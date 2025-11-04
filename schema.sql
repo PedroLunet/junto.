@@ -70,7 +70,7 @@ CREATE TABLE standard (
 CREATE TABLE review (
     postId INTEGER PRIMARY KEY REFERENCES post(id) ON DELETE CASCADE,
     rating INTEGER NOT NULL CHECK (rating >= 0 AND rating <= 5),
-    contest TEXT
+    content TEXT
 );
 
 -- COMMENTS
