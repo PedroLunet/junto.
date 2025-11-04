@@ -26,6 +26,7 @@ DROP TABLE IF EXISTS
     media
 CASCADE;
 
+SET search_path TO lbaw2544;
 
 -- MEDIA (Base)
 CREATE TABLE media (
