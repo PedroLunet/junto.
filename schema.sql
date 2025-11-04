@@ -1,3 +1,4 @@
+-- USERS
 CREATE TABLE users (
     id SERIAL PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
@@ -10,27 +11,27 @@ CREATE TABLE users (
     createdAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
--- Posts Table and its Subtypes
-
+-- POSTS (base table)
 CREATE TABLE post (
     id SERIAL PRIMARY KEY,
-    userId INTEGER REFERENCES users(id) ON DELETE CASCADE,
+    userId INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     content TEXT NOT NULL,
     createdAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE standart (
+-- STANDARD POST
+CREATE TABLE standard (
     postId INTEGER PRIMARY KEY REFERENCES post(id) ON DELETE CASCADE,
     imageUrl VARCHAR(255)
 );
 
--- review and media are specialized post types
-
+-- REVIEW POST
 CREATE TABLE review (
     postId INTEGER PRIMARY KEY REFERENCES post(id) ON DELETE CASCADE,
-    rating INTEGER CHECK (rating >= 1 AND rating <= 5),
+    rating INTEGER CHECK (rating >= 1 AND rating <= 5)
 );
 
+-- MEDIA POST
 CREATE TABLE media (
     postId INTEGER PRIMARY KEY REFERENCES post(id) ON DELETE CASCADE,
     title VARCHAR(255) NOT NULL,
@@ -40,15 +41,17 @@ CREATE TABLE media (
     mediaType VARCHAR(20) NOT NULL CHECK (mediaType IN ('Book', 'Film', 'Music'))
 );
 
+-- COMMENTS
 CREATE TABLE comment (
     id SERIAL PRIMARY KEY,
-    postId INTEGER REFERENCES post(id) ON DELETE CASCADE,
-    userId INTEGER REFERENCES users(id) ON DELETE CASCADE,
+    postId INTEGER NOT NULL REFERENCES post(id) ON DELETE CASCADE,
+    userId INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     content TEXT NOT NULL,
     createdAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE group (
+-- GROUPS
+CREATE TABLE groups (
     id SERIAL PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
     description TEXT,
@@ -56,54 +59,63 @@ CREATE TABLE group (
     icon VARCHAR(255)
 );
 
+-- MEMBERSHIP (User ↔ Group)
 CREATE TABLE membership (
-    userId INTEGER REFERENCES users(id) ON DELETE CASCADE,
-    groupId INTEGER REFERENCES group(id) ON DELETE CASCADE,
+    userId INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    groupId INTEGER NOT NULL REFERENCES groups(id) ON DELETE CASCADE,
     isOwner BOOLEAN DEFAULT FALSE,
     joinedAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (userId, groupId)
 );
 
+-- REQUESTS (base table)
 CREATE TABLE request (
     id SERIAL PRIMARY KEY,
     status VARCHAR(20) NOT NULL CHECK (status IN ('Pending', 'Approved', 'Rejected')),
     createdAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    senderId INTEGER REFERENCES users(id) ON DELETE CASCADE,
-    receiverId INTEGER REFERENCES users(id) ON DELETE CASCADE
+    senderId INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    receiverId INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE
 );
 
+-- FRIEND REQUEST
 CREATE TABLE friend_request (
-    resquestId INTEGER PRIMARY KEY REFERENCES request(id) ON DELETE CASCADE
+    requestId INTEGER PRIMARY KEY REFERENCES request(id) ON DELETE CASCADE
 );
 
+-- GROUP REQUEST
 CREATE TABLE group_request (
-    resquestId INTEGER PRIMARY KEY REFERENCES request(id) ON DELETE CASCADE,
-    groupId INTEGER REFERENCES group(id) ON DELETE CASCADE
+    requestId INTEGER PRIMARY KEY REFERENCES request(id) ON DELETE CASCADE,
+    groupId INTEGER NOT NULL REFERENCES groups(id) ON DELETE CASCADE
 );
 
+-- NOTIFICATIONS
 CREATE TABLE notification (
     id SERIAL PRIMARY KEY,
     message TEXT NOT NULL,
     isRead BOOLEAN DEFAULT FALSE,
     createdAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    userId INTEGER REFERENCES users(id) ON DELETE CASCADE
+    userId INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE
 );
 
+-- POST-RELATED NOTIFICATION (e.g., like, comment, tag)
 CREATE TABLE post_related (
-    id_notification INTEGER REFERENCES notification(id) ON DELETE CASCADE,
-    id_post INTEGER REFERENCES post(id) ON DELETE CASCADE,
-    actionType VARCHAR(20) NOT NULL CHECK (actionType IN ('like','comment','tag')),
-    PRIMARY KEY (id_notification, id_post, actionType)
+    notificationId INTEGER NOT NULL REFERENCES notification(id) ON DELETE CASCADE,
+    postId INTEGER NOT NULL REFERENCES post(id) ON DELETE CASCADE,
+    actionType VARCHAR(20) NOT NULL CHECK (actionType IN ('like', 'comment', 'tag')),
+    PRIMARY KEY (notificationId, postId, actionType)
 );
 
+-- FRIENDSHIPS
 CREATE TABLE friendship (
-    userId1 INTEGER REFERENCES users(id) ON DELETE CASCADE,
-    userId2 INTEGER REFERENCES users(id) ON DELETE CASCADE,
-    PRIMARY KEY (userId1, userId2)
-);
+    userId1 INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    userId2 INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    PRIMARY KEY (userId1, userId2),
+    CHECK (userId1 < userId2)
 
+-- GROUP-RELATED NOTIFICATION (e.g., join request, invite)
 CREATE TABLE join_group (
-    notificationId INTEGER REFERENCES notification(id) ON DELETE CASCADE,
-    groupId INTEGER REFERENCES group(id) ON DELETE CASCADE,
+    notificationId INTEGER NOT NULL REFERENCES notification(id) ON DELETE CASCADE,
+    groupId INTEGER NOT NULL REFERENCES groups(id) ON DELETE CASCADE,
+    actionType VARCHAR(20) NOT NULL CHECK (actionType IN ('join', 'invite')),
     PRIMARY KEY (notificationId, groupId, actionType)
 );
