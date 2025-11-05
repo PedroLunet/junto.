@@ -17,7 +17,7 @@ DROP TABLE IF EXISTS
     post_like,
     post_tag,
     review,
-    standard,
+    standard_post,
     post,
     users,
     book,
@@ -89,7 +89,7 @@ CREATE TABLE post_tag (
 );
 
 -- STANDARD POST
-CREATE TABLE standard (
+CREATE TABLE standard_post (
     postId INTEGER PRIMARY KEY REFERENCES post(id) ON DELETE CASCADE,
     text TEXT,
     imageUrl VARCHAR(255),
