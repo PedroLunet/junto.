@@ -174,7 +174,8 @@ CREATE TABLE request (
     notificationId INTEGER REFERENCES notification(id) ON DELETE CASCADE,
     status VARCHAR(20) NOT NULL DEFAULT 'pending'
         CHECK (status IN ('pending', 'accepted', 'rejected')),
-    senderId INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE
+    senderId INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    receiverId INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE
 );
 
 CREATE TABLE friend_request (
