@@ -9,10 +9,10 @@ DROP TABLE IF EXISTS
     membership,
     groups,
     friendship,
+    request,
     friend_request,
     group_invite_request,
     group_join_request,
-    request,
     report,
     post_like,
     post_tag,
@@ -170,25 +170,23 @@ CREATE TABLE like_notification (
 
 -- REQUESTS
 CREATE TABLE request (
-    id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    notificationId INTEGER REFERENCES notification(id) ON DELETE CASCADE,
+    notificationId INTEGER REFERENCES notification(id) ON DELETE CASCADE PRIMARY KEY,
     status VARCHAR(20) NOT NULL DEFAULT 'pending'
         CHECK (status IN ('pending', 'accepted', 'rejected')),
-    senderId INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-    receiverId INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE
+    senderId INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE
 );
 
 CREATE TABLE friend_request (
-    requestId INTEGER PRIMARY KEY REFERENCES request(id) ON DELETE CASCADE
+    requestId INTEGER PRIMARY KEY REFERENCES request(notificationId) ON DELETE CASCADE
 );
 
 CREATE TABLE group_invite_request (
-    requestId INTEGER PRIMARY KEY REFERENCES request(id) ON DELETE CASCADE,
+    requestId INTEGER PRIMARY KEY REFERENCES request(notificationId) ON DELETE CASCADE,
     groupId INTEGER NOT NULL REFERENCES groups(id) ON DELETE CASCADE
 );
 
 CREATE TABLE group_join_request (
-    requestId INTEGER PRIMARY KEY REFERENCES request(id) ON DELETE CASCADE,
+    requestId INTEGER PRIMARY KEY REFERENCES request(notificationId) ON DELETE CASCADE,
     groupId INTEGER NOT NULL REFERENCES groups(id) ON DELETE CASCADE
 );
 

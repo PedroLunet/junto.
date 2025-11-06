@@ -20,7 +20,7 @@ TRUNCATE TABLE
   post_tag,
   post_like,
   review,
-  standard,
+  standard_post,
   post,
   users,
   film,
@@ -63,7 +63,7 @@ VALUES
 INSERT INTO post (userId) VALUES
 (1), (2), (3), (4), (5), (6);
 
-INSERT INTO standard (postId, text, imageUrl) VALUES
+INSERT INTO standard_post (postId, text, imageUrl) VALUES
 (1, 'Just watched Inception again. Still brilliant.', 'inception-post.jpg'),
 (2, 'Reading The Great Gatsby this weekend.', NULL),
 (5, 'Finally finished 1984. Heavy stuff.', '1984-review.jpg');
@@ -120,7 +120,9 @@ INSERT INTO notification (message, receiverId, isRead) VALUES
 ('New group invite: Film Buffs.', 3, TRUE),
 ('Alice tagged you in a post.', 2, FALSE),
 ('Filipe mentioned you in Music Lovers.', 3, FALSE),
-('Eva replied to your comment.', 4, FALSE);
+('Eva replied to your comment.', 4, FALSE),
+('New friend request from Bruno.', 1, FALSE),
+('Group join request for Bookworms.', 5, FALSE);
 
 INSERT INTO activity_notification (notificationId, postId) VALUES
 (1, 1), (2, 1), (4, 1), (5, 3), (6, 5);
@@ -137,15 +139,13 @@ INSERT INTO like_notification (notificationId, postId) VALUES
 -- REQUESTS
 
 INSERT INTO request (notificationId, status, senderId) VALUES
-(NULL, 'pending', 2),
+(7, 'pending', 2),
 (3, 'accepted', 1),
-(NULL, 'rejected', 3),
-(NULL, 'pending', 5),
-(NULL, 'accepted', 6);
+(8, 'pending', 3);
 
-INSERT INTO friend_request (requestId) VALUES (1), (4);
-INSERT INTO group_invite_request (requestId, groupId) VALUES (2, 1), (5, 3);
-INSERT INTO group_join_request (requestId, groupId) VALUES (3, 2);
+INSERT INTO friend_request (requestId) VALUES (7);
+INSERT INTO group_invite_request (requestId, groupId) VALUES (3, 1);
+INSERT INTO group_join_request (requestId, groupId) VALUES (8, 2);
 
 -- REPORTS
 
