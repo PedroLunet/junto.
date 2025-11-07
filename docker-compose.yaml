@@ -5,10 +5,11 @@
 #   - postgres  (database)
 #   - pgadmin   (web UI for managing PostgreSQL)
 #
-# This file is meant for local development only.
+# This file is meant for local development only. 
 # ------------------------------------------------------------------------------
 
 services:
+
   postgres:
     image: postgres:16
     restart: always
@@ -16,7 +17,7 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: password
     ports:
-      - '5432:5432'
+      - "5432:5432"
 
   pgadmin:
     image: dpage/pgadmin4:9
@@ -26,9 +27,9 @@ services:
       PGADMIN_DEFAULT_PASSWORD: password
 
       # Disable user passwords. Only to be used in local single-user model.
-      PGADMIN_CONFIG_SERVER_MODE: 'False'
-      PGADMIN_CONFIG_MASTER_PASSWORD_REQUIRED: 'False'
+      PGADMIN_CONFIG_SERVER_MODE: "False"
+      PGADMIN_CONFIG_MASTER_PASSWORD_REQUIRED: "False"
     ports:
-      - '4321:80'
+      - "4321:80"
     depends_on:
       - postgres
