@@ -1,5 +1,8 @@
 SET search_path TO lbaw2544;
 
+-- Ensure schema exists so INSERTs run in the correct schema
+CREATE SCHEMA IF NOT EXISTS lbaw2544;
+
 -- CLEAN CURRENT DATA
 
 TRUNCATE TABLE

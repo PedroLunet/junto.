@@ -102,7 +102,8 @@ END $$ LANGUAGE plpgsql;
 -- 3. Create the trigger
 CREATE TRIGGER standard_post_search_update_trigger
     BEFORE INSERT OR UPDATE ON standard_post
-    FOR EACH ROW EXECUTE PROCEDURE standard_search_update();
+    FOR EACH ROW EXECUTE PROCEDURE standard_post_search_update();
+
 
 -- 4. Create the GIN index
 CREATE INDEX fts_standard_post_idx ON standard_post USING gin(fts_document);

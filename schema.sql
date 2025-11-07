@@ -28,6 +28,9 @@ CASCADE;
 
 SET search_path TO lbaw2544;
 
+-- Ensure schema exists before creating tables
+CREATE SCHEMA IF NOT EXISTS lbaw2544;
+
 -- MEDIA (Base)
 CREATE TABLE media (
     id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
