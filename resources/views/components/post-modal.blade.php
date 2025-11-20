@@ -1,35 +1,48 @@
 <!-- Modal -->
 <div id="postModal" style="display: none;"
   class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" onclick="closePostModal()">
-  <div class="bg-white max-w-2xl w-full mx-4" onclick="event.stopPropagation()">
-    <!-- Header with author and close button -->
-    <div class="flex justify-between items-center p-4 border-b">
-      <div id="modalAuthor" class="flex flex-col"></div>
-      <button onclick="closePostModal()" style="all: unset; cursor: pointer; font-size: 24px;">&times;</button>
-    </div>
+  <div class="bg-white w-full mx-4" style="max-width: 1200px; height: 600px; display: flex;"
+    onclick="event.stopPropagation()">
 
-    <!-- Post Content -->
-    <div id="modalContent" class="p-4"></div>
+    <!-- Left side - Post Content -->
+    <div style="flex: 1; display: flex; flex-direction: column; border-right: 1px solid #ddd;">
+      <!-- Header with author -->
+      <div class="flex items-center p-4 border-b">
+        <div id="modalAuthor" class="flex flex-col"></div>
+      </div>
 
-    <!-- Actions (like, comment) -->
-    <div class="px-4 py-2 border-t border-b">
-      <div class="flex gap-4">
-        <button onclick="likePost(event)" style="all: unset; cursor: pointer;">
-          ❤️ <span id="likesCount">0</span>
-        </button>
-        <button onclick="focusComment()" style="all: unset; cursor: pointer;">
-          💬 <span id="commentsCount">0</span>
-        </button>
+      <!-- Post Content -->
+      <div id="modalContent" class="p-4" style="flex: 1; overflow-y: auto;"></div>
+
+      <!-- Actions (like, comment) -->
+      <div class="px-4 py-2 border-t">
+        <div class="flex gap-4">
+          <button onclick="likePost(event)" style="all: unset; cursor: pointer;">
+            ❤️ <span id="likesCount">0</span>
+          </button>
+          <button onclick="focusComment()" style="all: unset; cursor: pointer;">
+            💬 <span id="commentsCount">0</span>
+          </button>
+        </div>
       </div>
     </div>
 
-    <!-- Comments Section -->
-    <div id="commentsSection" class="p-4 max-h-64 overflow-y-auto"></div>
+    <!-- Right side - Comments -->
+    <div style="width: 400px; display: flex; flex-direction: column;">
+      <!-- Close button -->
+      <div class="flex justify-end p-4 border-b">
+        <button onclick="closePostModal()" style="all: unset; cursor: pointer; font-size: 24px;">&times;</button>
+      </div>
 
-    <!-- Add Comment -->
-    <div class="p-4 border-t">
-      <input type="text" id="commentInput" placeholder="Add a comment..." class="w-full p-2 border rounded">
+      <!-- Comments Section -->
+      <div id="commentsSection" class="p-4" style="flex: 1; overflow-y: auto;"></div>
+
+      <!-- Add Comment -->
+      <div class="p-4 border-t">
+        <input type="text" id="commentInput" placeholder="Add a comment..." class="w-full p-2 border rounded">
+      </div>
     </div>
+
   </div>
 </div>
 
