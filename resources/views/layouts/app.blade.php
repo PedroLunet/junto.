@@ -19,7 +19,7 @@
     <body>
         <main>
             <header>
-                <h1><a href="{{ route('cards.index') }}">Thingy!</a></h1>
+                <h1>junto.</h1>
 
                 @auth
                     <a class="button" href="{{ url('/logout') }}"> Logout </a> <span>{{ Auth::user()->name }}</span>
