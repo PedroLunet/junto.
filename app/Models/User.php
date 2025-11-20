@@ -7,7 +7,6 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
 // Import Eloquent relationship classes.
-use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class User extends Authenticatable
 {
@@ -72,18 +71,5 @@ class User extends Authenticatable
     public function getAuthPasswordName()
     {
         return 'passwordhash';
-    }
-
-
-
-    /**
-     * Get the cards owned by this user.
-     *
-     * Defines a one-to-many relationship:
-     * a user can have multiple cards.
-     */
-    public function cards(): HasMany
-    {
-        return $this->hasMany(Card::class);
     }
 }

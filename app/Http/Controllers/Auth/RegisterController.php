@@ -56,8 +56,8 @@ class RegisterController extends Controller
         // Regenerate session for security (protection against session fixation).
         $request->session()->regenerate();
 
-        // Redirect to cards page with a success message.
-        return redirect()->route('cards.index')
+        // Redirect to home page with a success message.
+        return redirect()->route('home')
             ->withSuccess('You have successfully registered & logged in!');
     }
 }
