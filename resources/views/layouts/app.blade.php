@@ -25,7 +25,7 @@
 
             @auth
             <a class="button" href="{{ url('/logout') }}"> Logout </a> 
-            <a href="{{ route('profile') }}">{{ Auth::user()->name }}</a>
+            <a href="{{ route('profile.show', Auth::user()->username) }}">{{ Auth::user()->name }}</a>
             @endauth
         </header>
 

@@ -36,4 +36,6 @@ Route::controller(RegisterController::class)->group(function () {
     Route::post('/register', 'register');
 });
 
-
+Route::controller('auth')->controller(ProfileController::class)->group(function () {
+    Route::get('/{username}','show')->name('profile.show');
+});
