@@ -18,11 +18,6 @@ class User extends Authenticatable
     public $timestamps  = false;
 
     /**
-     * The name of the password column in the database.
-     */
-    protected $password = 'passwordHash';
-
-    /**
      * The attributes that are mass assignable.
      *
      * Only these fields may be filled using methods like create() or update().
@@ -33,7 +28,7 @@ class User extends Authenticatable
     protected $fillable = [
         'name',
         'email',
-        'passwordHash',
+        'passwordhash',
     ];
 
     /**
@@ -43,7 +38,7 @@ class User extends Authenticatable
      * @var list<string>
      */
     protected $hidden = [
-        'passwordHash',
+        'passwordhash',
         'remember_token',
     ];
 
@@ -56,9 +51,27 @@ class User extends Authenticatable
     {
         return [
             'email_verified_at' => 'datetime',
-            // Ensures password is always hashed automatically when set.
-            'passwordHash' => 'hashed',
         ];
+    }
+
+    /**
+     * Get the password for authentication.
+     *
+     * @return string
+     */
+    public function getAuthPassword()
+    {
+        return $this->passwordhash;
+    }
+
+    /**
+     * Get the name of the password column.
+     *
+     * @return string
+     */
+    public function getAuthPasswordName()
+    {
+        return 'passwordhash';
     }
 
 

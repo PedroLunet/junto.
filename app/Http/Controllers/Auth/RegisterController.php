@@ -46,7 +46,7 @@ class RegisterController extends Controller
         User::create([
             'name' => $request->name,
             'email' => $request->email,
-            'passwordHash' => Hash::make($request->password)
+            'passwordhash' => Hash::make($request->password)
         ]);
 
         // Attempt login for the newly registered user.
