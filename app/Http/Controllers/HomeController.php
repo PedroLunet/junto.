@@ -13,4 +13,10 @@ class HomeController extends Controller
         $posts = Post::getPostsWithDetails();
         return view('pages.home', compact('posts'));
     }
+
+    public function getComments($id)
+    {
+        $comments = Post::getCommentsForPost($id);
+        return response()->json($comments);
+    }
 }

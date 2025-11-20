@@ -5,14 +5,17 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 
-class Post extends Model {
+class Post extends Model
+{
     protected $table = 'lbaw2544.post';
     public $timestamps = false;
 
-    public static function getPostsWithDetails(){
+    public static function getPostsWithDetails()
+    {
         return DB::select("
             SELECT 
                 p.id,
+                p.createdAt as created_at,
                 u.name as author_name,
                 u.username,
                 COALESCE(sp.text, r.content) as content,
@@ -21,7 +24,9 @@ class Post extends Model {
                     WHEN r.postId IS NOT NULL THEN 'review'
                 END as post_type,
                 r.rating,
-                m.title as media_title
+                m.title as media_title,
+                (SELECT COUNT(*) FROM lbaw2544.post_like pl WHERE pl.postId = p.id) as likes_count,
+                (SELECT COUNT(*) FROM lbaw2544.comment c WHERE c.postId = p.id) as comments_count
             FROM lbaw2544.post p
             JOIN lbaw2544.users u ON p.userId = u.id
             LEFT JOIN lbaw2544.standard_post sp ON p.id = sp.postId
@@ -29,5 +34,22 @@ class Post extends Model {
             LEFT JOIN lbaw2544.media m ON r.mediaId = m.id
             ORDER BY p.id DESC
         ");
+    }
+
+    public static function getCommentsForPost($postId)
+    {
+        return DB::select("
+            SELECT 
+                c.id,
+                c.content,
+                c.createdAt as created_at,
+                u.name as author_name,
+                u.username,
+                (SELECT COUNT(*) FROM lbaw2544.comment_like cl WHERE cl.commentId = c.id) as likes_count
+            FROM lbaw2544.comment c
+            JOIN lbaw2544.users u ON c.userId = u.id
+            WHERE c.postId = ?
+            ORDER BY c.createdAt ASC
+        ", [$postId]);
     }
 }
