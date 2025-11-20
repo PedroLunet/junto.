@@ -19,7 +19,9 @@ class ProfileController extends Controller
     
     public function show($username): View
     {
-        $user = User::where('username', $username)->firstOrFail();
+        $user = User::with(['favoriteFilmMedia', 'favoriteBookMedia', 'favoriteSongMedia'])
+                    ->where('username', $username)
+                    ->firstOrFail();
         
         return view('pages.profile', compact('user'));
     }

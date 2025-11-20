@@ -72,4 +72,19 @@ class User extends Authenticatable
     {
         return 'passwordhash';
     }
+
+    public function favoriteFilmMedia()
+    {
+        return $this->belongsTo(Media::class, 'favoritefilm', 'id');
+    }
+
+    public function favoriteBookMedia()
+    {
+        return $this->belongsTo(Media::class, 'favoritebook', 'id');
+    }
+
+    public function favoriteSongMedia()
+    {
+        return $this->belongsTo(Media::class, 'favoritesong', 'id');
+    }
 }
