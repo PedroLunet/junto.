@@ -19,4 +19,18 @@ class HomeController extends Controller
         $comments = Post::getCommentsForPost($id);
         return response()->json($comments);
     }
+
+    public function addComment(Request $request, $id)
+    {
+        $request->validate([
+            'content' => 'required|string|max:1000'
+        ]);
+
+        $comment = Post::addComment($id, auth()->id(), $request->content);
+
+        return response()->json([
+            'success' => true,
+            'comment' => $comment
+        ]);
+    }
 }

@@ -52,4 +52,30 @@ class Post extends Model
             ORDER BY c.createdAt ASC
         ", [$postId]);
     }
+
+    public static function addComment($postId, $userId, $content)
+    {
+        DB::insert("
+            INSERT INTO lbaw2544.comment (postId, userId, content, createdAt)
+            VALUES (?, ?, ?, CURRENT_TIMESTAMP)
+        ", [$postId, $userId, $content]);
+
+        // Get the newly created comment
+        $comments = DB::select("
+            SELECT 
+                c.id,
+                c.content,
+                c.createdAt as created_at,
+                u.name as author_name,
+                u.username,
+                (SELECT COUNT(*) FROM lbaw2544.comment_like cl WHERE cl.commentId = c.id) as likes_count
+            FROM lbaw2544.comment c
+            JOIN lbaw2544.users u ON c.userId = u.id
+            WHERE c.postId = ? AND c.userId = ?
+            ORDER BY c.createdAt DESC
+            LIMIT 1
+        ", [$postId, $userId]);
+
+        return $comments[0] ?? null;
+    }
 }

@@ -39,7 +39,12 @@
 
       <!-- Add Comment -->
       <div class="p-4 border-t">
-        <input type="text" id="commentInput" placeholder="Add a comment..." class="w-full p-2 border rounded">
+        <div style="display: flex; gap: 8px;">
+          <input type="text" id="commentInput" placeholder="Add a comment..." class="p-2 border rounded"
+            style="flex: 1;" onkeypress="handleCommentKeyPress(event)">
+          <button onclick="submitComment()"
+            style="all: unset; cursor: pointer; padding: 8px 16px; background: #0095f6; color: white; border-radius: 4px; font-weight: 600;">Post</button>
+        </div>
       </div>
     </div>
 
@@ -137,6 +142,9 @@
     const modal = document.getElementById('postModal');
     modal.style.display = 'none';
     currentPostId = null;
+
+    // Clear the comment input
+    document.getElementById('commentInput').value = '';
   }
 
   function likePost(event) {
@@ -147,5 +155,54 @@
 
   function focusComment() {
     document.getElementById('commentInput').focus();
+  }
+
+  function handleCommentKeyPress(event) {
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      submitComment();
+    }
+  }
+
+  function submitComment() {
+    const input = document.getElementById('commentInput');
+    const commentText = input.value.trim();
+
+    if (!commentText) {
+      return;
+    }
+
+    // Get CSRF token
+    const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+    // Submit comment to backend
+    fetch(`/posts/${currentPostId}/comments`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRF-TOKEN': csrfToken
+      },
+      body: JSON.stringify({
+        content: commentText
+      })
+    })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          // Clear input
+          input.value = '';
+
+          // Reload comments to show the new one
+          loadComments(currentPostId);
+
+          // Update comment count
+          const countElem = document.getElementById('commentsCount');
+          countElem.textContent = parseInt(countElem.textContent) + 1;
+        }
+      })
+      .catch(error => {
+        console.error('Error submitting comment:', error);
+        alert('Failed to post comment. Please try again.');
+      });
   }
 </script>
