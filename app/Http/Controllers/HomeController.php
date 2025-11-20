@@ -33,4 +33,15 @@ class HomeController extends Controller
             'comment' => $comment
         ]);
     }
+
+    public function toggleLike($id)
+    {
+        $result = Post::toggleLike($id, auth()->id());
+
+        return response()->json([
+            'success' => true,
+            'liked' => $result['liked'],
+            'likes_count' => $result['likes_count']
+        ]);
+    }
 }

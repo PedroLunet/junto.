@@ -1,49 +1,50 @@
 <!-- Modal -->
-<div id="postModal" style="display: none;"
-  class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" onclick="closePostModal()">
-  <div class="bg-white w-full mx-4" style="max-width: 1200px; height: 600px; display: flex;"
+<div id="postModal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 50;"
+  onclick="closePostModal()">
+  <div
+    style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; border: 1px solid #ccc; max-width: 1200px; width: calc(100% - 32px); height: 600px; display: flex;"
     onclick="event.stopPropagation()">
 
     <!-- Left side - Post Content -->
-    <div style="flex: 1; display: flex; flex-direction: column; border-right: 1px solid #ddd;">
+    <div style="flex: 1; display: flex; flex-direction: column; border-right: 1px solid #ccc;">
       <!-- Header with author -->
-      <div class="flex items-center p-4 border-b">
-        <div id="modalAuthor" class="flex flex-col"></div>
+      <div style="padding: 16px; border-bottom: 1px solid #ccc;">
+        <div id="modalAuthor"></div>
       </div>
 
       <!-- Post Content -->
-      <div id="modalContent" class="p-4" style="flex: 1; overflow-y: auto;"></div>
+      <div id="modalContent" style="padding: 16px; flex: 1; overflow-y: auto;"></div>
 
       <!-- Actions (like, comment) -->
-      <div class="px-4 py-2 border-t">
-        <div class="flex gap-4">
-          <button onclick="likePost(event)" style="all: unset; cursor: pointer;">
-            ❤️ <span id="likesCount">0</span>
-          </button>
-          <button onclick="focusComment()" style="all: unset; cursor: pointer;">
-            💬 <span id="commentsCount">0</span>
-          </button>
-        </div>
+      <div style="padding: 16px; border-top: 1px solid #ccc; display: flex; gap: 16px;">
+        <button onclick="likePost(event)" style="all: unset; cursor: pointer;">
+          ❤️ <span id="likesCount">0</span>
+        </button>
+        <button onclick="focusComment()" style="all: unset; cursor: pointer;">
+          💬 <span id="commentsCount">0</span>
+        </button>
       </div>
     </div>
 
     <!-- Right side - Comments -->
     <div style="width: 400px; display: flex; flex-direction: column;">
       <!-- Close button -->
-      <div class="flex justify-end p-4 border-b">
-        <button onclick="closePostModal()" style="all: unset; cursor: pointer; font-size: 24px;">&times;</button>
+      <div style="padding: 16px; border-bottom: 1px solid #ccc; display: flex; justify-content: flex-end;">
+        <button onclick="closePostModal()"
+          style="all: unset; cursor: pointer; font-size: 20px; line-height: 1;">&times;</button>
       </div>
 
       <!-- Comments Section -->
-      <div id="commentsSection" class="p-4" style="flex: 1; overflow-y: auto;"></div>
+      <div id="commentsSection" style="padding: 16px; flex: 1; overflow-y: auto;"></div>
 
       <!-- Add Comment -->
-      <div class="p-4 border-t">
-        <div style="display: flex; gap: 8px;">
-          <input type="text" id="commentInput" placeholder="Add a comment..." class="p-2 border rounded"
-            style="flex: 1;" onkeypress="handleCommentKeyPress(event)">
+      <div style="padding: 16px; border-top: 1px solid #ccc;">
+        <div style="display: flex; gap: 8px; align-items: center;">
+          <input type="text" id="commentInput" placeholder="Add a comment..."
+            style="flex: 1; padding: 8px; border: 1px solid #ccc; outline: none;"
+            onkeypress="handleCommentKeyPress(event)">
           <button onclick="submitComment()"
-            style="all: unset; cursor: pointer; padding: 8px 16px; background: #0095f6; color: white; border-radius: 4px; font-weight: 600;">Post</button>
+            style="all: unset; cursor: pointer; padding: 8px 16px; border: 1px solid #000; white-space: nowrap;">Post</button>
         </div>
       </div>
     </div>
@@ -149,8 +150,31 @@
 
   function likePost(event) {
     event.stopPropagation();
-    // TODO: Implement like functionality
-    console.log('Like post:', currentPostId);
+
+    if (!currentPostId) return;
+
+    const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+    fetch(`/posts/${currentPostId}/like`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRF-TOKEN': csrfToken
+      }
+    })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          // Update likes count
+          document.getElementById('likesCount').textContent = data.likes_count;
+
+          // Optional: Change heart color based on liked state
+          // You can add visual feedback here later
+        }
+      })
+      .catch(error => {
+        console.error('Error liking post:', error);
+      });
   }
 
   function focusComment() {

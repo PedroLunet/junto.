@@ -78,4 +78,40 @@ class Post extends Model
 
         return $comments[0] ?? null;
     }
+
+    public static function toggleLike($postId, $userId)
+    {
+        // Check if already liked
+        $existing = DB::select("
+            SELECT * FROM lbaw2544.post_like
+            WHERE postId = ? AND userId = ?
+        ", [$postId, $userId]);
+
+        if (count($existing) > 0) {
+            // Unlike
+            DB::delete("
+                DELETE FROM lbaw2544.post_like
+                WHERE postId = ? AND userId = ?
+            ", [$postId, $userId]);
+            $liked = false;
+        } else {
+            // Like
+            DB::insert("
+                INSERT INTO lbaw2544.post_like (postId, userId, createdAt)
+                VALUES (?, ?, CURRENT_TIMESTAMP)
+            ", [$postId, $userId]);
+            $liked = true;
+        }
+
+        // Get updated likes count
+        $count = DB::select("
+            SELECT COUNT(*) as count FROM lbaw2544.post_like
+            WHERE postId = ?
+        ", [$postId]);
+
+        return [
+            'liked' => $liked,
+            'likes_count' => $count[0]->count
+        ];
+    }
 }
