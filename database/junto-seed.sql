@@ -632,40 +632,45 @@ INSERT INTO group_invite_request (requestId, groupId)
 VALUES (notif_id, p_group_id);
 END;
 $$ LANGUAGE plpgsql;
+
 -- US51 - Manage Reported Content
 CREATE OR REPLACE FUNCTION fn_manage_report(p_report_id INT, p_new_status TEXT) RETURNS VOID AS $$
 DECLARE post_target INT;
 BEGIN
-SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;
--- Ensures two moderators can’t process the same report simultaneously.
-UPDATE report
-SET status = p_new_status
-WHERE id = p_report_id;
-SELECT postId INTO post_target
-FROM report
-WHERE id = p_report_id;
-IF p_new_status = 'accepted' THEN
-DELETE FROM post
-WHERE id = post_target;
-END IF;
+    SET TRANSACTION ISOLATION LEVEL SERIALIZABLE; -- Ensures two moderators can’t process the same report simultaneously.
+    
+    UPDATE report
+    SET status = p_new_status
+    WHERE id = p_report_id;
+
+    SELECT postId INTO post_target FROM report WHERE id = p_report_id;
+
+    IF p_new_status = 'accepted' THEN
+        DELETE FROM post WHERE id = post_target;
+    END IF;
 END;
 $$ LANGUAGE plpgsql;
+
 -- US53 - Block/Unblock User
-CREATE OR REPLACE FUNCTION fn_toggle_block_user(p_user_id INT, p_is_blocked BOOLEAN) RETURNS VOID AS $$ BEGIN
-SET TRANSACTION ISOLATION LEVEL READ COMMITTED;
--- Simple update, no need for strong isolation.
-UPDATE users
-SET isBlocked = p_is_blocked
-WHERE id = p_user_id;
+CREATE OR REPLACE FUNCTION fn_toggle_block_user(p_user_id INT, p_is_blocked BOOLEAN) RETURNS VOID AS $$ 
+BEGIN
+    SET TRANSACTION ISOLATION LEVEL READ COMMITTED; -- Simple update, no need for strong isolation.
+
+    UPDATE users
+    SET isBlocked = p_is_blocked
+    WHERE id = p_user_id;
 END;
 $$ LANGUAGE plpgsql;
+
 -- US54 - Admin Delete User Account
-CREATE OR REPLACE FUNCTION fn_admin_delete_user(p_user_id INT) RETURNS VOID AS $$ BEGIN
-SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;
--- Administrative critical operation; must be fully isolated.
-PERFORM fn_anonymize_user_data(p_user_id);
+CREATE OR REPLACE FUNCTION fn_admin_delete_user(p_user_id INT) RETURNS VOID AS $$ 
+BEGIN
+    SET TRANSACTION ISOLATION LEVEL SERIALIZABLE; -- Administrative critical operation; must be fully isolated.
+
+    PERFORM fn_anonymize_user_data(p_user_id);
 END;
 $$ LANGUAGE plpgsql;
+
 --
 -- Insert value.
 --
@@ -696,6 +701,7 @@ book,
 music,
 media,
 report RESTART IDENTITY CASCADE;
+
 -- MEDIA
 INSERT INTO media (title, creator, releaseYear, coverImage)
 VALUES (
@@ -741,17 +747,21 @@ VALUES (
         'abbeyroad.jpg'
     ),
     ('1984', 'George Orwell', 1949, '1984.jpg');
+
 INSERT INTO film (mediaId)
 VALUES (1),
     (4),
     (6);
+
 INSERT INTO book (mediaId)
 VALUES (2),
     (5),
     (8);
+
 INSERT INTO music (mediaId)
 VALUES (3),
     (7);
+
 -- USERS
 INSERT INTO users (
         name,
@@ -845,6 +855,7 @@ VALUES (
         NULL,
         3
     );
+
 -- POSTS
 INSERT INTO post (userId)
 VALUES (1),
@@ -853,6 +864,7 @@ VALUES (1),
     (4),
     (5),
     (6);
+
 INSERT INTO standard_post (postId, text, imageUrl)
 VALUES (
         1,
@@ -869,6 +881,7 @@ VALUES (
         'Finally finished 1984. Heavy stuff.',
         '1984-review.jpg'
     );
+
 INSERT INTO review (postId, rating, mediaId, content)
 VALUES (3, 5, 3, 'This album is timeless.'),
     (
@@ -878,6 +891,7 @@ VALUES (3, 5, 3, 'This album is timeless.'),
         'Interstellar soundtrack gives me chills.'
     ),
     (6, 3, 8, 'Good but depressing.');
+
 -- POST INTERACTIONS
 INSERT INTO post_like (postId, userId)
 VALUES (1, 2),
@@ -888,6 +902,7 @@ VALUES (1, 2),
     (4, 3),
     (5, 6),
     (6, 2);
+
 INSERT INTO post_tag (postId, userId)
 VALUES (1, 3),
     (2, 4),
@@ -895,6 +910,7 @@ VALUES (1, 3),
     (4, 6),
     (5, 1),
     (6, 2);
+
 -- COMMENTS
 INSERT INTO comment (postId, userId, content)
 VALUES (1, 2, 'Totally agree! It’s a masterpiece.'),
@@ -904,6 +920,7 @@ VALUES (1, 2, 'Totally agree! It’s a masterpiece.'),
     (4, 1, 'That soundtrack is pure emotion.'),
     (5, 2, '1984 hits differently nowadays.'),
     (6, 4, 'Yeah, definitely not a light read.');
+
 INSERT INTO comment_like (commentId, userId)
 VALUES (1, 1),
     (2, 1),
@@ -911,6 +928,7 @@ VALUES (1, 1),
     (4, 1),
     (5, 3),
     (6, 5);
+
 -- GROUPS
 INSERT INTO groups (name, description, isPrivate, icon)
 VALUES (
@@ -931,6 +949,7 @@ VALUES (
         FALSE,
         'music-lovers.jpg'
     );
+
 INSERT INTO membership (userId, groupId, isOwner)
 VALUES (1, 1, TRUE),
     (2, 1, FALSE),
@@ -938,6 +957,7 @@ VALUES (1, 1, TRUE),
     (4, 1, FALSE),
     (5, 2, TRUE),
     (6, 3, FALSE);
+
 -- FRIENDSHIPS
 INSERT INTO friendship (userId1, userId2)
 VALUES (1, 2),
@@ -946,6 +966,7 @@ VALUES (1, 2),
     (3, 5),
     (4, 6),
     (2, 5);
+
 -- NOTIFICATIONS
 -- Note: Notifications are automatically created by triggers when:
 -- - post_like inserts trigger fn_notify_post_like() 
@@ -954,17 +975,22 @@ VALUES (1, 2),
 -- - friend_request inserts trigger fn_notify_friend_request() 
 -- - group_join_request inserts trigger fn_notify_group_join_request()
 -- So we don't manually insert notifications here to avoid conflicts
+
 -- REQUESTS
 INSERT INTO request (notificationId, status, senderId)
 VALUES (7, 'pending', 2),
     (3, 'accepted', 1),
     (8, 'pending', 3);
+
 INSERT INTO friend_request (requestId)
 VALUES (7);
+
 INSERT INTO group_invite_request (requestId, groupId)
 VALUES (3, 1);
+
 INSERT INTO group_join_request (requestId, groupId)
 VALUES (8, 2);
+
 -- REPORTS
 INSERT INTO report (reason, status, postId, commentId)
 VALUES ('Inappropriate content', 'pending', 4, NULL),
