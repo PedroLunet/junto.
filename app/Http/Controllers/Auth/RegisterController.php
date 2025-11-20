@@ -46,7 +46,7 @@ class RegisterController extends Controller
         User::create([
             'name' => $request->name,
             'email' => $request->email,
-            'password' => Hash::make($request->password)
+            'passwordhash' => Hash::make($request->password)
         ]);
 
         // Attempt login for the newly registered user.
@@ -56,8 +56,8 @@ class RegisterController extends Controller
         // Regenerate session for security (protection against session fixation).
         $request->session()->regenerate();
 
-        // Redirect to cards page with a success message.
-        return redirect()->route('cards.index')
+        // Redirect to home page with a success message.
+        return redirect()->route('home')
             ->withSuccess('You have successfully registered & logged in!');
     }
 }

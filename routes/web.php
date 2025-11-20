@@ -2,8 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 
-use App\Http\Controllers\CardController;
-use App\Http\Controllers\ItemController;
+use App\Http\Controllers\HomeController;
 
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
@@ -12,25 +11,10 @@ use App\Http\Controllers\Auth\LogoutController;
 // Home
 Route::redirect('/', '/login');
 
-// Cards (authentication required)
-Route::middleware('auth')->controller(CardController::class)->group(function () {
-    Route::get('/cards', 'index')->name('cards.index');
-    Route::get('/cards/{card}', 'show')->name('cards.show');
+// Home page (authentication required)
+Route::middleware('auth')->controller(HomeController::class)->group(function () {
+    Route::get('/home', 'index')->name('home');
 });
-
-
-// API (authentication required)
-Route::middleware('auth')->controller(CardController::class)->group(function () {
-    Route::post('/api/cards', 'store');              // create card
-    Route::delete('/api/cards/{card}', 'destroy');   // delete card
-});
-
-Route::middleware('auth')->controller(ItemController::class)->group(function () {
-    Route::post('/api/cards/{card}/items', 'store'); // add item to card
-    Route::patch('/api/items/{item}', 'update');     // update item
-    Route::delete('/api/items/{item}', 'destroy');   // delete item
-});
-
 
 // Authentication
 Route::controller(LoginController::class)->group(function () {

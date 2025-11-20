@@ -20,7 +20,7 @@ class LoginController extends Controller
     public function showLoginForm()
     {
         if (Auth::check()) {
-            return redirect()->route('cards.index');
+            return redirect()->route('home');
         } else {
             return view('auth.login');
         }
@@ -46,8 +46,8 @@ class LoginController extends Controller
             // Regenerate the session ID to prevent session fixation attacks.
             $request->session()->regenerate();
  
-            // Redirect the user to their intended destination (default: /cards).
-            return redirect()->intended(route('cards.index'));
+            // Redirect the user to their intended destination (default: /home).
+            return redirect()->intended(route('home'));
         }
  
         // Authentication failed: return back with an error message.
