@@ -2,6 +2,9 @@
 
 @section('content')
 <div class="container">
-    <p>Profile Page </p>
+    @auth
+    <h3>{{ Auth::user()->name }}</h3>
+    <p>@<span>{{ Auth::user()->username }}</span></p>
+    @endauth
 </div>
 @endsection
