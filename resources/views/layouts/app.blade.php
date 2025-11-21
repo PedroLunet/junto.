@@ -42,12 +42,12 @@
         </aside>
 
         <!-- main content -->
-        <main class="flex-1 overflow-y-auto">
-            <header class="bg-white shadow-sm p-4">
+        <main class="flex-1 flex flex-col overflow-hidden">
+            <header class="bg-white shadow-sm p-4 sticky top-0 z-10 mb-0">
                 <h2 class="font-semibold">@yield('page-title', 'Home')</h2>
             </header>
             
-            <section class="p-6">
+            <section class="flex-1 overflow-y-auto p-6">
                 @yield('content')
             </section>
         </main>
