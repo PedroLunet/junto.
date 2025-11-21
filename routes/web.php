@@ -15,6 +15,9 @@ Route::redirect('/', '/login');
 // Home page (authentication required)
 Route::middleware('auth')->controller(HomeController::class)->group(function () {
     Route::get('/home', 'index')->name('home');
+    Route::get('/posts/{id}/comments', 'getComments')->name('post.comments');
+    Route::post('/posts/{id}/comments', 'addComment')->name('post.comments.add');
+    Route::post('/posts/{id}/like', 'toggleLike')->name('post.like');
 });
 
 // Authentication
