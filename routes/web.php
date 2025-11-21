@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Models\Post;
 
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\ProfileController;
 
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
@@ -18,6 +19,10 @@ Route::middleware('auth')->controller(HomeController::class)->group(function () 
     Route::get('/posts/{id}/comments', 'getComments')->name('post.comments');
     Route::post('/posts/{id}/comments', 'addComment')->name('post.comments.add');
     Route::post('/posts/{id}/like', 'toggleLike')->name('post.like');
+});
+
+Route::middleware('auth')->controller(ProfileController::class)->group(function () {
+    Route::get('/profile', 'index')->name('profile');
 });
 
 // Authentication
@@ -35,5 +40,6 @@ Route::controller(RegisterController::class)->group(function () {
     Route::post('/register', 'register');
 });
 
-
-
+Route::controller('auth')->controller(ProfileController::class)->group(function () {
+    Route::get('/{username}','show')->name('profile.show');
+});

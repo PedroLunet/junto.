@@ -1,11 +1,10 @@
 <!DOCTYPE html>
 <html lang="{{ app()->getLocale() }}">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta name="csrf-token" content="{{ csrf_token() }}">
 
-        <title>@yield('title', config('app.name', 'Laravel'))</title>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
 
         <script src="https://cdn.tailwindcss.com"></script>
 
@@ -35,7 +34,7 @@
             
             @auth
                 <div class="p-4 border-t border-gray-700">
-                    <div class=" text-gray-300 mb-2">{{ Auth::user()->name }}</div>
+                    <a href="{{ route('profile.show', Auth::user()->username) }}" class=" text-gray-300 mb-2">{{ Auth::user()->name }}</a>
                     <a href="{{ url('/logout') }}" class="text-red-400 hover:text-red-300 text-xl">Logout</a>
                 </div>
             @endauth
