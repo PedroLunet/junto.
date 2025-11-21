@@ -8,6 +8,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\LogoutController;
+use App\Http\Controllers\SearchUserController;
 
 // Home
 Route::redirect('/', '/login');
@@ -16,6 +17,8 @@ Route::redirect('/', '/login');
 Route::middleware('auth')->controller(HomeController::class)->group(function () {
     Route::get('/home', 'index')->name('home');
 });
+
+
 
 Route::middleware('auth')->controller(ProfileController::class)->group(function () {
     Route::get('/profile', 'index')->name('profile');
@@ -36,6 +39,13 @@ Route::controller(RegisterController::class)->group(function () {
     Route::post('/register', 'register');
 });
 
-Route::controller('auth')->controller(ProfileController::class)->group(function () {
-    Route::get('/{username}','show')->name('profile.show');
+Route::controller(SearchUserController::class)->group(function () {
+    Route::get('/search-users', 'index')->name('search.users');
 });
+
+
+Route::controller('auth')->controller(ProfileController::class)->group(function () {
+    Route::get('/{username}', 'show')->name('profile.show');
+});
+
+
