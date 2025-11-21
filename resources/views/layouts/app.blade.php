@@ -22,13 +22,15 @@
         <!-- sidebar -->
         <aside class="w-80 bg-[#38157a] text-white flex flex-col">
             <div class="p-4">
-                <h1 class="text-4xl font-bold">junto.</h1>
+                <h1><a href="/" class="text-4xl font-bold">junto.</a></h1>
             </div>
             
             <nav class="flex-1 px-4">
                 <ul class="space-y-2">
-                    <li><a href="/home" class="block py-2 px-4 rounded hover:bg-[#7455ad] hover:text-white">Home</a></li>
                     <li><a href="#" class="block py-2 px-4 rounded hover:bg-[#7455ad] hover:text-white">Friends Feed</a></li>
+                    <li><a href="#" class="block py-2 px-4 rounded hover:bg-[#7455ad] hover:text-white">Films</a></li>
+                    <li><a href="#" class="block py-2 px-4 rounded hover:bg-[#7455ad] hover:text-white">Books</a></li>
+                    <li><a href="#" class="block py-2 px-4 rounded hover:bg-[#7455ad] hover:text-white">Music</a></li>
                 </ul>
             </nav>
             
