@@ -80,6 +80,14 @@
     html += post.content;
     html += '</div>';
 
+    // Add post image if it exists
+    if (post.image_url) {
+      html += '<div style="margin-top: 16px;">';
+      html += '<img src="/images/' + post.image_url + '" alt="Post image" ';
+      html += 'style="width: 100%; max-width: 500px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border: 1px solid #e5e7eb; display: block; margin: 0 auto;">';
+      html += '</div>';
+    }
+
     if (post.created_at) {
       html += '<div style="color: #888; font-size: 0.9em;">';
       html += new Date(post.created_at).toLocaleString();
