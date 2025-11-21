@@ -2,7 +2,7 @@
 
 @section('content')
 <div class="container mx-auto px-4 py-8">  
-    <div class="max-w-2xl mx-auto space-y-6">
+    <div class="max-w-4xl mx-auto space-y-6">
         @foreach($posts as $post)
             <div class="bg-white rounded-lg shadow-md p-6 border border-gray-200">
                 <!-- author info -->
