@@ -34,7 +34,7 @@
             
             @auth
                 <div class="p-4 border-t border-gray-700">
-                    <div class=" text-gray-300 mb-2" href="{{ route('profile.show', Auth::user()->username) }}">{{ Auth::user()->name }}</div>
+                    <a href="{{ route('profile.show', Auth::user()->username) }}" class=" text-gray-300 mb-2">{{ Auth::user()->name }}</a>
                     <a href="{{ url('/logout') }}" class="text-red-400 hover:text-red-300 text-xl">Logout</a>
                 </div>
             @endauth
