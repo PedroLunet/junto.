@@ -24,6 +24,14 @@
                     {{ $post->content }}
                 </div>
                 
+                <!-- post image -->
+                @if($post->image_url)
+                    <div class="mt-4">
+                        <img src="{{ asset('images/' . $post->image_url) }}" 
+                             alt="image" 
+                             class="w-full max-w-md rounded-lg shadow-sm border border-gray-200 mx-auto">
+                    </div>
+                @endif
                 
             </div>
         @endforeach

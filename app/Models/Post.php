@@ -21,7 +21,8 @@ class Post extends Model {
                     WHEN r.postId IS NOT NULL THEN 'review'
                 END as post_type,
                 r.rating,
-                m.title as media_title
+                m.title as media_title,
+                sp.imageUrl as image_url
             FROM lbaw2544.post p
             JOIN lbaw2544.users u ON p.userId = u.id
             LEFT JOIN lbaw2544.standard_post sp ON p.id = sp.postId
