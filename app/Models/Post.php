@@ -26,7 +26,7 @@ class Post extends Model
                 r.rating,
                 m.title as media_title,
                 (SELECT COUNT(*) FROM lbaw2544.post_like pl WHERE pl.postId = p.id) as likes_count,
-                (SELECT COUNT(*) FROM lbaw2544.comment c WHERE c.postId = p.id) as comments_count
+                (SELECT COUNT(*) FROM lbaw2544.comment c WHERE c.postId = p.id) as comments_count,
                 sp.imageUrl as image_url
             FROM lbaw2544.post p
             JOIN lbaw2544.users u ON p.userId = u.id
