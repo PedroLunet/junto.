@@ -18,19 +18,39 @@
         <script src="{{ asset('js/app.js') }}" defer></script>
         @stack('scripts')
     </head>
-    <body>
-        <main>
-            <header>
-                <h1>junto.</h1>
+   <body class="flex h-screen">
+        
+        <!-- sidebar -->
+        <aside class="w-80 bg-[#38157a] text-white flex flex-col">
+            <div class="p-4">
+                <h1 class="text-4xl font-bold">junto.</h1>
+            </div>
+            
+            <nav class="flex-1 px-4">
+                <ul class="space-y-2">
+                    <li><a href="/home" class="block py-2 px-4 rounded hover:bg-[#7455ad] hover:text-white">Home</a></li>
+                    <li><a href="#" class="block py-2 px-4 rounded hover:bg-[#7455ad] hover:text-white">Friends Feed</a></li>
+                </ul>
+            </nav>
+            
+            @auth
+                <div class="p-4 border-t border-gray-700">
+                    <div class=" text-gray-300 mb-2">{{ Auth::user()->name }}</div>
+                    <a href="{{ url('/logout') }}" class="text-red-400 hover:text-red-300 text-xl">Logout</a>
+                </div>
+            @endauth
+        </aside>
 
-                @auth
-                    <a class="button" href="{{ url('/logout') }}"> Logout </a> <span>{{ Auth::user()->name }}</span>
-                @endauth
+        <!-- main content -->
+        <main class="flex-1 flex flex-col overflow-hidden">
+            <header class="bg-white shadow-sm p-4 sticky top-0 z-10 mb-0">
+                <h2 class="font-semibold">@yield('page-title', 'Home')</h2>
             </header>
-
-            <section id="content">
+            
+            <section class="flex-1 overflow-y-auto p-6">
                 @yield('content')
             </section>
         </main>
+        
     </body>
 </html>
