@@ -58,5 +58,48 @@
                 @endif
             </div>
         </div>
+
+        <!-- tabs -->
+        <div class="flex gap-4 mb-6">
+            <button id="posts-tab"
+                class="flex-1 bg-gray-400 text-white py-3 px-6 rounded-lg text-xl font-semibold transition-colors hover:bg-gray-500">
+                Posts
+            </button>
+            <button id="reviews-tab"
+                class="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-700 py-3 px-6 rounded-lg text-xl font-semibold transition-colors">
+                Reviews
+            </button>
+        </div>
+
+        <!-- tab content (empty for now) -->
+        <div id="posts-content" class="tab-content">
+            <p>STANDARD POSTS!</p>
+        </div>
+
+        <div id="reviews-content" class="tab-content hidden">
+            <p>REVIEWS!</p>
+        </div>
     </div>
+
+    <script>
+        document.getElementById('posts-tab').addEventListener('click', function() {
+            // switch active tab - change classes directly
+            document.getElementById('posts-tab').className = 'flex-1 bg-gray-400 text-white py-3 px-6 rounded-lg text-xl font-semibold transition-colors hover:bg-gray-500';
+            document.getElementById('reviews-tab').className = 'flex-1 bg-gray-300 hover:bg-gray-400 text-gray-700 py-3 px-6 rounded-lg text-xl font-semibold transition-colors';
+
+            // switch content
+            document.getElementById('posts-content').classList.remove('hidden');
+            document.getElementById('reviews-content').classList.add('hidden');
+        });
+
+        document.getElementById('reviews-tab').addEventListener('click', function() {
+            // switch active tab - change classes directly
+            document.getElementById('reviews-tab').className = 'flex-1 bg-gray-400 text-white py-3 px-6 rounded-lg text-xl font-semibold transition-colors hover:bg-gray-500';
+            document.getElementById('posts-tab').className = 'flex-1 bg-gray-300 hover:bg-gray-400 text-gray-700 py-3 px-6 rounded-lg text-xl font-semibold transition-colors';
+
+            // switch content
+            document.getElementById('reviews-content').classList.remove('hidden');
+            document.getElementById('posts-content').classList.add('hidden');
+        });
+    </script>
 @endsection
