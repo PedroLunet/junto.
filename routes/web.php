@@ -10,6 +10,7 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\LogoutController;
 use App\Http\Controllers\SearchUserController;
+use App\Http\Controllers\MusicController;
 
 // Home
 Route::redirect('/', '/login');
@@ -47,9 +48,15 @@ Route::controller(SearchUserController::class)->group(function () {
     Route::get('/search-users', 'index')->name('search.users');
 });
 
+// temporary music routes
+Route::middleware('auth')->controller(MusicController::class)->group(function () {
+    Route::get('/music', 'search')->name('music.search');
+    Route::post('/music', 'store')->name('music.store');
+});
 
 Route::controller('auth')->controller(ProfileController::class)->group(function () {
     Route::get('/{username}', 'show')->name('profile.show');
 });
+
 
 

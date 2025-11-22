@@ -25,7 +25,7 @@ class MusicController extends Controller
 
         return $response->json()['access_token'] ?? null;
     }
-    
+
     public function search(Request $request)
     {
         $query = $request->input('q');
@@ -61,7 +61,7 @@ class MusicController extends Controller
             }
         }
 
-        return view('songs.index', ['songs' => $formattedSongs]);
+        return view('pages.music', ['songs' => $formattedSongs]);
     }
 
     public function store(Request $request)
@@ -98,8 +98,8 @@ class MusicController extends Controller
             $isNew = true;
         }
 
-        $message = $isNew 
-            ? 'Song added to database! (ID: ' . $songId . ')' 
+        $message = $isNew
+            ? 'Song added to database! (ID: ' . $songId . ')'
             : 'Song found in library! (ID: ' . $songId . ')';
 
         return redirect('/songs')->with('success', $message);
