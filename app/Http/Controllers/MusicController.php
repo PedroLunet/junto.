@@ -10,8 +10,8 @@ class MusicController extends Controller
 {
     private function getAccessToken()
     {
-        $clientId = env('SPOTIFY_CLIENT_ID');
-        $clientSecret = env('SPOTIFY_CLIENT_SECRET');
+        $clientId = config('services.spotify.client_id');
+        $clientSecret = config('services.spotify.client_secret');
 
         // Spotify requires the keys to be Base64 encoded for the token request
         $headers = [
