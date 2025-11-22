@@ -102,6 +102,6 @@ class MusicController extends Controller
             ? 'Song added to database! (ID: ' . $songId . ')'
             : 'Song found in library! (ID: ' . $songId . ')';
 
-        return redirect('/songs')->with('success', $message);
+        return redirect('/music')->with('success', $message);
     }
 }
