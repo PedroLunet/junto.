@@ -51,5 +51,3 @@ Route::controller(SearchUserController::class)->group(function () {
 Route::controller('auth')->controller(ProfileController::class)->group(function () {
     Route::get('/{username}', 'show')->name('profile.show');
 });
-
-
