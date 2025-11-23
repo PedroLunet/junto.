@@ -10,6 +10,7 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\LogoutController;
 use App\Http\Controllers\SearchUserController;
+use App\Http\Controllers\MovieController;
 
 // Home
 Route::redirect('/', '/login');
@@ -47,6 +48,10 @@ Route::controller(SearchUserController::class)->group(function () {
     Route::get('/search-users', 'index')->name('search.users');
 });
 
+Route::middleware('auth')->controller(MovieController::class)->group(function () {
+    Route::get('/movies', 'index')->name('movies');
+    Route::get('/movies/search', 'search')->name('movies.search');
+});
 
 Route::controller('auth')->controller(ProfileController::class)->group(function () {
     Route::get('/{username}', 'show')->name('profile.show');

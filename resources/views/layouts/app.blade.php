@@ -28,7 +28,7 @@
             <nav class="flex-1 px-4">
                 <ul class="space-y-2">
                     <li><a href="#" class="block py-2 px-4 rounded hover:bg-[#7455ad] hover:text-white">Friends Feed</a></li>
-                    <li><a href="#" class="block py-2 px-4 rounded hover:bg-[#7455ad] hover:text-white">Films</a></li>
+                    <li><a href="{{ route('movies') }}" class="block py-2 px-4 rounded hover:bg-[#7455ad] hover:text-white">Movies</a></li>
                     <li><a href="#" class="block py-2 px-4 rounded hover:bg-[#7455ad] hover:text-white">Books</a></li>
                     <li><a href="#" class="block py-2 px-4 rounded hover:bg-[#7455ad] hover:text-white">Music</a></li>
                 </ul>
