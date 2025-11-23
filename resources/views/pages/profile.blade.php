@@ -70,5 +70,7 @@
                 'content' => '<p>REVIEWS!</p>',
             ],
         ]" />
+
+        <x-post-modal />
     </div>
 @endsection
