@@ -10,8 +10,10 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\LogoutController;
 use App\Http\Controllers\SearchUserController;
+use App\Http\Controllers\MovieController;
 use App\Http\Controllers\MusicController;
 use App\Http\Controllers\BookController;
+
 
 // Home
 Route::redirect('/', '/login');
@@ -49,6 +51,12 @@ Route::controller(SearchUserController::class)->group(function () {
     Route::get('/search-users', 'index')->name('search.users');
 });
 
+// movie routes
+Route::middleware('auth')->controller(MovieController::class)->group(function () {
+    Route::get('/movies', 'index')->name('movies');
+    Route::get('/movies/search', 'search')->name('movies.search');
+});
+
 // temporary music routes
 Route::middleware('auth')->controller(MusicController::class)->group(function () {
     Route::get('/music', 'search')->name('music.search');
@@ -64,6 +72,4 @@ Route::middleware('auth')->controller(BookController::class)->group(function () 
 Route::controller('auth')->controller(ProfileController::class)->group(function () {
     Route::get('/{username}', 'show')->name('profile.show');
 });
-
-
 
