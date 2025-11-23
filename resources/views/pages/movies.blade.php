@@ -81,13 +81,13 @@ document.addEventListener('DOMContentLoaded', function() {
         movieCard.className = 'bg-white rounded-lg shadow-md overflow-hidden';
         movieCard.innerHTML = `
             ${posterPath ? 
-                `<img src="https://image.tmdb.org/t/p/w300${posterPath}" class="w-full h-64 object-cover" onerror="this.style.display='none'">` 
+                `<img src="https://image.tmdb.org/t/p/w300${posterPath}" class="w-full h-92 object-cover" onerror="this.style.display='none'">` 
                 : 
                 `<div class="w-full h-64 bg-gray-200 flex items-center justify-center text-gray-500">No Image Available</div>`
             }
             <div class="p-4">
-                <h3 class="font-bold text-lg">${title}</h3>
-                <p class="text-gray-600">${releaseDate ? new Date(releaseDate).getFullYear() : 'N/A'}</p>
+                <h3 class="font-bold">${title}</h3>
+                <p class="text-gray-600 text-lg">${releaseDate ? new Date(releaseDate).getFullYear() : 'N/A'}</p>
             </div>
         `;
         
