@@ -5,6 +5,7 @@ use App\Models\Post;
 
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\FriendRequestController;
 
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
@@ -47,6 +48,18 @@ Route::controller(RegisterController::class)->group(function () {
 
 Route::controller(SearchUserController::class)->group(function () {
     Route::get('/search-users', 'index')->name('search.users');
+});
+
+// Friend Requests (authentication required)
+Route::middleware('auth')->controller(FriendRequestController::class)->group(function () {
+    Route::get('/friend-requests', 'index')->name('friend-requests.index');
+    Route::get('/friend-requests/sent', 'sent')->name('friend-requests.sent');
+    Route::post('/friend-requests', 'store')->name('friend-requests.store');
+    Route::post('/friend-requests/{requestId}/accept', 'accept')->name('friend-requests.accept');
+    Route::post('/friend-requests/{requestId}/reject', 'reject')->name('friend-requests.reject');
+    Route::delete('/friend-requests/{requestId}/cancel', 'cancel')->name('friend-requests.cancel');
+    Route::get('/friends', 'friends')->name('friends.index');
+    Route::delete('/friends/{userId}', 'unfriend')->name('friends.unfriend');
 });
 
 // temporary music routes

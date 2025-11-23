@@ -3,13 +3,14 @@
 namespace App\Policies;
 
 use App\Models\User;
+use App\Models\Friendship;
 use Illuminate\Support\Facades\DB;
 
-class UserPolicy 
+class UserPolicy
 {
     // determine if the user can view the profile's posts and content
-    public function viewPosts(User $viewer, User $profileUser) 
-    {        
+    public function viewPosts(User $viewer, User $profileUser)
+    {
         // user can always view their own posts
         if ($viewer->id === $profileUser->id) {
             return true;
@@ -20,12 +21,8 @@ class UserPolicy
             return true;
         }
 
-        // if profile is private, check friendship
-        $res = DB::selectOne(
-            'SELECT fn_are_friends(?,?) as is_friend',
-            [$viewer->id, $profileUser->id]
-        );
-        return $res ? (bool)$res->is_friend : false; 
+        // if profile is private, check friendship using Eloquent
+        return Friendship::exists($viewer->id, $profileUser->id);
     }
 
     // determine if user can view basic profile info

@@ -29,6 +29,11 @@
 
                         @if (Auth::id() === $user->id)
                             <p class="text-xl italic text-gray-500">This is your profile</p>
+                        @else
+                            <!-- Friend request button -->
+                            <div class="mt-3">
+                                @include('components.friend-button', ['user' => $user])
+                            </div>
                         @endif
                     </div>
                 @endauth
