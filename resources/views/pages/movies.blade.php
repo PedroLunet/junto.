@@ -57,7 +57,11 @@ document.addEventListener('DOMContentLoaded', function() {
         
         resultsDiv.innerHTML = movies.map(movie => `
             <div class="p-4 hover:bg-gray-100 cursor-pointer border-b flex items-center" onclick="selectMovie(${movie.id}, '${movie.title.replace(/'/g, "\\'")}', '${movie.poster_path || ''}', '${movie.release_date || ''}')">
-                <img src="https://image.tmdb.org/t/p/w92${movie.poster_path}" class="w-12 h-18 object-cover rounded mr-3" onerror="this.src='/placeholder-image.jpg'">
+                ${movie.poster_path ? 
+                    `<img src="https://image.tmdb.org/t/p/w92${movie.poster_path}" class="w-12 h-18 object-cover rounded mr-3" onerror="this.style.display='none'">` 
+                    : 
+                    `<div class="w-12 h-18 bg-gray-200 rounded mr-3 flex items-center justify-center text-xs text-gray-500">No Image</div>`
+                }
                 <div>
                     <div class="font-medium">${movie.title}</div>
                     <div class="text-sm text-gray-600">${movie.release_date ? new Date(movie.release_date).getFullYear() : 'N/A'}</div>
@@ -76,7 +80,11 @@ document.addEventListener('DOMContentLoaded', function() {
         const movieCard = document.createElement('div');
         movieCard.className = 'bg-white rounded-lg shadow-md overflow-hidden';
         movieCard.innerHTML = `
-            <img src="https://image.tmdb.org/t/p/w300${posterPath}" class="w-full h-64 object-cover" onerror="this.src='/placeholder-image.jpg'">
+            ${posterPath ? 
+                `<img src="https://image.tmdb.org/t/p/w300${posterPath}" class="w-full h-64 object-cover" onerror="this.style.display='none'">` 
+                : 
+                `<div class="w-full h-64 bg-gray-200 flex items-center justify-center text-gray-500">No Image Available</div>`
+            }
             <div class="p-4">
                 <h3 class="font-bold text-lg">${title}</h3>
                 <p class="text-gray-600">${releaseDate ? new Date(releaseDate).getFullYear() : 'N/A'}</p>
