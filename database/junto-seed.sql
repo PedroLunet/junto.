@@ -752,6 +752,20 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+-- Check if two users are friends
+CREATE OR REPLACE FUNCTION fn_are_friends(p_user1_id INT, p_user2_id INT) RETURNS BOOLEAN AS $$
+DECLARE
+    friendship_exists BOOLEAN := FALSE;
+BEGIN
+    SELECT EXISTS(
+        SELECT 1 FROM friendship 
+        WHERE (userId1 = LEAST(p_user1_id, p_user2_id) AND userId2 = GREATEST(p_user1_id, p_user2_id))
+    ) INTO friendship_exists;
+    
+    RETURN friendship_exists;
+END;
+$$ LANGUAGE plpgsql;
+
 --
 -- Insert values
 --
@@ -816,7 +830,9 @@ INSERT INTO users (
     ('Carla Dias', 'carla', 'carla@example.org', 'hash3', 'Music addict', 'carla.jpg', TRUE, FALSE, 1, 2, 7),
     ('David Costa', 'david', 'david@example.org', 'hash4', 'Cinephile', 'david.jpg', FALSE, FALSE, 6, NULL, NULL),
     ('Eva Rocha', 'eva', 'eva@example.org', 'hash5', 'Book enthusiast', 'eva.jpg', TRUE, FALSE, 4, 8, 7),
-    ('Filipe Moreira', 'filipe', 'filipe@example.org', 'hash6', 'Vinyl collector', 'filipe.jpg', FALSE, FALSE, 1, NULL, 3);
+    ('Filipe Moreira', 'filipe', 'filipe@example.org', 'hash6', 'Vinyl collector', 'filipe.jpg', FALSE, FALSE, 1, NULL, 3),
+    ('John Doe', 'john_doe', 'john@example.org', 'hash6.', 'Private person', 'john.jpg', TRUE, FALSE, 1, 2, 3),
+    ('Jane Smith', 'jane_doe', 'jane@example.org', 'hash7', 'Keep it secret', 'jane.jpg', TRUE, FALSE, 4, 5, 7);
 
 -- POSTS
 INSERT INTO post (userId) VALUES 
@@ -888,7 +904,8 @@ INSERT INTO friendship (userId1, userId2) VALUES
     (2, 4),
     (3, 5),
     (4, 6),
-    (2, 5);
+    (2, 5),
+    (2, 3);
 
 -- NOTIFICATIONS
 -- Note: Notifications are automatically created by triggers when:
