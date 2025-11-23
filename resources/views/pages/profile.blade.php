@@ -15,12 +15,26 @@
                         <h3 class="text-4xl font-bold text-gray-900 mb-1">{{ $user->name }}</h3>
                         <p class="text-2xl text-gray-600 mb-2">@<span>{{ $user->username }}</span></p>
 
+                        <!-- friends and posts count -->
+                        <div class="flex gap-6 mb-3">
+                            <div>
+                                <span class="font-bold text-gray-900">{{ $friendsCount }}</span>
+                                <span class="text-gray-600 ml-1">Friends</span>
+                            </div>
+                            <div>
+                                <span class="font-bold text-gray-900">{{ $postsCount }}</span>
+                                <span class="text-gray-600 ml-1">Posts</span>
+                            </div>
+                        </div>
+
                         @if (Auth::id() === $user->id)
                             <p class="text-xl italic text-gray-500">This is your profile</p>
                         @endif
                     </div>
                 @endauth
             </div>
+
+
 
             <!-- 3 favorites -->
             <div class="flex gap-8 mr-40">
@@ -63,11 +77,19 @@
         <x-tabs :tabs="[
             'posts' => [
                 'title' => 'Posts',
-                'content' => view('components.posts.post-list', ['posts' => $posts, 'showAuthor' => false, 'postType' => 'standard'])->render(),
+                'content' => view('components.posts.post-list', [
+                    'posts' => $posts,
+                    'showAuthor' => false,
+                    'postType' => 'standard',
+                ])->render(),
             ],
             'reviews' => [
                 'title' => 'Reviews',
-                'content' => view('components.posts.post-list', ['posts' => $posts, 'showAuthor' => false, 'postType' => 'review'])->render(),
+                'content' => view('components.posts.post-list', [
+                    'posts' => $posts,
+                    'showAuthor' => false,
+                    'postType' => 'review',
+                ])->render(),
             ],
         ]" />
 
