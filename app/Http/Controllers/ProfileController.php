@@ -24,7 +24,15 @@ class ProfileController extends Controller
                     ->where('username', $username)
                     ->firstOrFail();
         
-        $posts = Post::getUserStandardPosts($user->id);
+        $standardPosts = Post::getUserStandardPosts($user->id);
+        $reviewPosts = Post::getUserReviewPosts($user->id);
+
+        // merge both types and sort by date
+        $posts = collect($standardPosts)
+                    ->merge($reviewPosts)
+                    ->sortByDesc('created_at')
+                    ->values()
+                    ->all();
 
         return view('pages.profile', compact('user', 'posts'));
     }
