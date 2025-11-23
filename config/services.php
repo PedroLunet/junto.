@@ -38,7 +38,11 @@ return [
     'spotify' => [
         'client_id' => env('SPOTIFY_CLIENT_ID'),
         'client_secret' => env('SPOTIFY_CLIENT_SECRET'),
-        'redirect' => env('SPOTIFY_REDIRECT_URI'), 
+        'redirect' => env('SPOTIFY_REDIRECT_URI'),
+    ],
+
+    'google_books' => [
+        'api_key' => env('GOOGLE_BOOKS_API_KEY'),
     ],
 
 ];
