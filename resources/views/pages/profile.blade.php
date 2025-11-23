@@ -37,37 +37,49 @@
             <!-- 3 favorites -->
             <div class="flex gap-8 mr-40">
                 <!-- fav music -->
-                @if ($user->favoriteSongMedia)
-                    <div class="w-40 h-40 bg-gray-300 rounded-lg flex items-center justify-center">
-                        <span class="text-gray-600 text-xl text-center px-2">{{ $user->favoriteSongMedia->title }}</span>
-                    </div>
-                @else
-                    <div class="w-40 h-40 bg-gray-300 rounded-lg flex items-center justify-center">
+                <div class="w-40 h-40 bg-gray-300 rounded-lg flex items-center justify-center overflow-hidden">
+                    @if ($user->favoriteSongMedia)
+                        @if ($user->favoriteSongMedia->coverimage && filter_var($user->favoriteSongMedia->coverimage, FILTER_VALIDATE_URL))
+                            <img src="{{ $user->favoriteSongMedia->coverimage }}"
+                                alt="{{ $user->favoriteSongMedia->title }}" class="w-full h-full object-cover rounded-lg">
+                        @else
+                            <span
+                                class="text-gray-600 text-xl text-center px-2">{{ $user->favoriteSongMedia->title }}</span>
+                        @endif
+                    @else
                         <span class="text-gray-600 text-xl text-center px-2">[fav music]</span>
-                    </div>
-                @endif
+                    @endif
+                </div>
 
                 <!-- fav book -->
-                @if ($user->favoriteBookMedia)
-                    <div class="w-40 h-40 bg-gray-300 rounded-lg flex items-center justify-center">
-                        <span class="text-gray-600 text-xl text-center px-2">{{ $user->favoriteBookMedia->title }}</span>
-                    </div>
-                @else
-                    <div class="w-40 h-40 bg-gray-300 rounded-lg flex items-center justify-center">
+                <div class="w-40 h-40 bg-gray-300 rounded-lg flex items-center justify-center overflow-hidden">
+                    @if ($user->favoriteBookMedia)
+                        @if ($user->favoriteBookMedia->coverimage && filter_var($user->favoriteBookMedia->coverimage, FILTER_VALIDATE_URL))
+                            <img src="{{ $user->favoriteBookMedia->coverimage }}"
+                                alt="{{ $user->favoriteBookMedia->title }}" class="w-full h-full object-cover rounded-lg">
+                        @else
+                            <span
+                                class="text-gray-600 text-xl text-center px-2">{{ $user->favoriteBookMedia->title }}</span>
+                        @endif
+                    @else
                         <span class="text-gray-600 text-xl text-center px-2">[fav book]</span>
-                    </div>
-                @endif
+                    @endif
+                </div>
 
                 <!-- fav movie -->
-                @if ($user->favoriteFilmMedia)
-                    <div class="w-40 h-40 bg-gray-300 rounded-lg flex items-center justify-center">
-                        <span class="text-gray-600 text-xl text-center px-2">{{ $user->favoriteFilmMedia->title }}</span>
-                    </div>
-                @else
-                    <div class="w-40 h-40 bg-gray-300 rounded-lg flex items-center justify-center">
+                <div class="w-40 h-40 bg-gray-300 rounded-lg flex items-center justify-center overflow-hidden">
+                    @if ($user->favoriteFilmMedia)
+                        @if ($user->favoriteFilmMedia->coverimage && filter_var($user->favoriteFilmMedia->coverimage, FILTER_VALIDATE_URL))
+                            <img src="{{ $user->favoriteFilmMedia->coverimage }}"
+                                alt="{{ $user->favoriteFilmMedia->title }}" class="w-full h-full object-cover rounded-lg">
+                        @else
+                            <span
+                                class="text-gray-600 text-xl text-center px-2">{{ $user->favoriteFilmMedia->title }}</span>
+                        @endif
+                    @else
                         <span class="text-gray-600 text-xl text-center px-2">[fav movie]</span>
-                    </div>
-                @endif
+                    @endif
+                </div>
             </div>
         </div>
 
@@ -77,7 +89,9 @@
             <div class="flex flex-col items-center justify-center py-20">
                 <div class="text-center">
                     <h2 class="text-4xl font-bold text-gray-900 mb-4">This account is private</h2>
-                    <p class="text-gray-600">Befriend @<span>{{ $user->username }}</span> to see their posts and reviews</p>
+                    <p class="text-gray-600">
+                        Befriend @<span>{{ $user->username }}</span> to see their posts and reviews
+                    </p>
                 </div>
             </div>
         @else
