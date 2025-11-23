@@ -10,6 +10,21 @@ class Post extends Model
     protected $table = 'lbaw2544.post';
     public $timestamps = false;
 
+    public function standardPost()
+    {
+        return $this->hasOne(StandardPost::class, 'postid', 'id');
+    }
+
+    public function review()
+    {
+        return $this->hasOne(Review::class, 'postid', 'id');
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'userid', 'id');
+    }
+
     public static function getPostsWithDetails()
     {
         return DB::select("

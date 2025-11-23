@@ -34,12 +34,10 @@
                 @endauth
             </div>
 
-
-
             <!-- 3 favorites -->
             <div class="flex gap-8 mr-40">
                 <!-- fav music -->
-                @if ($user->favoriteBookMedia)
+                @if ($user->favoriteSongMedia)
                     <div class="w-40 h-40 bg-gray-300 rounded-lg flex items-center justify-center">
                         <span class="text-gray-600 text-xl text-center px-2">{{ $user->favoriteSongMedia->title }}</span>
                     </div>
@@ -73,25 +71,36 @@
             </div>
         </div>
 
-        <!-- tabs -->
-        <x-tabs :tabs="[
-            'posts' => [
-                'title' => 'Posts',
-                'content' => view('components.posts.post-list', [
-                    'posts' => $posts,
-                    'showAuthor' => false,
-                    'postType' => 'standard',
-                ])->render(),
-            ],
-            'reviews' => [
-                'title' => 'Reviews',
-                'content' => view('components.posts.post-list', [
-                    'posts' => $posts,
-                    'showAuthor' => false,
-                    'postType' => 'review',
-                ])->render(),
-            ],
-        ]" />
+        <!-- check if profile is private -->
+        @if ($user->isprivate && !$isFriend && Auth::id() !== $user->id)
+            <!-- private account message -->
+            <div class="flex flex-col items-center justify-center py-20">
+                <div class="text-center">
+                    <h2 class="text-4xl font-bold text-gray-900 mb-4">This account is private</h2>
+                    <p class="text-gray-600">Befriend @<span>{{ $user->username }}</span> to see their posts and reviews</p>
+                </div>
+            </div>
+        @else
+            <!-- tabs -->
+            <x-tabs :tabs="[
+                'posts' => [
+                    'title' => 'Posts',
+                    'content' => view('components.posts.post-list', [
+                        'posts' => $standardPosts,
+                        'showAuthor' => false,
+                        'postType' => 'standard',
+                    ])->render(),
+                ],
+                'reviews' => [
+                    'title' => 'Reviews',
+                    'content' => view('components.posts.post-list', [
+                        'posts' => $reviewPosts,
+                        'showAuthor' => false,
+                        'postType' => 'review',
+                    ])->render(),
+                ],
+            ]" />
+        @endif
 
         <x-posts.post-modal />
     </div>

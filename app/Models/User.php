@@ -41,6 +41,12 @@ class User extends Authenticatable
         'remember_token',
     ];
 
+    protected $casts = [
+        'isprivate' => 'boolean',
+        'isadmin' => 'boolean',
+        'isblocked' => 'boolean',
+    ];
+
     /**
      * The attributes that should be cast to a specific type.
      *

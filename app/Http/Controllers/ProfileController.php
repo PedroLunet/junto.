@@ -15,29 +15,79 @@ class ProfileController extends Controller
 {
     public function index(): RedirectResponse
     {
-        // Redirect to username-based URL
         return redirect('/' . Auth::user()->username);
     }
-    
+
     public function show($username): View
     {
         $user = User::with(['favoriteFilmMedia', 'favoriteBookMedia', 'favoriteSongMedia'])
-                    ->where('username', $username)
-                    ->firstOrFail();
-        
-        $standardPosts = Post::getUserStandardPosts($user->id);
-        $reviewPosts = Post::getUserReviewPosts($user->id);
+            ->where('username', $username)
+            ->firstOrFail();
 
-        // merge both types and sort by date
-        $posts = collect($standardPosts)
-                    ->merge($reviewPosts)
-                    ->sortByDesc('created_at')
-                    ->values()
-                    ->all();
+        // check if current user is friends with the profile user
+        $isFriend = false;
+        if (Auth::check() && Auth::id() !== $user->id) {
+            $result = DB::selectOne(
+                'SELECT fn_are_friends(?, ?) as is_friend',
+                [Auth::id(), $user->id]
+            );
+            $isFriend = $result ? (bool)$result->is_friend : false;
+        }
+
+        // get posts only if user can see them
+        $posts = collect();
+        $standardPosts = collect();
+        $reviewPosts = collect();
+        
+        if (!$user->isprivate || $isFriend || Auth::id() === $user->id) {
+            // get all posts with relationships
+            $allPosts = Post::with(['standardPost', 'review.media', 'user'])
+                ->where('userid', $user->id)
+                ->orderBy('createdat', 'desc')
+                ->get();
+            
+            // transform the data to match the expected format
+            $posts = $allPosts->map(function ($post) {
+                $transformedPost = (object) [
+                    'id' => $post->id,
+                    'created_at' => $post->createdat,
+                    'author_name' => $post->user->name,
+                    'username' => $post->user->username,
+                    'likes_count' => 0, 
+                    'comments_count' => 0,
+                ];
+
+                // standard post data
+                if ($post->standardPost) {
+                    $transformedPost->content = $post->standardPost->text;
+                    $transformedPost->image_url = $post->standardPost->imageurl;
+                    $transformedPost->post_type = 'standard';
+                }
+
+                // review data
+                if ($post->review) {
+                    $transformedPost->content = $post->review->content;
+                    $transformedPost->rating = $post->review->rating;
+                    $transformedPost->media_title = $post->review->media ? $post->review->media->title : 'Unknown Media';
+                    $transformedPost->post_type = 'review';
+                }
+
+                return $transformedPost;
+            });
+            
+            // separate standard posts and reviews for tabs
+            $standardPosts = $posts->filter(function ($post) {
+                return $post->post_type === 'standard';
+            });
+            
+            $reviewPosts = $posts->filter(function ($post) {
+                return $post->post_type === 'review';
+            });
+        }
 
         $friendsCount = DB::selectOne("SELECT fn_get_friendship_count(?) as count", [$user->id])->count;
         $postsCount = DB::selectOne("SELECT fn_get_user_posts_count(?) as count", [$user->id])->count;
 
-        return view('pages.profile', compact('user', 'posts', 'friendsCount', 'postsCount'));
+        return view('pages.profile', compact('user', 'posts', 'standardPosts', 'reviewPosts', 'friendsCount', 'postsCount', 'isFriend'));
     }
 }
