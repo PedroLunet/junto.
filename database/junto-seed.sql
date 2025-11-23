@@ -562,6 +562,26 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+CREATE OR REPLACE FUNCTION fn_create_book(
+    p_title VARCHAR(255),
+    p_creator VARCHAR(255),
+    p_release_year INT,
+    p_cover_image VARCHAR(255)
+) RETURNS INTEGER AS $$
+DECLARE
+    new_media_id INTEGER;
+BEGIN
+    INSERT INTO media (title, creator, releaseYear, coverImage)
+    VALUES (p_title, p_creator, p_release_year, p_cover_image)
+    RETURNING id INTO new_media_id;
+
+    INSERT INTO book (mediaId)
+    VALUES (new_media_id);
+
+    RETURN new_media_id;
+END;
+$$ LANGUAGE plpgsql;
+
 -- US24 - Report Content
 CREATE OR REPLACE FUNCTION fn_report_post(p_post_id INT, p_reason TEXT) RETURNS VOID AS $$ 
 BEGIN
