@@ -1,6 +1,5 @@
 <?php
 
-
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
@@ -9,6 +8,7 @@ use App\Models\User;
 use App\Models\Post;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
 class ProfileController extends Controller
@@ -24,22 +24,14 @@ class ProfileController extends Controller
             ->where('username', $username)
             ->firstOrFail();
 
-        // check if current user is friends with the profile user
-        $isFriend = false;
-        if (Auth::check() && Auth::id() !== $user->id) {
-            $result = DB::selectOne(
-                'SELECT fn_are_friends(?, ?) as is_friend',
-                [Auth::id(), $user->id]
-            );
-            $isFriend = $result ? (bool)$result->is_friend : false;
-        }
+        $canViewPosts = Auth::check() ? Gate::allows('viewPosts', $user) : false;
 
-        // get posts only if user can see them
+        // get posts only if user can view them
         $posts = collect();
         $standardPosts = collect();
         $reviewPosts = collect();
         
-        if (!$user->isprivate || $isFriend || Auth::id() === $user->id) {
+        if ($canViewPosts) {
             // get all posts with relationships
             $allPosts = Post::with(['standardPost', 'review.media', 'user'])
                 ->where('userid', $user->id)
@@ -88,6 +80,6 @@ class ProfileController extends Controller
         $friendsCount = DB::selectOne("SELECT fn_get_friendship_count(?) as count", [$user->id])->count;
         $postsCount = DB::selectOne("SELECT fn_get_user_posts_count(?) as count", [$user->id])->count;
 
-        return view('pages.profile', compact('user', 'posts', 'standardPosts', 'reviewPosts', 'friendsCount', 'postsCount', 'isFriend'));
+        return view('pages.profile', compact('user', 'posts', 'standardPosts', 'reviewPosts', 'friendsCount', 'postsCount', 'canViewPosts'));
     }
 }

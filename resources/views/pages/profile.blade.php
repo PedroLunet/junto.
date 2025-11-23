@@ -72,7 +72,7 @@
         </div>
 
         <!-- check if profile is private -->
-        @if ($user->isprivate && !$isFriend && Auth::id() !== $user->id)
+        @if (!$canViewPosts)
             <!-- private account message -->
             <div class="flex flex-col items-center justify-center py-20">
                 <div class="text-center">
