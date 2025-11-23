@@ -8,6 +8,7 @@ use Illuminate\View\View;
 use App\Models\User;
 use App\Models\Post;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
 class ProfileController extends Controller
@@ -34,6 +35,9 @@ class ProfileController extends Controller
                     ->values()
                     ->all();
 
-        return view('pages.profile', compact('user', 'posts'));
+        $friendsCount = DB::selectOne("SELECT fn_get_friendship_count(?) as count", [$user->id])->count;
+        $postsCount = DB::selectOne("SELECT fn_get_user_posts_count(?) as count", [$user->id])->count;
+
+        return view('pages.profile', compact('user', 'posts', 'friendsCount', 'postsCount'));
     }
 }

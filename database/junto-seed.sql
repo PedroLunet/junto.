@@ -726,6 +726,32 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+-- Get user friendship count
+CREATE OR REPLACE FUNCTION fn_get_friendship_count(p_user_id INT) RETURNS INT AS $$
+DECLARE
+    friendship_count INT;
+BEGIN
+    SELECT COUNT(*) INTO friendship_count
+    FROM friendship
+    WHERE userId1 = p_user_id OR userId2 = p_user_id;
+    
+    RETURN friendship_count;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Get user posts count  
+CREATE OR REPLACE FUNCTION fn_get_user_posts_count(p_user_id INT) RETURNS INT AS $$
+DECLARE
+    posts_count INT;
+BEGIN
+    SELECT COUNT(*) INTO posts_count
+    FROM post
+    WHERE userId = p_user_id;
+    
+    RETURN posts_count;
+END;
+$$ LANGUAGE plpgsql;
+
 --
 -- Insert values
 --
