@@ -803,11 +803,11 @@ RESTART IDENTITY CASCADE;
 INSERT INTO media (title, creator, releaseYear, coverImage) VALUES 
     ('Inception', 'Christopher Nolan', 2010, 'inception.jpg'),
     ('The Great Gatsby', 'F. Scott Fitzgerald', 1925, 'gatsby.jpg'),
-    ('Random Access Memories', 'Daft Punk', 2013, 'ram.jpg'),
+    ('Get Lucky', 'Daft Punk', 2013, 'https://i.scdn.co/image/ab67616d0000b2739b9b36b0e22870b9f542d937'),
     ('The Matrix', 'Lana Wachowski', 1999, 'matrix.jpg'),
     ('To Kill a Mockingbird', 'Harper Lee', 1960, 'mockingbird.jpg'),
     ('Interstellar', 'Christopher Nolan', 2014, 'interstellar.jpg'),
-    ('The Beatles: Abbey Road', 'The Beatles', 1969, 'abbeyroad.jpg'),
+    ('Strawberry Fields Forever - Remastered 2009', 'The Beatles', 1967, 'https://i.scdn.co/image/ab67616d0000b273692d9189b2bd75525893f0c1'),
     ('1984', 'George Orwell', 1949, '1984.jpg');
 
 INSERT INTO film (mediaId) VALUES 
@@ -844,7 +844,7 @@ INSERT INTO standard_post (postId, text, imageUrl) VALUES
     (5, 'Finally finished 1984. Heavy stuff.', '1984-review.jpg');
 
 INSERT INTO review (postId, rating, mediaId, content) VALUES 
-    (3, 5, 3, 'This album is timeless.'),
+    (3, 5, 3, 'This song is timeless.'),
     (4, 4, 6, 'Interstellar soundtrack gives me chills.'),
     (6, 3, 8, 'Good but depressing.');
 
