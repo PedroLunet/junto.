@@ -115,4 +115,24 @@ class Post extends Model
             'likes_count' => $count[0]->count
         ];
     }
+
+    public static function getUserStandardPosts($userId)
+    {
+        return DB::select("
+            SELECT 
+                p.id,
+                p.createdAt as created_at,
+                u.name as author_name,
+                u.username,
+                sp.text as content,
+                sp.imageUrl as image_url,
+                (SELECT COUNT(*) FROM lbaw2544.post_like pl WHERE pl.postId = p.id) as likes_count,
+                (SELECT COUNT(*) FROM lbaw2544.comment c WHERE c.postId = p.id) as comments_count
+            FROM lbaw2544.post p
+            JOIN lbaw2544.users u ON p.userId = u.id
+            JOIN lbaw2544.standard_post sp ON p.id = sp.postId
+            WHERE p.userId = ?
+            ORDER BY p.createdAt DESC
+        ", [$userId]);
+    }
 }
