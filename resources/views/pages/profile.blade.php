@@ -63,11 +63,11 @@
         <x-tabs :tabs="[
             'posts' => [
                 'title' => 'Posts',
-                'content' => view('components.post-list', ['posts' => $posts, 'showAuthor' => false])->render(),
+                'content' => view('components.post-list', ['posts' => $posts, 'showAuthor' => false, 'postType' => 'standard'])->render(),
             ],
             'reviews' => [
                 'title' => 'Reviews',
-                'content' => '<p>REVIEWS!</p>',
+                'content' => view('components.post-list', ['posts' => $posts, 'showAuthor' => false, 'postType' => 'review'])->render(),
             ],
         ]" />
 
