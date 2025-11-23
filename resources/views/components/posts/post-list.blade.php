@@ -8,16 +8,16 @@
             @if(!isset($postType) || $postType === 'all')
                 <!-- both types -->
                 @if($isReview)
-                    <x-post-review :post="$post" :showAuthor="$showAuthor ?? true" />
+                    <x-posts.post-review :post="$post" :showAuthor="$showAuthor ?? true" />
                 @else
-                    <x-post-standard :post="$post" :showAuthor="$showAuthor ?? true" />
+                    <x-posts.post-standard :post="$post" :showAuthor="$showAuthor ?? true" />
                 @endif
             @elseif($postType === 'standard' && !$isReview)
                 <!-- only standard posts -->
-                <x-post-standard :post="$post" :showAuthor="$showAuthor ?? true" />
+                <x-posts.post-standard :post="$post" :showAuthor="$showAuthor ?? true" />
             @elseif($postType === 'review' && $isReview)
                 <!-- only review posts -->
-                <x-post-review :post="$post" :showAuthor="$showAuthor ?? true" />
+                <x-posts.post-review :post="$post" :showAuthor="$showAuthor ?? true" />
             @endif
         @endforeach
     </div>

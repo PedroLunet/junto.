@@ -63,14 +63,14 @@
         <x-tabs :tabs="[
             'posts' => [
                 'title' => 'Posts',
-                'content' => view('components.post-list', ['posts' => $posts, 'showAuthor' => false, 'postType' => 'standard'])->render(),
+                'content' => view('components.posts.post-list', ['posts' => $posts, 'showAuthor' => false, 'postType' => 'standard'])->render(),
             ],
             'reviews' => [
                 'title' => 'Reviews',
-                'content' => view('components.post-list', ['posts' => $posts, 'showAuthor' => false, 'postType' => 'review'])->render(),
+                'content' => view('components.posts.post-list', ['posts' => $posts, 'showAuthor' => false, 'postType' => 'review'])->render(),
             ],
         ]" />
 
-        <x-post-modal />
+        <x-posts.post-modal />
     </div>
 @endsection

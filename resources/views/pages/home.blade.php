@@ -37,5 +37,5 @@
             @endforeach
         </div>
     </div>
-    <x-post-modal />
+    <x-posts.post-modal />
 @endsection
