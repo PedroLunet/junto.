@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\View\View;
 use App\Models\User;
 use App\Models\Post;
+use App\Models\Friendship;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
@@ -30,14 +31,14 @@ class ProfileController extends Controller
         $posts = collect();
         $standardPosts = collect();
         $reviewPosts = collect();
-        
+
         if ($canViewPosts) {
             // get all posts with relationships
             $allPosts = Post::with(['standardPost', 'review.media', 'user'])
                 ->where('userid', $user->id)
                 ->orderBy('createdat', 'desc')
                 ->get();
-            
+
             // transform the data to match the expected format
             $posts = $allPosts->map(function ($post) {
                 $transformedPost = (object) [
@@ -45,7 +46,7 @@ class ProfileController extends Controller
                     'created_at' => $post->createdat,
                     'author_name' => $post->user->name,
                     'username' => $post->user->username,
-                    'likes_count' => 0, 
+                    'likes_count' => 0,
                     'comments_count' => 0,
                 ];
 
@@ -66,19 +67,22 @@ class ProfileController extends Controller
 
                 return $transformedPost;
             });
-            
+
             // separate standard posts and reviews for tabs
             $standardPosts = $posts->filter(function ($post) {
                 return $post->post_type === 'standard';
             });
-            
+
             $reviewPosts = $posts->filter(function ($post) {
                 return $post->post_type === 'review';
             });
         }
 
-        $friendsCount = DB::selectOne("SELECT fn_get_friendship_count(?) as count", [$user->id])->count;
-        $postsCount = DB::selectOne("SELECT fn_get_user_posts_count(?) as count", [$user->id])->count;
+        $friendsCount = Friendship::where('userid1', $user->id)
+            ->orWhere('userid2', $user->id)
+            ->count();
+
+        $postsCount = Post::where('userid', $user->id)->count();
 
         return view('pages.profile', compact('user', 'posts', 'standardPosts', 'reviewPosts', 'friendsCount', 'postsCount', 'canViewPosts'));
     }
