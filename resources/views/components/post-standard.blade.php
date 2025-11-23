@@ -9,14 +9,6 @@
         </div>
     @endif
 
-    <!-- review data -->
-    @if($post->rating ?? false)
-        <div class="mb-3 flex items-center">
-            <span class="text-yellow-500 font-medium">⭐ {{ $post->rating }}/5</span>
-            <span class="text-gray-600 ml-2">for {{ $post->media_title }}</span>
-        </div>
-    @endif
-
     <!-- post content -->
     <div class="text-gray-800 leading-relaxed">
         {{ $post->content }}
