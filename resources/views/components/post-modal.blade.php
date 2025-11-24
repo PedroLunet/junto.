@@ -23,7 +23,7 @@
         <button onclick="focusComment()" style="all: unset; cursor: pointer;">
           💬 <span id="commentsCount">0</span>
         </button>
-        <button onclick="openReportModal(event)" style="all: unset; cursor: pointer; margin-left: auto; color: #dc2626;">
+        <button onclick="openReportModal(event)" id="reportButton" style="all: unset; cursor: pointer; margin-left: auto; color: #dc2626;">
           🚩 Report
         </button>
       </div>
@@ -138,11 +138,13 @@
 
     // Handle guest view
     if (!window.isAuthenticated) {
-        document.getElementById('postActions').style.display = 'none';
+        document.getElementById('postActions').style.display = 'flex';
         document.getElementById('addCommentSection').style.display = 'none';
+        document.getElementById('reportButton').style.display = 'none';
     } else {
         document.getElementById('postActions').style.display = 'flex';
         document.getElementById('addCommentSection').style.display = 'block';
+        document.getElementById('reportButton').style.display = 'block';
     }
 
     modal.style.display = 'flex';
@@ -201,6 +203,11 @@
 
     if (!currentPostId) return;
 
+    if (!window.isAuthenticated) {
+        alert('Please login to like posts.');
+        return;
+    }
+
     const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
     fetch(`/posts/${currentPostId}/like`, {
@@ -226,6 +233,10 @@
   }
 
   function focusComment() {
+    if (!window.isAuthenticated) {
+        alert('Please login to comment.');
+        return;
+    }
     document.getElementById('commentInput').focus();
   }
 
