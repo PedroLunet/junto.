@@ -6,13 +6,16 @@ use App\Models\Post;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\FriendRequestController;
+use App\Http\Controllers\ReportController;
 
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\LogoutController;
 use App\Http\Controllers\SearchUserController;
+use App\Http\Controllers\MovieController;
 use App\Http\Controllers\MusicController;
 use App\Http\Controllers\BookController;
+
 
 // Home
 Route::redirect('/', '/login');
@@ -62,6 +65,12 @@ Route::middleware('auth')->controller(FriendRequestController::class)->group(fun
     Route::delete('/friends/{userId}', 'unfriend')->name('friends.unfriend');
 });
 
+// movie routes
+Route::middleware('auth')->controller(MovieController::class)->group(function () {
+    Route::get('/movies', 'index')->name('movies');
+    Route::get('/movies/search', 'search')->name('movies.search');
+});
+
 // temporary music routes
 Route::middleware('auth')->controller(MusicController::class)->group(function () {
     Route::get('/music', 'search')->name('music.search');
@@ -74,9 +83,15 @@ Route::middleware('auth')->controller(BookController::class)->group(function () 
     Route::post('/books', 'store')->name('books.store');
 });
 
+// reports routes
+Route::middleware('auth')->controller(ReportController::class)->group(function () {
+    Route::post('/posts/{id}/report', 'reportPost')->name('post.report');
+    Route::get('/reports', 'index')->name('reports.index')->middleware('admin');
+    Route::get('/reports/pending', 'pending')->name('reports.pending')->middleware('admin');
+    Route::post('/reports/{id}/status', 'updateStatus')->name('reports.update')->middleware('admin');
+});
+
 Route::controller('auth')->controller(ProfileController::class)->group(function () {
     Route::get('/{username}', 'show')->name('profile.show');
 });
-
-
 
