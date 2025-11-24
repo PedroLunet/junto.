@@ -89,7 +89,7 @@ class PostController extends Controller {
             // image removal
             if ($request->has('remove_image') && $request->remove_image == '1') {
                 if ($imagePath) {
-                    \Storage::delete('public/' . $imagePath);
+                    \Storage::disk('public')->delete($imagePath);
                     $imagePath = null;
                 }
             }
@@ -98,7 +98,7 @@ class PostController extends Controller {
             if ($request->hasFile('image')) {
                 // delete old image if exists
                 if ($imagePath) {
-                    \Storage::delete('public/' . $imagePath);
+                    \Storage::disk('public')->delete($imagePath);
                 }
                 
                 $imagePath = $request->file('image')->store('posts', 'public');
@@ -143,7 +143,7 @@ class PostController extends Controller {
 
             $standardPost = DB::selectOne("SELECT imageUrl FROM lbaw2544.standard_post WHERE postId = ?", [$id]);
             if ($standardPost && $standardPost->imageurl) {
-                \Storage::delete('public/' . $standardPost->imageurl);
+                \Storage::disk('public')->delete($standardPost->imageurl);
             }
 
             DB::delete("DELETE FROM lbaw2544.post WHERE id = ?", [$id]);
