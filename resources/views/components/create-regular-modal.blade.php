@@ -11,11 +11,16 @@
             
             <!-- modal body -->
             <div class="p-6">
-                <form id="create-post-form" action="{{ route('posts.store') }}" method="POST">
+                <form id="create-post-form" action="{{ route('posts.store') }}" method="POST" enctype="multipart/form-data">
                     @csrf
                     <div class="mb-4">
                         <label class="block font-medium text-gray-700 mb-2">What would you like to share?</label>
                         <textarea name="content"class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#38157a]" rows="4" placeholder="Share your thoughts..."></textarea>
+                    </div>
+
+                    <div id="image-preview-container" class="mb-4 hidden relative">
+                        <img id="image-preview" src="#" alt="Preview" class="max-h-64 rounded-lg object-cover border border-gray-200">
+                        <button type="button" id="remove-image-btn" class="absolute top-2 left-2 bg-red-500 text-white p-1 hover:bg-red-600">X</button>
                     </div>
 
                     <div class="mb-4">
@@ -41,9 +46,13 @@
         const cancelButton = document.getElementById('cancel-button');
         const textarea = document.querySelector('#create-regular-modal textarea');
         const form = document.getElementById('create-post-form');
+
         const addImageButton = document.getElementById('add-image-button');
         const imageInput = document.getElementById('image-input');
         const fileName = document.getElementById('file-name');
+        const previewContainer = document.getElementById('image-preview-container');
+        const previewImage = document.getElementById('image-preview');
+        const removeImageBtn = document.getElementById('remove-image-btn');
                 
         if (createButton && modal) {
             createButton.addEventListener('click', function() {
@@ -62,6 +71,8 @@
                 if (imageInput) {
                 imageInput.value = '';
                 fileName.textContent = '';
+                previewContainer.classList.add('hidden'); 
+                previewImage.src = '#';
             }
             });
         }
@@ -73,17 +84,38 @@
             });
 
             imageInput.addEventListener('change', function() {
-                if (this.files && this.files[0]) {
-                    fileName.textContent = this.files[0].name;
+                const file = this.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        previewImage.src = e.target.result;
+                        previewContainer.classList.remove('hidden');
+                    }
+                    reader.readAsDataURL(file);
+                    fileName.textContent = file.name;
                 }
+                
             });
         }
+
+        // 3. Remove selected image
+        removeImageBtn.addEventListener('click', function() {
+            imageInput.value = '';
+            previewContainer.classList.add('hidden');
+            previewImage.src = '#';
+            fileName.textContent = '';
+        });
+
 
         if (form) {
             form.addEventListener('submit', function (e) {
                 e.preventDefault();
 
                 const formData = new FormData(form)
+
+                if (!imageInput || imageInput.files.length === 0) {
+                    formData.delete('image');
+                }
 
                 fetch (form.action, {
                     method: 'POST',
@@ -99,6 +131,8 @@
                         textarea.value = '';
                         imageInput.value = '';
                         fileName.textContent = '';
+                        previewContainer.classList.add('hidden'); 
+                        previewImage.src = '#';
 
                         window.location.reload();
                     }
