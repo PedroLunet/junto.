@@ -33,6 +33,12 @@
                     <li><a href="#" class="block py-2 px-4 rounded hover:bg-[#7455ad] hover:text-white">Music</a></li>
                 </ul>
             </nav>
+
+    
+
+            <div class="px-4 mb-4 flex justify-center">
+                <button id="regular-button" class="w-1/2 bg-[#7455ad] hover:bg-[#5a3d8a] text-white py-2 px-6 rounded-lg text-3xl transition-all duration-200 hover:scale-105"> + </button>
+            </div>
             
             @auth
                 <div class="p-4 border-t border-gray-700">
@@ -52,6 +58,8 @@
                 @yield('content')
             </section>
         </main>
-        
+
+
+        <x-create-regular-modal/>
     </body>
 </html>

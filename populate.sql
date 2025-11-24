@@ -67,9 +67,9 @@ INSERT INTO post (userId) VALUES
 (1), (2), (3), (4), (5), (6);
 
 INSERT INTO standard_post (postId, text, imageUrl) VALUES
-(1, 'Just watched Inception again. Still brilliant.', 'inception-post.jpg'),
+(1, 'Just watched Inception again. Still brilliant.', 'posts/inception-post.jpg'),
 (2, 'Reading The Great Gatsby this weekend.', NULL),
-(5, 'Finally finished 1984. Heavy stuff.', '1984-review.jpg');
+(5, 'Finally finished 1984. Heavy stuff.', 'posts/1984-review.jpg');
 
 INSERT INTO review (postId, rating, mediaId, content) VALUES
 (3, 5, 3, 'This album is timeless.'),

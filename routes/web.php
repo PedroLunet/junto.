@@ -14,10 +14,12 @@ use App\Http\Controllers\SearchUserController;
 use App\Http\Controllers\MovieController;
 use App\Http\Controllers\MusicController;
 use App\Http\Controllers\BookController;
+use App\Http\Controllers\PostController;
 
 
 // Home
 Route::redirect('/', '/login');
+
 
 // Home page (authentication required)
 Route::middleware('auth')->controller(HomeController::class)->group(function () {
@@ -68,6 +70,13 @@ Route::middleware('auth')->controller(MusicController::class)->group(function ()
 Route::middleware('auth')->controller(BookController::class)->group(function () {
     Route::get('/books', 'search')->name('books.search');
     Route::post('/books', 'store')->name('books.store');
+});
+
+// posts routes
+Route::middleware('auth')->group(function () {
+    Route::post('/posts', [PostController::class, 'store'])->name('posts.store');
+    Route::put('/posts/{id}', [PostController::class, 'update'])->name('posts.update');
+    Route::delete('/posts/{id}', [PostController::class, 'destroy'])->name('posts.destroy');
 });
 
 // reports routes

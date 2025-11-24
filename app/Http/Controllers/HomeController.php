@@ -26,7 +26,7 @@ class HomeController extends Controller
             'content' => 'required|string|max:1000'
         ]);
 
-        $comment = Post::addComment($id, auth()->id(), $request->content);
+        $comment = Post::addComment($id, auth()->id(), $request->input('content'));
 
         return response()->json([
             'success' => true,
