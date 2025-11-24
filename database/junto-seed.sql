@@ -821,12 +821,12 @@ RESTART IDENTITY CASCADE;
 
 -- MEDIA
 INSERT INTO media (title, creator, releaseYear, coverImage) VALUES 
-    ('Inception', 'Christopher Nolan', 2010, 'inception.jpg'),
+    ('Inception', 'Christopher Nolan', 2010, 'https://image.tmdb.org/t/p/w300/xlaY2zyzMfkhk0HSC5VUwzoZPU1.jpg'),
     ('The Great Gatsby', 'F. Scott Fitzgerald', 2003, 'http://books.google.com/books/content?id=iXn5U2IzVH0C&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api'),
     ('Get Lucky', 'Daft Punk', 2013, 'https://i.scdn.co/image/ab67616d0000b2739b9b36b0e22870b9f542d937'),
-    ('The Matrix', 'Lana Wachowski', 1999, 'matrix.jpg'),
+    ('The Matrix', 'Lana Wachowski', 1999, 'https://image.tmdb.org/t/p/w300/p96dm7sCMn4VYAStA6siNz30G1r.jpg'),
     ('To Kill a Mockingbird', 'Harper Lee', 1960, 'http://books.google.com/books/content?id=DRagKAMw8AcC&printsec=frontcover&img=1&zoom=1&source=gbs_api'),
-    ('Interstellar', 'Christopher Nolan', 2014, 'interstellar.jpg'),
+    ('Interstellar', 'Christopher Nolan', 2014, 'https://image.tmdb.org/t/p/w300/gEU2QniE6E77NI6lCU6MxlNBvIx.jpg'),
     ('Strawberry Fields Forever - Remastered 2009', 'The Beatles', 1967, 'https://i.scdn.co/image/ab67616d0000b273692d9189b2bd75525893f0c1'),
     ('1984', 'George Orwell', 2021, 'http://books.google.com/books/content?id=5AwIEAAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api');
 
