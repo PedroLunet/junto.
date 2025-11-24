@@ -123,4 +123,41 @@ class PostController extends Controller {
             ], 500);
         }
     }
+
+    public function destroy($id)
+    {
+        try {
+            DB::beginTransaction();
+
+            // get the post to check ownership
+            $post = DB::selectOne("SELECT * FROM lbaw2544.post WHERE id = ?", [$id]);
+
+            if (!$post) {
+                return response()->json(['success' => false, 'message' => 'Post not found'], 404);
+            }
+
+            // check if user owns the post
+            if ($post->userid !== Auth::id()) {
+                return response()->json(['success' => false, 'message' => 'Unauthorized'], 403);
+            }
+
+            $standardPost = DB::selectOne("SELECT imageUrl FROM lbaw2544.standard_post WHERE postId = ?", [$id]);
+            if ($standardPost && $standardPost->imageurl) {
+                \Storage::delete('public/' . $standardPost->imageurl);
+            }
+
+            DB::delete("DELETE FROM lbaw2544.post WHERE id = ?", [$id]);
+
+            DB::commit();
+
+            return response()->json(['success' => true, 'message' => 'Post deleted successfully']);
+
+        } catch (\Exception $e) {
+            DB::rollback();
+            return response()->json([
+                'success' => false,
+                'message' => 'Server Error: ' . $e->getMessage()
+            ], 500);
+        }
+    }
 }

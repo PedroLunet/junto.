@@ -34,9 +34,12 @@
                         <span id="edit-file-name" class="ml-3 text-sm text-gray-600"></span>
                     </div>
                     
-                    <div class="flex justify-end space-x-3">
-                        <button type="button" id="edit-cancel-button" class="px-4 py-2 text-gray-800 border border-gray-300 rounded">Cancel</button>
-                        <button type="submit" class="px-4 py-2 bg-[#38157a] text-white rounded hover:bg-[#7455ad]">Update Post</button>
+                    <div class="flex justify-between items-center">
+                        <button type="button" id="delete-button" class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700">Delete</button>
+                        <div class="flex space-x-3">
+                            <button type="button" id="edit-cancel-button" class="px-4 py-2 text-gray-800 border border-gray-300 rounded">Cancel</button>
+                            <button type="submit" class="px-4 py-2 bg-[#38157a] text-white rounded hover:bg-[#7455ad]">Update Post</button>
+                        </div>
                     </div>
                 </form>
             </div>
@@ -57,6 +60,7 @@
         const currentImage = document.getElementById('current-image');
         const removeCurrentImageBtn = document.getElementById('remove-current-image');
         const editPostIdInput = document.getElementById('edit-post-id');
+        const deleteButton = document.getElementById('delete-button');
         
         window.openEditModal = function(postId, content, imagePath = null) {
             editPostIdInput.value = postId;
@@ -77,6 +81,34 @@
             editCancelButton.addEventListener('click', function (){
                 editModal.style.display = 'none';
                 resetEditForm();
+            });
+        }
+
+        if (deleteButton) {
+            deleteButton.addEventListener('click', function() {
+                if (confirm('Are you sure you want to delete this post?')) {
+                    const postId = editPostIdInput.value;
+                    fetch(`/posts/${postId}`, {
+                        method: 'DELETE',
+                        headers: {
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                            'Content-Type': 'application/json'
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            editModal.style.display = 'none';
+                            window.location.reload();
+                        } else {
+                            alert(data.message || 'Error deleting post');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error deleting post:', error);
+                        alert('An error occurred while deleting the post.');
+                    });
+                }
             });
         }
 
