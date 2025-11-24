@@ -16,12 +16,15 @@
       <div id="modalContent" style="padding: 16px; flex: 1; overflow-y: auto;"></div>
 
       <!-- Actions (like, comment) -->
-      <div style="padding: 16px; border-top: 1px solid #ccc; display: flex; gap: 16px;">
+      <div style="padding: 16px; border-top: 1px solid #ccc; display: flex; gap: 16px; align-items: center;">
         <button onclick="likePost(event)" style="all: unset; cursor: pointer;">
           ❤️ <span id="likesCount">0</span>
         </button>
         <button onclick="focusComment()" style="all: unset; cursor: pointer;">
           💬 <span id="commentsCount">0</span>
+        </button>
+        <button onclick="openReportModal(event)" style="all: unset; cursor: pointer; margin-left: auto; color: #dc2626;">
+          🚩 Report
         </button>
       </div>
     </div>
@@ -49,6 +52,34 @@
       </div>
     </div>
 
+  </div>
+</div>
+
+<!-- Report Modal -->
+<div id="reportModal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 60;"
+  onclick="closeReportModal()">
+  <div
+    style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; border: 1px solid #ccc; max-width: 500px; width: calc(100% - 32px); padding: 24px; border-radius: 8px;"
+    onclick="event.stopPropagation()">
+    
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+      <h2 style="margin: 0; font-size: 20px; font-weight: 600;">Report Post</h2>
+      <button onclick="closeReportModal()"
+        style="all: unset; cursor: pointer; font-size: 24px; line-height: 1; color: #666;">&times;</button>
+    </div>
+
+    <p style="color: #666; margin-bottom: 16px;">Please provide a reason for reporting this post. Our team will review it.</p>
+
+    <textarea id="reportReason" placeholder="Describe why you're reporting this post (minimum 10 characters)..." 
+      style="width: 100%; min-height: 120px; padding: 12px; border: 1px solid #ccc; border-radius: 4px; resize: vertical; font-family: inherit; font-size: 14px;"
+      maxlength="1000"></textarea>
+
+    <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 16px;">
+      <button onclick="closeReportModal()"
+        style="all: unset; cursor: pointer; padding: 10px 20px; border: 1px solid #ccc; border-radius: 4px;">Cancel</button>
+      <button onclick="submitReport()"
+        style="all: unset; cursor: pointer; padding: 10px 20px; background: #dc2626; color: white; border-radius: 4px; font-weight: 500;">Submit Report</button>
+    </div>
   </div>
 </div>
 
@@ -235,6 +266,60 @@
       .catch(error => {
         console.error('Error submitting comment:', error);
         alert('Failed to post comment. Please try again.');
+      });
+  }
+
+  function openReportModal(event) {
+    event.stopPropagation();
+    
+    if (!currentPostId) return;
+    
+    // Show report modal
+    document.getElementById('reportModal').style.display = 'flex';
+    document.getElementById('reportReason').value = '';
+  }
+
+  function closeReportModal() {
+    document.getElementById('reportModal').style.display = 'none';
+  }
+
+  function submitReport() {
+    const reason = document.getElementById('reportReason').value.trim();
+
+    if (!reason) {
+      alert('Please provide a reason for reporting this post.');
+      return;
+    }
+
+    if (reason.length < 10) {
+      alert('Please provide a more detailed reason (at least 10 characters).');
+      return;
+    }
+
+    const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+    fetch(`/posts/${currentPostId}/report`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRF-TOKEN': csrfToken
+      },
+      body: JSON.stringify({
+        reason: reason
+      })
+    })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          closeReportModal();
+          alert(data.message || 'Report submitted successfully. Thank you for helping keep our community safe.');
+        } else {
+          alert(data.message || 'Failed to submit report. Please try again.');
+        }
+      })
+      .catch(error => {
+        console.error('Error submitting report:', error);
+        alert('Failed to submit report. Please try again.');
       });
   }
 </script>

@@ -5,6 +5,7 @@ use App\Models\Post;
 
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ReportController;
 
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
@@ -71,10 +72,19 @@ Route::middleware('auth')->controller(BookController::class)->group(function () 
     Route::post('/books', 'store')->name('books.store');
 });
 
+// posts routes
 Route::middleware('auth')->group(function () {
     Route::post('/posts', [PostController::class, 'store'])->name('posts.store');
     Route::put('/posts/{id}', [PostController::class, 'update'])->name('posts.update');
     Route::delete('/posts/{id}', [PostController::class, 'destroy'])->name('posts.destroy');
+});
+
+// reports routes
+Route::middleware('auth')->controller(ReportController::class)->group(function () {
+    Route::post('/posts/{id}/report', 'reportPost')->name('post.report');
+    Route::get('/reports', 'index')->name('reports.index')->middleware('admin');
+    Route::get('/reports/pending', 'pending')->name('reports.pending')->middleware('admin');
+    Route::post('/reports/{id}/status', 'updateStatus')->name('reports.update')->middleware('admin');
 });
 
 Route::controller('auth')->controller(ProfileController::class)->group(function () {
