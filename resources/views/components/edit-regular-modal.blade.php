@@ -87,7 +87,16 @@
 
             editImageInput.addEventListener('change', function() {
                 if (this.files && this.files[0]) {
-                    editFileName.textContent = this.files[0].name;
+                    const file = this.files[0];
+                    editFileName.textContent = file.name;
+                    
+                    // update the preview image
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        currentImage.src = e.target.result;
+                        currentImageContainer.style.display = 'block';
+                    }
+                    reader.readAsDataURL(file);
                 }
             });
         }
