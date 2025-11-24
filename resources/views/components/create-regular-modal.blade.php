@@ -11,10 +11,11 @@
             
             <!-- modal body -->
             <div class="p-6">
-                <form>
+                <form id="create-post-form" action="{{ route('posts.store') }}" method="POST">
+                    @csrf
                     <div class="mb-4">
                         <label class="block font-medium text-gray-700 mb-2">What would you like to share?</label>
-                        <textarea class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#38157a]" rows="4" placeholder="Share your thoughts..."></textarea>
+                        <textarea name="content" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#38157a]" rows="4" placeholder="Share your thoughts..."></textarea>
                     </div>
                     
                     <div class="flex justify-end space-x-3">
@@ -33,6 +34,7 @@
         const modal = document.getElementById('create-regular-modal');
         const cancelButton = document.getElementById('cancel-button');
         const textarea = document.querySelector('#create-regular-modal textarea');
+        const form = document.getElementById('create-post-form');
                 
         if (createButton && modal) {
             createButton.addEventListener('click', function() {
@@ -49,6 +51,34 @@
                     textarea.value = '';
                 }
             });
+        }
+
+        if (form) {
+            form.addEventListener('submit', function (e) {
+                e.preventDefault();
+
+                const formData = new FormData(form)
+
+                fetch (form.action, {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        modal.style.display = 'none';
+                        textarea.value = '';
+
+                        window.location.reload();
+                    }
+                })
+                .catch (error => {
+                    console.error('Error creating post:', error);
+                })
+            })
         }
 
     });
