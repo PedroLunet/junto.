@@ -2,7 +2,7 @@
 <!-- modal overlay -->
 <div id="create-regular-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50">
     <div class="flex items-center justify-center min-h-screen p-4">
-        <div class="bg-white rounded-lg shadow-xl max-w-6xl w-full h-96">
+        <div class="bg-white rounded-lg shadow-xl max-w-6xl w-full h-auto">
 
             <!-- modal header -->
             <div class="flex justify-between items-center p-6 border-b">
@@ -15,7 +15,13 @@
                     @csrf
                     <div class="mb-4">
                         <label class="block font-medium text-gray-700 mb-2">What would you like to share?</label>
-                        <textarea name="content" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#38157a]" rows="4" placeholder="Share your thoughts..."></textarea>
+                        <textarea name="content"class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#38157a]" rows="4" placeholder="Share your thoughts..."></textarea>
+                    </div>
+
+                    <div class="mb-4">
+                        <input type="file" name="image" id="image-input" accept="image/*" class="hidden">
+                        <button type="button" id="add-image-button" class="px-4 py-2 text-gray-800 border border-gray-300 rounded">Add Photo</button>
+                        <span id="file-name" class="ml-3 text-sm text-gray-600"></span>
                     </div>
                     
                     <div class="flex justify-end space-x-3">
@@ -35,6 +41,9 @@
         const cancelButton = document.getElementById('cancel-button');
         const textarea = document.querySelector('#create-regular-modal textarea');
         const form = document.getElementById('create-post-form');
+        const addImageButton = document.getElementById('add-image-button');
+        const imageInput = document.getElementById('image-input');
+        const fileName = document.getElementById('file-name');
                 
         if (createButton && modal) {
             createButton.addEventListener('click', function() {
@@ -49,6 +58,23 @@
                 modal.style.display = 'none';
                 if (textarea) {
                     textarea.value = '';
+                }
+                if (imageInput) {
+                imageInput.value = '';
+                fileName.textContent = '';
+            }
+            });
+        }
+
+         // image button click
+        if (addImageButton && imageInput) {
+            addImageButton.addEventListener('click', function() {
+                imageInput.click();
+            });
+
+            imageInput.addEventListener('change', function() {
+                if (this.files && this.files[0]) {
+                    fileName.textContent = this.files[0].name;
                 }
             });
         }
@@ -71,6 +97,8 @@
                     if (data.success) {
                         modal.style.display = 'none';
                         textarea.value = '';
+                        imageInput.value = '';
+                        fileName.textContent = '';
 
                         window.location.reload();
                     }
