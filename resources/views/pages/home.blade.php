@@ -4,8 +4,22 @@
     <div class="container mx-auto px-4 py-8">
         <div class="max-w-4xl mx-auto space-y-6">
             @foreach($posts as $post)
-                <div class="bg-white rounded-lg shadow-md p-6 border border-gray-200"
+                <div class="bg-white rounded-lg shadow-md p-6 border border-gray-200 relative"
                     onclick="openPostModal({{ json_encode($post) }})">
+                    
+                    <!-- Edit button (only for post owner) -->
+                    @if(auth()->check() && $post->username === auth()->user()->username)
+                        <div class="absolute top-2 right-2">
+                            <button onclick="event.stopPropagation(); openEditModal({{ $post->id }}, '{{ addslashes($post->content) }}', '{{ $post->image_url ? asset('storage/' . $post->image_url) : '' }}')" 
+                                    class="text-gray-500 hover:text-gray-700 p-1">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                          d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                                </svg>
+                            </button>
+                        </div>
+                    @endif
+                    
                     <!-- author info -->
                     <div class="flex items-center mb-3">
                         <div class="font-semibold text-gray-900">{{ $post->author_name }}</div>
@@ -37,5 +51,7 @@
             @endforeach
         </div>
     </div>
+
     <x-post-modal />
+    <x-edit-regular-modal />
 @endsection

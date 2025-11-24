@@ -73,6 +73,7 @@ Route::middleware('auth')->controller(BookController::class)->group(function () 
 
 Route::middleware('auth')->group(function () {
     Route::post('/posts', [PostController::class, 'store'])->name('posts.store');
+    Route::put('/posts/{id}', [PostController::class, 'update'])->name('posts.update');
 });
 
 Route::controller('auth')->controller(ProfileController::class)->group(function () {

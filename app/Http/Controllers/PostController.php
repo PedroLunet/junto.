@@ -20,7 +20,7 @@ class PostController extends Controller {
             $imagePath = null;
             if ($request->hasFile('image')) {
 
-                // storage/app/public/posts
+     
                 $path = $request->file('image')->store('posts', 'public');
 
                 $imagePath = $path; 
@@ -50,6 +50,73 @@ class PostController extends Controller {
         } catch (\Exception $e) {
             DB::rollback();
 
+            return response()->json([
+                'success' => false,
+                'message' => 'Server Error: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function update(Request $request, $id)
+    {
+        $request->validate([
+            'content' => 'required|string|max:1000',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048'
+        ]);
+
+        try {
+            DB::beginTransaction();
+
+            // get the post to check ownership
+            $post = DB::selectOne("
+                SELECT p.*, sp.text, sp.imageUrl 
+                FROM lbaw2544.post p
+                JOIN lbaw2544.standard_post sp ON p.id = sp.postId
+                WHERE p.id = ?
+            ", [$id]);
+
+            if (!$post) {
+                return response()->json(['success' => false, 'message' => 'Post not found'], 404);
+            }
+
+            // check if user owns the post
+            if ($post->userid !== Auth::id()) {
+                return response()->json(['success' => false, 'message' => 'Unauthorized'], 403);
+            }
+
+            $imagePath = $post->imageurl;
+
+            // image removal
+            if ($request->has('remove_image') && $request->remove_image == '1') {
+                if ($imagePath) {
+                    \Storage::delete('public/' . $imagePath);
+                    $imagePath = null;
+                }
+            }
+
+            // new image upload
+            if ($request->hasFile('image')) {
+                // delete old image if exists
+                if ($imagePath) {
+                    \Storage::delete('public/' . $imagePath);
+                }
+                
+                $imagePath = $request->file('image')->store('posts', 'public');
+            }
+
+            // update the post
+            DB::update("
+                UPDATE lbaw2544.standard_post 
+                SET text = ?, imageUrl = ?
+                WHERE postId = ?
+            ", [$request->input('content'), $imagePath, $id]);
+
+            DB::commit();
+
+            return response()->json(['success' => true, 'message' => 'Post updated successfully']);
+
+        } catch (\Exception $e) {
+            DB::rollback();
             return response()->json([
                 'success' => false,
                 'message' => 'Server Error: ' . $e->getMessage()
