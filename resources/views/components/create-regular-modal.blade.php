@@ -18,7 +18,7 @@
                     </div>
                     
                     <div class="flex justify-end space-x-3">
-                        <button type="button" id="cancel-modal" class="px-4 py-2 text-gray-800 border border-gray-300 rounded">Cancel</button>
+                        <button type="button" id="cancel-button" class="px-4 py-2 text-gray-800 border border-gray-300 rounded">Cancel</button>
                         <button type="submit" class="px-4 py-2 bg-[#38157a] text-white rounded hover:bg-[#7455ad]">Post</button>
                     </div>
                 </form>
@@ -26,3 +26,30 @@
         </div>
     </div>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function (){
+        const createButton = document.getElementById('regular-button');
+        const modal = document.getElementById('create-regular-modal');
+        const cancelButton = document.getElementById('cancel-button');
+        const textarea = document.querySelector('#create-regular-modal textarea');
+                
+        if (createButton && modal) {
+            createButton.addEventListener('click', function() {
+                modal.style.display = 'block';
+                       
+            });
+        }
+
+        // close modal if cancel button clicked
+        if (cancelButton){
+            cancelButton.addEventListener('click', function (){
+                modal.style.display = 'none';
+                if (textarea) {
+                    textarea.value = '';
+                }
+            });
+        }
+
+    });
+</script>

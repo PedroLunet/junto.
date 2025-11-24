@@ -59,19 +59,7 @@
             </section>
         </main>
 
-        <script>
-            document.addEventListener('DOMContentLoaded', function() {
-                const createButton = document.getElementById('regular-button');
-                const modal = document.getElementById('create-regular-modal');
-                
-                if (createButton && modal) {
-                    createButton.addEventListener('click', function() {
-                        modal.style.display = 'block';
-                       
-                    });
-                }
-            });
-        </script>
+
         <x-create-regular-modal/>
     </body>
 </html>
