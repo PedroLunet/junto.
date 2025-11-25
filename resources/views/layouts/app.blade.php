@@ -7,6 +7,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
         <script src="https://cdn.tailwindcss.com"></script>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
         <!-- Styles -->
         <link rel="stylesheet" href="{{ asset('css/milligram.css') }}">
@@ -42,8 +43,11 @@
     
 
             @auth
-            <div class="px-4 mb-4 flex justify-center">
+            <div class="px-4 mb-4 flex justify-center gap-2">
                 <button id="regular-button" class="w-1/2 bg-[#7455ad] hover:bg-[#5a3d8a] text-white py-2 px-6 rounded-lg text-3xl transition-all duration-200 hover:scale-105"> + </button>
+                <button id="movie-button" class="w-1/2 bg-[#7455ad] hover:bg-[#5a3d8a] text-white py-2 px-6 rounded-lg transition-all duration-200 hover:scale-105 flex justify-center items-center">
+                    <i class="fa-solid fa-clapperboard text-2xl"></i>
+                </button>
             </div>
             @endauth
             
