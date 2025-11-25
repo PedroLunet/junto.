@@ -46,7 +46,7 @@
                         <label class="block font-medium text-gray-700 mb-2">Rating</label>
                         <div class="flex gap-2" id="star-rating">
                             @for($i = 1; $i <= 5; $i++)
-                                <button type="button" class="star-btn bg-transparent border-none p-0 h-auto leading-none shadow-none text-3xl text-gray-300 hover:text-yellow-400 hover:bg-transparent focus:bg-transparent transition-colors focus:outline-none" data-rating="{{ $i }}"> <!-- tirar depois que mudarmos o miligram -->
+                                <button type="button" class="star-btn bg-transparent border-none p-0 h-auto leading-none shadow-none text-3xl text-gray-300 focus:text-gray-300 hover:text-yellow-400 hover:bg-transparent focus:bg-transparent transition-colors focus:outline-none" data-rating="{{ $i }}">
                                     <i class="fa-regular fa-star"></i>
                                 </button>
                             @endfor
@@ -118,13 +118,13 @@
                 const currentRating = parseInt(rating);
                 
                 if (btnRating <= currentRating) {
-                    btn.classList.remove('text-gray-300');
-                    btn.classList.add('text-yellow-400');
+                    btn.classList.remove('text-gray-300', 'focus:text-gray-300');
+                    btn.classList.add('text-yellow-400', 'focus:text-yellow-400');
                     star.classList.remove('fa-regular');
                     star.classList.add('fa-solid');
                 } else {
-                    btn.classList.add('text-gray-300');
-                    btn.classList.remove('text-yellow-400');
+                    btn.classList.add('text-gray-300', 'focus:text-gray-300');
+                    btn.classList.remove('text-yellow-400', 'focus:text-yellow-400');
                     star.classList.add('fa-regular');
                     star.classList.remove('fa-solid');
                 }
