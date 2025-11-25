@@ -60,7 +60,10 @@
             <header class="bg-white shadow-sm p-4 sticky top-0 z-10 mb-0 flex justify-between items-center">
                 <h2 class="font-semibold">@yield('page-title', 'Home')</h2>
                 @guest
-                    <a href="{{ route('login') }}" class="bg-[#38157a] text-white px-4 py-2 rounded hover:bg-[#7455ad]">Login</a>
+                    <div class="flex gap-2">
+                        <a href="{{ route('login') }}" class="bg-[#38157a] text-white px-4 py-2 rounded-lg hover:bg-[#7455ad] hover:text-white">Login</a>
+                        <a href="{{ route('register') }}" class="bg-white text-[#38157a] px-4 py-2 border-[#38157a] border rounded-lg">Register</a>
+                    </div>
                 @endguest
             </header>
             
