@@ -33,6 +33,7 @@ Route::middleware('auth')->controller(HomeController::class)->group(function () 
 Route::middleware('auth')->controller(ProfileController::class)->group(function () {
     Route::get('/profile', 'index')->name('profile');
     Route::post('/profile/remove-favorite', 'removeFavorite')->name('profile.remove-favorite');
+    Route::post('/profile/add-favorite', 'addFavorite')->name('profile.add-favorite');
 });
 
 // Authentication

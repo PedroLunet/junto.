@@ -129,4 +129,91 @@ class ProfileController extends Controller
 
         return response()->json(['success' => true, 'message' => 'Favorite removed successfully']);
     }
+
+    public function addFavorite(Request $request)
+    {
+        $type = $request->input('type');
+        $title = $request->input('title');
+        $creator = $request->input('creator');
+        $releaseYear = $request->input('releaseYear');
+        $coverImage = $request->input('coverImage');
+        $user = Auth::user();
+
+        if (!$user) {
+            return response()->json(['error' => 'Unauthorized'], 401);
+        }
+
+        // check if media already exists
+        $mediaId = DB::table('media')
+            ->where('title', $title)
+            ->where('creator', $creator)
+            ->value('id');
+
+        // if media doesn't exist, create it
+        if (!$mediaId) {
+            try {
+                switch ($type) {
+                    case 'book':
+                        $result = DB::select('SELECT fn_create_book(?, ?, ?, ?) as id', [
+                            $title,
+                            $creator,
+                            $releaseYear,
+                            $coverImage
+                        ]);
+                        $mediaId = $result[0]->id;
+                        break;
+
+                    case 'movie':
+                        $result = DB::select('SELECT fn_create_film(?, ?, ?, ?) as id', [
+                            $title,
+                            $creator,
+                            $releaseYear,
+                            $coverImage
+                        ]);
+                        $mediaId = $result[0]->id;
+                        break;
+
+                    case 'music':
+                        $result = DB::select('SELECT fn_create_music(?, ?, ?, ?) as id', [
+                            $title,
+                            $creator,
+                            $releaseYear,
+                            $coverImage
+                        ]);
+                        $mediaId = $result[0]->id;
+                        break;
+
+                    default:
+                        return response()->json(['error' => 'Invalid type'], 400);
+                }
+            } catch (\Exception $e) {
+                return response()->json([
+                    'error' => 'Failed to create media',
+                    'message' => $e->getMessage()
+                ], 500);
+            }
+        }
+
+        $column = null;
+        switch ($type) {
+            case 'book':
+                $column = 'favoritebook';
+                break;
+            case 'movie':
+                $column = 'favoritefilm';
+                break;
+            case 'music':
+                $column = 'favoritesong';
+                break;
+            default:
+                return response()->json(['error' => 'Invalid type'], 400);
+        }
+
+        // update the user's favorite
+        DB::table('users')
+            ->where('id', $user->id)
+            ->update([$column => $mediaId]);
+
+        return response()->json(['success' => true, 'message' => 'Favorite added successfully']);
+    }
 }

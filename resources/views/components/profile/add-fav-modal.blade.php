@@ -21,18 +21,6 @@
                 </div>
             </div>
         </div>
-
-
-        <!-- footer -->
-        <div class="flex justify-end gap-3 p-6">
-            <button id="cancelBtn" class="px-4 py-2 transition-colors">
-                Cancel
-            </button>
-            <button id="saveBtn"
-                class="px-6 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors">
-                Save
-            </button>
-        </div>
     </div>
 </div>
 
@@ -43,9 +31,6 @@
         const modal = document.getElementById('addFavModal');
         const modalTitle = document.getElementById('modalTitle');
         const closeModal = document.getElementById('closeModal');
-        const cancelBtn = document.getElementById('cancelBtn');
-
-
 
         function closeModalHandler() {
             modal.classList.add('hidden');
@@ -54,7 +39,6 @@
 
         // close modal event listeners
         closeModal.addEventListener('click', closeModalHandler);
-        cancelBtn.addEventListener('click', closeModalHandler);
 
         // close modal when clicking outside
         modal.addEventListener('click', function(e) {
@@ -75,8 +59,6 @@
         let currentType = 'movie';
         const searchInput = document.getElementById('favSearch');
         const searchResultsDiv = document.getElementById('favSearchResults');
-
-        // Remove the duplicate openAddFavModal function here
 
         window.openAddFavModal = function(type) {
             currentType = type;
@@ -124,19 +106,28 @@
                         title = item.title;
                         subtitle = item.release_date ? new Date(item.release_date).getFullYear() :
                             'N/A';
-                        selectFunction = `selectItem(${item.id}, '${item.title.replace(/'/g, "\\'")}')`;
+                        const movieCoverImage = item.poster_path ?
+                            `https://image.tmdb.org/t/p/w300${item.poster_path}` : null;
+                        const movieYear = item.release_date ? item.release_date.substring(0, 4) : null;
+                        const movieDirector = 'Unknown Director';
+                        const movieTitle = item.title.replace(/'/g, "\\'").replace(/"/g, '\\"').replace(
+                            /\n/g, ' ').replace(/\r/g, ' ');
+                        selectFunction =
+                            `selectItem(null, '${movieTitle}', '${movieDirector}', '${movieYear}', '${movieCoverImage}')`;
                         break;
                     case 'book':
                         imageUrl = item.coverimage;
                         title = item.title;
                         subtitle = item.creator || 'Unknown Author';
-                        selectFunction = `selectItem(${item.id}, '${item.title.replace(/'/g, "\\'")}')`;
+                        selectFunction =
+                            `selectItem(null, '${item.title.replace(/'/g, "\\'")}', '${item.creator.replace(/'/g, "\\'")}', '${item.releaseyear || ''}', '${item.coverimage || ''}')`;
                         break;
                     case 'music':
                         imageUrl = item.coverimage;
                         title = item.title;
                         subtitle = item.creator || 'Unknown Artist';
-                        selectFunction = `selectItem(${item.id}, '${item.title.replace(/'/g, "\\'")}')`;
+                        selectFunction =
+                            `selectItem(null, '${item.title.replace(/'/g, "\\'")}', '${item.creator.replace(/'/g, "\\'")}', '${item.releaseyear || ''}', '${item.coverimage || ''}')`;
                         break;
                 }
 
@@ -158,17 +149,43 @@
             searchResultsDiv.classList.remove('hidden');
         }
 
-        window.selectItem = function(id, title) {
-            searchInput.value = title;
-            searchResultsDiv.classList.add('hidden');
-            
-            // store selected item
-            window.selectedFavorite = {
-                id,
-                title,
-                type: currentType
-            };
+        window.selectItem = function(id, title, creator, releaseYear, coverImage) {
+            saveFavorite(id, title, creator, releaseYear, coverImage, currentType);
         };
+
+        function saveFavorite(id, title, creator, releaseYear, coverImage, type) {
+            fetch('/profile/add-favorite', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute(
+                            'content'),
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        id: id,
+                        title: title,
+                        creator: creator,
+                        releaseYear: releaseYear,
+                        coverImage: coverImage,
+                        type: type
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        closeModalHandler();
+                        // reload the page to show the updated favorite
+                        window.location.reload();
+                    } else {
+                        alert('Error saving favorite: ' + (data.message || 'Unknown error'));
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error saving favorite');
+                });
+        }
 
         searchInput.addEventListener('input', function() {
             clearTimeout(searchTimeoutId);

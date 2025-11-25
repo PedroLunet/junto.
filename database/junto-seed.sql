@@ -541,7 +541,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
--- Create music
+-- Create media
 CREATE OR REPLACE FUNCTION fn_create_music(
     p_title VARCHAR(255),
     p_creator VARCHAR(255),
@@ -578,6 +578,24 @@ BEGIN
     INSERT INTO book (mediaId)
     VALUES (new_media_id);
 
+    RETURN new_media_id;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION fn_create_film(
+        p_title VARCHAR(255),
+        p_creator VARCHAR(255),
+        p_release_year INT,
+        p_cover_image VARCHAR(255)
+    ) RETURNS INTEGER AS $$
+DECLARE new_media_id INTEGER;
+BEGIN
+    INSERT INTO media (title, creator, releaseYear, coverImage)
+    VALUES ( p_title, p_creator, p_release_year, p_cover_image)
+    RETURNING id INTO new_media_id;
+
+    INSERT INTO film (mediaId)
+    VALUES (new_media_id);
     RETURN new_media_id;
 END;
 $$ LANGUAGE plpgsql;
