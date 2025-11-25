@@ -6,7 +6,8 @@
             <!-- profile header -->
             <div class="flex items-center gap-8 md:gap-10">
                 @auth
-                    <div class="w-54 h-54 md:w-60 md:h-60 lg:w-72 lg:h-72 bg-gray-300 rounded-full shrink-0 flex items-center justify-center text-6xl md:text-7xl lg:text-8xl font-bold text-gray-600">
+                    <div
+                        class="w-54 h-54 md:w-60 md:h-60 lg:w-72 lg:h-72 bg-gray-300 rounded-full shrink-0 flex items-center justify-center text-6xl md:text-7xl lg:text-8xl font-bold text-gray-600">
                         <span class="leading-[0.8] mt-[0.1em]">{{ strtoupper(substr($user->name, 0, 1)) }}</span>
                     </div>
 
@@ -55,7 +56,11 @@
                                 class="text-gray-600 text-lg md:text-xl text-center px-2">{{ $user->favoriteBookMedia->title }}</span>
                         @endif
                     @else
-                        <span class="text-gray-600 text-lg md:text-xl text-center px-2">[fav book]</span>
+                        @if (Auth::id() === $user->id)
+                            <span class="text-gray-600 text-5xl md:text-6xl lg:text-7xl font-light">+</span>
+                        @else
+                            <span class="text-gray-600 text-lg md:text-xl text-center px-2">[fav book]</span>
+                        @endif
                     @endif
                 </div>
 
@@ -71,7 +76,11 @@
                                 class="text-gray-600 text-lg md:text-xl text-center px-2">{{ $user->favoriteFilmMedia->title }}</span>
                         @endif
                     @else
-                        <span class="text-gray-600 text-lg md:text-xl text-center px-2">[fav movie]</span>
+                        @if (Auth::id() === $user->id)
+                            <span class="text-gray-600 text-5xl md:text-6xl lg:text-7xl font-light">+</span>
+                        @else
+                            <span class="text-gray-600 text-lg md:text-xl text-center px-2">[fav movie]</span>
+                        @endif
                     @endif
                 </div>
 
@@ -87,7 +96,11 @@
                                 class="text-gray-600 text-lg md:text-xl text-center px-2">{{ $user->favoriteSongMedia->title }}</span>
                         @endif
                     @else
-                        <span class="text-gray-600 text-lg md:text-xl text-center px-2">[fav music]</span>
+                        @if (Auth::id() === $user->id)
+                            <span class="text-gray-600 text-5xl md:text-6xl lg:text-7xl font-light">+</span>
+                        @else
+                            <span class="text-gray-600 text-lg md:text-xl text-center px-2">[fav music]</span>
+                        @endif
                     @endif
                 </div>
             </div>
