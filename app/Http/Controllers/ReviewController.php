@@ -104,4 +104,43 @@ class ReviewController extends Controller
             return response()->json(['success' => false, 'message' => 'Server Error: ' . $e->getMessage()], 500);
         }
     }
+
+    public function update(Request $request, $id)
+    {
+        $request->validate([
+            'rating' => 'required|integer|min:1|max:5',
+            'content' => 'nullable|string|max:1000',
+        ]);
+
+        try {
+            DB::beginTransaction();
+
+            // Check ownership
+            $post = DB::selectOne("SELECT userId FROM lbaw2544.post WHERE id = ?", [$id]);
+            
+            if (!$post) {
+                return response()->json(['success' => false, 'message' => 'Post not found'], 404);
+            }
+
+            if ($post->userid !== Auth::id()) {
+                return response()->json(['success' => false, 'message' => 'Unauthorized'], 403);
+            }
+
+            // Update Review
+            DB::table('lbaw2544.review')
+                ->where('postid', $id)
+                ->update([
+                    'rating' => $request->rating,
+                    'content' => $request->input('content')
+                ]);
+
+            DB::commit();
+
+            return response()->json(['success' => true, 'message' => 'Review updated successfully']);
+
+        } catch (\Exception $e) {
+            DB::rollback();
+            return response()->json(['success' => false, 'message' => 'Server Error: ' . $e->getMessage()], 500);
+        }
+    }
 }

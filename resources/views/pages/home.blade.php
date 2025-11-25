@@ -10,10 +10,17 @@
                     <!-- Edit button (only for post owner) -->
                     @if(auth()->check() && $post->username === auth()->user()->username)
                         <div class="absolute top-2 right-2">
-                            <button onclick="event.stopPropagation(); openEditModal({{ $post->id }}, '{{ addslashes($post->content) }}', '{{ $post->image_url ? asset('storage/' . $post->image_url) : '' }}')" 
-                                    class="text-gray-500 hover:text-gray-700 p-1">
-                                Edit
-                            </button>
+                            @if($post->post_type === 'review')
+                                <button onclick="event.stopPropagation(); openEditReviewModal({{ $post->id }}, '{{ addslashes($post->content) }}', {{ $post->rating }}, '{{ addslashes($post->media_title) }}')" 
+                                        class="text-gray-500 hover:text-gray-700 p-1">
+                                    Edit
+                                </button>
+                            @else
+                                <button onclick="event.stopPropagation(); openEditModal({{ $post->id }}, '{{ addslashes($post->content) }}', '{{ $post->image_url ? asset('storage/' . $post->image_url) : '' }}')" 
+                                        class="text-gray-500 hover:text-gray-700 p-1">
+                                    Edit
+                                </button>
+                            @endif
                         </div>
                     @endif
                     
@@ -51,6 +58,7 @@
 
     <x-post-modal />
     <x-edit-regular-modal />
+    <x-edit-review-modal />
 
     @yield('modal-overlay')
 @endsection
