@@ -41,27 +41,13 @@
 
             <!-- 3 favorites -->
             <div class="flex gap-8 mr-40">
-                <!-- fav music -->
-                <div class="w-40 h-40 bg-gray-300 rounded-lg flex items-center justify-center overflow-hidden">
-                    @if ($user->favoriteSongMedia)
-                        @if ($user->favoriteSongMedia->coverimage && filter_var($user->favoriteSongMedia->coverimage, FILTER_VALIDATE_URL))
-                            <img src="{{ $user->favoriteSongMedia->coverimage }}"
-                                alt="{{ $user->favoriteSongMedia->title }}" class="w-full h-full object-cover rounded-lg">
-                        @else
-                            <span
-                                class="text-gray-600 text-xl text-center px-2">{{ $user->favoriteSongMedia->title }}</span>
-                        @endif
-                    @else
-                        <span class="text-gray-600 text-xl text-center px-2">[fav music]</span>
-                    @endif
-                </div>
-
                 <!-- fav book -->
-                <div class="w-40 h-40 bg-gray-300 rounded-lg flex items-center justify-center overflow-hidden">
+                <div class="w-30 h-40 bg-gray-300 flex items-center justify-center overflow-hidden"
+                    @if ($user->favoriteBookMedia) title="{{ $user->favoriteBookMedia->title }}{{ $user->favoriteBookMedia->creator ? ' - ' . $user->favoriteBookMedia->creator : '' }}" @endif>
                     @if ($user->favoriteBookMedia)
                         @if ($user->favoriteBookMedia->coverimage && filter_var($user->favoriteBookMedia->coverimage, FILTER_VALIDATE_URL))
                             <img src="{{ $user->favoriteBookMedia->coverimage }}"
-                                alt="{{ $user->favoriteBookMedia->title }}" class="w-full h-full object-cover rounded-lg">
+                                alt="{{ $user->favoriteBookMedia->title }}" class="w-full h-full object-cover">
                         @else
                             <span
                                 class="text-gray-600 text-xl text-center px-2">{{ $user->favoriteBookMedia->title }}</span>
@@ -72,17 +58,34 @@
                 </div>
 
                 <!-- fav movie -->
-                <div class="w-40 h-40 bg-gray-300 rounded-lg flex items-center justify-center overflow-hidden">
+                <div class="w-30 h-40 bg-gray-300 flex items-center justify-center overflow-hidden"
+                    @if ($user->favoriteFilmMedia) title="{{ $user->favoriteFilmMedia->title }}{{ $user->favoriteFilmMedia->creator ? ' - ' . $user->favoriteFilmMedia->creator : '' }}" @endif>
                     @if ($user->favoriteFilmMedia)
                         @if ($user->favoriteFilmMedia->coverimage && filter_var($user->favoriteFilmMedia->coverimage, FILTER_VALIDATE_URL))
                             <img src="{{ $user->favoriteFilmMedia->coverimage }}"
-                                alt="{{ $user->favoriteFilmMedia->title }}" class="w-full h-full object-cover rounded-lg">
+                                alt="{{ $user->favoriteFilmMedia->title }}" class="w-full h-full object-cover">
                         @else
                             <span
                                 class="text-gray-600 text-xl text-center px-2">{{ $user->favoriteFilmMedia->title }}</span>
                         @endif
                     @else
                         <span class="text-gray-600 text-xl text-center px-2">[fav movie]</span>
+                    @endif
+                </div>
+
+                <!-- fav music -->
+                <div class="w-40 h-40 bg-gray-300 flex items-center justify-center overflow-hidden"
+                    @if ($user->favoriteSongMedia) title="{{ $user->favoriteSongMedia->title }}{{ $user->favoriteSongMedia->creator ? ' - ' . $user->favoriteSongMedia->creator : '' }}" @endif>
+                    @if ($user->favoriteSongMedia)
+                        @if ($user->favoriteSongMedia->coverimage && filter_var($user->favoriteSongMedia->coverimage, FILTER_VALIDATE_URL))
+                            <img src="{{ $user->favoriteSongMedia->coverimage }}"
+                                alt="{{ $user->favoriteSongMedia->title }}" class="w-full h-full object-cover">
+                        @else
+                            <span
+                                class="text-gray-600 text-xl text-center px-2">{{ $user->favoriteSongMedia->title }}</span>
+                        @endif
+                    @else
+                        <span class="text-gray-600 text-xl text-center px-2">[fav music]</span>
                     @endif
                 </div>
             </div>
