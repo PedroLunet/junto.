@@ -2,7 +2,7 @@
 
 @section('modal-overlay')
     <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
-        <div class="bg-white rounded-lg shadow-xl w-full max-w-2xl relative overflow-hidden">
+        <div class="bg-white rounded-2xl shadow-xl w-full max-w-2xl relative overflow-hidden">
             <div class="p-10">
                 <div class="flex justify-between items-center mb-6">
                     <h2 class="text-4xl font-bold text-gray-800 m-0">Welcome back!</h2>
