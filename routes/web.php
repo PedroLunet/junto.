@@ -15,6 +15,7 @@ use App\Http\Controllers\MovieController;
 use App\Http\Controllers\MusicController;
 use App\Http\Controllers\BookController;
 use App\Http\Controllers\PostController;
+use App\Http\Controllers\ReviewController;
 
 
 // Home
@@ -77,6 +78,7 @@ Route::middleware('auth')->controller(BookController::class)->group(function () 
 // posts routes
 Route::middleware('auth')->group(function () {
     Route::post('/posts', [PostController::class, 'store'])->name('posts.store');
+    Route::post('/reviews', [ReviewController::class, 'store'])->name('reviews.store');
     Route::put('/posts/{id}', [PostController::class, 'update'])->name('posts.update');
     Route::delete('/posts/{id}', [PostController::class, 'destroy'])->name('posts.destroy');
 });

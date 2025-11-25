@@ -11,7 +11,7 @@
             
             <!-- modal body -->
             <div class="p-8">
-                <form id="create-movie-review-form" method="POST">
+                <form id="create-movie-review-form" action="{{ route('reviews.store') }}" method="POST">
                     @csrf
                     
                     <!-- Movie Search Section -->
@@ -42,7 +42,7 @@
                         </div>
                     </div>
 
-                    <div class="mb-4">
+                    <div class="mb-6">
                         <label class="block font-medium text-gray-700 mb-2">Rating</label>
                         <div class="flex gap-2" id="star-rating">
                             @for($i = 1; $i <= 5; $i++)
@@ -246,5 +246,58 @@
                 modal.classList.add('hidden');
             }
         });
+
+        // handle form submission
+        if (form) {
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const formData = new FormData(form);
+                
+                // Validate required fields
+                if (!formData.get('tmdb_id')) {
+                    alert('Please select a movie');
+                    return;
+                }
+                if (!formData.get('rating')) {
+                    alert('Please select a rating');
+                    return;
+                }
+
+                fetch(form.action, {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                        'Accept': 'application/json'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // close modal and reset form
+                        modal.style.display = 'none';
+                        modal.classList.add('hidden');
+                        form.reset();
+                        
+                        // eeset custom elements
+                        selectedMovieId.value = '';
+                        selectedMovieDiv.classList.add('hidden');
+                        searchContainer.classList.remove('hidden');
+                        ratingInput.value = '';
+                        updateStars(0);
+                        
+                        // reload page to show new review
+                        window.location.reload();
+                    } else {
+                        alert(data.message || 'Error creating review');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('An error occurred while posting the review');
+                });
+            });
+        }
     });
 </script>

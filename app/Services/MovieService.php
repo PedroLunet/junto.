@@ -25,7 +25,8 @@ class MovieService{
 
     public function getMovie($id){
         $response = Http::get("{$this->baseUrl}/movie/{$id}", [
-            'api_key' => $this->apiKey
+            'api_key' => $this->apiKey,
+            'append_to_response' => 'credits'
         ]);
         return $response->json();
     }
