@@ -67,6 +67,7 @@ CREATE TABLE users (
     favoriteFilm INTEGER REFERENCES media(id),
     favoriteBook INTEGER REFERENCES media(id),
     favoriteSong INTEGER REFERENCES media(id),
+    remember_token VARCHAR(100),
     createdAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 

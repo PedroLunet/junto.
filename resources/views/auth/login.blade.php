@@ -2,8 +2,8 @@
 
 @section('modal-overlay')
     <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
-        <div class="bg-white rounded-lg shadow-xl w-full max-w-md relative overflow-hidden">
-            <div class="p-6">
+        <div class="bg-white rounded-lg shadow-xl w-full max-w-2xl relative overflow-hidden">
+            <div class="p-10">
                 <div class="flex justify-between items-center mb-6">
                     <h2 class="text-4xl font-bold text-gray-800 m-0">Login</h2>
                     <a href="{{ route('home') }}" class="text-gray-500 hover:text-gray-700 transition-colors">
@@ -55,7 +55,7 @@
 
                     <div class="mb-6 flex items-center">
                         <input type="checkbox" name="remember" value="1" @checked(old('remember')) class="mr-2 rounded text-violet-800 focus:ring-violet-700">
-                        <label class="text-sm text-gray-700 m-0 font-normal">Remember me</label>
+                        <label class="text-xl text-gray-700 m-0 font-normal">Remember me</label>
                     </div>
 
                     <div class="flex flex-col gap-3">
