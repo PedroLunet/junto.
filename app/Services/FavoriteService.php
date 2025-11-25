@@ -110,57 +110,7 @@ class FavoriteService
         }
     }
 
-
-    // format movie data
-    public function formatMovieData(array $movies): array
-    {
-        return array_map(function ($movie) {
-            return [
-                'id' => $movie['id'] ?? null,
-                'title' => $movie['title'] ?? 'Unknown Title',
-                'creator' => 'Unknown Director', // Movies don't have directors in TMDB basic response
-                'releaseYear' => isset($movie['release_date']) ?
-                    substr($movie['release_date'], 0, 4) : null,
-                'coverImage' => isset($movie['poster_path']) ?
-                    'https://image.tmdb.org/t/p/w300' . $movie['poster_path'] : null,
-                'poster_path' => $movie['poster_path'] ?? null,
-                'release_date' => $movie['release_date'] ?? null,
-                'type' => 'movie'
-            ];
-        }, $movies);
-    }
-
-    // format book data
-    public function formatBookData(array $books): array
-    {
-        return array_map(function ($book) {
-            return [
-                'id' => $book['id'] ?? null,
-                'title' => $book['title'] ?? 'Unknown Title',
-                'creator' => $book['creator'] ?? 'Unknown Author',
-                'releaseYear' => $book['releaseyear'] ?? null,
-                'coverImage' => $book['coverimage'] ?? null,
-                'type' => 'book'
-            ];
-        }, $books);
-    }
-
-    // format music data
-    public function formatMusicData(array $music): array
-    {
-        return array_map(function ($track) {
-            return [
-                'id' => $track['id'] ?? null,
-                'title' => $track['title'] ?? 'Unknown Title',
-                'creator' => $track['creator'] ?? 'Unknown Artist',
-                'releaseYear' => $track['releaseyear'] ?? null,
-                'coverImage' => $track['coverimage'] ?? null,
-                'type' => 'music'
-            ];
-        }, $music);
-    }
-
-    // get user's favorite by type
+    // get user's favorites by type
     public function getUserFavorites(int $userId, string $type = null): array
     {
         $user = User::with(['favoriteFilmMedia', 'favoriteBookMedia', 'favoriteSongMedia'])

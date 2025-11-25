@@ -3,16 +3,18 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\DB;
+use App\Services\BookService;
 use App\Services\FavoriteService;
 
 class BookController extends Controller
 {
+    protected $bookService;
     protected $favoriteService;
 
-    public function __construct(FavoriteService $favoriteService)
+    public function __construct(BookService $bookService, FavoriteService $favoriteService)
     {
+        $this->bookService = $bookService;
         $this->favoriteService = $favoriteService;
     }
 
@@ -23,35 +25,15 @@ class BookController extends Controller
         ]);
 
         $query = $request->input('q');
-        $rawBooks = [];
+        $formattedBooks = [];
 
         if ($query) {
-            // Google Books API doesn't require authentication for basic searches
-            $response = Http::get('https://www.googleapis.com/books/v1/volumes', [
-                'q' => $query,
-                'maxResults' => 10, // limit results to 10
-                'key' => config('services.google_books.api_key'), // optional, for higher quotas
-            ]);
+            $results = $this->bookService->searchBooks($query, 10);
 
-            $results = $response->json();
-
-            // extract raw data
             if (isset($results['items'])) {
-                foreach ($results['items'] as $book) {
-                    $volumeInfo = $book['volumeInfo'];
-
-                    $rawBooks[] = [
-                        'title' => $volumeInfo['title'] ?? 'Unknown Title',
-                        'creator' => isset($volumeInfo['authors']) ? implode(', ', $volumeInfo['authors']) : 'Unknown Author',
-                        'releaseyear' => isset($volumeInfo['publishedDate']) ? substr($volumeInfo['publishedDate'], 0, 4) : null,
-                        'coverimage' => $volumeInfo['imageLinks']['thumbnail'] ?? null,
-                    ];
-                }
+                $formattedBooks = $this->bookService->formatBookData($results['items']);
             }
         }
-
-        // format using FavoriteService for consistency
-        $formattedBooks = $this->favoriteService->formatBookData($rawBooks);
 
         // check if it's an AJAX request
         if ($request->ajax() || $request->expectsJson()) {

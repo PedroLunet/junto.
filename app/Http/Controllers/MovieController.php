@@ -34,8 +34,7 @@ class MovieController extends Controller
         $results = $this->movieService->searchMovies($query);
         $movies = $results['results'] ?? [];
 
-        // format the movie data using FavoriteService for consistency
-        $formattedMovies = $this->favoriteService->formatMovieData($movies);
+        $formattedMovies = $this->movieService->formatMovieData($movies);
 
         return response()->json($formattedMovies);
     }
