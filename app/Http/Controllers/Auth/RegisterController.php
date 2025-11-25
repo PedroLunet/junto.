@@ -11,16 +11,21 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\View\View;
 
 use App\Models\User;
+use App\Models\Post;
 
 class RegisterController extends Controller
 {
     /**
      * Show the user registration form.
      */
-    public function showRegistrationForm(): View
+    public function showRegistrationForm()
     {
-        // Render the registration view.
-        return view('auth.register');
+        if (Auth::check()) {
+            return redirect()->route('home');
+        } else {
+            $posts = Post::getPostsWithDetails();
+            return view('auth.register', compact('posts'));
+        }
     }
 
     /**

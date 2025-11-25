@@ -5,7 +5,7 @@
         <div class="bg-white rounded-lg shadow-xl w-full max-w-2xl relative overflow-hidden">
             <div class="p-10">
                 <div class="flex justify-between items-center mb-6">
-                    <h2 class="text-4xl font-bold text-gray-800 m-0">Login</h2>
+                    <h2 class="text-4xl font-bold text-gray-800 m-0">Welcome back!</h2>
                     <a href="{{ route('home') }}" class="text-gray-500 hover:text-gray-700 transition-colors">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
