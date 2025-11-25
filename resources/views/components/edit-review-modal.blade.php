@@ -21,7 +21,8 @@
                             <img id="edit-review-movie-poster" src="" alt="Poster" class=" h-80 object-cover rounded shadow-sm hidden">
                             <div>
                                 <h4 id="edit-review-movie-title" class="text-4xl font-bold text-gray-800"></h4>
-                                <p id="edit-review-movie-year" class="text-gray-600"></p>
+                                <p id="edit-review-movie-director" class="text-gray-600"></p>
+                                <p id="edit-review-movie-year" class="text-gray-600 text-xl"></p>
                             </div>
                         </div>
                     </div>
@@ -99,7 +100,7 @@
         }
 
       
-        window.openEditReviewModal = function(id, content, rating, movieTitle, moviePoster, movieYear) {
+        window.openEditReviewModal = function(id, content, rating, movieTitle, moviePoster, movieYear, movieDirector) {
             const modal = document.getElementById('edit-review-modal');
             const form = document.getElementById('edit-review-form');
             const contentInput = document.getElementById('edit-review-content');
@@ -107,12 +108,14 @@
             const movieTitleEl = document.getElementById('edit-review-movie-title');
             const moviePosterEl = document.getElementById('edit-review-movie-poster');
             const movieYearEl = document.getElementById('edit-review-movie-year');
+            const movieDirectorEl = document.getElementById('edit-review-movie-director');
 
             form.action = `/reviews/${id}`;
             contentInput.value = content;
             ratingInput.value = rating;
             movieTitleEl.textContent = movieTitle;
             movieYearEl.textContent = movieYear || '';
+            movieDirectorEl.textContent = movieDirector || 'Unknown Director';
             
             if (moviePoster) {
                 moviePosterEl.src = moviePoster;

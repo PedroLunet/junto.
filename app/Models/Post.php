@@ -27,6 +27,7 @@ class Post extends Model
                 m.title as media_title,
                 m.coverImage as media_poster,
                 m.releaseYear as media_year,
+                m.creator as media_creator,
                 (SELECT COUNT(*) FROM lbaw2544.post_like pl WHERE pl.postId = p.id) as likes_count,
                 (SELECT COUNT(*) FROM lbaw2544.comment c WHERE c.postId = p.id) as comments_count,
                 sp.imageUrl as image_url

@@ -61,6 +61,7 @@ Route::controller(SearchUserController::class)->group(function () {
 Route::middleware('auth')->controller(MovieController::class)->group(function () {
     Route::get('/movies', 'index')->name('movies');
     Route::get('/movies/search', 'search')->name('movies.search');
+    Route::get('/movies/{id}', 'show')->name('movies.show');
 });
 
 // temporary music routes

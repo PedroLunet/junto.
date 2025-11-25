@@ -34,7 +34,8 @@
                             <img id="selectedMoviePoster" src="" alt="Poster" class="h-80 object-cover rounded shadow-sm">
                             <div>
                                 <h4 id="selectedMovieTitle" class="text-4xl font-bold text-gray-800"></h4>
-                                <p id="selectedMovieYear" class="text-gray-600"></p>
+                                <p id="selectedMovieDirector" class="text-gray-600"></p>
+                                <p id="selectedMovieYear" class="text-gray-600 text-xl"></p>
                             </div>
                             <button type="button" id="removeMovieBtn" class="absolute top-2 right-2 text-gray-400 hover:text-red-500">
                                 <i class="fa-solid fa-times"></i>
@@ -88,6 +89,7 @@
         const selectedMovieId = document.getElementById('selectedMovieId');
         const selectedMovieTitle = document.getElementById('selectedMovieTitle');
         const selectedMovieYear = document.getElementById('selectedMovieYear');
+        const selectedMovieDirector = document.getElementById('selectedMovieDirector');
         const selectedMoviePoster = document.getElementById('selectedMoviePoster');
 
         // Rating elements
@@ -186,13 +188,32 @@
             // Update preview
             selectedMovieTitle.textContent = title;
             selectedMovieYear.textContent = releaseDate ? new Date(releaseDate).getFullYear() : 'N/A';
-            
+            selectedMovieDirector.textContent = 'Loading...';
+
             if (posterPath) {
                 selectedMoviePoster.src = `https://image.tmdb.org/t/p/w500${posterPath}`;
                 selectedMoviePoster.classList.remove('hidden');
             } else {
                 selectedMoviePoster.classList.add('hidden');
             }
+
+            // Fetch full details to get director
+            fetch(`/movies/${id}`)
+                .then(response => response.json())
+                .then(data => {
+                    let director = '';
+                    if (data.credits && data.credits.crew) {
+                        const directorObj = data.credits.crew.find(person => person.job === 'Director');
+                        if (directorObj) {
+                            director = directorObj.name;
+                        }
+                    }
+                    selectedMovieDirector.textContent = director;
+                })
+                .catch(err => {
+                    console.error(err);
+                    selectedMovieDirector.textContent = 'Unknown Director';
+                });
             
             // Show selection, hide search
             searchContainer.classList.add('hidden');
