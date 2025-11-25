@@ -34,6 +34,22 @@
                     </div>
 
                     <div class="mb-4">
+                        <label for="username" class="block font-medium text-gray-700 mb-1">Username</label>
+                        <input
+                            id="username"
+                            type="text"
+                            name="username"
+                            value="{{ old('username') }}"
+                            required
+                            autocomplete="username"
+                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-violet-800"
+                        >
+                        @error('username')
+                            <span id="username-error" class="text-red-500 text-sm mt-1 block" role="alert">{{ $message }}</span>
+                        @enderror
+                    </div>
+
+                    <div class="mb-4">
                         <label for="email" class="block font-medium text-gray-700 mb-1">E-mail Address</label>
                         <input
                             id="email"

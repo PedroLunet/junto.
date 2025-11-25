@@ -43,6 +43,7 @@ class RegisterController extends Controller
         // Validate registration input.
         $request->validate([
             'name' => 'required|string|max:250',
+            'username' => 'required|string|max:50|unique:users',
             'email' => 'required|email|max:250|unique:users',
             'password' => 'required|min:8|confirmed'
         ]);
@@ -50,6 +51,7 @@ class RegisterController extends Controller
         // Create the new user.
         User::create([
             'name' => $request->name,
+            'username' => $request->username,
             'email' => $request->email,
             'passwordhash' => Hash::make($request->password)
         ]);
