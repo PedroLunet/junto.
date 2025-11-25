@@ -97,4 +97,36 @@ class ProfileController extends Controller
 
         return view('pages.profile', compact('user', 'posts', 'standardPosts', 'reviewPosts', 'friendsCount', 'postsCount', 'canViewPosts', 'friendButtonData'));
     }
+
+    public function removeFavorite(Request $request)
+    {
+        $type = $request->input('type');
+        $user = Auth::user();
+
+        if (!$user) {
+            return response()->json(['error' => 'Unauthorized'], 401);
+        }
+
+        $column = null;
+        switch ($type) {
+            case 'book':
+                $column = 'favoritebook';
+                break;
+            case 'movie':
+                $column = 'favoritefilm';
+                break;
+            case 'music':
+                $column = 'favoritesong';
+                break;
+            default:
+                return response()->json(['error' => 'Invalid type'], 400);
+        }
+
+        // Update the user's favorite to null
+        DB::table('users')
+            ->where('id', $user->id)
+            ->update([$column => null]);
+
+        return response()->json(['success' => true, 'message' => 'Favorite removed successfully']);
+    }
 }

@@ -32,6 +32,7 @@ Route::middleware('auth')->controller(HomeController::class)->group(function () 
 
 Route::middleware('auth')->controller(ProfileController::class)->group(function () {
     Route::get('/profile', 'index')->name('profile');
+    Route::post('/profile/remove-favorite', 'removeFavorite')->name('profile.remove-favorite');
 });
 
 // Authentication
@@ -94,4 +95,3 @@ Route::middleware('auth')->controller(ReportController::class)->group(function (
 Route::controller('auth')->controller(ProfileController::class)->group(function () {
     Route::get('/{username}', 'show')->name('profile.show');
 });
-

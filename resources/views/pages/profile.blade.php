@@ -86,8 +86,8 @@
                         @endif
                     @else
                         @if (Auth::id() === $user->id)
-                            <a onclick="openAddFavModal('movie')"
-                                class="w-full h-full text-gray-600 text-5xl md:text-6xl lg:text-7xl font-light hover:text-gray-800 hover:bg-gray-400 transition-all cursor-pointer">+</a>
+                            <button onclick="openAddFavModal('movie')"
+                                class="w-full h-full text-gray-600 text-5xl md:text-6xl lg:text-7xl font-light hover:text-gray-800 hover:bg-gray-400 transition-all cursor-pointer">+</button>
                         @else
                             <span class="text-gray-600 text-lg md:text-xl text-center px-2">[fav movie]</span>
                         @endif
@@ -157,4 +157,37 @@
         <x-posts.post-modal />
         @include('components.profile.add-fav-modal')
     </div>
+
+    <script>
+        function removeFavorite(type) {
+            if (!confirm(`Are you sure you want to remove your favorite ${type}?`)) {
+                return;
+            }
+
+            fetch('/profile/remove-favorite', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        type: type
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // reload the page to show the updated favorites
+                        window.location.reload();
+                    } else {
+                        alert('Error removing favorite: ' + (data.message || 'Unknown error'));
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error removing favorite');
+                });
+        }
+    </script>
 @endsection
