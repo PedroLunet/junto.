@@ -57,7 +57,8 @@
                         @endif
                     @else
                         @if (Auth::id() === $user->id)
-                            <span class="text-gray-600 text-5xl md:text-6xl lg:text-7xl font-light">+</span>
+                            <button onclick="openAddFavModal('book')"
+                                class="w-full h-full text-gray-600 text-5xl md:text-6xl lg:text-7xl font-light hover:text-gray-800 hover:bg-gray-400 transition-all cursor-pointer">+</button>
                         @else
                             <span class="text-gray-600 text-lg md:text-xl text-center px-2">[fav book]</span>
                         @endif
@@ -77,7 +78,8 @@
                         @endif
                     @else
                         @if (Auth::id() === $user->id)
-                            <span class="text-gray-600 text-5xl md:text-6xl lg:text-7xl font-light">+</span>
+                            <a onclick="openAddFavModal('movie')"
+                                class="w-full h-full text-gray-600 text-5xl md:text-6xl lg:text-7xl font-light hover:text-gray-800 hover:bg-gray-400 transition-all cursor-pointer">+</a>
                         @else
                             <span class="text-gray-600 text-lg md:text-xl text-center px-2">[fav movie]</span>
                         @endif
@@ -97,7 +99,8 @@
                         @endif
                     @else
                         @if (Auth::id() === $user->id)
-                            <span class="text-gray-600 text-5xl md:text-6xl lg:text-7xl font-light">+</span>
+                            <button onclick="openAddFavModal('music')"
+                                class="w-full h-full text-gray-600 text-5xl md:text-6xl lg:text-7xl font-light hover:text-gray-800 hover:bg-gray-400 transition-all cursor-pointer">+</button>
                         @else
                             <span class="text-gray-600 text-lg md:text-xl text-center px-2">[fav music]</span>
                         @endif
@@ -140,5 +143,6 @@
         @endif
 
         <x-posts.post-modal />
+        @include('components.profile.add-fav-modal')
     </div>
 @endsection
