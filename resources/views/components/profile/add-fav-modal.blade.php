@@ -15,7 +15,17 @@
         <div class="flex-1 p-8">
             <div class="relative">
                 <input type="text" id="favSearch" placeholder="Search..."
-                    class="w-full px-6 py-4 text-xl border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#38157a] focus:border-transparent">
+                    class="w-full px-6 py-4 pr-16 text-xl border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#38157a] focus:border-transparent">
+                <div id="loadingSpinner" class="absolute right-4 top-1/2 transform -translate-y-1/2 hidden">
+                    <svg class="animate-spin h-6 w-6 text-[#38157a]" xmlns="http://www.w3.org/2000/svg" fill="none"
+                        viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                            stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor"
+                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                        </path>
+                    </svg>
+                </div>
                 <div id="favSearchResults"
                     class="absolute top-full left-0 w-full bg-white border rounded-lg shadow-lg hidden max-h-96 overflow-y-auto z-30 mt-1">
                 </div>
@@ -59,8 +69,18 @@
         let currentType = 'movie';
         let selectedIndex = -1;
         let searchResults = [];
+        let currentQuery = '';
         const searchInput = document.getElementById('favSearch');
         const searchResultsDiv = document.getElementById('favSearchResults');
+        const loadingSpinner = document.getElementById('loadingSpinner');
+
+        function showLoading() {
+            loadingSpinner.classList.remove('hidden');
+        }
+
+        function hideLoading() {
+            loadingSpinner.classList.add('hidden');
+        }
 
         window.openAddFavModal = function(type) {
             currentType = type;
@@ -281,15 +301,20 @@
         searchInput.addEventListener('input', function() {
             clearTimeout(searchTimeoutId);
             const query = this.value.trim();
+            currentQuery = query;
 
             if (query.length < 2) {
                 searchResultsDiv.classList.add('hidden');
                 selectedIndex = -1;
                 searchResults = [];
+                currentQuery = '';
+                hideLoading();
                 return;
             }
 
+            showLoading();
             searchTimeoutId = setTimeout(() => {
+                const searchQuery = currentQuery;
                 let endpoint;
 
                 switch (currentType) {
@@ -317,13 +342,21 @@
                         return response.json();
                     })
                     .then(results => {
-                        displaySearchResults(results.slice(0, 5), currentType);
+                        // only process results if this response is for the current query
+                        if (searchQuery === currentQuery) {
+                            hideLoading();
+                            displaySearchResults(results.slice(0, 5), currentType);
+                        }
                     })
                     .catch(error => {
-                        console.error('Search error:', error);
-                        searchResultsDiv.innerHTML =
-                            `<div class="p-4 text-red-500">Error: ${error.message}</div>`;
-                        searchResultsDiv.classList.remove('hidden');
+                        // only show error if this response is for the current query
+                        if (searchQuery === currentQuery) {
+                            hideLoading();
+                            console.error('Search error:', error);
+                            searchResultsDiv.innerHTML =
+                                `<div class="p-4 text-red-500">Error: ${error.message}</div>`;
+                            searchResultsDiv.classList.remove('hidden');
+                        }
                     });
             }, 100);
         });
