@@ -1,37 +1,37 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="container mx-auto px-10 py-10">
-        <div class="flex items-start justify-between gap-8 mb-8">
+    <div class="container mx-auto px-20 py-10">
+        <div class="flex items-start justify-between gap-10 md:gap-12 lg:gap-16 mb-10 md:mb-12">
             <!-- profile header -->
-            <div class="flex items-center gap-6">
+            <div class="flex items-center gap-8 md:gap-10">
                 @auth
                     <div
-                        class="w-40 h-40 bg-gray-300 rounded-full flex items-center justify-center text-6xl font-bold text-gray-600 shrink-0">
+                        class="w-54 h-54 md:w-60 md:h-60 lg:w-72 lg:h-72 bg-gray-300 rounded-full flex items-center justify-center text-6xl md:text-7xl lg:text-8xl font-bold text-gray-600 shrink-0">
                         {{ strtoupper(substr($user->name, 0, 1)) }}
                     </div>
 
                     <div class="flex-1">
-                        <h3 class="text-4xl font-bold text-gray-900 mb-1">{{ $user->name }}</h3>
-                        <p class="text-2xl text-gray-600 mb-2">@<span>{{ $user->username }}</span></p>
+                        <h3 class="text-5xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-2">{{ $user->name }}</h3>
+                        <p class="text-3xl md:text-4xl text-gray-600 mb-4">@<span>{{ $user->username }}</span></p>
 
                         <!-- friends and posts count -->
-                        <div class="flex gap-6 mb-3">
+                        <div class="flex gap-8 md:gap-10 mb-4 md:mb-6">
                             <div>
-                                <span class="font-bold text-gray-900">{{ $friendsCount }}</span>
-                                <span class="text-gray-600 ml-1">Friends</span>
+                                <span class="font-bold text-gray-900 text-xl md:text-2xl">{{ $friendsCount }}</span>
+                                <span class="text-gray-600 text-xl md:text-2xl">Friends</span>
                             </div>
                             <div>
-                                <span class="font-bold text-gray-900">{{ $postsCount }}</span>
-                                <span class="text-gray-600 ml-1">Posts</span>
+                                <span class="font-bold text-gray-900 text-xl md:text-2xl">{{ $postsCount }}</span>
+                                <span class="text-gray-600 text-xl md:text-2xl">Posts</span>
                             </div>
                         </div>
 
                         @if (Auth::id() === $user->id)
-                            <p class="text-xl italic text-gray-500">This is your profile</p>
+                            <p class="text-2xl md:text-3xl italic text-gray-500">This is your profile</p>
                         @else
                             <!-- Friend request button -->
-                            <div class="mt-3">
+                            <div class="mt-4 md:mt-6">
                                 @include('components.friend-button', ['user' => $user])
                             </div>
                         @endif
@@ -40,9 +40,9 @@
             </div>
 
             <!-- 3 favorites -->
-            <div class="flex gap-8 mr-40">
+            <div class="flex gap-8 md:gap-12 lg:gap-16">
                 <!-- fav book -->
-                <div class="w-30 h-40 bg-gray-300 flex items-center justify-center overflow-hidden"
+                <div class="w-36 h-54 md:w-40 md:h-60 lg:w-48 lg:h-72 bg-gray-300 flex items-center justify-center overflow-hidden"
                     @if ($user->favoriteBookMedia) title="{{ $user->favoriteBookMedia->title }}{{ $user->favoriteBookMedia->creator ? ' - ' . $user->favoriteBookMedia->creator : '' }}" @endif>
                     @if ($user->favoriteBookMedia)
                         @if ($user->favoriteBookMedia->coverimage && filter_var($user->favoriteBookMedia->coverimage, FILTER_VALIDATE_URL))
@@ -50,15 +50,15 @@
                                 alt="{{ $user->favoriteBookMedia->title }}" class="w-full h-full object-cover">
                         @else
                             <span
-                                class="text-gray-600 text-xl text-center px-2">{{ $user->favoriteBookMedia->title }}</span>
+                                class="text-gray-600 text-lg md:text-xl text-center px-2">{{ $user->favoriteBookMedia->title }}</span>
                         @endif
                     @else
-                        <span class="text-gray-600 text-xl text-center px-2">[fav book]</span>
+                        <span class="text-gray-600 text-lg md:text-xl text-center px-2">[fav book]</span>
                     @endif
                 </div>
 
                 <!-- fav movie -->
-                <div class="w-30 h-40 bg-gray-300 flex items-center justify-center overflow-hidden"
+                <div class="w-36 h-54 md:w-40 md:h-60 lg:w-48 lg:h-72 bg-gray-300 flex items-center justify-center overflow-hidden"
                     @if ($user->favoriteFilmMedia) title="{{ $user->favoriteFilmMedia->title }}{{ $user->favoriteFilmMedia->creator ? ' - ' . $user->favoriteFilmMedia->creator : '' }}" @endif>
                     @if ($user->favoriteFilmMedia)
                         @if ($user->favoriteFilmMedia->coverimage && filter_var($user->favoriteFilmMedia->coverimage, FILTER_VALIDATE_URL))
@@ -66,15 +66,15 @@
                                 alt="{{ $user->favoriteFilmMedia->title }}" class="w-full h-full object-cover">
                         @else
                             <span
-                                class="text-gray-600 text-xl text-center px-2">{{ $user->favoriteFilmMedia->title }}</span>
+                                class="text-gray-600 text-lg md:text-xl text-center px-2">{{ $user->favoriteFilmMedia->title }}</span>
                         @endif
                     @else
-                        <span class="text-gray-600 text-xl text-center px-2">[fav movie]</span>
+                        <span class="text-gray-600 text-lg md:text-xl text-center px-2">[fav movie]</span>
                     @endif
                 </div>
 
                 <!-- fav music -->
-                <div class="w-40 h-40 bg-gray-300 flex items-center justify-center overflow-hidden"
+                <div class="w-48 h-56 md:w-56 md:h-56 lg:w-72 lg:h-72 bg-gray-300 flex items-center justify-center overflow-hidden"
                     @if ($user->favoriteSongMedia) title="{{ $user->favoriteSongMedia->title }}{{ $user->favoriteSongMedia->creator ? ' - ' . $user->favoriteSongMedia->creator : '' }}" @endif>
                     @if ($user->favoriteSongMedia)
                         @if ($user->favoriteSongMedia->coverimage && filter_var($user->favoriteSongMedia->coverimage, FILTER_VALIDATE_URL))
@@ -82,10 +82,10 @@
                                 alt="{{ $user->favoriteSongMedia->title }}" class="w-full h-full object-cover">
                         @else
                             <span
-                                class="text-gray-600 text-xl text-center px-2">{{ $user->favoriteSongMedia->title }}</span>
+                                class="text-gray-600 text-lg md:text-xl text-center px-2">{{ $user->favoriteSongMedia->title }}</span>
                         @endif
                     @else
-                        <span class="text-gray-600 text-xl text-center px-2">[fav music]</span>
+                        <span class="text-gray-600 text-lg md:text-xl text-center px-2">[fav music]</span>
                     @endif
                 </div>
             </div>
