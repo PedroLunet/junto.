@@ -29,11 +29,11 @@
                         </div>
                         
                         <!-- Selected Movie Preview -->
-                        <div id="modalSelectedMovie" class="hidden mt-4 p-4 border rounded-lg bg-gray-50 items-start gap-4 relative">
+                        <div id="modalSelectedMovie" class="hidden mt-4 p-4 border rounded-lg bg-gray-50 flex items-start gap-4 relative">
                             <input type="hidden" name="tmdb_id" id="selectedMovieId">
-                            <img id="selectedMoviePoster" src="" alt="Poster" class="w-auto h-80 object-cover rounded shadow-sm">
+                            <img id="selectedMoviePoster" src="" alt="Poster" class="h-80 object-cover rounded shadow-sm">
                             <div>
-                                <h4 id="selectedMovieTitle" class="font-bold text-4xl"></h4>
+                                <h4 id="selectedMovieTitle" class="text-4xl font-bold text-gray-800"></h4>
                                 <p id="selectedMovieYear" class="text-gray-600"></p>
                             </div>
                             <button type="button" id="removeMovieBtn" class="absolute top-2 right-2 text-gray-400 hover:text-red-500">
@@ -188,7 +188,7 @@
             selectedMovieYear.textContent = releaseDate ? new Date(releaseDate).getFullYear() : 'N/A';
             
             if (posterPath) {
-                selectedMoviePoster.src = `https://image.tmdb.org/t/p/w92${posterPath}`;
+                selectedMoviePoster.src = `https://image.tmdb.org/t/p/w500${posterPath}`;
                 selectedMoviePoster.classList.remove('hidden');
             } else {
                 selectedMoviePoster.classList.add('hidden');
