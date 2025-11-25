@@ -57,6 +57,8 @@
         //=== SEARCH ===
         let searchTimeoutId;
         let currentType = 'movie';
+        let selectedIndex = -1;
+        let searchResults = [];
         const searchInput = document.getElementById('favSearch');
         const searchResultsDiv = document.getElementById('favSearchResults');
 
@@ -98,10 +100,15 @@
         function displaySearchResults(results, type) {
             if (results.length === 0) {
                 searchResultsDiv.classList.add('hidden');
+                selectedIndex = -1;
+                searchResults = [];
                 return;
             }
 
-            searchResultsDiv.innerHTML = results.map(item => {
+            searchResults = results;
+            selectedIndex = -1;
+
+            searchResultsDiv.innerHTML = results.map((item, index) => {
                 let imageUrl, title, subtitle, selectFunction;
 
                 switch (type) {
@@ -137,7 +144,7 @@
                 }
 
                 return `
-                    <div class="p-4 hover:bg-gray-100 cursor-pointer border-b flex items-center" onclick="${selectFunction}">
+                    <div class="search-result-item p-4 hover:bg-gray-100 cursor-pointer border-b flex items-center" onclick="${selectFunction}" data-index="${index}">
                         ${imageUrl ? 
                             `<img src="${imageUrl}" class="w-12 h-18 object-cover rounded mr-3" onerror="this.style.display='none'">` 
                             : 
@@ -152,6 +159,57 @@
             }).join('');
 
             searchResultsDiv.classList.remove('hidden');
+        }
+
+        function updateSelectedItem() {
+            const items = document.querySelectorAll('.search-result-item');
+            items.forEach((item, index) => {
+                if (index === selectedIndex) {
+                    item.classList.add('bg-[#38157a]', 'text-white');
+                    item.classList.remove('hover:bg-gray-100');
+                    // Scroll item into view if needed
+                    item.scrollIntoView({
+                        block: 'nearest'
+                    });
+                } else {
+                    item.classList.remove('bg-[#38157a]', 'text-white');
+                    item.classList.add('hover:bg-gray-100');
+                }
+            });
+        }
+
+        function selectCurrentItem() {
+            if (selectedIndex >= 0 && selectedIndex < searchResults.length) {
+                const item = searchResults[selectedIndex];
+                let id, title, creator, releaseYear, coverImage;
+
+                switch (currentType) {
+                    case 'movie':
+                        id = null;
+                        title = item.title;
+                        creator = 'Unknown Director';
+                        releaseYear = item.release_date ? item.release_date.substring(0, 4) : null;
+                        coverImage = item.poster_path ? `https://image.tmdb.org/t/p/w300${item.poster_path}` :
+                            null;
+                        break;
+                    case 'book':
+                        id = null;
+                        title = item.title;
+                        creator = item.creator;
+                        releaseYear = item.releaseyear || '';
+                        coverImage = item.coverimage || '';
+                        break;
+                    case 'music':
+                        id = null;
+                        title = item.title;
+                        creator = item.creator;
+                        releaseYear = item.releaseyear || '';
+                        coverImage = item.coverimage || '';
+                        break;
+                }
+
+                saveFavorite(id, title, creator, releaseYear, coverImage, currentType);
+            }
         }
 
         window.selectItem = function(id, title, creator, releaseYear, coverImage) {
@@ -192,12 +250,42 @@
                 });
         }
 
+        // keyboard navigation for search results
+        searchInput.addEventListener('keydown', function(e) {
+            if (!searchResultsDiv.classList.contains('hidden') && searchResults.length > 0) {
+                switch (e.key) {
+                    case 'ArrowDown':
+                        e.preventDefault();
+                        selectedIndex = Math.min(selectedIndex + 1, searchResults.length - 1);
+                        updateSelectedItem();
+                        break;
+                    case 'ArrowUp':
+                        e.preventDefault();
+                        selectedIndex = Math.max(selectedIndex - 1, 0);
+                        updateSelectedItem();
+                        break;
+                    case 'Enter':
+                        e.preventDefault();
+                        if (selectedIndex >= 0) {
+                            selectCurrentItem();
+                        }
+                        break;
+                    case 'Escape':
+                        searchResultsDiv.classList.add('hidden');
+                        selectedIndex = -1;
+                        break;
+                }
+            }
+        });
+
         searchInput.addEventListener('input', function() {
             clearTimeout(searchTimeoutId);
             const query = this.value.trim();
 
             if (query.length < 2) {
                 searchResultsDiv.classList.add('hidden');
+                selectedIndex = -1;
+                searchResults = [];
                 return;
             }
 
