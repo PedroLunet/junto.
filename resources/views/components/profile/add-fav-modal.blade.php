@@ -1,5 +1,5 @@
 <div id="addFavModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden items-center justify-center">
-    <div class="bg-white rounded-2xl shadow-xl max-w-md w-full mx-4">
+    <div class="bg-white rounded-2xl shadow-xl max-w-2xl w-full mx-4">
         <!-- header -->
         <div class="flex items-center justify-between p-8">
             <h2 id="modalTitle" class="text-3xl font-bold text-gray-900">Add favorite</h2>
@@ -12,12 +12,12 @@
         </div>
 
         <!-- body -->
-        <div class="flex-1 p-6">
+        <div class="flex-1 p-8">
             <div class="relative">
                 <input type="text" id="favSearch" placeholder="Search..."
-                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#38157a] focus:border-transparent">
+                    class="w-full px-6 py-4 text-xl border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#38157a] focus:border-transparent">
                 <div id="favSearchResults"
-                    class="absolute top-full left-0 w-full bg-white border rounded-lg shadow-lg hidden max-h-60 overflow-y-auto z-30 mt-1">
+                    class="absolute top-full left-0 w-full bg-white border rounded-lg shadow-lg hidden max-h-96 overflow-y-auto z-30 mt-1">
                 </div>
             </div>
         </div>
@@ -45,28 +45,7 @@
         const closeModal = document.getElementById('closeModal');
         const cancelBtn = document.getElementById('cancelBtn');
 
-        // open modal with specific type
-        window.openAddFavModal = function(type) {
-            let title;
 
-            switch (type) {
-                case 'book':
-                    title = 'Add favorite book';
-                    break;
-                case 'movie':
-                    title = 'Add favorite movie';
-                    break;
-                case 'music':
-                    title = 'Add favorite music';
-                    break;
-                default:
-                    title = 'Add favorite';
-            }
-
-            modalTitle.textContent = title;
-            modal.classList.remove('hidden');
-            modal.classList.add('flex');
-        };
 
         function closeModalHandler() {
             modal.classList.add('hidden');
@@ -93,10 +72,14 @@
 
         //=== SEARCH ===
         let searchTimeoutId;
+        let currentType = 'movie';
         const searchInput = document.getElementById('favSearch');
         const searchResultsDiv = document.getElementById('favSearchResults');
 
+        // Remove the duplicate openAddFavModal function here
+
         window.openAddFavModal = function(type) {
+            currentType = type;
             let title, placeholder;
 
             switch (type) {
@@ -125,6 +108,68 @@
             modal.classList.add('flex');
         };
 
+        function displaySearchResults(results, type) {
+            if (results.length === 0) {
+                searchResultsDiv.classList.add('hidden');
+                return;
+            }
+
+            searchResultsDiv.innerHTML = results.map(item => {
+                let imageUrl, title, subtitle, selectFunction;
+
+                switch (type) {
+                    case 'movie':
+                        imageUrl = item.poster_path ?
+                            `https://image.tmdb.org/t/p/w92${item.poster_path}` : null;
+                        title = item.title;
+                        subtitle = item.release_date ? new Date(item.release_date).getFullYear() :
+                            'N/A';
+                        selectFunction = `selectItem(${item.id}, '${item.title.replace(/'/g, "\\'")}')`;
+                        break;
+                    case 'book':
+                        imageUrl = item.coverimage;
+                        title = item.title;
+                        subtitle = item.creator || 'Unknown Author';
+                        selectFunction = `selectItem(${item.id}, '${item.title.replace(/'/g, "\\'")}')`;
+                        break;
+                    case 'music':
+                        imageUrl = item.coverimage;
+                        title = item.title;
+                        subtitle = item.creator || 'Unknown Artist';
+                        selectFunction = `selectItem(${item.id}, '${item.title.replace(/'/g, "\\'")}')`;
+                        break;
+                }
+
+                return `
+                    <div class="p-4 hover:bg-gray-100 cursor-pointer border-b flex items-center" onclick="${selectFunction}">
+                        ${imageUrl ? 
+                            `<img src="${imageUrl}" class="w-12 h-18 object-cover rounded mr-3" onerror="this.style.display='none'">` 
+                            : 
+                            `<div class="w-12 h-18 bg-gray-200 rounded mr-3 flex items-center justify-center text-xs text-gray-500">No Image</div>`
+                        }
+                        <div>
+                            <div class="font-medium">${title}</div>
+                            <div class="text-sm text-gray-600">${subtitle}</div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            searchResultsDiv.classList.remove('hidden');
+        }
+
+        window.selectItem = function(id, title) {
+            searchInput.value = title;
+            searchResultsDiv.classList.add('hidden');
+            
+            // store selected item
+            window.selectedFavorite = {
+                id,
+                title,
+                type: currentType
+            };
+        };
+
         searchInput.addEventListener('input', function() {
             clearTimeout(searchTimeoutId);
             const query = this.value.trim();
@@ -135,8 +180,41 @@
             }
 
             searchTimeoutId = setTimeout(() => {
-                // for now just hiding results
-                searchResultsDiv.classList.add('hidden');
+                let endpoint;
+
+                switch (currentType) {
+                    case 'movie':
+                        endpoint = `/movies/search?q=${encodeURIComponent(query)}`;
+                        break;
+                    case 'book':
+                        endpoint = `/books?q=${encodeURIComponent(query)}`;
+                        break;
+                    case 'music':
+                        endpoint = `/music?q=${encodeURIComponent(query)}`;
+                        break;
+                }
+
+                fetch(endpoint, {
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest',
+                            'Accept': 'application/json'
+                        }
+                    })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error(`HTTP error! status: ${response.status}`);
+                        }
+                        return response.json();
+                    })
+                    .then(results => {
+                        displaySearchResults(results.slice(0, 5), currentType);
+                    })
+                    .catch(error => {
+                        console.error('Search error:', error);
+                        searchResultsDiv.innerHTML =
+                            `<div class="p-4 text-red-500">Error: ${error.message}</div>`;
+                        searchResultsDiv.classList.remove('hidden');
+                    });
             }, 100);
         });
 

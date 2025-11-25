@@ -61,6 +61,11 @@ class MusicController extends Controller
             }
         }
 
+        // Check if this is an AJAX request
+        if ($request->ajax() || $request->expectsJson()) {
+            return response()->json($formattedSongs);
+        }
+
         return view('pages.music', ['songs' => $formattedSongs]);
     }
 
