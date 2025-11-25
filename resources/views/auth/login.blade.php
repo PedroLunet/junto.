@@ -3,7 +3,7 @@
 @section('modal-overlay')
     <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
         <div class="bg-white rounded-2xl shadow-xl w-full max-w-2xl relative overflow-hidden">
-            <div class="p-10">
+            <div class="px-10 pt-10 pb-4">
                 <div class="flex justify-between items-center mb-6">
                     <h2 class="text-4xl font-bold text-gray-800 m-0">Welcome back!</h2>
                     <a href="{{ route('home') }}" class="text-gray-500 hover:text-gray-700 transition-colors">
@@ -58,9 +58,12 @@
                         <label class="text-xl text-gray-700 m-0 font-normal">Remember me</label>
                     </div>
 
-                    <div class="flex flex-col gap-3">
-                        <button type="submit" class="w-full bg-[#38157a] text-white font-bold py-2 px-4 rounded hover:bg-[#7455ad] transition-colors">Login</button>
-                        <a class="w-full text-center border border-gray-300 text-gray-700 font-bold py-2 px-4 rounded hover:bg-gray-50 transition-colors" href="{{ route('register') }}">Register</a>
+                    <div class="flex flex-col gap-8 items-center">
+                        <button type="submit" class="w-1/2 bg-[#38157a] text-white font-bold py-2 px-4 rounded-xl hover:bg-[#7455ad] transition-colors">Login</button>
+                        <div class="flex items-center justify-center gap-2">
+                            <span class="text-gray-800">Don't have an account yet?</span>
+                            <a class="text-center border border-gray-300 text-gray-700 font-bold py-2 px-4 rounded-xl hover:bg-gray-50 transition-colors" href="{{ route('register') }}">Register</a>
+                        </div>
                     </div>
 
                     @if (session('status'))
