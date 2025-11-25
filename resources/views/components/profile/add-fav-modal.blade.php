@@ -88,6 +88,11 @@
             searchResultsDiv.classList.add('hidden');
             modal.classList.remove('hidden');
             modal.classList.add('flex');
+
+            // focus the input after a short delay (wait for modal to be fully rendered)
+            setTimeout(() => {
+                searchInput.focus();
+            }, 100);
         };
 
         function displaySearchResults(results, type) {
