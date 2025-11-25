@@ -232,6 +232,10 @@
                 if (textarea) {
                     textarea.value = '';
                 }
+                if (ratingInput) {
+                    ratingInput.value = '';
+                    updateStars(0);
+                }
             });
         }
 
