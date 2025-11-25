@@ -17,7 +17,13 @@
                     
                     <!-- movie info -->
                     <div class="mb-6">
-                        <h4 id="edit-review-movie-title" class="text-2xl font-bold text-gray-800"></h4>
+                        <div class="p-4 border rounded-lg bg-gray-50 flex items-start gap-4">
+                            <img id="edit-review-movie-poster" src="" alt="Poster" class=" h-80 object-cover rounded shadow-sm hidden">
+                            <div>
+                                <h4 id="edit-review-movie-title" class="text-4xl font-bold text-gray-800"></h4>
+                                <p id="edit-review-movie-year" class="text-gray-600"></p>
+                            </div>
+                        </div>
                     </div>
 
                     <div class="mb-6">
@@ -92,17 +98,28 @@
             });
         }
 
-        window.openEditReviewModal = function(id, content, rating, movieTitle) {
+      
+        window.openEditReviewModal = function(id, content, rating, movieTitle, moviePoster, movieYear) {
             const modal = document.getElementById('edit-review-modal');
             const form = document.getElementById('edit-review-form');
             const contentInput = document.getElementById('edit-review-content');
             const ratingInput = document.getElementById('edit-rating-input');
             const movieTitleEl = document.getElementById('edit-review-movie-title');
+            const moviePosterEl = document.getElementById('edit-review-movie-poster');
+            const movieYearEl = document.getElementById('edit-review-movie-year');
 
             form.action = `/reviews/${id}`;
             contentInput.value = content;
             ratingInput.value = rating;
             movieTitleEl.textContent = movieTitle;
+            movieYearEl.textContent = movieYear || '';
+            
+            if (moviePoster) {
+                moviePosterEl.src = moviePoster;
+                moviePosterEl.classList.remove('hidden');
+            } else {
+                moviePosterEl.classList.add('hidden');
+            }
             
             updateEditStars(rating);
             

@@ -31,7 +31,7 @@
                         <!-- Selected Movie Preview -->
                         <div id="modalSelectedMovie" class="hidden mt-4 p-4 border rounded-lg bg-gray-50 items-start gap-4 relative">
                             <input type="hidden" name="tmdb_id" id="selectedMovieId">
-                            <img id="selectedMoviePoster" src="" alt="Poster" class="w-auto h-92 object-cover rounded shadow-sm">
+                            <img id="selectedMoviePoster" src="" alt="Poster" class="w-auto h-80 object-cover rounded shadow-sm">
                             <div>
                                 <h4 id="selectedMovieTitle" class="font-bold text-4xl"></h4>
                                 <p id="selectedMovieYear" class="text-gray-600"></p>

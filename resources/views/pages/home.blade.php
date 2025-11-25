@@ -11,7 +11,7 @@
                     @if(auth()->check() && $post->username === auth()->user()->username)
                         <div class="absolute top-2 right-2">
                             @if($post->post_type === 'review')
-                                <button onclick="event.stopPropagation(); openEditReviewModal({{ $post->id }}, '{{ addslashes($post->content) }}', {{ $post->rating }}, '{{ addslashes($post->media_title) }}')" 
+                                <button onclick="event.stopPropagation(); openEditReviewModal({{ $post->id }}, '{{ addslashes($post->content) }}', {{ $post->rating }}, '{{ addslashes($post->media_title) }}', '{{ $post->media_poster }}', '{{ $post->media_year }}')" 
                                         class="text-gray-500 hover:text-gray-700 p-1">
                                     Edit
                                 </button>
