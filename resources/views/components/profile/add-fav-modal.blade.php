@@ -12,7 +12,14 @@
         </div>
 
         <!-- body -->
-        <div class="flex-1 p-20">
+        <div class="flex-1 p-6">
+            <div class="relative">
+                <input type="text" id="favSearch" placeholder="Search..."
+                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#38157a] focus:border-transparent">
+                <div id="favSearchResults"
+                    class="absolute top-full left-0 w-full bg-white border rounded-lg shadow-lg hidden max-h-60 overflow-y-auto z-30 mt-1">
+                </div>
+            </div>
         </div>
 
 
@@ -22,7 +29,7 @@
                 Cancel
             </button>
             <button id="saveBtn"
-                class="px-6 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-500 transition-colors">
+                class="px-6 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors">
                 Save
             </button>
         </div>
@@ -31,6 +38,8 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
+
+        //=== MODAL ===
         const modal = document.getElementById('addFavModal');
         const modalTitle = document.getElementById('modalTitle');
         const closeModal = document.getElementById('closeModal');
@@ -81,5 +90,60 @@
                 closeModalHandler();
             }
         });
+
+        //=== SEARCH ===
+        let searchTimeoutId;
+        const searchInput = document.getElementById('favSearch');
+        const searchResultsDiv = document.getElementById('favSearchResults');
+
+        window.openAddFavModal = function(type) {
+            let title, placeholder;
+
+            switch (type) {
+                case 'book':
+                    title = 'Add favorite book';
+                    placeholder = 'Search for books...';
+                    break;
+                case 'movie':
+                    title = 'Add favorite movie';
+                    placeholder = 'Search for movies...';
+                    break;
+                case 'music':
+                    title = 'Add favorite music';
+                    placeholder = 'Search for music...';
+                    break;
+                default:
+                    title = 'Add favorite';
+                    placeholder = 'Search...';
+            }
+
+            modalTitle.textContent = title;
+            searchInput.placeholder = placeholder;
+            searchInput.value = '';
+            searchResultsDiv.classList.add('hidden');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        };
+
+        searchInput.addEventListener('input', function() {
+            clearTimeout(searchTimeoutId);
+            const query = this.value.trim();
+
+            if (query.length < 2) {
+                searchResultsDiv.classList.add('hidden');
+                return;
+            }
+
+            searchTimeoutId = setTimeout(() => {
+                // for now just hiding results
+                searchResultsDiv.classList.add('hidden');
+            }, 100);
+        });
+
+        document.addEventListener('click', function(e) {
+            if (!searchInput.contains(e.target) && !searchResultsDiv.contains(e.target)) {
+                searchResultsDiv.classList.add('hidden');
+            }
+        })
     });
 </script>
