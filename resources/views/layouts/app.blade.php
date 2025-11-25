@@ -14,6 +14,9 @@
         @stack('styles')
 
         <!-- Scripts -->
+        <script>
+            window.isAuthenticated = {{ auth()->check() ? 'true' : 'false' }};
+        </script>
         <script src="{{ asset('js/app.js') }}" defer></script>
         @stack('scripts')
     </head>
@@ -26,19 +29,23 @@
             </div>
             
             <nav class="flex-1 px-4">
+                @auth
                 <ul class="space-y-2">
                     <li><a href="#" class="block py-2 px-4 rounded hover:bg-[#7455ad] hover:text-white">Friends Feed</a></li>
                     <li><a href="{{ route('movies') }}" class="block py-2 px-4 rounded hover:bg-[#7455ad] hover:text-white">Movies</a></li>
                     <li><a href="#" class="block py-2 px-4 rounded hover:bg-[#7455ad] hover:text-white">Books</a></li>
                     <li><a href="#" class="block py-2 px-4 rounded hover:bg-[#7455ad] hover:text-white">Music</a></li>
                 </ul>
+                @endauth
             </nav>
 
     
 
+            @auth
             <div class="px-4 mb-4 flex justify-center">
                 <button id="regular-button" class="w-1/2 bg-[#7455ad] hover:bg-[#5a3d8a] text-white py-2 px-6 rounded-lg text-3xl transition-all duration-200 hover:scale-105"> + </button>
             </div>
+            @endauth
             
             @auth
                 <div class="p-4 border-t border-gray-700">
@@ -50,8 +57,14 @@
 
         <!-- main content -->
         <main class="flex-1 flex flex-col overflow-hidden">
-            <header class="bg-white shadow-sm p-4 sticky top-0 z-10 mb-0">
+            <header class="bg-white shadow-sm p-4 sticky top-0 z-10 mb-0 flex justify-between items-center">
                 <h2 class="font-semibold">@yield('page-title', 'Home')</h2>
+                @guest
+                    <div class="flex gap-2">
+                        <a href="{{ route('login') }}" class="bg-[#38157a] text-white px-4 py-2 rounded-lg hover:bg-[#7455ad] hover:text-white">Login</a>
+                        <a href="{{ route('register') }}" class="bg-white text-[#38157a] px-4 py-2 border-[#38157a] border rounded-lg">Register</a>
+                    </div>
+                @endguest
             </header>
             
             <section class="flex-1 overflow-y-auto p-6">
@@ -60,6 +73,8 @@
         </main>
 
 
-        <x-create-regular-modal/>
+        @auth
+            <x-create-regular-modal/>
+        @endauth
     </body>
 </html>

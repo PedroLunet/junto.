@@ -1,15 +1,15 @@
 <!-- edit modal overlay -->
 <div id="edit-post-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50">
     <div class="flex items-center justify-center min-h-screen p-4">
-        <div class="bg-white rounded-lg shadow-xl max-w-6xl w-full h-auto">
+        <div class="bg-white rounded-2xl shadow-xl max-w-6xl w-full h-auto">
 
             <!-- modal header -->
-            <div class="flex justify-between items-center p-6 border-b">
+            <div class="flex justify-between items-center p-8 border-b">
                 <h3 class="text-4xl font-semibold">Edit Post</h3>
             </div>
             
             <!-- modal body -->
-            <div class="p-6">
+            <div class="p-8">
                 <form id="edit-post-form" method="POST">
                     @csrf
                     @method('PUT')

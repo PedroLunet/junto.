@@ -18,13 +18,15 @@ use App\Http\Controllers\PostController;
 
 
 // Home
-Route::redirect('/', '/login');
+// Route::redirect('/', '/login');
 
+Route::controller(HomeController::class)->group(function () {
+    Route::get('/', 'index')->name('home');
+    Route::get('/posts/{id}/comments', 'getComments')->name('post.comments');
+});
 
 // Home page (authentication required)
 Route::middleware('auth')->controller(HomeController::class)->group(function () {
-    Route::get('/', 'index')->name('home');
-    Route::get('/posts/{id}/comments', 'getComments')->name('post.comments');
     Route::post('/posts/{id}/comments', 'addComment')->name('post.comments.add');
     Route::post('/posts/{id}/like', 'toggleLike')->name('post.like');
 });

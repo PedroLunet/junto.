@@ -51,4 +51,6 @@
 
     <x-post-modal />
     <x-edit-regular-modal />
+
+    @yield('modal-overlay')
 @endsection

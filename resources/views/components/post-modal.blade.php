@@ -16,14 +16,14 @@
       <div id="modalContent" style="padding: 16px; flex: 1; overflow-y: auto;"></div>
 
       <!-- Actions (like, comment) -->
-      <div style="padding: 16px; border-top: 1px solid #ccc; display: flex; gap: 16px; align-items: center;">
+      <div id="postActions" style="padding: 16px; border-top: 1px solid #ccc; display: flex; gap: 16px; align-items: center;">
         <button onclick="likePost(event)" style="all: unset; cursor: pointer;">
           ❤️ <span id="likesCount">0</span>
         </button>
         <button onclick="focusComment()" style="all: unset; cursor: pointer;">
           💬 <span id="commentsCount">0</span>
         </button>
-        <button onclick="openReportModal(event)" style="all: unset; cursor: pointer; margin-left: auto; color: #dc2626;">
+        <button onclick="openReportModal(event)" id="reportButton" style="all: unset; cursor: pointer; margin-left: auto; color: #dc2626;">
           🚩 Report
         </button>
       </div>
@@ -41,7 +41,7 @@
       <div id="commentsSection" style="padding: 16px; flex: 1; overflow-y: auto;"></div>
 
       <!-- Add Comment -->
-      <div style="padding: 16px; border-top: 1px solid #ccc;">
+      <div id="addCommentSection" style="padding: 16px; border-top: 1px solid #ccc;">
         <div style="display: flex; gap: 8px; align-items: center;">
           <input type="text" id="commentInput" placeholder="Add a comment..."
             style="flex: 1; padding: 8px; border: 1px solid #ccc; outline: none;"
@@ -136,6 +136,17 @@
     // Load comments from server
     loadComments(post.id);
 
+    // Handle guest view
+    if (!window.isAuthenticated) {
+        document.getElementById('postActions').style.display = 'flex';
+        document.getElementById('addCommentSection').style.display = 'none';
+        document.getElementById('reportButton').style.display = 'none';
+    } else {
+        document.getElementById('postActions').style.display = 'flex';
+        document.getElementById('addCommentSection').style.display = 'block';
+        document.getElementById('reportButton').style.display = 'block';
+    }
+
     modal.style.display = 'flex';
   }
 
@@ -192,6 +203,11 @@
 
     if (!currentPostId) return;
 
+    if (!window.isAuthenticated) {
+        alert('Please login to like posts.');
+        return;
+    }
+
     const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
     fetch(`/posts/${currentPostId}/like`, {
@@ -217,6 +233,10 @@
   }
 
   function focusComment() {
+    if (!window.isAuthenticated) {
+        alert('Please login to comment.');
+        return;
+    }
     document.getElementById('commentInput').focus();
   }
 
