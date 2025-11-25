@@ -117,7 +117,7 @@
             }, 100);
         };
 
-        function displaySearchResults(results, type) {
+        function displaySearchResults(results) {
             if (results.length === 0) {
                 searchResultsDiv.classList.add('hidden');
                 selectedIndex = -1;
@@ -129,39 +129,10 @@
             selectedIndex = -1;
 
             searchResultsDiv.innerHTML = results.map((item, index) => {
-                let imageUrl, title, subtitle, selectFunction;
-
-                switch (type) {
-                    case 'movie':
-                        imageUrl = item.poster_path ?
-                            `https://image.tmdb.org/t/p/w92${item.poster_path}` : null;
-                        title = item.title;
-                        subtitle = item.release_date ? new Date(item.release_date).getFullYear() :
-                            'N/A';
-                        const movieCoverImage = item.poster_path ?
-                            `https://image.tmdb.org/t/p/w300${item.poster_path}` : null;
-                        const movieYear = item.release_date ? item.release_date.substring(0, 4) : null;
-                        const movieDirector = 'Unknown Director';
-                        const movieTitle = item.title.replace(/'/g, "\\'").replace(/"/g, '\\"').replace(
-                            /\n/g, ' ').replace(/\r/g, ' ');
-                        selectFunction =
-                            `selectItem(null, '${movieTitle}', '${movieDirector}', '${movieYear}', '${movieCoverImage}')`;
-                        break;
-                    case 'book':
-                        imageUrl = item.coverimage;
-                        title = item.title;
-                        subtitle = item.creator || 'Unknown Author';
-                        selectFunction =
-                            `selectItem(null, '${item.title.replace(/'/g, "\\'")}', '${item.creator.replace(/'/g, "\\'")}', '${item.releaseyear || ''}', '${item.coverimage || ''}')`;
-                        break;
-                    case 'music':
-                        imageUrl = item.coverimage;
-                        title = item.title;
-                        subtitle = item.creator || 'Unknown Artist';
-                        selectFunction =
-                            `selectItem(null, '${item.title.replace(/'/g, "\\'")}', '${item.creator.replace(/'/g, "\\'")}', '${item.releaseyear || ''}', '${item.coverimage || ''}')`;
-                        break;
-                }
+                const imageUrl = item.coverImage || null;
+                const title = item.title || 'Unknown Title';
+                const subtitle = item.creator || 'Unknown Creator';
+                const selectFunction = `selectItem(${index})`;
 
                 return `
                     <div class="search-result-item p-4 hover:bg-gray-100 cursor-pointer border-b flex items-center" onclick="${selectFunction}" data-index="${index}">
@@ -187,8 +158,7 @@
                 if (index === selectedIndex) {
                     item.classList.add('bg-[#38157a]', 'text-white');
                     item.classList.remove('hover:bg-gray-100');
-                    // Scroll item into view if needed
-                    item.scrollIntoView({
+                    item.scrollIntoView({ // scroll item into view if needed
                         block: 'nearest'
                     });
                 } else {
@@ -200,43 +170,18 @@
 
         function selectCurrentItem() {
             if (selectedIndex >= 0 && selectedIndex < searchResults.length) {
-                const item = searchResults[selectedIndex];
-                let id, title, creator, releaseYear, coverImage;
-
-                switch (currentType) {
-                    case 'movie':
-                        id = null;
-                        title = item.title;
-                        creator = 'Unknown Director';
-                        releaseYear = item.release_date ? item.release_date.substring(0, 4) : null;
-                        coverImage = item.poster_path ? `https://image.tmdb.org/t/p/w300${item.poster_path}` :
-                            null;
-                        break;
-                    case 'book':
-                        id = null;
-                        title = item.title;
-                        creator = item.creator;
-                        releaseYear = item.releaseyear || '';
-                        coverImage = item.coverimage || '';
-                        break;
-                    case 'music':
-                        id = null;
-                        title = item.title;
-                        creator = item.creator;
-                        releaseYear = item.releaseyear || '';
-                        coverImage = item.coverimage || '';
-                        break;
-                }
-
-                saveFavorite(id, title, creator, releaseYear, coverImage, currentType);
+                selectItem(selectedIndex);
             }
         }
 
-        window.selectItem = function(id, title, creator, releaseYear, coverImage) {
-            saveFavorite(id, title, creator, releaseYear, coverImage, currentType);
+        window.selectItem = function(itemIndex) {
+            if (itemIndex >= 0 && itemIndex < searchResults.length) {
+                const item = searchResults[itemIndex];
+                saveFavorite(item);
+            }
         };
 
-        function saveFavorite(id, title, creator, releaseYear, coverImage, type) {
+        function saveFavorite(item) {
             fetch('/profile/add-favorite', {
                     method: 'POST',
                     headers: {
@@ -246,19 +191,18 @@
                         'Accept': 'application/json'
                     },
                     body: JSON.stringify({
-                        id: id,
-                        title: title,
-                        creator: creator,
-                        releaseYear: releaseYear,
-                        coverImage: coverImage,
-                        type: type
+                        id: item.id || null,
+                        title: item.title,
+                        creator: item.creator,
+                        releaseYear: item.releaseYear,
+                        coverImage: item.coverImage,
+                        type: currentType
                     })
                 })
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
                         closeModalHandler();
-                        // reload the page to show the updated favorite
                         window.location.reload();
                     } else {
                         alert('Error saving favorite: ' + (data.message || 'Unknown error'));
@@ -345,7 +289,7 @@
                         // only process results if this response is for the current query
                         if (searchQuery === currentQuery) {
                             hideLoading();
-                            displaySearchResults(results.slice(0, 5), currentType);
+                            displaySearchResults(results.slice(0, 5));
                         }
                     })
                     .catch(error => {

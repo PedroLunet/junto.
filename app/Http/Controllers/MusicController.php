@@ -5,9 +5,17 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\DB;
+use App\Services\FavoriteService;
 
 class MusicController extends Controller
 {
+    protected $favoriteService;
+
+    public function __construct(FavoriteService $favoriteService)
+    {
+        $this->favoriteService = $favoriteService;
+    }
+
     private function getAccessToken()
     {
         $clientId = config('services.spotify.client_id');
@@ -28,8 +36,12 @@ class MusicController extends Controller
 
     public function search(Request $request)
     {
+        $request->validate([
+            'q' => 'required|string|min:2|max:100'
+        ]);
+
         $query = $request->input('q');
-        $formattedSongs = [];
+        $rawSongs = [];
 
         if ($query) {
             // 1. get token
@@ -47,10 +59,10 @@ class MusicController extends Controller
 
                 $results = $response->json();
 
-                // 3. format the data
+                // 3. extract raw data
                 if (isset($results['tracks']['items'])) {
                     foreach ($results['tracks']['items'] as $track) {
-                        $formattedSongs[] = [
+                        $rawSongs[] = [
                             'title'       => $track['name'],
                             'creator'     => $track['artists'][0]['name'], // first artist
                             'releaseyear' => substr($track['album']['release_date'], 0, 4),
@@ -61,7 +73,10 @@ class MusicController extends Controller
             }
         }
 
-        // Check if this is an AJAX request
+        // format using FavoriteService for consistency
+        $formattedSongs = $this->favoriteService->formatMusicData($rawSongs);
+
+        // check if this is an AJAX request
         if ($request->ajax() || $request->expectsJson()) {
             return response()->json($formattedSongs);
         }

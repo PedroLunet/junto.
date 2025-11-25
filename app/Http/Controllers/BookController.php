@@ -5,13 +5,25 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\DB;
+use App\Services\FavoriteService;
 
 class BookController extends Controller
 {
+    protected $favoriteService;
+
+    public function __construct(FavoriteService $favoriteService)
+    {
+        $this->favoriteService = $favoriteService;
+    }
+
     public function search(Request $request)
     {
+        $request->validate([
+            'q' => 'required|string|min:2|max:100'
+        ]);
+
         $query = $request->input('q');
-        $formattedBooks = [];
+        $rawBooks = [];
 
         if ($query) {
             // Google Books API doesn't require authentication for basic searches
@@ -23,12 +35,12 @@ class BookController extends Controller
 
             $results = $response->json();
 
-            // Format the data
+            // extract raw data
             if (isset($results['items'])) {
                 foreach ($results['items'] as $book) {
                     $volumeInfo = $book['volumeInfo'];
 
-                    $formattedBooks[] = [
+                    $rawBooks[] = [
                         'title' => $volumeInfo['title'] ?? 'Unknown Title',
                         'creator' => isset($volumeInfo['authors']) ? implode(', ', $volumeInfo['authors']) : 'Unknown Author',
                         'releaseyear' => isset($volumeInfo['publishedDate']) ? substr($volumeInfo['publishedDate'], 0, 4) : null,
@@ -38,7 +50,10 @@ class BookController extends Controller
             }
         }
 
-        // Check if this is an AJAX request
+        // format using FavoriteService for consistency
+        $formattedBooks = $this->favoriteService->formatBookData($rawBooks);
+
+        // check if it's an AJAX request
         if ($request->ajax() || $request->expectsJson()) {
             return response()->json($formattedBooks);
         }
@@ -58,17 +73,17 @@ class BookController extends Controller
         $bookId = null;
         $isNew = false;
 
-        // Check for duplicates
+        // check for duplicates
         $existingBook = DB::table('media')
             ->where('title', $validated['title'])
             ->where('creator', $validated['creator'])
             ->first();
 
         if ($existingBook) {
-            // The book already exists, so we just use its ID.
+            // book already exists -> we just use its ID.
             $bookId = $existingBook->id;
         } else {
-            // Call the SQL function to create Media + Book atomically.
+            // call the SQL function to create Media + Book atomically
             $result = DB::select('SELECT fn_create_book(?, ?, ?, ?) as id', [
                 $validated['title'],
                 $validated['creator'],
