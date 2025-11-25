@@ -32,7 +32,10 @@
                         @else
                             <!-- Friend request button -->
                             <div class="mt-4 md:mt-6">
-                                @include('components.friend-button', ['user' => $user])
+                                @include('components.friend-button', [
+                                    'user' => $user,
+                                    'friendButtonData' => $friendButtonData,
+                                ])
                             </div>
                         @endif
                     </div>

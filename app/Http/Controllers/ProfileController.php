@@ -7,6 +7,7 @@ use Illuminate\View\View;
 use App\Models\User;
 use App\Models\Post;
 use App\Models\Friendship;
+use App\Services\FriendService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
@@ -14,6 +15,13 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 
 class ProfileController extends Controller
 {
+    protected $friendService;
+
+    public function __construct(FriendService $friendService)
+    {
+        $this->friendService = $friendService;
+    }
+
     public function index(): RedirectResponse
     {
         return redirect('/' . Auth::user()->username);
@@ -84,6 +92,9 @@ class ProfileController extends Controller
 
         $postsCount = Post::where('userid', $user->id)->count();
 
-        return view('pages.profile', compact('user', 'posts', 'standardPosts', 'reviewPosts', 'friendsCount', 'postsCount', 'canViewPosts'));
+        // friend button data using the service
+        $friendButtonData = $this->friendService->getFriendButtonData($user);
+
+        return view('pages.profile', compact('user', 'posts', 'standardPosts', 'reviewPosts', 'friendsCount', 'postsCount', 'canViewPosts', 'friendButtonData'));
     }
 }
