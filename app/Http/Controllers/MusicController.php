@@ -45,6 +45,7 @@ class MusicController extends Controller
 
     public function store(Request $request)
     {
+
         $validated = $request->validate([
             'title'       => 'required|string|max:255',
             'creator'     => 'required|string|max:255',

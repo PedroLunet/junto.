@@ -34,8 +34,8 @@ class MovieController extends Controller
         $results = $this->movieService->searchMovies($query);
         $movies = $results['results'] ?? [];
 
-        // disable director fetching for search results to avoid extra API calls
-        $formattedMovies = $this->movieService->formatMovieData($movies, false);
+        // enable director fetching
+        $formattedMovies = $this->movieService->formatMovieData($movies, true);
 
         return response()->json($formattedMovies);
     }

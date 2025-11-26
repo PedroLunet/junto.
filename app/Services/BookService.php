@@ -22,7 +22,7 @@ class BookService
             'maxResults' => $maxResults,
         ];
 
-        // Add API key if configured
+        // add API key if configured
         if ($this->apiKey) {
             $params['key'] = $this->apiKey;
         }
@@ -36,7 +36,7 @@ class BookService
     {
         $params = [];
 
-        // Add API key if configured
+        // add API key if configured
         if ($this->apiKey) {
             $params['key'] = $this->apiKey;
         }

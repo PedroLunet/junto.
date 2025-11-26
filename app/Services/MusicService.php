@@ -3,11 +3,13 @@
 namespace App\Services;
 
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Cache;
 
 class MusicService
 {
     protected $clientId;
     protected $clientSecret;
+    protected $authUrl;
     protected $baseUrl;
 
     public function __construct()

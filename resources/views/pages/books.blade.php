@@ -9,7 +9,7 @@
     <!-- Search Form -->
     <form method="GET" action="{{ route('books.search') }}">
         <input type="text" name="q" value="{{ request('q') }}" placeholder="Search for books, authors...">
-        <button type="submit">Search</button>
+        <x-button type="submit">Search</x-button>
     </form>
 
     <!-- Success Message -->
@@ -52,7 +52,7 @@
             <input type="hidden" name="coverimage" value="{{ $book['coverimage'] }}">
             @endif
 
-            <button type="submit">Add to Library</button>
+            <x-button type="submit">Add to Library</x-button>
         </form>
     </div>
     @endforeach
