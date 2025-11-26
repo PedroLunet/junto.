@@ -94,7 +94,7 @@
                     </div>
 
                     <div class="flex flex-col gap-6 items-center">
-                        <button type="submit" class="w-1/2 bg-[#38157a] text-white font-bold py-2 px-8 rounded-xl hover:bg-[#7455ad] transition-colors">Register</button>
+                        <x-button type="submit" variant="primary">Register</x-button>
                         <div class="flex items-center justify-center gap-2">
                             <span class="text-gray-800">Already have an account?</span>
                             <a class="text-center border border-gray-300 text-gray-700 font-bold py-2 px-4 rounded-xl hover:bg-gray-50 transition-colors" href="{{ route('login') }}">Login</a>
