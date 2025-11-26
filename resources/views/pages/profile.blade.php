@@ -121,6 +121,20 @@
             </div>
         </div>
 
+        <!-- bio -->
+        <div class="mb-10 md:mb-12">
+            <h2 class="text-2xl md:text-3xl font-bold text-gray-900 mb-4">About Me</h2>
+            @if ($user->bio)
+                <p class="text-lg md:text-xl text-gray-700 leading-relaxed">{{ $user->bio }}</p>
+            @else
+                @if (Auth::id() === $user->id)
+                    <p class="text-lg md:text-xl text-gray-500 italic">Add a bio to tell others about yourself</p>
+                @else
+                    <p class="text-lg md:text-xl text-gray-500 italic">{{ $user->name }} hasn't added a bio yet</p>
+                @endif
+            @endif
+        </div>
+
         <!-- check if profile is private -->
         @if (!$canViewPosts)
             <!-- private account message -->
