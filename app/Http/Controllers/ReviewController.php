@@ -6,14 +6,17 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use App\Services\MovieService;
+use App\Services\BookService;
 
 class ReviewController extends Controller
 {
     protected $movieService;
+    protected $bookService;
 
-    public function __construct(MovieService $movieService)
+    public function __construct(MovieService $movieService, BookService $bookService)
     {
         $this->movieService = $movieService;
+        $this->bookService = $bookService;
     }
 
     public function store(Request $request)
@@ -36,14 +39,26 @@ class ReviewController extends Controller
             if ($request->input('type') === 'book') {
                 $request->validate([
                     'google_book_id' => 'required|string',
-                    'title' => 'required|string',
-                    'creator' => 'required|string',
                 ]);
 
-                $title = $request->input('title');
-                $creator = $request->input('creator');
-                $releaseYear = $request->input('release_year');
-                $coverImage = $request->input('cover_image');
+                $googleBook = $this->bookService->getBook($request->google_book_id);
+
+                if (!$googleBook || isset($googleBook['error'])) {
+                    return response()->json(['success' => false, 'message' => 'Book not found on Google Books'], 404);
+                }
+
+                $volumeInfo = $googleBook['volumeInfo'];
+                $title = $volumeInfo['title'] ?? 'Unknown Title';
+                $creator = isset($volumeInfo['authors']) ? implode(', ', $volumeInfo['authors']) : 'Unknown Author';
+                $releaseDate = $volumeInfo['publishedDate'] ?? null;
+                $releaseYear = $releaseDate ? (int)substr($releaseDate, 0, 4) : null;
+                $coverImage = $volumeInfo['imageLinks']['thumbnail'] ?? null;
+                
+                
+                if ($coverImage) {
+                    $coverImage = str_replace('http://', 'https://', $coverImage);
+                }
+
                 $mediaType = 'book';
 
             } elseif ($request->input('type') === 'movie') {

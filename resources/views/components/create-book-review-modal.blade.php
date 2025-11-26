@@ -32,10 +32,6 @@
                         <!-- Selected Book Preview -->
                         <div id="modalSelectedBook" class="hidden mt-4 p-4 border rounded-lg bg-gray-50 flex items-start gap-4 relative">
                             <input type="hidden" name="google_book_id" id="selectedBookId">
-                            <input type="hidden" name="title" id="hiddenBookTitle">
-                            <input type="hidden" name="creator" id="hiddenBookAuthor">
-                            <input type="hidden" name="release_year" id="hiddenBookYear">
-                            <input type="hidden" name="cover_image" id="hiddenBookCover">
 
                             <img id="selectedBookCover" src="" alt="Cover" class="h-80 object-cover rounded shadow-sm">
                             <div>
@@ -97,12 +93,6 @@
         const selectedBookYear = document.getElementById('selectedBookYear');
         const selectedBookAuthor = document.getElementById('selectedBookAuthor');
         const selectedBookCover = document.getElementById('selectedBookCover');
-
-        // Hidden inputs for backend
-        const hiddenBookTitle = document.getElementById('hiddenBookTitle');
-        const hiddenBookAuthor = document.getElementById('hiddenBookAuthor');
-        const hiddenBookYear = document.getElementById('hiddenBookYear');
-        const hiddenBookCover = document.getElementById('hiddenBookCover');
 
         // Rating elements
         const starButtons = document.querySelectorAll('.book-star-btn');
@@ -201,10 +191,6 @@
         window.selectModalBook = function(id, title, author, cover, year) {
             // Set hidden inputs
             selectedBookId.value = id;
-            hiddenBookTitle.value = title;
-            hiddenBookAuthor.value = author;
-            hiddenBookYear.value = year;
-            hiddenBookCover.value = cover;
             
             // Update preview
             selectedBookTitle.textContent = title;
@@ -263,10 +249,6 @@
                 
                 // Reset book selection
                 selectedBookId.value = '';
-                hiddenBookTitle.value = '';
-                hiddenBookAuthor.value = '';
-                hiddenBookYear.value = '';
-                hiddenBookCover.value = '';
                 
                 selectedBookDiv.classList.add('hidden');
                 searchContainer.classList.remove('hidden');
