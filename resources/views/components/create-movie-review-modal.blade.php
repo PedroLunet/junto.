@@ -258,6 +258,17 @@
                     ratingInput.value = '';
                     updateStars(0);
                 }
+
+                // Reset movie selection
+                selectedMovieId.value = '';
+                selectedMovieTitle.textContent = '';
+                selectedMovieYear.textContent = '';
+                selectedMovieDirector.textContent = '';
+                selectedMoviePoster.src = '';
+                
+                selectedMovieDiv.classList.add('hidden');
+                searchContainer.classList.remove('hidden');
+                searchInput.value = '';
             });
         }
 

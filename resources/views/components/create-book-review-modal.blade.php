@@ -15,7 +15,7 @@
                     @csrf
                     <input type="hidden" name="type" value="book">
                     
-                    <!-- book search -->
+                    <!-- Book Search Section -->
                     <div class="mb-6">
                         <label class="block font-medium text-gray-700 mb-2">What book did you read?</label>
                         <div class="relative" id="bookSearchContainer">
@@ -29,7 +29,7 @@
                             <div id="modalBookSearchResults" class="absolute top-full left-0 w-full bg-white border rounded-lg shadow-lg hidden max-h-60 overflow-y-auto z-20 mt-1"></div>
                         </div>
                         
-                        <!-- selected book preview -->
+                        <!-- Selected Book Preview -->
                         <div id="modalSelectedBook" class="hidden mt-4 p-4 border rounded-lg bg-gray-50 flex items-start gap-4 relative">
                             <input type="hidden" name="google_book_id" id="selectedBookId">
                             <input type="hidden" name="title" id="hiddenBookTitle">
@@ -173,7 +173,7 @@
             });
         }
 
-        function displayResults(books) {
+        function displayBookResults(books) {
             if (books.length === 0) {
                 resultsDiv.classList.add('hidden');
                 return;
@@ -258,8 +258,19 @@
                 }
                 if (ratingInput) {
                     ratingInput.value = '';
-                    updateBookStars(0);
+                    updateStars(0);
                 }
+                
+                // Reset book selection
+                selectedBookId.value = '';
+                hiddenBookTitle.value = '';
+                hiddenBookAuthor.value = '';
+                hiddenBookYear.value = '';
+                hiddenBookCover.value = '';
+                
+                selectedBookDiv.classList.add('hidden');
+                searchContainer.classList.remove('hidden');
+                searchInput.value = '';
             });
         }
 
@@ -304,12 +315,11 @@
                         modal.classList.add('hidden');
                         form.reset();
                         
-                     
                         selectedBookId.value = '';
                         selectedBookDiv.classList.add('hidden');
                         searchContainer.classList.remove('hidden');
                         ratingInput.value = '';
-                        updateBookStars(0);
+                        updateStars(0);
                         
                         // reload page to show new review
                         window.location.reload();
