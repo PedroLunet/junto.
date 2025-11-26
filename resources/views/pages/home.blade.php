@@ -7,26 +7,6 @@
                 <div class="bg-white rounded-2xl shadow-md border border-gray-200 p-8 cursor-pointer"
                     onclick="openPostModal({{ json_encode($post) }})">
 
-                    <!-- edit button (vai ser mudado pro modal) -->
-                    @if(auth()->check() && $post->username === auth()->user()->username)
-                        <div class="absolute top-3 right-3 z-10">
-                            @if($post->post_type === 'review')
-                                <button
-                                    onclick="event.stopPropagation(); openEditReviewModal({{ $post->id }}, '{{ addslashes($post->content) }}', {{ $post->rating }}, '{{ addslashes($post->media_title) }}', '{{ $post->media_poster }}', '{{ $post->media_year }}', '{{ addslashes($post->media_creator) }}')"
-                                    class="text-gray-500 hover:text-gray-700 p-1">
-                                    <i class="fas fa-edit"></i>
-                                </button>
-                            @else
-                                <button
-                                    onclick="event.stopPropagation(); openEditModal({{ $post->id }}, '{{ addslashes($post->content) }}', '{{ $post->image_url ? asset('storage/' . $post->image_url) : '' }}')"
-                                    class="text-gray-500 hover:text-gray-700 p-1">
-                                    <i class="fas fa-edit"></i>
-                                </button>
-                            @endif
-                        </div>
-                    @endif
-
-
                     <!-- profile + name -->
                     <div class="flex items-center justify-between mb-8">
                         <div class="flex items-center gap-3">
