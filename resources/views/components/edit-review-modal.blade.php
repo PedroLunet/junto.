@@ -15,14 +15,14 @@
                     @csrf
                     @method('PUT')
                     
-                    <!-- movie info -->
+                    <!-- media info -->
                     <div class="mb-6">
                         <div class="p-4 border rounded-lg bg-gray-50 flex items-start gap-4">
-                            <img id="edit-review-movie-poster" src="" alt="Poster" class=" h-80 object-cover rounded shadow-sm hidden">
+                            <img id="edit-review-cover" src="" alt="Poster" class=" h-80 object-cover rounded shadow-sm hidden">
                             <div>
-                                <h4 id="edit-review-movie-title" class="text-4xl font-bold text-gray-800"></h4>
-                                <p id="edit-review-movie-director" class="text-gray-600"></p>
-                                <p id="edit-review-movie-year" class="text-gray-600 text-xl"></p>
+                                <h4 id="edit-review-title" class="text-4xl font-bold text-gray-800"></h4>
+                                <p id="edit-review-creator" class="text-gray-600"></p>
+                                <p id="edit-review-year" class="text-gray-600 text-xl"></p>
                             </div>
                         </div>
                     </div>
@@ -67,19 +67,19 @@
             button.addEventListener('click', function() {
                 const rating = this.dataset.rating;
                 ratingInput.value = rating;
-                updateEditStars(rating);
+                updateStars(rating);
             });
 
             button.addEventListener('mouseenter', function() {
-                updateEditStars(this.dataset.rating);
+                updateStars(this.dataset.rating);
             });
 
             button.addEventListener('mouseleave', function() {
-                updateEditStars(ratingInput.value || 0);
+                updateStars(ratingInput.value || 0);
             });
         });
 
-        function updateEditStars(rating) {
+        function updateStars(rating) {
             starButtons.forEach(btn => {
                 const star = btn.querySelector('i');
                 const btnRating = parseInt(btn.dataset.rating);
@@ -100,31 +100,31 @@
         }
 
       
-        window.openEditReviewModal = function(id, content, rating, movieTitle, moviePoster, movieYear, movieDirector) {
+        window.openEditReviewModal = function(id, content, rating, title, cover, year, creator) {
             const modal = document.getElementById('edit-review-modal');
             const form = document.getElementById('edit-review-form');
             const contentInput = document.getElementById('edit-review-content');
             const ratingInput = document.getElementById('edit-rating-input');
-            const movieTitleEl = document.getElementById('edit-review-movie-title');
-            const moviePosterEl = document.getElementById('edit-review-movie-poster');
-            const movieYearEl = document.getElementById('edit-review-movie-year');
-            const movieDirectorEl = document.getElementById('edit-review-movie-director');
+            const mediaTitleEl = document.getElementById('edit-review-title');
+            const mediaCoverEl = document.getElementById('edit-review-cover');
+            const mediaYearEl = document.getElementById('edit-review-year');
+            const mediaCreatorEl = document.getElementById('edit-review-creator');
 
             form.action = `/reviews/${id}`;
             contentInput.value = content;
             ratingInput.value = rating;
-            movieTitleEl.textContent = movieTitle;
-            movieYearEl.textContent = movieYear || '';
-            movieDirectorEl.textContent = movieDirector || 'Unknown Director';
+            mediaTitleEl.textContent = title;
+            mediaYearEl.textContent = year || '';
+            mediaCreatorEl.textContent = creator || 'Unknown Creator';
             
-            if (moviePoster) {
-                moviePosterEl.src = moviePoster;
-                moviePosterEl.classList.remove('hidden');
+            if (cover) {
+                mediaCoverEl.src = cover;
+                mediaCoverEl.classList.remove('hidden');
             } else {
-                moviePosterEl.classList.add('hidden');
+                mediaCoverEl.classList.add('hidden');
             }
             
-            updateEditStars(rating);
+            updateStars(rating);
             
             modal.style.display = 'block';
             modal.classList.remove('hidden');
