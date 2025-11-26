@@ -10,15 +10,19 @@
     @endif
 
     <!-- post content -->
-    <div class="text-gray-800 leading-relaxed">
-        {{ $post->content }}
-    </div>
+    @if($post->content)
+        <div class="text-gray-800 leading-relaxed">
+            {{ $post->content }}
+        </div>
+    @endif
 
     <!-- post image -->
     @if($post->image_url)
         <div class="mt-4">
-            <img src="{{ asset('images/' . $post->image_url) }}" alt="image"
-                class="w-full max-w-md rounded-lg shadow-sm border border-gray-200 mx-auto">
+            <img src="{{ asset('post/' . $post->image_url) }}" 
+                 onerror="this.src='{{ asset('post/default.jpg') }}'"
+                 alt="image"
+                 class="w-full max-w-md rounded-lg shadow-sm border border-gray-200 mx-auto">
         </div>
     @endif
 </div>
