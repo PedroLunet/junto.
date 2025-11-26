@@ -20,7 +20,7 @@
 
                     <div id="image-preview-container" class="mb-4 hidden relative">
                         <img id="image-preview" src="#" alt="Preview" class="max-h-64 rounded-lg object-cover border border-gray-200">
-                        <x-button type="button" id="remove-image-btn" class="absolute top-2 left-2 bg-red-500 text-white p-1 hover:bg-red-600">X</x-button>
+                        <x-button type="button" id="remove-image-btn" variant="secondary">X</x-button>
                     </div>
 
                     <div class="mb-4">
