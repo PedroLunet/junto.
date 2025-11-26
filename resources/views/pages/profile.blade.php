@@ -45,81 +45,75 @@
             </div>
 
             <!-- 3 favorites -->
-            <div class="flex gap-8 md:gap-12 lg:gap-16">
+            <div class="flex gap-8 md:gap-12 lg:gap-16 justify-end">
                 <!-- fav book -->
-                <div class="w-36 h-54 md:w-40 md:h-60 lg:w-48 lg:h-72 bg-gray-300 flex items-center justify-center relative"
-                    @if ($user->favoriteBookMedia) title="{{ $user->favoriteBookMedia->title }}{{ $user->favoriteBookMedia->creator ? ' - ' . $user->favoriteBookMedia->creator : '' }}" @endif>
-                    @if ($user->favoriteBookMedia)
-                        @if (Auth::id() === $user->id)
-                            <button onclick="removeFavorite('book')"
-                                class="absolute -top-5 -right-5 w-10 h-10 bg-red-500 text-white rounded-full flex items-center justify-center text-3xl font-bold hover:bg-red-600 transition-colors z-10">-</button>
-                        @endif
-                        @if ($user->favoriteBookMedia->coverimage && filter_var($user->favoriteBookMedia->coverimage, FILTER_VALIDATE_URL))
-                            <img src="{{ $user->favoriteBookMedia->coverimage }}"
-                                alt="{{ $user->favoriteBookMedia->title }}" class="w-full h-full object-cover">
+                @if ($user->favoriteBookMedia || Auth::id() === $user->id)
+                    <div class="w-36 h-54 md:w-40 md:h-60 lg:w-48 lg:h-72 bg-gray-300 flex items-center justify-center relative"
+                        @if ($user->favoriteBookMedia) title="{{ $user->favoriteBookMedia->title }}{{ $user->favoriteBookMedia->creator ? ' - ' . $user->favoriteBookMedia->creator : '' }}" @endif>
+                        @if ($user->favoriteBookMedia)
+                            @if (Auth::id() === $user->id)
+                                <button onclick="removeFavorite('book')"
+                                    class="absolute -top-5 -right-5 w-10 h-10 bg-red-500 text-white rounded-full flex items-center justify-center text-3xl font-bold hover:bg-red-600 transition-colors z-10">-</button>
+                            @endif
+                            @if ($user->favoriteBookMedia->coverimage && filter_var($user->favoriteBookMedia->coverimage, FILTER_VALIDATE_URL))
+                                <img src="{{ $user->favoriteBookMedia->coverimage }}"
+                                    alt="{{ $user->favoriteBookMedia->title }}" class="w-full h-full object-cover">
+                            @else
+                                <span
+                                    class="text-gray-600 text-lg md:text-xl text-center px-2">{{ $user->favoriteBookMedia->title }}</span>
+                            @endif
                         @else
-                            <span
-                                class="text-gray-600 text-lg md:text-xl text-center px-2">{{ $user->favoriteBookMedia->title }}</span>
-                        @endif
-                    @else
-                        @if (Auth::id() === $user->id)
                             <button onclick="openAddFavModal('book')"
                                 class="w-full h-full text-gray-600 text-5xl md:text-6xl lg:text-7xl font-light hover:text-gray-800 hover:bg-gray-400 transition-all cursor-pointer">+</button>
-                        @else
-                            <span class="text-gray-600 text-lg md:text-xl text-center px-2">[fav book]</span>
                         @endif
-                    @endif
-                </div>
+                    </div>
+                @endif
 
                 <!-- fav movie -->
-                <div class="w-36 h-54 md:w-40 md:h-60 lg:w-48 lg:h-72 bg-gray-300 flex items-center justify-center relative"
-                    @if ($user->favoriteFilmMedia) title="{{ $user->favoriteFilmMedia->title }}{{ $user->favoriteFilmMedia->creator ? ' - ' . $user->favoriteFilmMedia->creator : '' }}" @endif>
-                    @if ($user->favoriteFilmMedia)
-                        @if (Auth::id() === $user->id)
-                            <button onclick="removeFavorite('movie')"
-                                class="absolute -top-5 -right-5 w-10 h-10 bg-red-500 text-white rounded-full flex items-center justify-center text-3xl font-bold hover:bg-red-600 transition-colors z-10">-</button>
-                        @endif
-                        @if ($user->favoriteFilmMedia->coverimage && filter_var($user->favoriteFilmMedia->coverimage, FILTER_VALIDATE_URL))
-                            <img src="{{ $user->favoriteFilmMedia->coverimage }}"
-                                alt="{{ $user->favoriteFilmMedia->title }}" class="w-full h-full object-cover">
+                @if ($user->favoriteFilmMedia || Auth::id() === $user->id)
+                    <div class="w-36 h-54 md:w-40 md:h-60 lg:w-48 lg:h-72 bg-gray-300 flex items-center justify-center relative"
+                        @if ($user->favoriteFilmMedia) title="{{ $user->favoriteFilmMedia->title }}{{ $user->favoriteFilmMedia->creator ? ' - ' . $user->favoriteFilmMedia->creator : '' }}" @endif>
+                        @if ($user->favoriteFilmMedia)
+                            @if (Auth::id() === $user->id)
+                                <button onclick="removeFavorite('movie')"
+                                    class="absolute -top-5 -right-5 w-10 h-10 bg-red-500 text-white rounded-full flex items-center justify-center text-3xl font-bold hover:bg-red-600 transition-colors z-10">-</button>
+                            @endif
+                            @if ($user->favoriteFilmMedia->coverimage && filter_var($user->favoriteFilmMedia->coverimage, FILTER_VALIDATE_URL))
+                                <img src="{{ $user->favoriteFilmMedia->coverimage }}"
+                                    alt="{{ $user->favoriteFilmMedia->title }}" class="w-full h-full object-cover">
+                            @else
+                                <span
+                                    class="text-gray-600 text-lg md:text-xl text-center px-2">{{ $user->favoriteFilmMedia->title }}</span>
+                            @endif
                         @else
-                            <span
-                                class="text-gray-600 text-lg md:text-xl text-center px-2">{{ $user->favoriteFilmMedia->title }}</span>
-                        @endif
-                    @else
-                        @if (Auth::id() === $user->id)
                             <button onclick="openAddFavModal('movie')"
                                 class="w-full h-full text-gray-600 text-5xl md:text-6xl lg:text-7xl font-light hover:text-gray-800 hover:bg-gray-400 transition-all cursor-pointer">+</button>
-                        @else
-                            <span class="text-gray-600 text-lg md:text-xl text-center px-2">[fav movie]</span>
                         @endif
-                    @endif
-                </div>
+                    </div>
+                @endif
 
                 <!-- fav music -->
-                <div class="w-48 h-56 md:w-56 md:h-56 lg:w-72 lg:h-72 bg-gray-300 flex items-center justify-center relative"
-                    @if ($user->favoriteSongMedia) title="{{ $user->favoriteSongMedia->title }}{{ $user->favoriteSongMedia->creator ? ' - ' . $user->favoriteSongMedia->creator : '' }}" @endif>
-                    @if ($user->favoriteSongMedia)
-                        @if (Auth::id() === $user->id)
-                            <button onclick="removeFavorite('music')"
-                                class="absolute -top-5 -right-5 w-10 h-10 bg-red-500 text-white rounded-full flex items-center justify-center text-3xl font-bold hover:bg-red-600 transition-colors z-10">-</button>
-                        @endif
-                        @if ($user->favoriteSongMedia->coverimage && filter_var($user->favoriteSongMedia->coverimage, FILTER_VALIDATE_URL))
-                            <img src="{{ $user->favoriteSongMedia->coverimage }}"
-                                alt="{{ $user->favoriteSongMedia->title }}" class="w-full h-full object-cover">
+                @if ($user->favoriteSongMedia || Auth::id() === $user->id)
+                    <div class="w-48 h-56 md:w-56 md:h-56 lg:w-72 lg:h-72 bg-gray-300 flex items-center justify-center relative"
+                        @if ($user->favoriteSongMedia) title="{{ $user->favoriteSongMedia->title }}{{ $user->favoriteSongMedia->creator ? ' - ' . $user->favoriteSongMedia->creator : '' }}" @endif>
+                        @if ($user->favoriteSongMedia)
+                            @if (Auth::id() === $user->id)
+                                <button onclick="removeFavorite('music')"
+                                    class="absolute -top-5 -right-5 w-10 h-10 bg-red-500 text-white rounded-full flex items-center justify-center text-3xl font-bold hover:bg-red-600 transition-colors z-10">-</button>
+                            @endif
+                            @if ($user->favoriteSongMedia->coverimage && filter_var($user->favoriteSongMedia->coverimage, FILTER_VALIDATE_URL))
+                                <img src="{{ $user->favoriteSongMedia->coverimage }}"
+                                    alt="{{ $user->favoriteSongMedia->title }}" class="w-full h-full object-cover">
+                            @else
+                                <span
+                                    class="text-gray-600 text-lg md:text-xl text-center px-2">{{ $user->favoriteSongMedia->title }}</span>
+                            @endif
                         @else
-                            <span
-                                class="text-gray-600 text-lg md:text-xl text-center px-2">{{ $user->favoriteSongMedia->title }}</span>
-                        @endif
-                    @else
-                        @if (Auth::id() === $user->id)
                             <button onclick="openAddFavModal('music')"
                                 class="w-full h-full text-gray-600 text-5xl md:text-6xl lg:text-7xl font-light hover:text-gray-800 hover:bg-gray-400 transition-all cursor-pointer">+</button>
-                        @else
-                            <span class="text-gray-600 text-lg md:text-xl text-center px-2">[fav music]</span>
                         @endif
-                    @endif
-                </div>
+                    </div>
+                @endif
             </div>
         </div>
 
