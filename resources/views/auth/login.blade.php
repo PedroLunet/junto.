@@ -59,10 +59,10 @@
                     </div>
 
                     <div class="flex flex-col gap-8 items-center">
-                        <button type="submit" class="w-1/2 bg-[#38157a] text-white font-bold py-2 px-4 rounded-xl hover:bg-[#7455ad] transition-colors">Login</button>
+                        <x-button type="submit" variant="primary">Login</x-button>
                         <div class="flex items-center justify-center gap-2">
                             <span class="text-gray-800">Don't have an account yet?</span>
-                            <a class="text-center border border-gray-300 text-gray-700 font-bold py-2 px-4 rounded-xl hover:bg-gray-50 transition-colors" href="{{ route('register') }}">Register</a>
+                            <a class="text-center text-gray-700 font-bold py-2 px-4" href="{{ route('register') }}">Register</a>
                         </div>
                     </div>
 

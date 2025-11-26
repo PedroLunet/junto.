@@ -17,15 +17,15 @@
 
       <!-- Actions (like, comment) -->
       <div id="postActions" style="padding: 16px; border-top: 1px solid #ccc; display: flex; gap: 16px; align-items: center;">
-        <button onclick="likePost(event)" style="all: unset; cursor: pointer;">
+        <x-button onclick="likePost(event)" variant="primary">
           ❤️ <span id="likesCount">0</span>
-        </button>
-        <button onclick="focusComment()" style="all: unset; cursor: pointer;">
+        </x-button>
+        <x-button onclick="focusComment()" variant="primary">
           💬 <span id="commentsCount">0</span>
-        </button>
-        <button onclick="openReportModal(event)" id="reportButton" style="all: unset; cursor: pointer; margin-left: auto; color: #dc2626;">
+        </x-button>
+        <x-button onclick="openReportModal(event)" id="reportButton" variant="danger">
           🚩 Report
-        </button>
+        </x-button>
       </div>
     </div>
 
@@ -33,8 +33,8 @@
     <div style="width: 400px; display: flex; flex-direction: column;">
       <!-- Close button -->
       <div style="padding: 16px; border-bottom: 1px solid #ccc; display: flex; justify-content: flex-end;">
-        <button onclick="closePostModal()"
-          style="all: unset; cursor: pointer; font-size: 20px; line-height: 1;">&times;</button>
+        <x-button onclick="closePostModal()"
+          variant="primary">&times;</x-button>
       </div>
 
       <!-- Comments Section -->
@@ -46,8 +46,8 @@
           <input type="text" id="commentInput" placeholder="Add a comment..."
             style="flex: 1; padding: 8px; border: 1px solid #ccc; outline: none;"
             onkeypress="handleCommentKeyPress(event)">
-          <button onclick="submitComment()"
-            style="all: unset; cursor: pointer; padding: 8px 16px; border: 1px solid #000; white-space: nowrap;">Post</button>
+          <x-button onclick="submitComment()"
+            variant="primary">Post</x-button>
         </div>
       </div>
     </div>
@@ -64,8 +64,8 @@
     
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
       <h2 style="margin: 0; font-size: 20px; font-weight: 600;">Report Post</h2>
-      <button onclick="closeReportModal()"
-        style="all: unset; cursor: pointer; font-size: 24px; line-height: 1; color: #666;">&times;</button>
+      <x-button onclick="closeReportModal()"
+        style="all: unset; cursor: pointer; font-size: 24px; line-height: 1; color: #666;">&times;</x-button>
     </div>
 
     <p style="color: #666; margin-bottom: 16px;">Please provide a reason for reporting this post. Our team will review it.</p>
@@ -75,10 +75,10 @@
       maxlength="1000"></textarea>
 
     <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 16px;">
-      <button onclick="closeReportModal()"
-        style="all: unset; cursor: pointer; padding: 10px 20px; border: 1px solid #ccc; border-radius: 4px;">Cancel</button>
-      <button onclick="submitReport()"
-        style="all: unset; cursor: pointer; padding: 10px 20px; background: #dc2626; color: white; border-radius: 4px; font-weight: 500;">Submit Report</button>
+      <x-button onclick="closeReportModal()"
+        style="all: unset; cursor: pointer; padding: 10px 20px; border: 1px solid #ccc; border-radius: 4px;">Cancel</x-button>
+      <x-button onclick="submitReport()"
+        style="all: unset; cursor: pointer; padding: 10px 20px; background: #dc2626; color: white; border-radius: 4px; font-weight: 500;">Submit Report</x-button>
     </div>
   </div>
 </div>

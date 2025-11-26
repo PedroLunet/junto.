@@ -11,15 +11,15 @@
                     @if(auth()->check() && $post->username === auth()->user()->username)
                         <div class="absolute top-2 right-2">
                             @if($post->post_type === 'review')
-                                <button onclick="event.stopPropagation(); openEditReviewModal({{ $post->id }}, '{{ addslashes($post->content) }}', {{ $post->rating }}, '{{ addslashes($post->media_title) }}', '{{ $post->media_poster }}', '{{ $post->media_year }}', '{{ addslashes($post->media_creator) }}')" 
-                                        class="text-gray-500 hover:text-gray-700 p-1">
+                                <x-button onclick="event.stopPropagation(); openEditReviewModal({{ $post->id }}, '{{ addslashes($post->content) }}', {{ $post->rating }}, '{{ addslashes($post->media_title) }}', '{{ $post->media_poster }}', '{{ $post->media_year }}', '{{ addslashes($post->media_creator) }}')" 
+                                        variant="secondary">
                                     <i class="fas fa-edit"></i>
-                                </button>
+                                </x-button>
                             @else
-                                <button onclick="event.stopPropagation(); openEditModal({{ $post->id }}, '{{ addslashes($post->content) }}', '{{ $post->image_url ? asset('storage/' . $post->image_url) : '' }}')" 
-                                        class="text-gray-500 hover:text-gray-700 p-1">
+                                <x-button onclick="event.stopPropagation(); openEditModal({{ $post->id }}, '{{ addslashes($post->content) }}', '{{ $post->image_url ? asset('storage/' . $post->image_url) : '' }}')" 
+                                        variant="secondary">
                                     <i class="fas fa-edit"></i>
-                                </button>
+                                </x-button>
                             @endif
                         </div>
                     @endif
