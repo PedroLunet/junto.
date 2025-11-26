@@ -102,7 +102,7 @@
         </div>
     </div>
 
-    <x-post-modal />
+    <x-posts.post-modal />
     <x-edit-regular-modal />
     <x-edit-review-modal />
 

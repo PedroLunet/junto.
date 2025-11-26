@@ -5,6 +5,7 @@ use App\Models\Post;
 
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\FriendRequestController;
 use App\Http\Controllers\ReportController;
 
 use App\Http\Controllers\Auth\LoginController;
@@ -36,6 +37,9 @@ Route::middleware('auth')->controller(HomeController::class)->group(function () 
 
 Route::middleware('auth')->controller(ProfileController::class)->group(function () {
     Route::get('/profile', 'index')->name('profile');
+    Route::put('/profile/update', 'update')->name('profile.update');
+    Route::post('/profile/remove-favorite', 'removeFavorite')->name('profile.remove-favorite');
+    Route::post('/profile/add-favorite', 'addFavorite')->name('profile.add-favorite');
 });
 
 // Authentication
@@ -55,6 +59,18 @@ Route::controller(RegisterController::class)->group(function () {
 
 Route::controller(SearchUserController::class)->group(function () {
     Route::get('/search-users', 'index')->name('search.users');
+});
+
+// Friend Requests (authentication required)
+Route::middleware('auth')->controller(FriendRequestController::class)->group(function () {
+    Route::get('/friend-requests', 'index')->name('friend-requests.index');
+    Route::get('/friend-requests/sent', 'sent')->name('friend-requests.sent');
+    Route::post('/friend-requests', 'store')->name('friend-requests.store');
+    Route::post('/friend-requests/{requestId}/accept', 'accept')->name('friend-requests.accept');
+    Route::post('/friend-requests/{requestId}/reject', 'reject')->name('friend-requests.reject');
+    Route::delete('/friend-requests/{requestId}/cancel', 'cancel')->name('friend-requests.cancel');
+    Route::get('/friends', 'friends')->name('friends.index');
+    Route::delete('/friends/{userId}', 'unfriend')->name('friends.unfriend');
 });
 
 // movie routes
@@ -96,4 +112,3 @@ Route::middleware('auth')->controller(ReportController::class)->group(function (
 Route::controller('auth')->controller(ProfileController::class)->group(function () {
     Route::get('/{username}', 'show')->name('profile.show');
 });
-

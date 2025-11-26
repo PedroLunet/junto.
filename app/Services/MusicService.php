@@ -16,54 +16,83 @@ class MusicService
     {
         $this->clientId = config('services.spotify.client_id');
         $this->clientSecret = config('services.spotify.client_secret');
-        $this->authUrl = 'https://accounts.spotify.com/api/token';
         $this->baseUrl = 'https://api.spotify.com/v1';
     }
 
-    protected function getAccessToken()
+    // get Spotify access token for API requests
+    private function getAccessToken(): ?string
     {
-        return Cache::remember('spotify_access_token', 3500, function () {
-            $response = Http::asForm()->post($this->authUrl, [
-                'grant_type' => 'client_credentials',
-                'client_id' => $this->clientId,
-                'client_secret' => $this->clientSecret,
-            ]);
-
-            if ($response->successful()) {
-                return $response->json()['access_token'];
-            }
-
+        if (!$this->clientId || !$this->clientSecret) {
             return null;
-        });
+        }
+
+        $headers = [
+            'Authorization' => 'Basic ' . base64_encode($this->clientId . ':' . $this->clientSecret),
+            'Content-Type' => 'application/x-www-form-urlencoded',
+        ];
+
+        $response = Http::withHeaders($headers)->asForm()->post('https://accounts.spotify.com/api/token', [
+            'grant_type' => 'client_credentials',
+        ]);
+
+        $result = $response->json();
+        return $result['access_token'] ?? null;
     }
 
-    public function searchTracks($query)
+    // search for tracks on Spotify
+    public function searchTracks($query, $limit = 10)
     {
         $token = $this->getAccessToken();
 
         if (!$token) {
-            return ['error' => 'Unable to authenticate with Spotify'];
+            return ['tracks' => ['items' => []]];
         }
 
-        $response = Http::withToken($token)->get("{$this->baseUrl}/search", [
+        $response = Http::withHeaders([
+            'Authorization' => 'Bearer ' . $token
+        ])->get("{$this->baseUrl}/search", [
             'q' => $query,
             'type' => 'track',
-            'limit' => 10
+            'limit' => $limit
         ]);
 
         return $response->json();
     }
 
+    // get a specific track by ID
     public function getTrack($id)
     {
         $token = $this->getAccessToken();
 
         if (!$token) {
-            return ['error' => 'Unable to authenticate with Spotify'];
+            return null;
         }
 
-        $response = Http::withToken($token)->get("{$this->baseUrl}/tracks/{$id}");
+        $response = Http::withHeaders([
+            'Authorization' => 'Bearer ' . $token
+        ])->get("{$this->baseUrl}/tracks/{$id}");
 
         return $response->json();
+    }
+
+    // format raw Spotify API data into standardized format
+    public function formatMusicData(array $spotifyTracks): array
+    {
+        $formattedTracks = [];
+
+        foreach ($spotifyTracks as $track) {
+            $formattedTracks[] = [
+                'id' => $track['id'] ?? null,
+                'title' => $track['name'] ?? 'Unknown Title',
+                'creator' => isset($track['artists'][0]['name']) ? $track['artists'][0]['name'] : 'Unknown Artist',
+                'releaseYear' => isset($track['album']['release_date']) ? substr($track['album']['release_date'], 0, 4) : null,
+                'coverImage' => isset($track['album']['images'][0]['url']) ? $track['album']['images'][0]['url'] : null,
+                'releaseyear' => isset($track['album']['release_date']) ? substr($track['album']['release_date'], 0, 4) : null,
+                'coverimage' => isset($track['album']['images'][0]['url']) ? $track['album']['images'][0]['url'] : null,
+                'type' => 'music'
+            ];
+        }
+
+        return $formattedTracks;
     }
 }

@@ -31,7 +31,7 @@ END $do$ LANGUAGE plpgsql;
 -- MEDIA (Base)
 CREATE TABLE media (
     id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    title VARCHAR(255) NOT NULL,
+    title TEXT NOT NULL,
     creator VARCHAR(255) NOT NULL,
     releaseYear INT,
     coverImage TEXT
@@ -542,7 +542,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
--- Create music
+-- Create media
 CREATE OR REPLACE FUNCTION fn_create_music(
     p_title VARCHAR(255),
     p_creator VARCHAR(255),
@@ -579,6 +579,24 @@ BEGIN
     INSERT INTO book (mediaId)
     VALUES (new_media_id);
 
+    RETURN new_media_id;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION fn_create_film(
+        p_title VARCHAR(255),
+        p_creator VARCHAR(255),
+        p_release_year INT,
+        p_cover_image VARCHAR(255)
+    ) RETURNS INTEGER AS $$
+DECLARE new_media_id INTEGER;
+BEGIN
+    INSERT INTO media (title, creator, releaseYear, coverImage)
+    VALUES ( p_title, p_creator, p_release_year, p_cover_image)
+    RETURNING id INTO new_media_id;
+
+    INSERT INTO film (mediaId)
+    VALUES (new_media_id);
     RETURN new_media_id;
 END;
 $$ LANGUAGE plpgsql;
@@ -747,6 +765,46 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+-- Get user friendship count
+CREATE OR REPLACE FUNCTION fn_get_friendship_count(p_user_id INT) RETURNS INT AS $$
+DECLARE
+    friendship_count INT;
+BEGIN
+    SELECT COUNT(*) INTO friendship_count
+    FROM friendship
+    WHERE userId1 = p_user_id OR userId2 = p_user_id;
+    
+    RETURN friendship_count;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Get user posts count  
+CREATE OR REPLACE FUNCTION fn_get_user_posts_count(p_user_id INT) RETURNS INT AS $$
+DECLARE
+    posts_count INT;
+BEGIN
+    SELECT COUNT(*) INTO posts_count
+    FROM post
+    WHERE userId = p_user_id;
+    
+    RETURN posts_count;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Check if two users are friends
+CREATE OR REPLACE FUNCTION fn_are_friends(p_user1_id INT, p_user2_id INT) RETURNS BOOLEAN AS $$
+DECLARE
+    friendship_exists BOOLEAN := FALSE;
+BEGIN
+    SELECT EXISTS(
+        SELECT 1 FROM friendship 
+        WHERE (userId1 = LEAST(p_user1_id, p_user2_id) AND userId2 = GREATEST(p_user1_id, p_user2_id))
+    ) INTO friendship_exists;
+    
+    RETURN friendship_exists;
+END;
+$$ LANGUAGE plpgsql;
+
 --
 -- Insert values
 --
@@ -782,14 +840,14 @@ RESTART IDENTITY CASCADE;
 
 -- MEDIA
 INSERT INTO media (title, creator, releaseYear, coverImage) VALUES 
-    ('Inception', 'Christopher Nolan', 2010, 'inception.jpg'),
-    ('The Great Gatsby', 'F. Scott Fitzgerald', 1925, 'gatsby.jpg'),
-    ('Random Access Memories', 'Daft Punk', 2013, 'ram.jpg'),
-    ('The Matrix', 'Lana Wachowski', 1999, 'matrix.jpg'),
-    ('To Kill a Mockingbird', 'Harper Lee', 1960, 'mockingbird.jpg'),
-    ('Interstellar', 'Christopher Nolan', 2014, 'interstellar.jpg'),
-    ('The Beatles: Abbey Road', 'The Beatles', 1969, 'abbeyroad.jpg'),
-    ('1984', 'George Orwell', 1949, '1984.jpg');
+    ('Inception', 'Christopher Nolan', 2010, 'https://image.tmdb.org/t/p/w300/xlaY2zyzMfkhk0HSC5VUwzoZPU1.jpg'),
+    ('The Great Gatsby', 'F. Scott Fitzgerald', 2003, 'http://books.google.com/books/content?id=iXn5U2IzVH0C&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api'),
+    ('Get Lucky', 'Daft Punk', 2013, 'https://i.scdn.co/image/ab67616d0000b2739b9b36b0e22870b9f542d937'),
+    ('The Matrix', 'Lana Wachowski', 1999, 'https://image.tmdb.org/t/p/w300/p96dm7sCMn4VYAStA6siNz30G1r.jpg'),
+    ('To Kill a Mockingbird', 'Harper Lee', 1960, 'http://books.google.com/books/content?id=DRagKAMw8AcC&printsec=frontcover&img=1&zoom=1&source=gbs_api'),
+    ('Interstellar', 'Christopher Nolan', 2014, 'https://image.tmdb.org/t/p/w300/gEU2QniE6E77NI6lCU6MxlNBvIx.jpg'),
+    ('Strawberry Fields Forever - Remastered 2009', 'The Beatles', 1967, 'https://i.scdn.co/image/ab67616d0000b273692d9189b2bd75525893f0c1'),
+    ('1984', 'George Orwell', 2021, 'http://books.google.com/books/content?id=5AwIEAAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api');
 
 INSERT INTO film (mediaId) VALUES 
     (1), (4), (6);
@@ -807,11 +865,13 @@ INSERT INTO users (
     favoriteFilm, favoriteBook, favoriteSong
 ) VALUES 
     ('Alice Martins', 'alice', 'alice@example.org', '$2y$10$HfzIhGCCaxqyaIdGgjARSuOKAcm1Uy82YfLuNaajn6JrjLWy9Sj/W', 'Movie lover', 'alice.jpg', FALSE, FALSE, 1, 2, 3),
-    ('Bruno Silva', 'bruno', 'bruno@example.org', 'hash2', 'Reader & gamer', 'bruno.jpg', FALSE, TRUE, 4, 5, 3),
-    ('Carla Dias', 'carla', 'carla@example.org', 'hash3', 'Music addict', 'carla.jpg', TRUE, FALSE, 1, 2, 7),
-    ('David Costa', 'david', 'david@example.org', 'hash4', 'Cinephile', 'david.jpg', FALSE, FALSE, 6, NULL, NULL),
-    ('Eva Rocha', 'eva', 'eva@example.org', 'hash5', 'Book enthusiast', 'eva.jpg', TRUE, FALSE, 4, 8, 7),
-    ('Filipe Moreira', 'filipe', 'filipe@example.org', 'hash6', 'Vinyl collector', 'filipe.jpg', FALSE, FALSE, 1, NULL, 3);
+    ('Bruno Silva', 'bruno', 'bruno@example.org', '$2y$10$HfzIhGCCaxqyaIdGgjARSuOKAcm1Uy82YfLuNaajn6JrjLWy9Sj/W', 'Reader & gamer', 'bruno.jpg', FALSE, TRUE, 4, 5, 3),
+    ('Carla Dias', 'carla', 'carla@example.org', '$2y$10$HfzIhGCCaxqyaIdGgjARSuOKAcm1Uy82YfLuNaajn6JrjLWy9Sj/W', 'Music addict', 'carla.jpg', TRUE, FALSE, 1, 2, 7),
+    ('David Costa', 'david', 'david@example.org', '$2y$10$HfzIhGCCaxqyaIdGgjARSuOKAcm1Uy82YfLuNaajn6JrjLWy9Sj/W', 'Cinephile', 'david.jpg', FALSE, FALSE, 6, NULL, NULL),
+    ('Eva Rocha', 'eva', 'eva@example.org', '$2y$10$HfzIhGCCaxqyaIdGgjARSuOKAcm1Uy82YfLuNaajn6JrjLWy9Sj/W', 'Book enthusiast', 'eva.jpg', TRUE, FALSE, 4, 8, 7),
+    ('Filipe Moreira', 'filipe', 'filipe@example.org', '$2y$10$HfzIhGCCaxqyaIdGgjARSuOKAcm1Uy82YfLuNaajn6JrjLWy9Sj/W', 'Vinyl collector', 'filipe.jpg', FALSE, FALSE, 1, NULL, 3),
+    ('John Doe', 'john_doe', 'john@example.org', '$2y$10$HfzIhGCCaxqyaIdGgjARSuOKAcm1Uy82YfLuNaajn6JrjLWy9Sj/W', 'Private person', 'john.jpg', TRUE, FALSE, 1, 2, 3),
+    ('Jane Smith', 'jane_doe', 'jane@example.org', '$2y$10$HfzIhGCCaxqyaIdGgjARSuOKAcm1Uy82YfLuNaajn6JrjLWy9Sj/W', 'Keep it secret', 'jane.jpg', TRUE, FALSE, 4, 5, 7);
 
 -- POSTS
 INSERT INTO post (userId) VALUES 
@@ -823,7 +883,7 @@ INSERT INTO standard_post (postId, text, imageUrl) VALUES
     (5, 'Finally finished 1984. Heavy stuff.', 'posts/1984-review.jpg');
 
 INSERT INTO review (postId, rating, mediaId, content) VALUES 
-    (3, 5, 3, 'This album is timeless.'),
+    (3, 5, 3, 'This song is timeless.'),
     (4, 4, 6, 'Interstellar soundtrack gives me chills.'),
     (6, 3, 8, 'Good but depressing.');
 
@@ -883,7 +943,8 @@ INSERT INTO friendship (userId1, userId2) VALUES
     (2, 4),
     (3, 5),
     (4, 6),
-    (2, 5);
+    (2, 5),
+    (2, 3);
 
 -- NOTIFICATIONS
 -- Note: Notifications are automatically created by triggers when:

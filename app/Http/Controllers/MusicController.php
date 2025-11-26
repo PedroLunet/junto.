@@ -5,38 +5,38 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Services\MusicService;
+use App\Services\FavoriteService;
 
 class MusicController extends Controller
 {
     protected $musicService;
+    protected $favoriteService;
 
-    public function __construct(MusicService $musicService)
+    public function __construct(MusicService $musicService, FavoriteService $favoriteService)
     {
         $this->musicService = $musicService;
+        $this->favoriteService = $favoriteService;
     }
 
     public function search(Request $request)
     {
+        $request->validate([
+            'q' => 'required|string|min:2|max:100'
+        ]);
+
         $query = $request->input('q');
         $formattedSongs = [];
 
         if ($query) {
-            $results = $this->musicService->searchTracks($query);
+            $results = $this->musicService->searchTracks($query, 10);
 
             if (isset($results['tracks']['items'])) {
-                foreach ($results['tracks']['items'] as $track) {
-                    $formattedSongs[] = [
-                        'id'          => $track['id'],
-                        'title'       => $track['name'],
-                        'creator'     => $track['artists'][0]['name'], // first artist
-                        'releaseyear' => substr($track['album']['release_date'], 0, 4),
-                        'coverimage'  => $track['album']['images'][0]['url'] ?? null,
-                    ];
-                }
+                $formattedSongs = $this->musicService->formatMusicData($results['tracks']['items']);
             }
         }
 
-        if ($request->wantsJson() || $request->ajax()) {
+        // check if this is an AJAX request
+        if ($request->ajax() || $request->expectsJson()) {
             return response()->json($formattedSongs);
         }
 

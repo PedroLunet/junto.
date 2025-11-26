@@ -2,6 +2,10 @@
 
 namespace App\Models;
 
+use App\Models\Friendship;
+use App\Models\FriendRequest;
+use App\Models\Notification;
+use App\Models\Request;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -14,7 +18,7 @@ class User extends Authenticatable
     use HasFactory, Notifiable;
 
     // Disable default created_at and updated_at timestamps for this model.
-    public $timestamps  = false;
+    public $timestamps = false;
 
     /**
      * The attributes that are mass assignable.
@@ -27,6 +31,7 @@ class User extends Authenticatable
     protected $fillable = [
         'name',
         'username',
+        'bio',
         'email',
         'passwordhash',
     ];
@@ -40,6 +45,12 @@ class User extends Authenticatable
     protected $hidden = [
         'passwordhash',
         'remember_token',
+    ];
+
+    protected $casts = [
+        'isprivate' => 'boolean',
+        'isadmin' => 'boolean',
+        'isblocked' => 'boolean',
     ];
 
     /**
@@ -87,5 +98,101 @@ class User extends Authenticatable
     public function favoriteSongMedia()
     {
         return $this->belongsTo(Media::class, 'favoritesong', 'id');
+    }
+
+    /**
+     * Get all friends of this user (both directions).
+     */
+    public function friends()
+    {
+        // Friends where this user is user1
+        $friends1 = $this->belongsToMany(
+            User::class,
+            'friendship',
+            'userid1',
+            'userid2'
+        );
+
+        // Friends where this user is user2
+        $friends2 = $this->belongsToMany(
+            User::class,
+            'friendship',
+            'userid2',
+            'userid1'
+        );
+
+        // Merge both collections
+        return $friends1->union($friends2->getQuery());
+    }
+
+    /**
+     * Get friend requests sent by this user.
+     */
+    public function sentFriendRequests()
+    {
+        return $this->hasMany(Request::class, 'senderid', 'id')
+            ->whereHas('friendRequest');
+    }
+
+    /**
+     * Get friend requests received by this user.
+     */
+    public function receivedFriendRequests()
+    {
+        return $this->hasManyThrough(
+            FriendRequest::class,
+            Notification::class,
+            'receiverid',    // Foreign key on notifications table
+            'requestid',     // Foreign key on friend_requests table
+            'id',            // Local key on users table
+            'id'             // Local key on notifications table
+        )->whereHas('request', function ($query) {
+            $query->where('status', 'pending');
+        });
+    }
+
+    /**
+     * Get all notifications for this user.
+     */
+    public function notifications()
+    {
+        return $this->hasMany(Notification::class, 'receiverid', 'id')
+            ->orderBy('createdat', 'desc');
+    }
+
+    /**
+     * Check if this user is friends with another user.
+     */
+    public function isFriendsWith(int $userId): bool
+    {
+        return Friendship::exists($this->id, $userId);
+    }
+
+    /**
+     * Check if this user has sent a friend request to another user.
+     */
+    public function hasSentFriendRequestTo(int $userId): bool
+    {
+        return Request::where('senderid', $this->id)
+            ->whereHas('notification', function ($query) use ($userId) {
+                $query->where('receiverid', $userId);
+            })
+            ->where('status', 'pending')
+            ->whereHas('friendRequest')
+            ->exists();
+    }
+
+    /**
+     * Check if this user has received a friend request from another user.
+     */
+    public function hasReceivedFriendRequestFrom(int $userId): bool
+    {
+        return Request::where('senderid', $userId)
+            ->whereHas('notification', function ($query) {
+                $query->where('receiverid', $this->id);
+            })
+            ->where('status', 'pending')
+            ->whereHas('friendRequest')
+            ->exists();
     }
 }

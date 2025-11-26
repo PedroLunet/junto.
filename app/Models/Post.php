@@ -10,6 +10,21 @@ class Post extends Model
     protected $table = 'lbaw2544.post';
     public $timestamps = false;
 
+    public function standardPost()
+    {
+        return $this->hasOne(StandardPost::class, 'postid', 'id');
+    }
+
+    public function review()
+    {
+        return $this->hasOne(Review::class, 'postid', 'id');
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'userid', 'id');
+    }
+
     public static function getPostsWithDetails($currentUserId = null)
     {
         $sql = "
@@ -127,5 +142,48 @@ class Post extends Model
             'liked' => $liked,
             'likes_count' => $count[0]->count
         ];
+    }
+
+    public static function getUserStandardPosts($userId)
+    {
+        return DB::select("
+            SELECT 
+                p.id,
+                p.createdAt as created_at,
+                u.name as author_name,
+                u.username,
+                sp.text as content,
+                sp.imageUrl as image_url,
+                (SELECT COUNT(*) FROM lbaw2544.post_like pl WHERE pl.postId = p.id) as likes_count,
+                (SELECT COUNT(*) FROM lbaw2544.comment c WHERE c.postId = p.id) as comments_count
+            FROM lbaw2544.post p
+            JOIN lbaw2544.users u ON p.userId = u.id
+            JOIN lbaw2544.standard_post sp ON p.id = sp.postId
+            WHERE p.userId = ?
+            ORDER BY p.createdAt DESC
+        ", [$userId]);
+    }
+
+    public static function getUserReviewPosts($userId)
+    {
+        return DB::select("
+            SELECT 
+                p.id,
+                p.createdAt as created_at,
+                u.name as author_name,
+                u.username,
+                r.content,
+                r.rating,
+                m.title as media_title,
+                m.coverimage as image_url,
+                (SELECT COUNT(*) FROM lbaw2544.post_like pl WHERE pl.postId = p.id) as likes_count,
+                (SELECT COUNT(*) FROM lbaw2544.comment c WHERE c.postId = p.id) as comments_count
+            FROM lbaw2544.post p
+            JOIN lbaw2544.users u ON p.userId = u.id
+            JOIN lbaw2544.review r ON p.id = r.postId
+            JOIN lbaw2544.media m ON r.mediaId = m.id
+            WHERE p.userId = ?
+            ORDER BY p.createdAt DESC
+        ", [$userId]);
     }
 }
