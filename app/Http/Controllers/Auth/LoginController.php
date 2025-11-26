@@ -1,5 +1,5 @@
 <?php
- 
+
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
@@ -21,7 +21,10 @@ class LoginController extends Controller
     public function showLoginForm()
     {
         if (Auth::check()) {
-            return redirect()->route('home');
+            // redirect admin users to admin dashboard, regular users to home
+            return Auth::user()->isadmin
+                ? redirect()->route('admin.dashboard')
+                : redirect()->route('home');
         } else {
             $posts = Post::getPostsWithDetails();
             return view('auth.login', compact('posts'));
@@ -42,16 +45,17 @@ class LoginController extends Controller
             'email' => ['required', 'email'],
             'password' => ['required'],
         ]);
- 
+
         // Attempt to authenticate and log in the user.
         if (Auth::attempt($credentials, $request->filled('remember'))) {
             // Regenerate the session ID to prevent session fixation attacks.
             $request->session()->regenerate();
- 
-            // Redirect the user to their intended destination (default: /home).
-            return redirect()->intended(route('home'));
+
+            // Redirect admin users to admin dashboard, regular users to home
+            $redirectRoute = Auth::user()->isadmin ? 'admin.dashboard' : 'home';
+            return redirect()->intended(route($redirectRoute));
         }
- 
+
         // Authentication failed: return back with an error message.
         return back()->withErrors([
             'email' => 'The provided credentials do not match our records.',
