@@ -7,7 +7,7 @@
 
     <form method="get">
         <input value="{{ old('query', request('query')) }}" type="text" name="query" />
-        <button>Search</button>
+        <x-button>Search</x-button>
     </form>
 
     <div id="user-list">

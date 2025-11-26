@@ -53,7 +53,7 @@
         autocomplete="new-password"
     >
 
-    <button type="submit">Register</button>
-    <a class="button button-outline" href="{{ route('login') }}">Login</a>
+    <x-button type="submit">Register</x-button>
+    <a class="text-red-500" href="{{ route('login') }}">Login</a>
 </form>
 @endsection

@@ -37,7 +37,7 @@
     
 
             <div class="px-4 mb-4 flex justify-center">
-                <button id="regular-button" class="w-1/2 bg-[#7455ad] hover:bg-[#5a3d8a] text-white py-2 px-6 rounded-lg text-3xl transition-all duration-200 hover:scale-105"> + </button>
+                <x-button id="regular-button" class="w-1/2 bg-[#7455ad] hover:bg-[#5a3d8a] text-white py-2 px-6 rounded-lg text-3xl transition-all duration-200 hover:scale-105"> + </x-button>
             </div>
             
             @auth

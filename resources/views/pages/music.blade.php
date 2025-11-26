@@ -9,7 +9,7 @@
     <!-- Search Form -->
     <form method="GET" action="{{ route('music.search') }}">
         <input type="text" name="q" value="{{ request('q') }}" placeholder="Search for songs, artists...">
-        <button type="submit">Search</button>
+        <x-button type="submit">Search</x-button>
     </form>
 
     <!-- Success Message -->
@@ -46,7 +46,7 @@
             <input type="hidden" name="releaseyear" value="{{ $song['releaseyear'] }}">
             <input type="hidden" name="coverimage" value="{{ $song['coverimage'] }}">
 
-            <button type="submit">Add to Library</button>
+            <x-button type="submit">Add to Library</x-button>
         </form>
     </div>
     @endforeach

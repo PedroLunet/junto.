@@ -40,8 +40,8 @@
         Remember me
     </label>
 
-    <button type="submit">Login</button>
-    <a class="button button-outline" href="{{ route('register') }}">Register</a>
+    <x-button type="submit">Login</x-button>
+    <a class="text-red-500" href="{{ route('register') }}">Register</a>
 
     @if (session('status'))
         <p class="success" role="status">{{ session('status') }}</p>
