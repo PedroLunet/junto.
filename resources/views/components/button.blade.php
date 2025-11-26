@@ -12,7 +12,7 @@
 @php
     $defaultStyle = '';
     if ($variant === 'primary') {
-        $defaultStyle = 'background-image: linear-gradient(45deg, #F75C03 0%, #291720 65%, #291720 100%);';
+        $defaultStyle = 'background-image: linear-gradient(45deg, #F75C03 0%, #820263 50%, #291720 100%);';
     } elseif ($variant === 'special') {
         $defaultStyle = 'box-shadow: -2px 4px 8px 0px rgba(0,0,0,0.25), 2px -2px 4px 2px rgba(130,2,99,0.2) inset, -2px 2px 4px 2px rgba(247,92,3,0.3) inset, -2px -2px 2px 0px rgba(0,0,0,0.3) inset, 2px 2px 4px 0px rgba(141,141,141,0.6) inset;';
     }
