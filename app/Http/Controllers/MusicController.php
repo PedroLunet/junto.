@@ -3,27 +3,16 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\DB;
+use App\Services\MusicService;
 
 class MusicController extends Controller
 {
-    private function getAccessToken()
+    protected $musicService;
+
+    public function __construct(MusicService $musicService)
     {
-        $clientId = config('services.spotify.client_id');
-        $clientSecret = config('services.spotify.client_secret');
-
-        // Spotify requires the keys to be Base64 encoded for the token request
-        $headers = [
-            'Authorization' => 'Basic ' . base64_encode($clientId . ':' . $clientSecret),
-            'Content-Type' => 'application/x-www-form-urlencoded',
-        ];
-
-        $response = Http::withHeaders($headers)->asForm()->post('https://accounts.spotify.com/api/token', [
-            'grant_type' => 'client_credentials',
-        ]);
-
-        return $response->json()['access_token'] ?? null;
+        $this->musicService = $musicService;
     }
 
     public function search(Request $request)
@@ -32,33 +21,23 @@ class MusicController extends Controller
         $formattedSongs = [];
 
         if ($query) {
-            // 1. get token
-            $token = $this->getAccessToken();
+            $results = $this->musicService->searchTracks($query);
 
-            if ($token) {
-                // 2. search API using the token
-                $response = Http::withHeaders([
-                    'Authorization' => 'Bearer ' . $token
-                ])->get('https://api.spotify.com/v1/search', [
-                    'q' => $query,
-                    'type' => 'track',
-                    'limit' => 10 // limit results to 10
-                ]);
-
-                $results = $response->json();
-
-                // 3. format the data
-                if (isset($results['tracks']['items'])) {
-                    foreach ($results['tracks']['items'] as $track) {
-                        $formattedSongs[] = [
-                            'title'       => $track['name'],
-                            'creator'     => $track['artists'][0]['name'], // first artist
-                            'releaseyear' => substr($track['album']['release_date'], 0, 4),
-                            'coverimage'  => $track['album']['images'][0]['url'] ?? null,
-                        ];
-                    }
+            if (isset($results['tracks']['items'])) {
+                foreach ($results['tracks']['items'] as $track) {
+                    $formattedSongs[] = [
+                        'id'          => $track['id'],
+                        'title'       => $track['name'],
+                        'creator'     => $track['artists'][0]['name'], // first artist
+                        'releaseyear' => substr($track['album']['release_date'], 0, 4),
+                        'coverimage'  => $track['album']['images'][0]['url'] ?? null,
+                    ];
                 }
             }
+        }
+
+        if ($request->wantsJson() || $request->ajax()) {
+            return response()->json($formattedSongs);
         }
 
         return view('pages.music', ['songs' => $formattedSongs]);
@@ -66,6 +45,7 @@ class MusicController extends Controller
 
     public function store(Request $request)
     {
+
         $validated = $request->validate([
             'title'       => 'required|string|max:255',
             'creator'     => 'required|string|max:255',

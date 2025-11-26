@@ -89,6 +89,7 @@
             <x-create-regular-modal/>
             <x-create-movie-review-modal/>
             <x-create-book-review-modal/>
+            <x-create-music-review-modal/>
         @endauth
     </body>
 </html>

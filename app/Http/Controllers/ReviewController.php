@@ -7,16 +7,19 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use App\Services\MovieService;
 use App\Services\BookService;
+use App\Services\MusicService;
 
 class ReviewController extends Controller
 {
     protected $movieService;
     protected $bookService;
+    protected $musicService;
 
-    public function __construct(MovieService $movieService, BookService $bookService)
+    public function __construct(MovieService $movieService, BookService $bookService, MusicService $musicService)
     {
         $this->movieService = $movieService;
         $this->bookService = $bookService;
+        $this->musicService = $musicService;
     }
 
     public function store(Request $request)
@@ -90,6 +93,24 @@ class ReviewController extends Controller
                         }
                     }
                 }
+            } elseif ($request->input('type') === 'music') {
+                $request->validate([
+                    'spotify_id' => 'required|string',
+                ]);
+
+                $track = $this->musicService->getTrack($request->spotify_id);
+
+                if (!$track || isset($track['error'])) {
+                    return response()->json(['success' => false, 'message' => 'Track not found on Spotify'], 404);
+                }
+
+                $title = $track['name'];
+                $creator = $track['artists'][0]['name'] ?? 'Unknown Artist';
+                $releaseDate = $track['album']['release_date'] ?? null;
+                $releaseYear = $releaseDate ? (int)substr($releaseDate, 0, 4) : null;
+                $coverImage = $track['album']['images'][0]['url'] ?? null;
+                $mediaType = 'music';
+
             } else {
                 return response()->json(['success' => false, 'message' => 'Media type not supported yet'], 400);
             }
@@ -119,6 +140,8 @@ class ReviewController extends Controller
                     DB::table('lbaw2544.book')->insert(['mediaid' => $mediaId]);
                 } elseif ($mediaType === 'film') {
                     DB::table('lbaw2544.film')->insert(['mediaid' => $mediaId]);
+                } elseif ($mediaType === 'music') {
+                    DB::table('lbaw2544.music')->insert(['mediaid' => $mediaId]);
                 }
             }
 
