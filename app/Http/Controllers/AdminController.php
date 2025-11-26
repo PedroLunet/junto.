@@ -69,6 +69,7 @@ class AdminController extends Controller
     // display the admin users page
     public function users()
     {
-        return view('admin.users');
+        $users = User::orderBy('createdat', 'desc')->get();
+        return view('admin.users', compact('users'));
     }
 }
