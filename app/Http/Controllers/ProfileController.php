@@ -140,4 +140,38 @@ class ProfileController extends Controller
 
         return response()->json($result);
     }
+
+    public function update(Request $request)
+    {
+        $user = Auth::user();
+        
+        // Validate the input
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'username' => 'required|string|max:255|unique:users,username,' . $user->id,
+            'bio' => 'nullable|string|max:1000'
+        ]);
+
+        try {
+            // Update user data using direct DB query
+            DB::table('users')
+                ->where('id', $user->id)
+                ->update([
+                    'name' => $request->input('name'),
+                    'username' => $request->input('username'),
+                    'bio' => $request->input('bio')
+                ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Profile updated successfully',
+                'redirect_url' => '/' . $request->input('username') // redirect to new username if changed
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'An error occurred while updating your profile'
+            ], 500);
+        }
+    }
 }

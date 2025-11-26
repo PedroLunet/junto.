@@ -95,5 +95,72 @@
             }, 100);
         };
 
+        // form submission
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const submitButton = document.querySelector('button[type="submit"][form="editProfileForm"]');
+            const originalText = submitButton.textContent;
+            
+            // disable submit button and show loading state
+            submitButton.disabled = true;
+            submitButton.textContent = 'Saving...';
+            
+            // clear previous error messages
+            const errorElements = form.querySelectorAll('.error-message');
+            errorElements.forEach(el => el.remove());
+            
+            const formData = new FormData(form);
+            const data = {
+                name: formData.get('name'),
+                username: formData.get('username'),
+                bio: formData.get('bio')
+            };
+
+            fetch('/profile/update', {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // close modal and redirect if username changed
+                    closeModalHandler();
+                    if (data.redirect_url) {
+                        window.location.href = data.redirect_url;
+                    } else {
+                        window.location.reload();
+                    }
+                } else {
+                    // show error message
+                    showError('An error occurred: ' + (data.message || 'Unknown error'));
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showError('An error occurred while updating your profile');
+            })
+            .finally(() => {
+                // re-enable submit button
+                submitButton.disabled = false;
+                submitButton.textContent = originalText;
+            });
+        });
+        
+        // helper function to show error messages
+        function showError(message) {
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'error-message bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4';
+            errorDiv.textContent = message;
+            
+            const firstInput = form.querySelector('input');
+            firstInput.parentNode.insertBefore(errorDiv, firstInput);
+        }
+
     });
 </script>
