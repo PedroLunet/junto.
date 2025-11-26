@@ -1,44 +1,49 @@
 
 <!-- modal overlay -->
-<div id="create-movie-review-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50">
+<div id="create-book-review-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50">
     <div class="flex items-center justify-center min-h-screen p-4">
         <div class="bg-white rounded-2xl shadow-xl max-w-6xl w-full min-h-[400px]">
 
             <!-- modal header -->
             <div class="flex justify-between items-center p-8 border-b">
-                <h3 class="text-4xl font-semibold">Create Movie Review</h3>
+                <h3 class="text-4xl font-semibold">Create Book Review</h3>
             </div>
             
             <!-- modal body -->
             <div class="p-8">
-                <form id="create-movie-review-form" action="{{ route('reviews.store') }}" method="POST">
+                <form id="create-book-review-form" action="{{ route('reviews.store') }}" method="POST">
                     @csrf
-                    <input type="hidden" name="type" value="movie">
+                    <input type="hidden" name="type" value="book">
                     
-                    <!-- Movie Search Section -->
+                    <!-- Book Search Section -->
                     <div class="mb-6">
-                        <label class="block font-medium text-gray-700 mb-2">What movie did you watch?</label>
-                        <div class="relative" id="searchContainer">
+                        <label class="block font-medium text-gray-700 mb-2">What book did you read?</label>
+                        <div class="relative" id="bookSearchContainer">
                             <input 
                                 type="text" 
-                                id="modalMovieSearch" 
-                                placeholder="Search for a movie..." 
+                                id="modalBookSearch" 
+                                placeholder="Search for a book..." 
                                 class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#38157a] focus:border-transparent"
                                 autocomplete="off"
                             >
-                            <div id="modalSearchResults" class="absolute top-full left-0 w-full bg-white border rounded-lg shadow-lg hidden max-h-60 overflow-y-auto z-20 mt-1"></div>
+                            <div id="modalBookSearchResults" class="absolute top-full left-0 w-full bg-white border rounded-lg shadow-lg hidden max-h-60 overflow-y-auto z-20 mt-1"></div>
                         </div>
                         
-                        <!-- Selected Movie Preview -->
-                        <div id="modalSelectedMovie" class="hidden mt-4 p-4 border rounded-lg bg-gray-50 flex items-start gap-4 relative">
-                            <input type="hidden" name="tmdb_id" id="selectedMovieId">
-                            <img id="selectedMoviePoster" src="" alt="Poster" class="h-80 object-cover rounded shadow-sm">
+                        <!-- Selected Book Preview -->
+                        <div id="modalSelectedBook" class="hidden mt-4 p-4 border rounded-lg bg-gray-50 flex items-start gap-4 relative">
+                            <input type="hidden" name="google_book_id" id="selectedBookId">
+                            <input type="hidden" name="title" id="hiddenBookTitle">
+                            <input type="hidden" name="creator" id="hiddenBookAuthor">
+                            <input type="hidden" name="release_year" id="hiddenBookYear">
+                            <input type="hidden" name="cover_image" id="hiddenBookCover">
+
+                            <img id="selectedBookCover" src="" alt="Cover" class="h-80 object-cover rounded shadow-sm">
                             <div>
-                                <h4 id="selectedMovieTitle" class="text-4xl font-bold text-gray-800"></h4>
-                                <p id="selectedMovieDirector" class="text-gray-600"></p>
-                                <p id="selectedMovieYear" class="text-gray-600 text-xl"></p>
+                                <h4 id="selectedBookTitle" class="text-4xl font-bold text-gray-800"></h4>
+                                <p id="selectedBookAuthor" class="text-gray-600 text-lg"></p>
+                                <p id="selectedBookYear" class="text-gray-500"></p>
                             </div>
-                            <button type="button" id="removeMovieBtn" class="absolute top-2 right-2 text-gray-400 hover:text-red-500">
+                            <button type="button" id="removeBookBtn" class="absolute top-2 right-2 text-gray-400 hover:text-red-500">
                                 <i class="fa-solid fa-times"></i>
                             </button>
                         </div>
@@ -46,14 +51,14 @@
 
                     <div class="mb-6">
                         <label class="block font-medium text-gray-700 mb-2">Rating</label>
-                        <div class="flex gap-2" id="star-rating">
+                        <div class="flex gap-2" id="book-star-rating">
                             @for($i = 1; $i <= 5; $i++)
-                                <button type="button" class="star-btn bg-transparent border-none p-0 h-auto leading-none shadow-none text-3xl text-gray-300 focus:text-gray-300 hover:text-yellow-400 hover:bg-transparent focus:bg-transparent transition-colors focus:outline-none" data-rating="{{ $i }}">
+                                <button type="button" class="book-star-btn bg-transparent border-none p-0 h-auto leading-none shadow-none text-3xl text-gray-300 focus:text-gray-300 hover:text-yellow-400 hover:bg-transparent focus:bg-transparent transition-colors focus:outline-none" data-rating="{{ $i }}">
                                     <i class="fa-regular fa-star"></i>
                                 </button>
                             @endfor
                         </div>
-                        <input type="hidden" name="rating" id="rating-input" required>
+                        <input type="hidden" name="rating" id="book-rating-input" required>
                     </div>
 
                     <div class="mb-4">
@@ -62,7 +67,7 @@
                     </div>
                     
                     <div class="flex justify-end space-x-3">
-                        <button type="button" id="cancel-movie-review-button" class="px-4 py-2 text-gray-800 border border-gray-300 rounded">Cancel</button>
+                        <button type="button" id="cancel-book-review-button" class="px-4 py-2 text-gray-800 border border-gray-300 rounded">Cancel</button>
                         <button type="submit" class="px-4 py-2 bg-[#38157a] text-white rounded hover:bg-[#7455ad]">Post</button>
                     </div>
                 </form>
@@ -73,48 +78,54 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function (){
-        const createButton = document.getElementById('movie-button');
-        const modal = document.getElementById('create-movie-review-modal');
-        const cancelButton = document.getElementById('cancel-movie-review-button');
-        const textarea = document.querySelector('#create-movie-review-modal textarea');
-        const form = document.getElementById('create-movie-review-form');
+        const createButton = document.getElementById('book-button');
+        const modal = document.getElementById('create-book-review-modal');
+        const cancelButton = document.getElementById('cancel-book-review-button');
+        const textarea = document.querySelector('#create-book-review-modal textarea');
+        const form = document.getElementById('create-book-review-form');
         
         // Search elements
-        const searchInput = document.getElementById('modalMovieSearch');
-        const resultsDiv = document.getElementById('modalSearchResults');
-        const selectedMovieDiv = document.getElementById('modalSelectedMovie');
-        const searchContainer = document.getElementById('searchContainer');
-        const removeMovieBtn = document.getElementById('removeMovieBtn');
+        const searchInput = document.getElementById('modalBookSearch');
+        const resultsDiv = document.getElementById('modalBookSearchResults');
+        const selectedBookDiv = document.getElementById('modalSelectedBook');
+        const searchContainer = document.getElementById('bookSearchContainer');
+        const removeBookBtn = document.getElementById('removeBookBtn');
         
-        // Selected movie inputs
-        const selectedMovieId = document.getElementById('selectedMovieId');
-        const selectedMovieTitle = document.getElementById('selectedMovieTitle');
-        const selectedMovieYear = document.getElementById('selectedMovieYear');
-        const selectedMovieDirector = document.getElementById('selectedMovieDirector');
-        const selectedMoviePoster = document.getElementById('selectedMoviePoster');
+        // Selected book inputs
+        const selectedBookId = document.getElementById('selectedBookId');
+        const selectedBookTitle = document.getElementById('selectedBookTitle');
+        const selectedBookYear = document.getElementById('selectedBookYear');
+        const selectedBookAuthor = document.getElementById('selectedBookAuthor');
+        const selectedBookCover = document.getElementById('selectedBookCover');
+
+        // Hidden inputs for backend
+        const hiddenBookTitle = document.getElementById('hiddenBookTitle');
+        const hiddenBookAuthor = document.getElementById('hiddenBookAuthor');
+        const hiddenBookYear = document.getElementById('hiddenBookYear');
+        const hiddenBookCover = document.getElementById('hiddenBookCover');
 
         // Rating elements
-        const starButtons = document.querySelectorAll('.star-btn');
-        const ratingInput = document.getElementById('rating-input');
+        const starButtons = document.querySelectorAll('.book-star-btn');
+        const ratingInput = document.getElementById('book-rating-input');
 
         // Rating logic
         starButtons.forEach(button => {
             button.addEventListener('click', function() {
                 const rating = this.dataset.rating;
                 ratingInput.value = rating;
-                updateStars(rating);
+                updateBookStars(rating);
             });
 
             button.addEventListener('mouseenter', function() {
-                updateStars(this.dataset.rating);
+                updateBookStars(this.dataset.rating);
             });
 
             button.addEventListener('mouseleave', function() {
-                updateStars(ratingInput.value || 0);
+                updateBookStars(ratingInput.value || 0);
             });
         });
 
-        function updateStars(rating) {
+        function updateBookStars(rating) {
             starButtons.forEach(btn => {
                 const star = btn.querySelector('i');
                 const btnRating = parseInt(btn.dataset.rating);
@@ -147,33 +158,38 @@
                 }
                 
                 timeoutId = setTimeout(() => {
-                    fetch(`/movies/search?q=${encodeURIComponent(query)}`)
+                    fetch(`/books?q=${encodeURIComponent(query)}`, {
+                        headers: {
+                            'Accept': 'application/json',
+                            'X-Requested-With': 'XMLHttpRequest'
+                        }
+                    })
                         .then(response => response.json())
-                        .then(movies => {
-                            displayResults(movies.slice(0, 5));
+                        .then(books => {
+                            displayBookResults(books.slice(0, 5));
                         })
                         .catch(err => console.error(err));
                 }, 300);
             });
         }
 
-        function displayResults(movies) {
-            if (movies.length === 0) {
+        function displayBookResults(books) {
+            if (books.length === 0) {
                 resultsDiv.classList.add('hidden');
                 return;
             }
             
-            resultsDiv.innerHTML = movies.map(movie => `
+            resultsDiv.innerHTML = books.map(book => `
                 <div class="p-3 hover:bg-gray-100 cursor-pointer border-b flex items-center transition-colors" 
-                     onclick="selectModalMovie(${movie.id}, '${movie.title.replace(/'/g, "\\'")}', '${movie.poster_path || ''}', '${movie.release_date || ''}')">
-                    ${movie.poster_path ? 
-                        `<img src="https://image.tmdb.org/t/p/w92${movie.poster_path}" class="w-10 h-14 object-cover rounded mr-3" onerror="this.style.display='none'">` 
+                     onclick="selectModalBook('${book.id}', '${book.title.replace(/'/g, "\\'")}', '${book.creator.replace(/'/g, "\\'")}', '${book.coverimage || ''}', '${book.releaseyear || ''}')">
+                    ${book.coverimage ? 
+                        `<img src="${book.coverimage}" class="w-10 h-14 object-cover rounded mr-3" onerror="this.style.display='none'">` 
                         : 
                         `<div class="w-10 h-14 bg-gray-200 rounded mr-3 flex items-center justify-center text-xs text-gray-500">No Image</div>`
                     }
                     <div>
-                        <div class="font-medium text-gray-800">${movie.title}</div>
-                        <div class="text-xs text-gray-500">${movie.release_date ? new Date(movie.release_date).getFullYear() : 'N/A'}</div>
+                        <div class="font-medium text-gray-800">${book.title}</div>
+                        <div class="text-xs text-gray-500">${book.creator} • ${book.releaseyear || 'N/A'}</div>
                     </div>
                 </div>
             `).join('');
@@ -182,51 +198,37 @@
         }
 
         
-        window.selectModalMovie = function(id, title, posterPath, releaseDate) {
-            // Set hidden input
-            selectedMovieId.value = id;
+        window.selectModalBook = function(id, title, author, cover, year) {
+            // Set hidden inputs
+            selectedBookId.value = id;
+            hiddenBookTitle.value = title;
+            hiddenBookAuthor.value = author;
+            hiddenBookYear.value = year;
+            hiddenBookCover.value = cover;
             
             // Update preview
-            selectedMovieTitle.textContent = title;
-            selectedMovieYear.textContent = releaseDate ? new Date(releaseDate).getFullYear() : 'N/A';
-            selectedMovieDirector.textContent = 'Loading...';
+            selectedBookTitle.textContent = title;
+            selectedBookAuthor.textContent = author;
+            selectedBookYear.textContent = year || 'N/A';
 
-            if (posterPath) {
-                selectedMoviePoster.src = `https://image.tmdb.org/t/p/w500${posterPath}`;
-                selectedMoviePoster.classList.remove('hidden');
+            if (cover) {
+                selectedBookCover.src = cover;
+                selectedBookCover.classList.remove('hidden');
             } else {
-                selectedMoviePoster.classList.add('hidden');
+                selectedBookCover.classList.add('hidden');
             }
-
-            // Fetch full details to get director
-            fetch(`/movies/${id}`)
-                .then(response => response.json())
-                .then(data => {
-                    let director = '';
-                    if (data.credits && data.credits.crew) {
-                        const directorObj = data.credits.crew.find(person => person.job === 'Director');
-                        if (directorObj) {
-                            director = directorObj.name;
-                        }
-                    }
-                    selectedMovieDirector.textContent = director;
-                })
-                .catch(err => {
-                    console.error(err);
-                    selectedMovieDirector.textContent = 'Unknown Director';
-                });
             
             // Show selection, hide search
             searchContainer.classList.add('hidden');
-            selectedMovieDiv.classList.remove('hidden');
+            selectedBookDiv.classList.remove('hidden');
             resultsDiv.classList.add('hidden');
             searchInput.value = '';
         };
 
-        if (removeMovieBtn) {
-            removeMovieBtn.addEventListener('click', function() {
-                selectedMovieId.value = '';
-                selectedMovieDiv.classList.add('hidden');
+        if (removeBookBtn) {
+            removeBookBtn.addEventListener('click', function() {
+                selectedBookId.value = '';
+                selectedBookDiv.classList.add('hidden');
                 searchContainer.classList.remove('hidden');
                 searchInput.focus();
             });
@@ -256,7 +258,7 @@
                 }
                 if (ratingInput) {
                     ratingInput.value = '';
-                    updateStars(0);
+                    updateBookStars(0);
                 }
             });
         }
@@ -277,8 +279,8 @@
                 const formData = new FormData(form);
                 
                 // Validate required fields
-                if (!formData.get('tmdb_id')) {
-                    alert('Please select a movie');
+                if (!formData.get('google_book_id')) {
+                    alert('Please select a book');
                     return;
                 }
                 if (!formData.get('rating')) {
@@ -303,11 +305,11 @@
                         form.reset();
                         
                         // eeset custom elements
-                        selectedMovieId.value = '';
-                        selectedMovieDiv.classList.add('hidden');
+                        selectedBookId.value = '';
+                        selectedBookDiv.classList.add('hidden');
                         searchContainer.classList.remove('hidden');
                         ratingInput.value = '';
-                        updateStars(0);
+                        updateBookStars(0);
                         
                         // reload page to show new review
                         window.location.reload();

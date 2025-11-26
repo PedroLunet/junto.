@@ -88,6 +88,7 @@
         @auth
             <x-create-regular-modal/>
             <x-create-movie-review-modal/>
+            <x-create-book-review-modal/>
         @endauth
     </body>
 </html>
