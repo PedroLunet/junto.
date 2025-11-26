@@ -28,7 +28,9 @@
                         </div>
 
                         @if (Auth::id() === $user->id)
-                            <p class="text-2xl md:text-3xl italic text-gray-500">This is your profile</p>
+                            <button onclick="openEditProfileModal()"
+                                class="px-6 py-2 rounded-lg text-xl md:text-2xl font-medium transition-colors">Edit
+                                Profile</button>
                         @else
                             <!-- Friend request button -->
                             <div class="mt-4 md:mt-6">
@@ -170,6 +172,7 @@
 
         <x-posts.post-modal />
         @include('components.profile.add-fav-modal')
+        @include('components.profile.edit-profile-modal')
     </div>
 
     <script>
