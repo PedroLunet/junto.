@@ -44,9 +44,12 @@
                         <textarea name="content" id="edit-review-content" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#38157a]" rows="4"></textarea>
                     </div>
                     
-                    <div class="flex justify-end space-x-3">
-                        <button type="button" id="cancel-edit-review-button" class="px-4 py-2 text-gray-800 border border-gray-300 rounded-xl">Cancel</button>
-                        <button type="submit" class="px-4 py-2 bg-[#38157a] text-white rounded-xl hover:bg-[#7455ad]">Update Review</button>
+                    <div class="flex justify-between items-center">
+                        <button type="button" id="delete-review-button" class="px-4 py-2 bg-red-600 rounded-xl hover:bg-red-200 text-white">Delete</button>
+                        <div class="flex space-x-3">
+                            <button type="button" id="cancel-edit-review-button" class="px-4 py-2 text-gray-800 border border-gray-300 rounded-xl">Cancel</button>
+                            <button type="submit" class="px-4 py-2 bg-[#38157a] text-white rounded-xl hover:bg-[#7455ad]">Update Review</button>
+                        </div>
                     </div>
                 </form>
             </div>
@@ -61,6 +64,39 @@
         const form = document.getElementById('edit-review-form');
         const ratingInput = document.getElementById('edit-rating-input');
         const starButtons = document.querySelectorAll('.edit-star-btn');
+        const deleteButton = document.getElementById('delete-review-button');
+
+        // Delete logic
+        if (deleteButton) {
+            deleteButton.addEventListener('click', function() {
+                const id = this.dataset.id;
+                if (!id) return;
+                
+                if (!confirm('Are you sure you want to delete this review?')) {
+                    return;
+                }
+
+                fetch(`/posts/${id}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                        'Accept': 'application/json'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        window.location.reload();
+                    } else {
+                        alert(data.message || 'Error deleting review');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('An error occurred while deleting the review');
+                });
+            });
+        }
 
         // Rating logic
         starButtons.forEach(button => {
@@ -109,8 +145,13 @@
             const mediaCoverEl = document.getElementById('edit-review-cover');
             const mediaYearEl = document.getElementById('edit-review-year');
             const mediaCreatorEl = document.getElementById('edit-review-creator');
+            const deleteButton = document.getElementById('delete-review-button');
 
             form.action = `/reviews/${id}`;
+            if (deleteButton) {
+                deleteButton.dataset.id = id;
+            }
+            
             contentInput.value = content;
             ratingInput.value = rating;
             mediaTitleEl.textContent = title;
