@@ -65,14 +65,18 @@
                         <!-- image -->
                         @if($post->image_url)
                             <div class="w-full bg-gray-200 rounded-xl overflow-hidden mb-4">
-                                <img src="{{ asset('storage/' . $post->image_url) }}" class="w-full h-auto object-cover">
+                                <img src="{{ asset('post/' . $post->image_url) }}" 
+                                     onerror="this.src='{{ asset('post/default.jpg') }}'"
+                                     class="w-full h-auto object-cover">
                             </div>
                         @endif
 
                         <!-- text -->
-                        <p class="text-black">
-                            {{ $post->content }}
-                        </p>
+                        @if($post->content)
+                            <p class="text-black">
+                                {{ $post->content }}
+                            </p>
+                        @endif
                     @endif
 
 

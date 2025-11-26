@@ -122,7 +122,7 @@
                         post.media_creator
                     );
                 } else {
-                    const imageUrl = post.image_url ? `/storage/${post.image_url}` : '';
+                    const imageUrl = post.image_url ? `/post/${post.image_url}` : '';
                     openEditModal(post.id, post.content, imageUrl);
                 }
             };
@@ -145,7 +145,9 @@
     // Add post image if it exists
     if (post.image_url) {
       html += '<div style="margin-top: 16px;">';
-      html += '<img src="/storage/' + post.image_url + '" alt="Post image" ';
+      html += '<img src="/post/' + post.image_url + '" ';
+      html += 'onerror="this.src=\'/post/default.jpg\'" ';
+      html += 'alt="Post image" ';
       html += 'style="width: 100%; max-width: 500px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border: 1px solid #e5e7eb; display: block; margin: 0 auto;">';
       html += '</div>';
     }
