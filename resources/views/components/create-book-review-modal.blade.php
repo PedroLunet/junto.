@@ -15,7 +15,7 @@
                     @csrf
                     <input type="hidden" name="type" value="book">
                     
-                    <!-- Book Search Section -->
+                    <!-- book search section -->
                     <div class="mb-6">
                         <label class="block font-medium text-gray-700 mb-2">What book did you read?</label>
                         <div class="relative" id="bookSearchContainer">
@@ -29,15 +29,15 @@
                             <div id="modalBookSearchResults" class="absolute top-full left-0 w-full bg-white border rounded-lg shadow-lg hidden max-h-60 overflow-y-auto z-20 mt-1"></div>
                         </div>
                         
-                        <!-- Selected Book Preview -->
+                        <!-- selected book preview -->
                         <div id="modalSelectedBook" class="hidden mt-4 p-4 border rounded-lg bg-gray-50 flex items-start gap-4 relative">
                             <input type="hidden" name="google_book_id" id="selectedBookId">
 
                             <img id="selectedBookCover" src="" alt="Cover" class="h-80 object-cover rounded shadow-sm">
                             <div>
                                 <h4 id="selectedBookTitle" class="text-4xl font-bold text-gray-800"></h4>
-                                <p id="selectedBookAuthor" class="text-gray-600 text-lg"></p>
-                                <p id="selectedBookYear" class="text-gray-500"></p>
+                                <p id="selectedBookAuthor" class="text-gray-600"></p>
+                                <p id="selectedBookYear" class="text-gray-600 text-xl"></p>
                             </div>
                             <button type="button" id="removeBookBtn" class="absolute top-2 right-2 text-gray-400 hover:text-red-500">
                                 <i class="fa-solid fa-times"></i>
