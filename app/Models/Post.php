@@ -10,14 +10,15 @@ class Post extends Model
     protected $table = 'lbaw2544.post';
     public $timestamps = false;
 
-    public static function getPostsWithDetails()
+    public static function getPostsWithDetails($currentUserId = null)
     {
-        return DB::select("
+        $sql = "
             SELECT 
                 p.id,
                 p.createdAt as created_at,
                 u.name as author_name,
                 u.username,
+                u.profilePicture as author_image,
                 COALESCE(sp.text, r.content) as content,
                 CASE 
                     WHEN sp.postId IS NOT NULL THEN 'standard'
@@ -28,7 +29,13 @@ class Post extends Model
                 m.coverImage as media_poster,
                 m.releaseYear as media_year,
                 m.creator as media_creator,
+                CASE
+                    WHEN EXISTS (SELECT 1 FROM lbaw2544.book b WHERE b.mediaId = m.id) THEN 'book'
+                    WHEN EXISTS (SELECT 1 FROM lbaw2544.film f WHERE f.mediaId = m.id) THEN 'movie'
+                    WHEN EXISTS (SELECT 1 FROM lbaw2544.music mu WHERE mu.mediaId = m.id) THEN 'music'
+                END as media_type,
                 (SELECT COUNT(*) FROM lbaw2544.post_like pl WHERE pl.postId = p.id) as likes_count,
+                " . ($currentUserId ? "(SELECT COUNT(*) > 0 FROM lbaw2544.post_like pl WHERE pl.postId = p.id AND pl.userId = ?) as is_liked," : "FALSE as is_liked,") . "
                 (SELECT COUNT(*) FROM lbaw2544.comment c WHERE c.postId = p.id) as comments_count,
                 sp.imageUrl as image_url
             FROM lbaw2544.post p
@@ -37,7 +44,10 @@ class Post extends Model
             LEFT JOIN lbaw2544.review r ON p.id = r.postId
             LEFT JOIN lbaw2544.media m ON r.mediaId = m.id
             ORDER BY p.id DESC
-        ");
+        ";
+
+        $params = $currentUserId ? [$currentUserId] : [];
+        return DB::select($sql, $params);
     }
 
     public static function getCommentsForPost($postId)

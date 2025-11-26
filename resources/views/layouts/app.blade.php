@@ -17,6 +17,7 @@
         <!-- Scripts -->
         <script>
             window.isAuthenticated = {{ auth()->check() ? 'true' : 'false' }};
+            window.currentUserUsername = "{{ auth()->check() ? auth()->user()->username : '' }}";
         </script>
         <script src="{{ asset('js/app.js') }}" defer></script>
         @stack('scripts')

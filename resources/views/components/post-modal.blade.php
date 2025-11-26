@@ -8,8 +8,13 @@
     <!-- Left side - Post Content -->
     <div style="flex: 1; display: flex; flex-direction: column; border-right: 1px solid #ccc;">
       <!-- Header with author -->
-      <div style="padding: 16px; border-bottom: 1px solid #ccc;">
+      <div style="padding: 16px; border-bottom: 1px solid #ccc; display: flex; justify-content: space-between; align-items: flex-start;">
         <div id="modalAuthor"></div>
+        @auth
+            <button id="modalEditButton" class="text-gray-500 hover:text-gray-700 p-1" style="display: none;">
+                <i class="fas fa-edit"></i>
+            </button>
+        @endauth
       </div>
 
       <!-- Post Content -->
@@ -91,12 +96,38 @@
     const content = document.getElementById('modalContent');
     const authorDiv = document.getElementById('modalAuthor');
     const commentsSection = document.getElementById('commentsSection');
+    const editBtn = document.getElementById('modalEditButton');
 
     currentPostId = post.id;
 
     // Set author info in header
     authorDiv.innerHTML = '<div>' + post.author_name + '</div>' +
       '<div>@' + post.username + '</div>';
+
+    // Set edit button if author
+    if (editBtn) {
+        editBtn.style.display = 'none';
+        if (window.isAuthenticated && window.currentUserUsername === post.username) {
+            editBtn.style.display = 'block';
+            editBtn.onclick = function() {
+                closePostModal();
+                if (post.post_type === 'review') {
+                    openEditReviewModal(
+                        post.id, 
+                        post.content, 
+                        post.rating, 
+                        post.media_title, 
+                        post.media_poster, 
+                        post.media_year, 
+                        post.media_creator
+                    );
+                } else {
+                    const imageUrl = post.image_url ? `/storage/${post.image_url}` : '';
+                    openEditModal(post.id, post.content, imageUrl);
+                }
+            };
+        }
+    }
 
     // Set content
     let html = '<div>';

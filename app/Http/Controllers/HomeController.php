@@ -10,7 +10,7 @@ class HomeController extends Controller
 {
     public function index(): View
     {
-        $posts = Post::getPostsWithDetails();
+        $posts = Post::getPostsWithDetails(auth()->id());
         return view('pages.home', compact('posts'));
     }
 
