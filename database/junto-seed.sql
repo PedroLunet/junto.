@@ -34,7 +34,7 @@ CREATE TABLE media (
     title VARCHAR(255) NOT NULL,
     creator VARCHAR(255) NOT NULL,
     releaseYear INT,
-    coverImage VARCHAR(255)
+    coverImage TEXT
 );
 
 CREATE TABLE book (

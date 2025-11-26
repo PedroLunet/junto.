@@ -30,4 +30,9 @@ class MovieController extends Controller {
         return response()->json($results['results'] ?? []);
 
     }
+
+    public function show($id) {
+        $movie = $this->movieService->getMovie($id);
+        return response()->json($movie);
+    }
 }
