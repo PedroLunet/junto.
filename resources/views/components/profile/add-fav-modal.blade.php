@@ -131,7 +131,15 @@
             searchResultsDiv.innerHTML = results.map((item, index) => {
                 const imageUrl = item.coverImage || null;
                 const title = item.title || 'Unknown Title';
-                const subtitle = item.creator || 'Unknown Creator';
+
+                // show different subtitle based on type
+                let subtitle;
+                if (currentType === 'movie') {
+                    subtitle = item.releaseYear ? `${item.releaseYear}` : 'Unknown Year';
+                } else {
+                    subtitle = item.creator || 'Unknown Creator';
+                }
+
                 const selectFunction = `selectItem(${index})`;
 
                 return `

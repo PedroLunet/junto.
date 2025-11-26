@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\User;
 use App\Models\Media;
+use App\Services\MovieService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -33,6 +34,12 @@ class FavoriteService
             $creator = $itemData['creator'] ?? null;
             $releaseYear = $itemData['releaseYear'] ?? null;
             $coverImage = $itemData['coverImage'] ?? null;
+
+            // for movies, if creator is null, fetch the director information
+            if ($type === 'movie' && $creator === null && isset($itemData['id'])) {
+                $movieService = new MovieService();
+                $creator = $movieService->getMovieWithCredits($itemData['id']);
+            }
 
             // check if media already exists
             $mediaId = DB::table('media')

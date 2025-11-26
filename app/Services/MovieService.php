@@ -67,23 +67,23 @@ class MovieService
         $formattedMovies = [];
 
         foreach ($tmdbMovies as $movie) {
-            $director = 'Unknown Director';
-
-            // only fetch director if explicitly requested and we have a movie ID
-            if ($includeDirectors && isset($movie['id'])) {
-                $director = $this->getMovieWithCredits($movie['id']);
-            }
-
-            $formattedMovies[] = [
+            $movieData = [
                 'id' => $movie['id'] ?? null,
                 'title' => $movie['title'] ?? 'Unknown Title',
-                'creator' => $director,
                 'releaseYear' => isset($movie['release_date']) ? substr($movie['release_date'], 0, 4) : null,
                 'coverImage' => isset($movie['poster_path']) ? 'https://image.tmdb.org/t/p/w300' . $movie['poster_path'] : null,
                 'poster_path' => $movie['poster_path'] ?? null,
                 'release_date' => $movie['release_date'] ?? null,
                 'type' => 'movie'
             ];
+
+            // only include creator/director if explicitly requested
+            if ($includeDirectors && isset($movie['id'])) {
+                $director = $this->getMovieWithCredits($movie['id']);
+                $movieData['creator'] = $director;
+            }
+
+            $formattedMovies[] = $movieData;
         }
 
         return $formattedMovies;
