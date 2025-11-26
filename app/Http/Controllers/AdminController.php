@@ -65,4 +65,10 @@ class AdminController extends Controller
 
         return view('admin.dashboard', compact('stats'));
     }
+
+    // display the admin users page
+    public function users()
+    {
+        return view('admin.users');
+    }
 }

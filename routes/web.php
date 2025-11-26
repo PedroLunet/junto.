@@ -116,6 +116,7 @@ Route::middleware(['auth', 'admin'])->controller(ReportController::class)->group
 // admin routes
 Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/admin/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
+    Route::get('/admin/users', [AdminController::class, 'users'])->name('admin.users');
 });
 
 Route::middleware('regular.user')->controller(ProfileController::class)->group(function () {

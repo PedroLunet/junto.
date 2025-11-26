@@ -39,6 +39,12 @@
                         Admin Dashboard
                     </a>
                 </li>
+                <li>
+                    <a href="{{ route('admin.users') }}"
+                        class="block py-2 px-4 rounded hover:bg-[#7455ad] hover:text-white {{ request()->routeIs('admin.users') ? 'bg-[#7455ad]' : '' }}">
+                        Users
+                    </a>
+                </li>
             </ul>
         </nav>
 
