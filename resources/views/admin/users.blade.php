@@ -27,12 +27,12 @@
         </div>
 
         <!-- Users Table -->
-        <div class="bg-white rounded-lg shadow overflow-hidden">
-            <table class="min-w-full">
+        <div class="bg-white overflow-hidden">
+            <table class="min-w-full border-collapse">
                 <thead class="bg-gray-50">
                     <tr>
-                        <th class="px-6 py-3 text-left">
-                            <input type="checkbox" id="select-all" class="rounded border-gray-300">
+                        <th class="pl-16 pr-6 py-3 text-left">
+                            <input type="checkbox" id="select-all" class="rounded border-gray-300 ml-8">
                         </th>
                         <th class="px-6 py-3 text-left text-xl font-medium text-gray-500 uppercase tracking-wider">Name</th>
                         <th class="px-6 py-3 text-left text-xl font-medium text-gray-500 uppercase tracking-wider">Username
@@ -49,13 +49,13 @@
                 <tbody class="bg-white divide-y divide-gray-200">
                     @forelse($users as $user)
                         <tr class="hover:bg-gray-50">
-                            <td class="px-6 py-4">
-                                <input type="checkbox" class="user-checkbox rounded border-gray-300"
+                            <td class="pl-16 pr-6 py-4">
+                                <input type="checkbox" class="user-checkbox rounded border-gray-300 ml-8"
                                     value="{{ $user->id }}">
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <div class="flex items-center">
-                                    <div class="flex-shrink-0 h-10 w-10">
+                                    <div class="shrink-0 h-10 w-10">
                                         <div class="h-10 w-10 rounded-full bg-gray-300 flex items-center justify-center">
                                             <i class="fas fa-user text-gray-600"></i>
                                         </div>
@@ -79,12 +79,12 @@
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <span
                                     class="inline-flex items-center px-2.5 py-0.5 rounded-full text-2xl font-medium
-                            {{ $user->isblocked ? 'bg-red-100 text-red-800' : ($user->isadmin ? 'bg-purple-100 text-purple-800' : 'bg-green-100 text-green-800') }}">
+                        {{ $user->isblocked ? 'bg-red-100 text-red-800' : ($user->isadmin ? 'bg-purple-100 text-purple-800' : 'bg-green-100 text-green-800') }}">
                                     {{ $user->isblocked ? 'Blocked' : ($user->isadmin ? 'Admin' : 'Active') }}
                                 </span>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-2xl font-medium">
-                                <div class="flex space-x-2">
+                                <div class="flex space-x-6">
                                     <button class="text-blue-600 hover:text-blue-900">
                                         <i class="fas fa-edit"></i>
                                     </button>
