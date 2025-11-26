@@ -30,7 +30,7 @@ class LogoutController extends Controller
         $request->session()->regenerateToken();
 
         // Redirect to login route with a success flash message.
-        return redirect()->route('login')
+        return redirect()->route('home')
             ->withSuccess('You have logged out successfully!');
     }
 }

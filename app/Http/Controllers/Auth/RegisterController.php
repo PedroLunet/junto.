@@ -11,16 +11,21 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\View\View;
 
 use App\Models\User;
+use App\Models\Post;
 
 class RegisterController extends Controller
 {
     /**
      * Show the user registration form.
      */
-    public function showRegistrationForm(): View
+    public function showRegistrationForm()
     {
-        // Render the registration view.
-        return view('auth.register');
+        if (Auth::check()) {
+            return redirect()->route('home');
+        } else {
+            $posts = Post::getPostsWithDetails();
+            return view('auth.register', compact('posts'));
+        }
     }
 
     /**
@@ -38,6 +43,7 @@ class RegisterController extends Controller
         // Validate registration input.
         $request->validate([
             'name' => 'required|string|max:250',
+            'username' => 'required|string|max:50|unique:users',
             'email' => 'required|email|max:250|unique:users',
             'password' => 'required|min:8|confirmed'
         ]);
@@ -45,6 +51,7 @@ class RegisterController extends Controller
         // Create the new user.
         User::create([
             'name' => $request->name,
+            'username' => $request->username,
             'email' => $request->email,
             'passwordhash' => Hash::make($request->password)
         ]);

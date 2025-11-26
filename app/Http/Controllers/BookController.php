@@ -29,6 +29,7 @@ class BookController extends Controller
           $volumeInfo = $book['volumeInfo'];
 
           $formattedBooks[] = [
+            'id' => $book['id'],
             'title' => $volumeInfo['title'] ?? 'Unknown Title',
             'creator' => isset($volumeInfo['authors']) ? implode(', ', $volumeInfo['authors']) : 'Unknown Author',
             'releaseyear' => isset($volumeInfo['publishedDate']) ? substr($volumeInfo['publishedDate'], 0, 4) : null,
@@ -36,6 +37,10 @@ class BookController extends Controller
           ];
         }
       }
+    }
+
+    if ($request->wantsJson()) {
+        return response()->json($formattedBooks);
     }
 
     return view('pages.books', ['books' => $formattedBooks]);

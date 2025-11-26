@@ -34,7 +34,7 @@ CREATE TABLE media (
     title VARCHAR(255) NOT NULL,
     creator VARCHAR(255) NOT NULL,
     releaseYear INT,
-    coverImage VARCHAR(255)
+    coverImage TEXT
 );
 
 CREATE TABLE book (
@@ -64,6 +64,7 @@ CREATE TABLE users (
     favoriteFilm INTEGER REFERENCES media(id),
     favoriteBook INTEGER REFERENCES media(id),
     favoriteSong INTEGER REFERENCES media(id),
+    remember_token VARCHAR(100),
     createdAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 

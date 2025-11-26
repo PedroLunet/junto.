@@ -16,14 +16,14 @@
       <div id="modalContent" style="padding: 16px; flex: 1; overflow-y: auto;"></div>
 
       <!-- Actions (like, comment) -->
-      <div style="padding: 16px; border-top: 1px solid #ccc; display: flex; gap: 16px; align-items: center;">
-        <x-button onclick="likePost(event)" style="all: unset; cursor: pointer;">
+      <div id="postActions" style="padding: 16px; border-top: 1px solid #ccc; display: flex; gap: 16px; align-items: center;">
+        <x-button onclick="likePost(event)" variant="primary">
           ❤️ <span id="likesCount">0</span>
         </x-button>
-        <x-button onclick="focusComment()" style="all: unset; cursor: pointer;">
+        <x-button onclick="focusComment()" variant="primary">
           💬 <span id="commentsCount">0</span>
         </x-button>
-        <x-button onclick="openReportModal(event)" style="all: unset; cursor: pointer; margin-left: auto; color: #dc2626;">
+        <x-button onclick="openReportModal(event)" id="reportButton" variant="danger">
           🚩 Report
         </x-button>
       </div>
@@ -34,20 +34,20 @@
       <!-- Close button -->
       <div style="padding: 16px; border-bottom: 1px solid #ccc; display: flex; justify-content: flex-end;">
         <x-button onclick="closePostModal()"
-          style="all: unset; cursor: pointer; font-size: 20px; line-height: 1;">&times;</x-button>
+          variant="primary">&times;</x-button>
       </div>
 
       <!-- Comments Section -->
       <div id="commentsSection" style="padding: 16px; flex: 1; overflow-y: auto;"></div>
 
       <!-- Add Comment -->
-      <div style="padding: 16px; border-top: 1px solid #ccc;">
+      <div id="addCommentSection" style="padding: 16px; border-top: 1px solid #ccc;">
         <div style="display: flex; gap: 8px; align-items: center;">
           <input type="text" id="commentInput" placeholder="Add a comment..."
             style="flex: 1; padding: 8px; border: 1px solid #ccc; outline: none;"
             onkeypress="handleCommentKeyPress(event)">
           <x-button onclick="submitComment()"
-            style="all: unset; cursor: pointer; padding: 8px 16px; border: 1px solid #000; white-space: nowrap;">Post</x-button>
+            variant="primary">Post</x-button>
         </div>
       </div>
     </div>
@@ -136,6 +136,17 @@
     // Load comments from server
     loadComments(post.id);
 
+    // Handle guest view
+    if (!window.isAuthenticated) {
+        document.getElementById('postActions').style.display = 'flex';
+        document.getElementById('addCommentSection').style.display = 'none';
+        document.getElementById('reportButton').style.display = 'none';
+    } else {
+        document.getElementById('postActions').style.display = 'flex';
+        document.getElementById('addCommentSection').style.display = 'block';
+        document.getElementById('reportButton').style.display = 'block';
+    }
+
     modal.style.display = 'flex';
   }
 
@@ -192,6 +203,11 @@
 
     if (!currentPostId) return;
 
+    if (!window.isAuthenticated) {
+        alert('Please login to like posts.');
+        return;
+    }
+
     const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
     fetch(`/posts/${currentPostId}/like`, {
@@ -217,6 +233,10 @@
   }
 
   function focusComment() {
+    if (!window.isAuthenticated) {
+        alert('Please login to comment.');
+        return;
+    }
     document.getElementById('commentInput').focus();
   }
 

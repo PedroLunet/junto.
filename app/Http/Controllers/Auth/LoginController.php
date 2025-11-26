@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
+use App\Models\Post;
 
 class LoginController extends Controller
 {
@@ -22,7 +23,8 @@ class LoginController extends Controller
         if (Auth::check()) {
             return redirect()->route('home');
         } else {
-            return view('auth.login');
+            $posts = Post::getPostsWithDetails();
+            return view('auth.login', compact('posts'));
         }
     }
 
