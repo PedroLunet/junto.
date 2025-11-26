@@ -31,7 +31,7 @@ END $do$ LANGUAGE plpgsql;
 -- MEDIA (Base)
 CREATE TABLE media (
     id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    title VARCHAR(255) NOT NULL,
+    title TEXT NOT NULL,
     creator VARCHAR(255) NOT NULL,
     releaseYear INT,
     coverImage TEXT
