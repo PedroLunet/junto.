@@ -15,7 +15,7 @@
                     @csrf
                     <input type="hidden" name="type" value="book">
                     
-                    <!-- Book Search Section -->
+                    <!-- book search -->
                     <div class="mb-6">
                         <label class="block font-medium text-gray-700 mb-2">What book did you read?</label>
                         <div class="relative" id="bookSearchContainer">
@@ -29,7 +29,7 @@
                             <div id="modalBookSearchResults" class="absolute top-full left-0 w-full bg-white border rounded-lg shadow-lg hidden max-h-60 overflow-y-auto z-20 mt-1"></div>
                         </div>
                         
-                        <!-- Selected Book Preview -->
+                        <!-- selected book preview -->
                         <div id="modalSelectedBook" class="hidden mt-4 p-4 border rounded-lg bg-gray-50 flex items-start gap-4 relative">
                             <input type="hidden" name="google_book_id" id="selectedBookId">
                             <input type="hidden" name="title" id="hiddenBookTitle">
@@ -113,19 +113,19 @@
             button.addEventListener('click', function() {
                 const rating = this.dataset.rating;
                 ratingInput.value = rating;
-                updateBookStars(rating);
+                updateStars(rating);
             });
 
             button.addEventListener('mouseenter', function() {
-                updateBookStars(this.dataset.rating);
+                updateStars(this.dataset.rating);
             });
 
             button.addEventListener('mouseleave', function() {
-                updateBookStars(ratingInput.value || 0);
+                updateStars(ratingInput.value || 0);
             });
         });
 
-        function updateBookStars(rating) {
+        function updateStars(rating) {
             starButtons.forEach(btn => {
                 const star = btn.querySelector('i');
                 const btnRating = parseInt(btn.dataset.rating);
@@ -173,7 +173,7 @@
             });
         }
 
-        function displayBookResults(books) {
+        function displayResults(books) {
             if (books.length === 0) {
                 resultsDiv.classList.add('hidden');
                 return;
@@ -304,7 +304,7 @@
                         modal.classList.add('hidden');
                         form.reset();
                         
-                        // eeset custom elements
+                     
                         selectedBookId.value = '';
                         selectedBookDiv.classList.add('hidden');
                         searchContainer.classList.remove('hidden');
