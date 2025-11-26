@@ -20,7 +20,7 @@
 
                     <div id="image-preview-container" class="mb-4 hidden relative">
                         <img id="image-preview" src="#" alt="Preview" class="max-h-64 rounded-lg object-cover border border-gray-200">
-                        <x-button type="button" id="remove-image-btn" variant="secondary">X</x-button>
+                        <x-button type="button" id="remove-image-btn" variant="ghost">X</x-button>
                     </div>
 
                     <div class="mb-4">
