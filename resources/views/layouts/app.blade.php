@@ -43,11 +43,19 @@
     
 
             @auth
-            <div class="px-4 mb-4 flex justify-center gap-2">
-                <button id="regular-button" class="w-1/2 bg-[#7455ad] hover:bg-[#5a3d8a] text-white py-2 px-6 rounded-lg text-3xl transition-all duration-200 hover:scale-105"> + </button>
-                <button id="movie-button" class="w-1/2 bg-[#7455ad] hover:bg-[#5a3d8a] text-white py-2 px-6 rounded-lg transition-all duration-200 hover:scale-105 flex justify-center items-center">
-                    <i class="fa-solid fa-clapperboard text-2xl"></i>
-                </button>
+            <div class="px-4 mb-4 flex flex-col gap-2">
+                <button id="regular-button" class="w-full bg-[#7455ad] hover:bg-[#5a3d8a] text-white py-2 rounded-lg text-3xl transition-all duration-200 hover:scale-105"> + </button>
+                <div class="flex gap-2">
+                    <button id="movie-button" class="flex-1 bg-[#7455ad] hover:bg-[#5a3d8a] text-white py-2 rounded-lg transition-all duration-200 hover:scale-105 flex justify-center items-center">
+                        <i class="fa-solid fa-clapperboard text-2xl"></i>
+                    </button>
+                    <button id="book-button" class="flex-1 bg-[#7455ad] hover:bg-[#5a3d8a] text-white py-2 rounded-lg transition-all duration-200 hover:scale-105 flex justify-center items-center">
+                        <i class="fa-solid fa-book text-2xl"></i>
+                    </button>
+                    <button id="music-button" class="flex-1 bg-[#7455ad] hover:bg-[#5a3d8a] text-white py-2 rounded-lg transition-all duration-200 hover:scale-105 flex justify-center items-center">
+                        <i class="fa-solid fa-music text-2xl"></i>
+                    </button>
+                </div>
             </div>
             @endauth
             
