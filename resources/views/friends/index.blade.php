@@ -26,31 +26,7 @@
         @else
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 @foreach ($friends as $friend)
-                    <div
-                        class="bg-white shadow-sm rounded-3xl overflow-hidden hover:shadow-md transition-shadow border border-gray-100">
-                        <div class="flex items-center justify-between p-6">
-                            <a href="{{ route('profile.show', $friend->username) }}"
-                                class="flex items-center space-x-4 flex-1">
-                                <div class="w-32 h-32 rounded-full bg-[#F1EBF4] flex items-center justify-center shrink-0">
-                                    <span
-                                        class="text-4xl font-bold text-[#820273]">{{ substr($friend->name, 0, 1) }}</span>
-                                </div>
-                                <div class="min-w-0 flex-1">
-                                    <h3 class="font-semibold text-3xl text-gray-900 truncate">{{ $friend->name }}</h3>
-                                    <p class="text-gray-500 text-2xl truncate">@<!-- -->{{ $friend->username }}</p>
-                                </div>
-                            </a>
-                            <form action="{{ route('friends.unfriend', $friend->id) }}" method="POST"
-                                onsubmit="return confirm('Are you sure you want to unfriend {{ $friend->name }}?')"
-                                class="ml-4">
-                                @csrf
-                                @method('DELETE')
-                                <x-button type="submit" variant="danger" class="px-4 py-1.5 text-xl">
-                                    Unfriend
-                                </x-button>
-                            </form>
-                        </div>
-                    </div>
+                    <x-user-card :user="$friend" :showUnfriendButton="true" :unfriendRoute="route('friends.unfriend', $friend->id)" :confirmMessage="'Are you sure you want to unfriend ' . $friend->name . '?'" />
                 @endforeach
             </div>
         @endif
