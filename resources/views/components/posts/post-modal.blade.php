@@ -110,29 +110,29 @@
 <div id="reportModal" class="fixed inset-0 z-50 hidden" onclick="closeReportModal()">
     <div class="fixed inset-0 bg-gray-900/60 backdrop-blur-sm transition-opacity"></div>
     <div class="fixed inset-0 z-10 w-screen overflow-y-auto">
-        <div class="flex min-h-full items-center justify-center p-4">
-            <div class="relative transform overflow-hidden rounded-xl bg-white text-left shadow-xl transition-all sm:w-full sm:max-w-lg p-6" onclick="event.stopPropagation()">
+        <div class="flex min-h-full items-center justify-center p-6">
+            <div class="relative transform overflow-hidden rounded-xl bg-white text-left shadow-xl transition-all sm:w-full sm:max-w-2xl p-6" onclick="event.stopPropagation()">
                 
                 <div class="flex justify-between items-center mb-6">
-                    <h2 class="text-xl font-bold text-gray-900">Report Post</h2>
+                    <h2 class="text-4xl font-bold text-gray-900">Report Post</h2>
                     <button onclick="closeReportModal()" class="text-gray-400 hover:text-gray-600 transition-colors">
                         <i class="fas fa-times text-xl"></i>
                     </button>
                 </div>
 
-                <p class="text-gray-600 mb-4">Please provide a reason for reporting this post. Our team will review it.</p>
+                <p class="text-gray-600 mb-4 font-medium">Please provide a reason for reporting this post. Our team will review it.</p>
 
                 <textarea id="reportReason" placeholder="Describe why you're reporting this post (minimum 10 characters)..." 
-                    class="w-full min-h-[120px] p-3 border border-gray-300 rounded-lg focus:border-[#38157a] focus:ring-[#38157a] text-sm mb-6 resize-none"
+                    class="w-full min-h-[120px] p-3 border border-gray-300 rounded-lg focus:border-[#38157a] focus:ring-[#38157a] mb-6 resize-none"
                     maxlength="1000"></textarea>
 
                 <div class="flex justify-end gap-3">
-                    <button onclick="closeReportModal()" class="px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors font-medium">
+                    <x-button onclick="closeReportModal()" variant="secondary">
                         Cancel
-                    </button>
-                    <button onclick="submitReport()" class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors font-medium shadow-sm">
+                    </x-button>
+                    <x-button onclick="submitReport()" variant="danger">
                         Submit Report
-                    </button>
+                    </x-button>
                 </div>
             </div>
         </div>
@@ -230,7 +230,7 @@
     if (post.created_at) {
         const date = new Date(post.created_at);
         html += `
-            <div class="mt-8 pt-4 border-t border-gray-100 text-gray-400 text-sm flex items-center gap-2">
+            <div class="mt-8 pt-4 border-t border-gray-100 text-gray-600 text-xl flex items-center gap-2">
                 <i class="far fa-clock"></i>
                 ${date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})} · ${date.toLocaleDateString()}
             </div>
