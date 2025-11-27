@@ -28,7 +28,7 @@
                     </div>
 
                     <!-- Actions Footer -->
-                    <div id="postActions" class="p-8 flex items-center gap-6 shrink-0">
+                    <div id="postActions" class="p-8 pt-4 pb-6 border-t border-gray-200 flex items-center gap-6 shrink-0">
                          <!-- Like Button -->
                          <button onclick="likePost(event)" class="group flex items-center gap-2 text-gray-600 hover:text-red-500 transition-colors">
                             <i class="far fa-heart text-4xl group-hover:scale-110 transition-transform" id="modalLikeIcon"></i>
