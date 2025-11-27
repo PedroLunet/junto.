@@ -4,15 +4,24 @@
 
 @section('content')
     <div class="container mx-auto px-4 py-8">
-        <div class="max-w-4xl mx-auto space-y-6">
-            @foreach ($posts as $post)
-                @if ($post->post_type === 'review')
-                    <x-posts.post-review :post="$post" :showAuthor="true" />
-                @else
-                    <x-posts.post-standard :post="$post" :showAuthor="true" />
-                @endif
-            @endforeach
-        </div>
+        @if (isset($pageTitle) && $pageTitle === 'Friends Feed' && empty($posts))
+            <div class="p-6 rounded text-center">
+                <p class="text-gray-600">You don't have any friends yet. Start by sending some friend requests!</p>
+                <x-button onclick="window.location='{{ route('search.users') }}'" variant="primary" class="mt-4 px-6 py-2">
+                    Find Friends
+                </x-button>
+            </div>
+        @else
+            <div class="max-w-4xl mx-auto space-y-6">
+                @foreach ($posts as $post)
+                    @if ($post->post_type === 'review')
+                        <x-posts.post-review :post="$post" :showAuthor="true" />
+                    @else
+                        <x-posts.post-standard :post="$post" :showAuthor="true" />
+                    @endif
+                @endforeach
+            </div>
+        @endif
     </div>
 
     <x-posts.post-modal />

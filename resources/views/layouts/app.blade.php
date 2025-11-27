@@ -34,8 +34,6 @@
                 @auth
                 <ul class="space-y-2">
                     <li><a href="{{ route('friends-feed') }}" class="block py-2 px-4 rounded hover:bg-[#7a5466] hover:text-white">Friends Feed</a></li>
-                    <li><a href="{{ route('friends.index') }}" class="block py-2 px-4 rounded hover:bg-[#7a5466] hover:text-white">My Friends</a></li>
-                    <li><a href="{{ route('friend-requests.index') }}" class="block py-2 px-4 rounded hover:bg-[#7a5466] hover:text-white">Friend Requests</a></li>
                     <li><a href="{{ route('movies') }}" class="block py-2 px-4 rounded hover:bg-[#7a5466] hover:text-white">Movies</a></li>
                     <li><a href="{{ route('books') }}" class="block py-2 px-4 rounded hover:bg-[#7a5466] hover:text-white">Books</a></li>
                     <li><a href="{{ route('music') }}" class="block py-2 px-4 rounded hover:bg-[#7a5466] hover:text-white">Music</a></li>
