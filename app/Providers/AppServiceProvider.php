@@ -5,9 +5,11 @@ namespace App\Providers;
 use App\Models\User;
 use App\Models\FriendRequest;
 use App\Models\Post;
+use App\Models\Report;
 use App\Policies\UserPolicy;
 use App\Policies\FriendRequestPolicy;
 use App\Policies\PostPolicy;
+use App\Policies\ReportPolicy;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -16,6 +18,7 @@ class AppServiceProvider extends ServiceProvider
         User::class => UserPolicy::class,
         FriendRequest::class => FriendRequestPolicy::class,
         Post::class => PostPolicy::class,
+        Report::class => ReportPolicy::class,
     ];
 
     /**

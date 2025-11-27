@@ -179,7 +179,7 @@
                         post.media_creator
                     );
                 } else {
-                    const imageUrl = post.image_url ? `/storage/${post.image_url}` : '';
+                    const imageUrl = post.image_url ? `/post/${post.image_url}` : '';
                     openEditModal(post.id, post.content, imageUrl);
                 }
             };
@@ -219,8 +219,8 @@
         if (post.image_url) {
             html += `
                 <div class="w-full bg-gray-100 rounded-xl overflow-hidden mb-6 shadow-inner">
-                    <img src="/storage/${post.image_url}" 
-                         onerror="this.src='/storage/default.jpg'" 
+                    <img src="/post/${post.image_url}" 
+                         onerror="this.src='/post/default.jpg'" 
                          alt="Post image" 
                          class="w-full h-auto object-contain max-h-[500px] mx-auto">
                 </div>
