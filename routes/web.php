@@ -13,24 +13,26 @@ use App\Http\Controllers\PostController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\ReviewController;
+use App\Http\Controllers\AdminController;
+
 use App\Http\Controllers\SearchUserController;
 use Illuminate\Support\Facades\Route;
 
 // Home
 // Route::redirect('/', '/login');
 
-Route::controller(HomeController::class)->group(function () {
+Route::middleware('regular.user')->controller(HomeController::class)->group(function () {
     Route::get('/', 'index')->name('home');
     Route::get('/posts/{id}/comments', 'getComments')->name('post.comments');
 });
 
 // Home page (authentication required)
-Route::middleware('auth')->controller(HomeController::class)->group(function () {
+Route::middleware(['auth', 'regular.user'])->controller(HomeController::class)->group(function () {
     Route::post('/posts/{id}/comments', 'addComment')->name('post.comments.add');
     Route::post('/posts/{id}/like', 'toggleLike')->name('post.like');
 });
 
-Route::middleware('auth')->controller(ProfileController::class)->group(function () {
+Route::middleware(['auth', 'regular.user'])->controller(ProfileController::class)->group(function () {
     Route::get('/profile', 'index')->name('profile');
     Route::put('/profile/update', 'update')->name('profile.update');
     Route::post('/profile/remove-favorite', 'removeFavorite')->name('profile.remove-favorite');
@@ -52,12 +54,12 @@ Route::controller(RegisterController::class)->group(function () {
     Route::post('/register', 'register');
 });
 
-Route::controller(SearchUserController::class)->group(function () {
+Route::middleware('regular.user')->controller(SearchUserController::class)->group(function () {
     Route::get('/search-users', 'index')->name('search.users');
 });
 
 // Friend Requests (authentication required)
-Route::middleware('auth')->controller(FriendRequestController::class)->group(function () {
+Route::middleware(['auth', 'regular.user'])->controller(FriendRequestController::class)->group(function () {
     Route::get('/friend-requests', 'index')->name('friend-requests.index');
     Route::get('/friend-requests/sent', 'sent')->name('friend-requests.sent');
     Route::post('/friend-requests', 'store')->name('friend-requests.store');
@@ -69,26 +71,26 @@ Route::middleware('auth')->controller(FriendRequestController::class)->group(fun
 });
 
 // movie routes
-Route::middleware('auth')->controller(MovieController::class)->group(function () {
+Route::middleware(['auth', 'regular.user'])->controller(MovieController::class)->group(function () {
     Route::get('/movies', 'index')->name('movies');
     Route::get('/movies/search', 'search')->name('movies.search');
     Route::get('/movies/{id}', 'show')->name('movies.show');
 });
 
 // temporary music routes
-Route::middleware('auth')->controller(MusicController::class)->group(function () {
+Route::middleware(['auth', 'regular.user'])->controller(MusicController::class)->group(function () {
     Route::get('/music', 'search')->name('music.search');
     Route::post('/music', 'store')->name('music.store');
 });
 
 // books routes
-Route::middleware('auth')->controller(BookController::class)->group(function () {
+Route::middleware(['auth', 'regular.user'])->controller(BookController::class)->group(function () {
     Route::get('/books', 'search')->name('books.search');
     Route::post('/books', 'store')->name('books.store');
 });
 
 // posts routes
-Route::middleware('auth')->group(function () {
+Route::middleware(['auth', 'regular.user'])->group(function () {
     Route::post('/posts', [PostController::class, 'store'])->name('posts.store');
     Route::post('/reviews', [ReviewController::class, 'store'])->name('reviews.store');
     Route::put('/reviews/{id}', [ReviewController::class, 'update'])->name('reviews.update');
@@ -103,13 +105,24 @@ Route::middleware('auth')->controller(FileController::class)->group(function () 
 });
 
 // reports routes
-Route::middleware('auth')->controller(ReportController::class)->group(function () {
+Route::middleware(['auth', 'regular.user'])->controller(ReportController::class)->group(function () {
     Route::post('/posts/{id}/report', 'reportPost')->name('post.report');
-    Route::get('/reports', 'index')->name('reports.index')->middleware('admin');
-    Route::get('/reports/pending', 'pending')->name('reports.pending')->middleware('admin');
-    Route::post('/reports/{id}/status', 'updateStatus')->name('reports.update')->middleware('admin');
 });
 
-Route::controller('auth')->controller(ProfileController::class)->group(function () {
+Route::middleware(['auth', 'admin'])->controller(ReportController::class)->group(function () {
+    Route::get('/reports', 'index')->name('reports.index');
+    Route::get('/reports/pending', 'pending')->name('reports.pending');
+    Route::post('/reports/{id}/status', 'updateStatus')->name('reports.update');
+});
+
+// admin routes
+Route::middleware(['auth', 'admin'])->group(function () {
+    Route::get('/admin/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
+    Route::get('/admin/users', [AdminController::class, 'users'])->name('admin.users');
+    Route::post('/admin/users/create', [AdminController::class, 'createUser'])->name('admin.users.create');
+    Route::put('/admin/users/{id}', [AdminController::class, 'updateUser'])->name('admin.users.update');
+});
+
+Route::middleware('regular.user')->controller(ProfileController::class)->group(function () {
     Route::get('/{username}', 'show')->name('profile.show');
 });
