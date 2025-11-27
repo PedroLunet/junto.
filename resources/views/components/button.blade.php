@@ -1,5 +1,5 @@
 @php
-    $base = 'px-8 py-2 rounded-[14px] focus:outline-none focus:ring transition border-zinc-400 border-[1.5px]';
+    $base = 'px-8 py-2 rounded-[14px] focus:outline-none focus:ring transition border-zinc-400 border-[0.8px]';
     $variants = [
         'primary' => 'text-white opacity-90',
         'special' => 'px-12 py-12 bg-stone-300 text-[#291720] text-center font-bold text-2xl',
