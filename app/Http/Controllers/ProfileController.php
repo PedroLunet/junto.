@@ -98,7 +98,19 @@ class ProfileController extends Controller
         // friend button data using the service
         $friendButtonData = $this->friendService->getFriendButtonData($user);
 
-        return view('pages.profile', compact('user', 'posts', 'standardPosts', 'reviewPosts', 'friendsCount', 'postsCount', 'canViewPosts', 'friendButtonData'));
+        // get pending friend requests count for notification dot
+        $pendingRequestsCount = 0;
+        if (Auth::id() === $user->id) {
+            $pendingRequestsCount = \App\Models\FriendRequest::whereHas('request.notification', function ($query) use ($user) {
+                $query->where('receiverid', $user->id);
+            })
+                ->whereHas('request', function ($query) {
+                    $query->where('status', 'pending');
+                })
+                ->count();
+        }
+
+        return view('pages.profile', compact('user', 'posts', 'standardPosts', 'reviewPosts', 'friendsCount', 'postsCount', 'canViewPosts', 'friendButtonData', 'pendingRequestsCount'));
     }
 
     public function removeFavorite(Request $request)
@@ -144,7 +156,7 @@ class ProfileController extends Controller
     public function update(Request $request)
     {
         $user = Auth::user();
-        
+
         // Validate the input
         $request->validate([
             'name' => 'required|string|max:255',
