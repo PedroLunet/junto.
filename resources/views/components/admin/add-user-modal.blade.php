@@ -1,10 +1,10 @@
 <div id="addUserModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden items-center justify-center">
     <div class="bg-white rounded-2xl shadow-xl max-w-2xl w-full mx-4">
         <!-- header -->
-        <div class="flex items-center justify-between p-8">
-            <h2 class="text-3xl font-bold text-gray-900">Add New User</h2>
+        <div class="flex items-center justify-between p-10">
+            <h2 class="text-4xl font-bold text-gray-900">Add New User</h2>
             <a id="closeAddUserModal" class="text-gray-400 hover:text-gray-600 transition-colors">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12">
                     </path>
                 </svg>
@@ -12,51 +12,51 @@
         </div>
 
         <!-- body -->
-        <div class="flex-1 px-8">
-            <form id="addUserForm" class="space-y-6">
+        <div class="flex-1 px-10">
+            <form id="addUserForm" class="space-y-8">
                 @csrf
 
                 <!-- name -->
                 <div>
-                    <label for="addName" class="block text-lg font-medium text-gray-700 mb-2">Name</label>
+                    <label for="addName" class="block text-2xl font-medium text-gray-700 mb-2">Name</label>
                     <input type="text" id="addName" name="name" required
-                        class="w-full px-4 py-3 text-lg border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#38157a] focus:border-transparent">
+                        class="w-full px-4 py-4 text-2xl border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#38157a] focus:border-transparent">
                 </div>
 
                 <!-- username -->
                 <div>
-                    <label for="addUsername" class="block text-lg font-medium text-gray-700 mb-2">Username</label>
+                    <label for="addUsername" class="block text-2xl font-medium text-gray-700 mb-2">Username</label>
                     <input type="text" id="addUsername" name="username" required
-                        class="w-full px-4 py-3 text-lg border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#38157a] focus:border-transparent">
+                        class="w-full px-4 py-3 text-2xl border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#38157a] focus:border-transparent">
                 </div>
 
                 <!-- email -->
                 <div>
-                    <label for="addEmail" class="block text-lg font-medium text-gray-700 mb-2">Email</label>
+                    <label for="addEmail" class="block text-2xl font-medium text-gray-700 mb-2">Email</label>
                     <input type="email" id="addEmail" name="email" required
-                        class="w-full px-4 py-3 text-lg border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#38157a] focus:border-transparent">
+                        class="w-full px-4 py-3 text-2xl border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#38157a] focus:border-transparent">
                 </div>
 
                 <!-- password -->
                 <div>
-                    <label for="addPassword" class="block text-lg font-medium text-gray-700 mb-2">Password</label>
+                    <label for="addPassword" class="block text-2xl font-medium text-gray-700 mb-2">Password</label>
                     <input type="password" id="addPassword" name="password" required
-                        class="w-full px-4 py-3 text-lg border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#38157a] focus:border-transparent">
+                        class="w-full px-4 py-3 text-2xl border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#38157a] focus:border-transparent">
                 </div>
 
                 <!-- bio -->
                 <div>
-                    <label for="addBio" class="block text-lg font-medium text-gray-700 mb-2">Bio (Optional)</label>
+                    <label for="addBio" class="block text-2xl font-medium text-gray-700 mb-2">Bio (Optional)</label>
                     <textarea id="addBio" name="bio" rows="3" placeholder="Tell others about this user..."
-                        class="w-full px-4 py-3 text-lg border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#38157a] focus:border-transparent resize-none"></textarea>
+                        class="w-full px-4 py-3 text-2xl border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#38157a] focus:border-transparent resize-none"></textarea>
                 </div>
 
                 <!-- admin status -->
                 <div>
-                    <label class="flex items-center space-x-3">
+                    <label class="flex items-center space-x-4">
                         <input type="checkbox" id="addIsAdmin" name="is_admin"
-                            class="rounded border-gray-300 text-[#38157a] focus:ring-[#38157a]">
-                        <span class="text-lg font-medium text-gray-700">Admin User</span>
+                            class="w-6 h-6 rounded border-gray-300 text-[#38157a] focus:ring-[#38157a] shrink-0">
+                        <span class="text-2xl font-medium text-gray-700">Admin User</span>
                     </label>
                 </div>
             </form>
@@ -64,10 +64,10 @@
 
         <!-- footer -->
         <div class="flex justify-end gap-4 p-8">
-            <x-button variant="secondary" type="button" onclick="closeAddUserModal()" class="text-lg">
+            <x-button variant="secondary" type="button" onclick="closeAddUserModal()" class="text-2xl">
                 Cancel
             </x-button>
-            <x-button variant="primary" type="submit" form="addUserForm" class="text-lg">
+            <x-button variant="primary" type="submit" form="addUserForm" class="text-2xl px-10 py-4">
                 Create User
             </x-button>
         </div>
