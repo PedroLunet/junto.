@@ -7,31 +7,31 @@
             <div class="flex items-start justify-between gap-10 md:gap-12 lg:gap-16 mb-10 md:mb-12">
                 <!-- profile header -->
                 <div class="flex items-center gap-8 md:gap-10">
-                    @auth
-                        <div
-                            class="w-54 h-54 md:w-60 md:h-60 lg:w-72 lg:h-72 bg-gray-300 rounded-full shrink-0 flex items-center justify-center text-6xl md:text-7xl lg:text-8xl font-bold text-gray-600">
-                            <span class="leading-[0.8] mt-[0.1em]">{{ strtoupper(substr($user->name, 0, 1)) }}</span>
+                    <div
+                        class="w-54 h-54 md:w-60 md:h-60 lg:w-72 lg:h-72 bg-gray-300 rounded-full shrink-0 flex items-center justify-center text-6xl md:text-7xl lg:text-8xl font-bold text-gray-600">
+                        <span class="leading-[0.8] mt-[0.1em]">{{ strtoupper(substr($user->name, 0, 1)) }}</span>
+                    </div>
+
+                    <div class="flex-1">
+                        <h3 class="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-2">{{ $user->name }}</h3>
+                        <p class="text-2xl md:text-3xl lg:text-4xl text-gray-600 mb-4">@<span>{{ $user->username }}</span>
+                        </p>
+
+                        <!-- friends and posts count -->
+                        <div class="flex gap-8 md:gap-10 mb-4 md:mb-6">
+                            <div>
+                                <a href="{{ url('/friends-' . $user->username) }}" class="hover:underline">
+                                    <span class="font-bold text-gray-900 text-xl md:text-2xl">{{ $friendsCount }}</span>
+                                    <span class="text-gray-600 text-xl md:text-2xl">Friends</span>
+                                </a>
+                            </div>
+                            <div>
+                                <span class="font-bold text-gray-900 text-xl md:text-2xl">{{ $postsCount }}</span>
+                                <span class="text-gray-600 text-xl md:text-2xl">Posts</span>
+                            </div>
                         </div>
 
-                        <div class="flex-1">
-                            <h3 class="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-2">{{ $user->name }}</h3>
-                            <p class="text-2xl md:text-3xl lg:text-4xl text-gray-600 mb-4">@<span>{{ $user->username }}</span>
-                            </p>
-
-                            <!-- friends and posts count -->
-                            <div class="flex gap-8 md:gap-10 mb-4 md:mb-6">
-                                <div>
-                                    <a href="{{ url('/friends-' . $user->username) }}" class="hover:underline">
-                                        <span class="font-bold text-gray-900 text-xl md:text-2xl">{{ $friendsCount }}</span>
-                                        <span class="text-gray-600 text-xl md:text-2xl">Friends</span>
-                                    </a>
-                                </div>
-                                <div>
-                                    <span class="font-bold text-gray-900 text-xl md:text-2xl">{{ $postsCount }}</span>
-                                    <span class="text-gray-600 text-xl md:text-2xl">Posts</span>
-                                </div>
-                            </div>
-
+                        @auth
                             @if (Auth::id() === $user->id)
                                 <x-button onclick="openEditProfileModal()" variant="primary"
                                     class="text-xl md:text-2xl font-medium">
@@ -46,8 +46,16 @@
                                     ])
                                 </div>
                             @endif
-                        </div>
-                    @endauth
+                        @else
+                            <!-- Befriend button for guests -->
+                            <div class="mt-4 md:mt-6">
+                                <x-button variant="primary" onclick="window.location.href='/login'"
+                                    class="text-xl md:text-2xl font-medium">
+                                    Befriend
+                                </x-button>
+                            </div>
+                        @endauth
+                    </div>
                 </div>
 
                 <!-- 3 favorites -->
@@ -75,9 +83,8 @@
 
         <!-- Scrollable Content Section -->
         <div class="flex-1 overflow-hidden px-32">
-            <!-- check if profile is private -->
+            <!-- Only show private message if profile is actually private -->
             @if (!$canViewPosts)
-                <!-- private account message -->
                 <div class="flex flex-col items-center justify-center py-20">
                     <div class="text-center">
                         <h2 class="text-4xl font-bold text-gray-900 mb-4">This account is private</h2>
