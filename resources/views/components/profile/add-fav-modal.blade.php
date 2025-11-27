@@ -274,7 +274,7 @@
                         endpoint = `/movies/search?q=${encodeURIComponent(query)}`;
                         break;
                     case 'book':
-                        endpoint = `/books?q=${encodeURIComponent(query)}`;
+                        endpoint = `/books/search?q=${encodeURIComponent(query)}`;
                         break;
                     case 'music':
                         endpoint = `/music/search?q=${encodeURIComponent(query)}`;
