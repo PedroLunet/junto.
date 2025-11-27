@@ -29,9 +29,9 @@
         </script>
     @elseif($friendButtonData['status'] === 'request_sent')
         <!-- Request pending -->
-        <span class="bg-yellow-100 text-yellow-800 px-4 py-2 rounded inline-block">
+        <x-badge variant="pending" size="lg" icon="fas fa-clock">
             Friend Request Sent
-        </span>
+        </x-badge>
     @elseif($friendButtonData['status'] === 'request_received')
         <!-- Has received request from this user -->
         <div class="bg-blue-100 border border-blue-400 text-blue-800 px-4 py-3 rounded">
