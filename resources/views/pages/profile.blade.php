@@ -168,6 +168,7 @@
         <x-posts.post-modal />
         @include('components.profile.add-fav-modal')
         @include('components.profile.edit-profile-modal')
+        <x-alert />
     </div>
 
     <script>
