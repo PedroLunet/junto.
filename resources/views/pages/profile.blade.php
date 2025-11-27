@@ -1,9 +1,9 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="h-screen flex flex-col overflow-hidden">
+    <div class="flex flex-col min-h-0 h-full -m-6">
         <!-- Fixed Header Section -->
-        <div class="shrink-0 px-32 py-10">
+        <div class="shrink-0 px-32 pt-20 pb-10">
             <div class="flex items-start justify-between gap-10 md:gap-12 lg:gap-16 mb-10 md:mb-12">
                 @if (Auth::id() === $user->id)
                     <!-- inbox button -->
