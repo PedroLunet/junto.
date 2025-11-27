@@ -61,7 +61,7 @@
                                     alt="{{ $user->favoriteBookMedia->title }}" class="w-full h-full object-cover">
                             @else
                                 <span
-                                    class="text-gray-600 text-lg md:text-xl text-center px-2">{{ $user->favoriteBookMedia->title }}</span>
+                                    class="text-gray-600 text-2xl md:text-xl text-center px-2">{{ $user->favoriteBookMedia->title }}</span>
                             @endif
                         @else
                             <x-button onclick="openAddFavModal('book')" variant="ghost"
@@ -84,7 +84,7 @@
                                     alt="{{ $user->favoriteFilmMedia->title }}" class="w-full h-full object-cover">
                             @else
                                 <span
-                                    class="text-gray-600 text-lg md:text-xl text-center px-2">{{ $user->favoriteFilmMedia->title }}</span>
+                                    class="text-gray-600 text-2xl md:text-xl text-center px-2">{{ $user->favoriteFilmMedia->title }}</span>
                             @endif
                         @else
                             <x-button onclick="openAddFavModal('movie')" variant="ghost"
@@ -107,7 +107,7 @@
                                     alt="{{ $user->favoriteSongMedia->title }}" class="w-full h-full object-cover">
                             @else
                                 <span
-                                    class="text-gray-600 text-lg md:text-xl text-center px-2">{{ $user->favoriteSongMedia->title }}</span>
+                                    class="text-gray-600 text-2xl md:text-xl text-center px-2">{{ $user->favoriteSongMedia->title }}</span>
                             @endif
                         @else
                             <x-button onclick="openAddFavModal('music')" variant="ghost"
@@ -119,15 +119,15 @@
         </div>
 
         <!-- bio -->
-        <div class="mb-10 md:mb-12">
+        <div class="mb-10 md:mb-12 px-20 py-2">
             <h2 class="text-2xl md:text-3xl font-bold text-gray-900 mb-4">About Me</h2>
             @if ($user->bio)
-                <p class="text-lg md:text-xl text-gray-700 leading-relaxed">{{ $user->bio }}</p>
+                <p class="text-xl md:text-2xl text-gray-700 leading-relaxed">{{ $user->bio }}</p>
             @else
                 @if (Auth::id() === $user->id)
-                    <p class="text-lg md:text-xl text-gray-500 italic">Add a bio to tell others about yourself</p>
+                    <p class="text-xl md:text-2xl text-gray-500 italic">Add a bio to tell others about yourself</p>
                 @else
-                    <p class="text-lg md:text-xl text-gray-500 italic">{{ $user->name }} hasn't added a bio yet</p>
+                    <p class="text-xl md:text-2xl text-gray-500 italic">{{ $user->name }} hasn't added a bio yet</p>
                 @endif
             @endif
         </div>
