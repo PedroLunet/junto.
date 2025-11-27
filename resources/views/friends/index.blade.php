@@ -3,12 +3,12 @@
 @section('content')
     <div class="container mx-auto px-4 py-8">
         <div class="flex items-center mb-20 gap-10">
-            <a href="{{ route('profile.show', auth()->user()->username) }}" class="mr-4 text-gray-600 hover:text-gray-800">
+            <a href="{{ route('profile.show', $user->username) }}" class="mr-4 text-gray-600 hover:text-gray-800">
                 <i class="fas fa-arrow-left text-3xl"></i>
             </a>
             <div>
-                <h1 class="text-4xl font-bold text-gray-900">{{ auth()->user()->name }}</h1>
-                <p class="text-gray-600 text-xl">@<!---->{{ auth()->user()->username }}</p>
+                <h1 class="text-4xl font-bold text-gray-900">{{ $user->name }}</h1>
+                <p class="text-gray-600 text-xl">@<!---->{{ $user->username }}</p>
             </div>
         </div>
 
@@ -26,16 +26,21 @@
 
         @if ($friends->isEmpty())
             <div class="bg-gray-100 p-6 rounded text-center">
-                <p class="text-gray-600">You don't have any friends yet. Start by sending some friend requests!</p>
-                <x-button onclick="window.location='{{ route('search.users') }}'" variant="primary" class="mt-4 px-6 py-2">
-                    Find Friends
-                </x-button>
+                @if (auth()->id() === $user->id)
+                    <p class="text-gray-600">You don't have any friends yet. Start by sending some friend requests!</p>
+                    <x-button onclick="window.location='{{ route('search.users') }}'" variant="primary"
+                        class="mt-4 px-6 py-2">
+                        Find Friends
+                    </x-button>
+                @else
+                    <p class="text-gray-600">{{ $user->name }} doesn't have any friends yet.</p>
+                @endif
             </div>
         @else
             <h1 class="text-3xl font-bold text-gray-900 mb-6">Friends</h1>
             <div class="space-y-4">
                 @foreach ($friends as $friend)
-                    <x-user-card :user="$friend" :showUnfriendButton="true" :unfriendRoute="route('friends.unfriend', $friend->id)" :confirmMessage="'Are you sure you want to unfriend ' . $friend->name . '?'" />
+                    <x-user-card :user="$friend" :showUnfriendButton="auth()->id() === $user->id" :unfriendRoute="route('friends.unfriend', $friend->id)" :confirmMessage="'Are you sure you want to unfriend ' . $friend->name . '?'" />
                 @endforeach
             </div>
         @endif
