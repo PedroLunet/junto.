@@ -148,7 +148,7 @@
                 }
                 
                 timeoutId = setTimeout(() => {
-                    fetch(`/books?q=${encodeURIComponent(query)}`, {
+                    fetch(`/books/search?q=${encodeURIComponent(query)}`, {
                         headers: {
                             'Accept': 'application/json',
                             'X-Requested-With': 'XMLHttpRequest'

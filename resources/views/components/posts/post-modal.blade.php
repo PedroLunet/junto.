@@ -154,10 +154,10 @@
 
     // author info in header
     authorDiv.innerHTML = `
-        <div class="w-12 h-12 bg-gray-200 rounded-full shrink-0"></div>
+        <a href="/${post.username}" class="w-12 h-12 bg-gray-200 rounded-full shrink-0"></a>
         <div class="flex flex-col">
-            <span class="font-semibold text-black text-3xl">${post.author_name}</span>
-            <span class="text-gray-600 text-xl">@${post.username}</span>
+            <a href="/${post.username}" class="font-semibold text-black text-3xl hover:text-[#38157a] transition">${post.author_name}</a>
+            <a href="/${post.username}" class="text-gray-600 text-xl">@${post.username}</a>
         </div>
     `;
 
@@ -179,7 +179,7 @@
                         post.media_creator
                     );
                 } else {
-                    const imageUrl = post.image_url ? `/storage/${post.image_url}` : '';
+                    const imageUrl = post.image_url ? `/post/${post.image_url}` : '';
                     openEditModal(post.id, post.content, imageUrl);
                 }
             };
@@ -219,8 +219,8 @@
         if (post.image_url) {
             html += `
                 <div class="w-full bg-gray-100 rounded-xl overflow-hidden mb-6 shadow-inner">
-                    <img src="/storage/${post.image_url}" 
-                         onerror="this.src='/storage/default.jpg'" 
+                    <img src="/post/${post.image_url}" 
+                         onerror="this.src='/post/default.jpg'" 
                          alt="Post image" 
                          class="w-full h-auto object-contain max-h-[500px] mx-auto">
                 </div>

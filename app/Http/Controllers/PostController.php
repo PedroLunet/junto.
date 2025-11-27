@@ -75,24 +75,10 @@ class PostController extends Controller
         try {
             DB::beginTransaction();
 
-            // get the post to check ownership
-            $post = DB::selectOne('
-                SELECT p.*, sp.text, sp.imageUrl 
-                FROM lbaw2544.post p
-                JOIN lbaw2544.standard_post sp ON p.id = sp.postId
-                WHERE p.id = ?
-            ', [$id]);
+            $post = Post::with('standardPost')->findOrFail($id);
+            $this->authorize('update', $post);
 
-            if (! $post) {
-                return response()->json(['success' => false, 'message' => 'Post not found'], 404);
-            }
-
-            // check if user owns the post
-            if ($post->userid !== Auth::id()) {
-                return response()->json(['success' => false, 'message' => 'Unauthorized'], 403);
-            }
-
-            $imagePath = $post->imageurl;
+            $imagePath = $post->standardPost->imageUrl;
 
             // image removal
             if ($request->has('remove_image') && $request->remove_image == '1') {
@@ -114,11 +100,10 @@ class PostController extends Controller
             }
 
             // update the post
-            DB::update('
-                UPDATE lbaw2544.standard_post 
-                SET text = ?, imageUrl = ?
-                WHERE postId = ?
-            ', [$request->input('content'), $imagePath, $id]);
+            $post->standardPost->update([
+                'text' => $request->input('content'),
+                'imageurl' => $imagePath
+            ]);
 
             DB::commit();
 
@@ -139,24 +124,14 @@ class PostController extends Controller
         try {
             DB::beginTransaction();
 
-            // get the post to check ownership
-            $post = DB::selectOne('SELECT * FROM lbaw2544.post WHERE id = ?', [$id]);
+            $post = Post::with('standardPost')->findOrFail($id);
+            $this->authorize('delete', $post);
 
-            if (! $post) {
-                return response()->json(['success' => false, 'message' => 'Post not found'], 404);
+            if ($post->standardPost && $post->standardPost->imageUrl && $post->standardPost->imageUrl !== 'default.jpg') {
+                Storage::disk('FileStorage')->delete('post/'.$post->standardPost->imageUrl);
             }
 
-            // check if user owns the post
-            if ($post->userid !== Auth::id()) {
-                return response()->json(['success' => false, 'message' => 'Unauthorized'], 403);
-            }
-
-            $standardPost = DB::selectOne('SELECT imageUrl FROM lbaw2544.standard_post WHERE postId = ?', [$id]);
-            if ($standardPost && $standardPost->imageurl && $standardPost->imageurl !== 'default.jpg') {
-                Storage::disk('FileStorage')->delete('post/'.$standardPost->imageurl);
-            }
-
-            DB::delete('DELETE FROM lbaw2544.post WHERE id = ?', [$id]);
+            $post->delete();
 
             DB::commit();
 

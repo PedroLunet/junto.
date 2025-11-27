@@ -25,7 +25,7 @@
    <body class="flex h-screen bg-[#F1EBF4]">
         
         <!-- sidebar -->
-        <aside class="w-1/6 bg-[#624452] text-white flex flex-col rounded-r-2xl">
+        <aside class="w-1/6 bg-[#624452] text-white flex flex-col rounded-r-2xl shadow-2xl">
             <div class="p-8">
                 <h1><a href="/" class="text-4xl font-bold hover:text-[#a17f8f]">junto.</a></h1>
             </div>

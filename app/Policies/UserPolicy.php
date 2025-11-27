@@ -31,4 +31,10 @@ class UserPolicy
         // anyone can view basic profile info (name, username, etc.)
         return true;
     }
+
+    // determine if user can update the profile
+    public function update(User $user, User $model): bool
+    {
+        return $user->id === $model->id;
+    }
 }

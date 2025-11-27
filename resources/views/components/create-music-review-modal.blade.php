@@ -148,7 +148,7 @@
                 }
                 
                 timeoutId = setTimeout(() => {
-                    fetch(`/music?q=${encodeURIComponent(query)}`, {
+                    fetch(`/music/search?q=${encodeURIComponent(query)}`, {
                         headers: {
                             'Accept': 'application/json',
                             'X-Requested-With': 'XMLHttpRequest'
