@@ -3,12 +3,12 @@
         <!-- header -->
         <div class="flex items-center justify-between p-8">
             <h2 id="modalTitle" class="text-3xl font-bold text-gray-900">Add favorite</h2>
-            <a id="closeModal" class="text-gray-400 hover:text-gray-600 transition-colors">
+            <x-button id="closeModal" variant="ghost" class="text-gray-400 hover:text-gray-600 p-1">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12">
                     </path>
                 </svg>
-            </a>
+            </x-button>
         </div>
 
         <!-- body -->

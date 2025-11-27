@@ -4,108 +4,24 @@
 
 @section('content')
     <div class="container mx-auto px-4 py-8">
-        <div class="max-w-4xl mx-auto space-y-6">
-            @foreach($posts as $post)
-                <div class="bg-white rounded-2xl shadow-md border border-gray-200 p-8 cursor-pointer"
-                    onclick="openPostModal({{ json_encode($post) }})">
-
-                    <!-- profile + name -->
-                    <div class="flex items-center justify-between mb-8">
-                        <div class="flex items-center gap-3">
-                            <!-- provisorio antes de ter foto -->
-                            <div class="w-12 h-12 bg-gray-200 rounded-full"></div>
-
-                            <div class="flex flex-col">
-                                <span class="font-semibold text-gray-900">
-                                    {{ $post->author_name }}
-                                </span>
-                                <span class="text-gray-700 text-lg">
-                                    @<span>{{$post->username}}</span>
-                                </span>
-                            </div>
-                        </div>
-
-                        <!-- timestamp -->
-                        <div class="text-lg text-gray-800 text-right">
-                            {{ \Carbon\Carbon::parse($post->created_at)->format('H:i') }} <br>
-                            {{ \Carbon\Carbon::parse($post->created_at)->format('d/m/Y') }}
-                        </div>
-                    </div>
-
-
-                    <!-- REVIEWS!!!!! -->
-                    @if($post->post_type === 'review')
-                        <div class="flex gap-4 mb-4">
-                            <!-- cover -->
-                            <div class="shrink-0">
-                                <img src="{{ $post->media_poster }}" 
-                                     class="rounded-lg shadow-sm object-cover {{ $post->media_type === 'music' ? 'w-40 h-40' : 'w-40 h-64' }}" 
-                                     alt="{{ $post->media_title }}">
-                            </div>
-                            
-                          
-                            <div class="flex-1">
-                                 <div class="flex justify-between items-start gap-4 mb-1">
-                                     <h3 class="text-4xl font-bold text-gray-900">{{ $post->media_title }}</h3>
-                                     <div class="flex gap-0.5 text-yellow-400 text-2xl shrink-0 pt-1">
-                                        @for($i = 0; $i < $post->rating; $i++)
-                                            <i class="fas fa-star"></i>
-                                        @endfor
-                                     </div>
-                                 </div>
-                                 <p class="text-xl text-gray-700 font-medium mb-0.5">{{ $post->media_creator }}</p>
-                                 <p class="text-lg text-gray-700 mb-3">{{ $post->media_year }}</p>
-                                 
-                                 <p class="text-black font-light">
-                                    {{ $post->content }}
-                                 </p>
-                            </div>
-                        </div>
-
-
+        @if (isset($pageTitle) && $pageTitle === 'Friends Feed' && empty($posts))
+            <div class="p-6 rounded text-center">
+                <p class="text-gray-600">You don't have any friends yet. Start by sending some friend requests!</p>
+                <x-button onclick="window.location='{{ route('search.users') }}'" variant="primary" class="mt-4 px-6 py-2">
+                    Find Friends
+                </x-button>
+            </div>
+        @else
+            <div class="max-w-4xl mx-auto space-y-6">
+                @foreach ($posts as $post)
+                    @if ($post->post_type === 'review')
+                        <x-posts.post-review :post="$post" :showAuthor="true" />
                     @else
-                        <!-- image -->
-                        @if($post->image_url)
-                            <div class="w-full bg-gray-200 rounded-xl overflow-hidden mb-4">
-                                <img src="{{ asset('post/' . $post->image_url) }}" 
-                                     onerror="this.src='{{ asset('post/default.jpg') }}'"
-                                     class="w-full h-auto object-cover">
-                            </div>
-                        @endif
-
-                        <!-- text -->
-                        @if($post->content)
-                            <p class="text-black">
-                                {{ $post->content }}
-                            </p>
-                        @endif
+                        <x-posts.post-standard :post="$post" :showAuthor="true" />
                     @endif
-
-
-                    <!-- interactions -->
-                    <div class="flex justify-end items-center gap-4 mt-4 text-gray-600">
-
-                        <!-- likes -->
-                        <button 
-                            onclick="event.stopPropagation(); toggleLike({{ $post->id }})" 
-                            class="bg-transparent border-0 shadow-none p-0 h-auto leading-none flex items-center gap-1 hover:text-red-500 hover:bg-transparent focus:bg-transparent focus:outline-none transition-colors {{ $post->is_liked ? 'text-red-500 focus:text-red-500' : 'text-gray-600 focus:text-gray-600' }}"
-                            id="like-btn-{{ $post->id }}"
-                        >
-                            <i class="{{ $post->is_liked ? 'fas' : 'far' }} fa-heart text-2xl" id="like-icon-{{ $post->id }}"></i>
-                            <span class="text-2xl" id="like-count-{{ $post->id }}">{{ $post->likes_count ?? 0 }}</span>
-                        </button>
-
-                        <!-- comments -->
-                        <div class="flex items-center gap-1">
-                            <i class="far fa-comment text-2xl"></i>
-                            <span class="text-2xl">{{ $post->comments_count ?? 0 }}</span>
-                        </div>
-                    </div>
-
-                </div>
-
-            @endforeach
-        </div>
+                @endforeach
+            </div>
+        @endif
     </div>
 
     <x-posts.post-modal />
@@ -122,35 +38,35 @@
             }
 
             fetch(`/posts/${postId}/like`, {
-                method: 'POST',
-                headers: {
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-                    'Accept': 'application/json'
-                }
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    const likeBtn = document.getElementById(`like-btn-${postId}`);
-                    const likeCount = document.getElementById(`like-count-${postId}`);
-                    const likeIcon = document.getElementById(`like-icon-${postId}`);
-
-                    likeCount.textContent = data.likes_count;
-                    
-                    if (data.liked) {
-                        likeBtn.classList.remove('text-gray-600', 'focus:text-gray-600');
-                        likeBtn.classList.add('text-red-500', 'focus:text-red-500');
-                        likeIcon.classList.remove('far');
-                        likeIcon.classList.add('fas');
-                    } else {
-                        likeBtn.classList.remove('text-red-500', 'focus:text-red-500');
-                        likeBtn.classList.add('text-gray-600', 'focus:text-gray-600');
-                        likeIcon.classList.remove('fas');
-                        likeIcon.classList.add('far');
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                        'Accept': 'application/json'
                     }
-                }
-            })
-            .catch(error => console.error('Error:', error));
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        const likeBtn = document.getElementById(`like-btn-${postId}`);
+                        const likeCount = document.getElementById(`like-count-${postId}`);
+                        const likeIcon = document.getElementById(`like-icon-${postId}`);
+
+                        likeCount.textContent = data.likes_count;
+
+                        if (data.liked) {
+                            likeBtn.classList.remove('text-gray-600', 'focus:text-gray-600');
+                            likeBtn.classList.add('text-red-500', 'focus:text-red-500');
+                            likeIcon.classList.remove('far');
+                            likeIcon.classList.add('fas');
+                        } else {
+                            likeBtn.classList.remove('text-red-500', 'focus:text-red-500');
+                            likeBtn.classList.add('text-gray-600', 'focus:text-gray-600');
+                            likeIcon.classList.remove('fas');
+                            likeIcon.classList.add('far');
+                        }
+                    }
+                })
+                .catch(error => console.error('Error:', error));
         }
     </script>
 @endsection

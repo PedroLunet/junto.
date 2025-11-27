@@ -72,6 +72,11 @@ Route::middleware(['auth', 'regular.user'])->controller(FriendRequestController:
     Route::delete('/friends/{userId}', 'unfriend')->name('friends.unfriend');
 });
 
+// Friends route with username
+Route::middleware('regular.user')->controller(FriendRequestController::class)->group(function () {
+    Route::get('/friends-{username}', 'friendsByUsername')->name('friends.by-username');
+});
+
 // movie routes
 Route::middleware(['auth', 'regular.user'])->controller(MovieController::class)->group(function () {
     Route::get('/movies', 'index')->name('movies');
