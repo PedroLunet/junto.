@@ -26,7 +26,7 @@ class FriendRequestController extends Controller
     {
         $user = Auth::user();
 
-        // Get pending friend requests
+        // Get pending friend requests (received)
         $friendRequests = FriendRequest::whereHas('request.notification', function ($query) use ($user) {
             $query->where('receiverid', $user->id);
         })
@@ -36,9 +36,16 @@ class FriendRequestController extends Controller
             ->with(['request.sender', 'request.notification'])
             ->get();
 
-        return view('friend-requests.index', compact('friendRequests'));
-    }
+        // Get sent friend requests
+        $sentRequests = FriendRequest::whereHas('request', function ($query) use ($user) {
+            $query->where('senderid', $user->id)
+                ->where('status', 'pending');
+        })
+            ->with(['request.notification'])
+            ->get();
 
+        return view('friend-requests.index', compact('friendRequests', 'sentRequests'));
+    }
     /**
      * Display a listing of sent friend requests for the authenticated user.
      */
