@@ -11,13 +11,13 @@
                 <!-- Left Side: Post Content -->
                 <div class="flex-1 flex flex-col sm:border-r border-gray-200 overflow-hidden bg-white">
                     <!-- Header -->
-                    <div class="p-6 border-b border-gray-100 flex justify-between items-center shrink-0">
+                    <div class="p-8 flex justify-between items-center shrink-0">
                         <div id="modalAuthor" class="flex items-center gap-3">
                             <!-- js will inject author info here -->
                         </div>
                         @auth
                             <button id="modalEditButton" class="text-gray-400 hover:text-gray-600 transition-colors p-2 rounded-full hover:bg-gray-100 hidden">
-                                <i class="fas fa-edit text-xl"></i>
+                                <i class="fas fa-edit text-2xl"></i>
                             </button>
                         @endauth
                     </div>
@@ -28,7 +28,7 @@
                     </div>
 
                     <!-- Actions Footer -->
-                    <div id="postActions" class="p-4 border-t border-gray-100 flex items-center gap-6 shrink-0 bg-gray-50/50">
+                    <div id="postActions" class="p-8 flex items-center gap-6 shrink-0">
                          <!-- Like Button -->
                          <button onclick="likePost(event)" class="group flex items-center gap-2 text-gray-600 hover:text-red-500 transition-colors">
                             <i class="far fa-heart text-2xl group-hover:scale-110 transition-transform" id="modalLikeIcon"></i>
@@ -232,7 +232,7 @@
     if (post.created_at) {
         const date = new Date(post.created_at);
         html += `
-            <div class="mt-8 pt-4 border-t border-gray-100 text-gray-600 text-xl flex items-center gap-2">
+            <div class="mt-8 pt-4 text-gray-600 text-xl flex items-center gap-2">
                 <i class="far fa-clock"></i>
                 ${date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})} · ${date.toLocaleDateString()}
             </div>
