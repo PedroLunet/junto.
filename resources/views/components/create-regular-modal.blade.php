@@ -25,13 +25,13 @@
 
                     <div class="mb-4">
                         <input type="file" name="image" id="image-input" accept="image/*" class="hidden">
-                        <x-button type="button" id="add-image-button" class="px-4 py-2 text-gray-800 border border-gray-300 rounded">Add Photo</x-button>
+                        <x-button type="button" id="add-image-button" variant="secondary">Add Photo</x-button>
                         <span id="file-name" class="ml-3 text-sm text-gray-600"></span>
                     </div>
                     
                     <div class="flex justify-end space-x-3">
-                        <x-button type="button" id="cancel-button" class="px-4 py-2 text-gray-800 border border-gray-300 rounded">Cancel</x-button>
-                        <x-button type="submit" class="px-4 py-2 bg-[#38157a] text-white rounded hover:bg-[#7455ad]">Post</x-button>
+                        <x-button type="button" id="cancel-button" variant="secondary">Cancel</x-button>
+                        <x-button type="submit">Post</x-button>
                     </div>
                 </form>
             </div>

@@ -45,10 +45,10 @@
                     </div>
                     
                     <div class="flex justify-between items-center">
-                        <button type="button" id="delete-review-button" class="px-4 py-2 bg-red-600 rounded-xl hover:bg-red-200 text-white">Delete</button>
+                        <x-button type="button" id="delete-review-button" variant="danger">Delete</x-button>
                         <div class="flex space-x-3">
-                            <button type="button" id="cancel-edit-review-button" class="px-4 py-2 text-gray-800 border border-gray-300 rounded-xl">Cancel</button>
-                            <button type="submit" class="px-4 py-2 bg-[#38157a] text-white rounded-xl hover:bg-[#7455ad]">Update Review</button>
+                            <x-button type="button" id="cancel-edit-review-button" variant="secondary">Cancel</x-button>
+                            <x-button type="submit" variant="primary">Update Review</x-button>
                         </div>
                     </div>
                 </form>

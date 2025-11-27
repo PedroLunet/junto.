@@ -14,6 +14,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\CommentController;
 
 use App\Http\Controllers\SearchUserController;
 use Illuminate\Support\Facades\Route;
@@ -21,15 +22,16 @@ use Illuminate\Support\Facades\Route;
 // Home
 // Route::redirect('/', '/login');
 
-Route::middleware('regular.user')->controller(HomeController::class)->group(function () {
-    Route::get('/', 'index')->name('home');
-    Route::get('/posts/{id}/comments', 'getComments')->name('post.comments');
+Route::middleware('regular.user')->group(function () {
+    Route::get('/', [HomeController::class, 'index'])->name('home');
+    Route::get('/posts/{id}/comments', [CommentController::class, 'index'])->name('post.comments');
 });
 
 // Home page (authentication required)
-Route::middleware(['auth', 'regular.user'])->controller(HomeController::class)->group(function () {
-    Route::post('/posts/{id}/comments', 'addComment')->name('post.comments.add');
-    Route::post('/posts/{id}/like', 'toggleLike')->name('post.like');
+Route::middleware(['auth', 'regular.user'])->group(function () {
+    Route::get('/friends-feed', [HomeController::class, 'friendsFeed'])->name('friends-feed');
+    Route::post('/posts/{id}/comments', [CommentController::class, 'store'])->name('post.comments.add');
+    Route::post('/posts/{id}/like', [HomeController::class, 'toggleLike'])->name('post.like');
 });
 
 Route::middleware(['auth', 'regular.user'])->controller(ProfileController::class)->group(function () {
@@ -84,13 +86,15 @@ Route::middleware(['auth', 'regular.user'])->controller(MovieController::class)-
 
 // temporary music routes
 Route::middleware(['auth', 'regular.user'])->controller(MusicController::class)->group(function () {
-    Route::get('/music', 'search')->name('music.search');
+    Route::get('/music', 'index')->name('music');
+    Route::get('/music/search', 'search')->name('music.search');
     Route::post('/music', 'store')->name('music.store');
 });
 
 // books routes
 Route::middleware(['auth', 'regular.user'])->controller(BookController::class)->group(function () {
-    Route::get('/books', 'search')->name('books.search');
+    Route::get('/books', 'index')->name('books');
+    Route::get('/books/search', 'search')->name('books.search');
     Route::post('/books', 'store')->name('books.store');
 });
 
@@ -131,3 +135,4 @@ Route::middleware(['auth', 'admin'])->group(function () {
 Route::middleware('regular.user')->controller(ProfileController::class)->group(function () {
     Route::get('/{username}', 'show')->name('profile.show');
 });
+

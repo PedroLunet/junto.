@@ -25,7 +25,7 @@
         @endif
 
         @if ($friends->isEmpty())
-            <div class="bg-gray-100 p-6 rounded text-center">
+            <div class="p-6 rounded text-center">
                 @if (auth()->id() === $user->id)
                     <p class="text-gray-600">You don't have any friends yet. Start by sending some friend requests!</p>
                     <x-button onclick="window.location='{{ route('search.users') }}'" variant="primary"

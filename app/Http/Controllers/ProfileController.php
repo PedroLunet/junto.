@@ -52,13 +52,35 @@ class ProfileController extends Controller
 
             // transform the data to match the expected format
             $posts = $allPosts->map(function ($post) {
+                // get actual likes and comments counts from database
+                $likesCount = \Illuminate\Support\Facades\DB::select("
+                    SELECT COUNT(*) as count FROM lbaw2544.post_like 
+                    WHERE postId = ?
+                ", [$post->id])[0]->count ?? 0;
+
+                $commentsCount = \Illuminate\Support\Facades\DB::select("
+                    SELECT COUNT(*) as count FROM lbaw2544.comment 
+                    WHERE postId = ?
+                ", [$post->id])[0]->count ?? 0;
+
+                // check if current user liked this post
+                $isLiked = false;
+                if (Auth::check()) {
+                    $likedCheck = \Illuminate\Support\Facades\DB::select("
+                        SELECT COUNT(*) as count FROM lbaw2544.post_like 
+                        WHERE postId = ? AND userId = ?
+                    ", [$post->id, Auth::id()])[0]->count ?? 0;
+                    $isLiked = $likedCheck > 0;
+                }
+
                 $transformedPost = (object) [
                     'id' => $post->id,
                     'created_at' => $post->createdat,
                     'author_name' => $post->user->name,
                     'username' => $post->user->username,
-                    'likes_count' => 0,
-                    'comments_count' => 0,
+                    'likes_count' => $likesCount,
+                    'comments_count' => $commentsCount,
+                    'is_liked' => $isLiked,
                 ];
 
                 // standard post data
@@ -73,6 +95,24 @@ class ProfileController extends Controller
                     $transformedPost->content = $post->review->content;
                     $transformedPost->rating = $post->review->rating;
                     $transformedPost->media_title = $post->review->media ? $post->review->media->title : 'Unknown Media';
+                    $transformedPost->media_poster = $post->review->media ? $post->review->media->coverimage : null;
+                    $transformedPost->media_creator = $post->review->media ? $post->review->media->creator : null;
+                    $transformedPost->media_year = $post->review->media ? $post->review->media->releaseyear : null;
+
+                    // Determine media type by checking related tables
+                    if ($post->review->media) {
+                        $mediaId = $post->review->media->id;
+                        if (\App\Models\Book::where('mediaid', $mediaId)->exists()) {
+                            $transformedPost->media_type = 'book';
+                        } elseif (\App\Models\Music::where('mediaid', $mediaId)->exists()) {
+                            $transformedPost->media_type = 'music';
+                        } else {
+                            $transformedPost->media_type = 'movie'; // default for films
+                        }
+                    } else {
+                        $transformedPost->media_type = 'movie';
+                    }
+
                     $transformedPost->post_type = 'review';
                 }
 

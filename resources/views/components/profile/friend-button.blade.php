@@ -34,29 +34,11 @@
         </x-badge>
     @elseif($friendButtonData['status'] === 'request_received')
         <!-- Has received request from this user -->
-        <div class="bg-blue-100 border border-blue-400 text-blue-800 px-4 py-3 rounded">
-            <p class="mb-2">{{ $user->name }} sent you a friend request!</p>
-            <div class="flex space-x-2">
-                @if ($friendButtonData['received_request'])
-                    <form
-                        action="{{ route('friend-requests.accept', $friendButtonData['received_request']->notificationid) }}"
-                        method="POST">
-                        @csrf
-                        <x-button type="submit" variant="primary" class="px-4 py-2">
-                            Accept
-                        </x-button>
-                    </form>
-                    <form
-                        action="{{ route('friend-requests.reject', $friendButtonData['received_request']->notificationid) }}"
-                        method="POST">
-                        @csrf
-                        <x-button type="submit" variant="danger" class="px-4 py-2">
-                            Reject
-                        </x-button>
-                    </form>
-                @endif
-            </div>
-        </div>
+        <a href="{{ route('friend-requests.index') }}" class="inline-block hover:opacity-80 transition-opacity">
+            <x-badge variant="pending" size="lg" icon="fas fa-user-plus">
+                Requested to be your friend!
+            </x-badge>
+        </a>
     @else
         <!-- Can send friend request -->
         <form action="{{ route('friend-requests.store') }}" method="POST">
