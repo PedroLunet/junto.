@@ -12,6 +12,8 @@ class ReportController extends Controller
    */
   public function reportPost(Request $request, $id)
   {
+    $this->authorize('create', Report::class);
+
     $request->validate([
       'reason' => 'required|string|min:10|max:1000'
     ]);
@@ -36,10 +38,7 @@ class ReportController extends Controller
    */
   public function index()
   {
-    // Check if user is admin
-    if (!auth()->check() || !auth()->user()->isAdmin) {
-      abort(403, 'Unauthorized');
-    }
+    $this->authorize('viewAny', Report::class);
 
     $reports = Report::getAllReports();
 
@@ -51,10 +50,7 @@ class ReportController extends Controller
    */
   public function pending()
   {
-    // Check if user is admin
-    if (!auth()->check() || !auth()->user()->isAdmin) {
-      abort(403, 'Unauthorized');
-    }
+    $this->authorize('viewAny', Report::class);
 
     $reports = Report::getPendingReports();
 
@@ -66,13 +62,8 @@ class ReportController extends Controller
    */
   public function updateStatus(Request $request, $id)
   {
-    // Check if user is admin
-    if (!auth()->check() || !auth()->user()->isAdmin) {
-      return response()->json([
-        'success' => false,
-        'message' => 'Unauthorized'
-      ], 403);
-    }
+    $report = Report::findOrFail($id);
+    $this->authorize('update', $report);
 
     $request->validate([
       'status' => 'required|in:accepted,rejected'

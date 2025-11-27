@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Services\MusicService;
 use App\Services\FavoriteService;
+use App\Models\Post;
 
 class MusicController extends Controller
 {
@@ -16,6 +17,15 @@ class MusicController extends Controller
     {
         $this->musicService = $musicService;
         $this->favoriteService = $favoriteService;
+    }
+
+    public function index()
+    {
+        $posts = Post::getMusicReviewPosts(auth()->id());
+        return view('pages.home', [
+            'posts' => $posts,
+            'pageTitle' => 'Music Reviews'
+        ]);
     }
 
     public function search(Request $request)
@@ -35,7 +45,7 @@ class MusicController extends Controller
             }
         }
 
-        // check if this is an AJAX request
+        // check if this is an ajax request
         if ($request->ajax() || $request->expectsJson()) {
             return response()->json($formattedSongs);
         }

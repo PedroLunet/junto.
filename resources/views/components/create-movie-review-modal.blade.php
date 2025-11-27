@@ -62,8 +62,8 @@
                     </div>
                     
                     <div class="flex justify-end space-x-3">
-                        <button type="button" id="cancel-movie-review-button" class="px-4 py-2 text-gray-800 border border-gray-300 rounded">Cancel</button>
-                        <button type="submit" class="px-4 py-2 bg-[#38157a] text-white rounded hover:bg-[#7455ad]">Post</button>
+                        <x-button type="button" id="cancel-movie-review-button" variant="secondary">Cancel</x-button>
+                        <x-button type="submit">Post</x-button>
                     </div>
                 </form>
             </div>

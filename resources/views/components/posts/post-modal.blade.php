@@ -104,7 +104,7 @@
                 <span class="font-semibold text-gray-900 truncate comment-author"></span>
                 <span class="text-lg text-gray-600 ml-2 shrink-0 comment-date"></span>
             </div>
-            <p class="text-gray-700 text leading-relaxed break-words comment-content"></p>
+            <p class="text-gray-700 text leading-relaxed wrap-break-word comment-content"></p>
         </div>
     </div>
 </template>
@@ -157,38 +157,47 @@
 
         currentPostId = post.id;
 
-        // author info in header
-        authorDiv.innerHTML = `
-        <div class="w-12 h-12 bg-gray-200 rounded-full shrink-0"></div>
+    // author info in header
+    authorDiv.innerHTML = `
+        <a href="/${post.username}" class="w-12 h-12 bg-gray-200 rounded-full shrink-0"></a>
         <div class="flex flex-col">
-            <span class="font-semibold text-black text-3xl">${post.author_name}</span>
-            <span class="text-gray-600 text-xl">@${post.username}</span>
+            <a href="/${post.username}" class="font-semibold text-black text-3xl hover:text-[#38157a] transition">${post.author_name}</a>
+            <a href="/${post.username}" class="text-gray-600 text-xl">@${post.username}</a>
         </div>
     `;
 
-        // Set edit button if author
-        if (editBtn) {
-            editBtn.style.display = 'none';
-            if (window.isAuthenticated && window.currentUserUsername === post.username) {
-                editBtn.style.display = 'block';
-                editBtn.onclick = function() {
-                    closePostModal();
-                    if (post.post_type === 'review') {
-                        openEditReviewModal(
-                            post.id,
-                            post.content,
-                            post.rating,
-                            post.media_title,
-                            post.media_poster,
-                            post.media_year,
-                            post.media_creator
-                        );
-                    } else {
-                        const imageUrl = post.image_url ? `/storage/${post.image_url}` : '';
-                        openEditModal(post.id, post.content, imageUrl);
-                    }
-                };
-            }
+    // Set edit button if author
+    if (editBtn) {
+        editBtn.style.display = 'none';
+        if (window.isAuthenticated && window.currentUserUsername === post.username) {
+            editBtn.style.display = 'block';
+            editBtn.onclick = function() {
+                closePostModal();
+                if (post.post_type === 'review') {
+                    openEditReviewModal(
+                        post.id, 
+                        post.content, 
+                        post.rating, 
+                        post.media_title, 
+                        post.media_poster, 
+                        post.media_year, 
+                        post.media_creator
+                    );
+                } else {
+                    const imageUrl = post.image_url ? `/post/${post.image_url}` : '';
+                    openEditModal(post.id, post.content, imageUrl);
+                }
+            };
+        }
+    }
+
+    // Set content
+    let html = '';
+
+    if (post.post_type === 'review') {
+        let starsHtml = '';
+        for(let i = 0; i < post.rating; i++) {
+            starsHtml += '<i class="fas fa-star text-4xl"></i>';
         }
 
         // Set content
@@ -224,8 +233,8 @@
             if (post.image_url) {
                 html += `
                 <div class="w-full bg-gray-100 rounded-xl overflow-hidden mb-6 shadow-inner">
-                    <img src="/storage/${post.image_url}" 
-                         onerror="this.src='/storage/default.jpg'" 
+                    <img src="/post/${post.image_url}" 
+                         onerror="this.src='/post/default.jpg'" 
                          alt="Post image" 
                          class="w-full h-auto object-contain max-h-[500px] mx-auto">
                 </div>

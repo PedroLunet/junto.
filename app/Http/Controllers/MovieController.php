@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Services\MovieService;
 use App\Services\FavoriteService;
+use App\Models\Post;
 use Illuminate\Http\Request;
 
 class MovieController extends Controller
@@ -19,7 +20,11 @@ class MovieController extends Controller
 
     public function index()
     {
-        return view('pages.movies');
+        $posts = Post::getMovieReviewPosts(auth()->id());
+        return view('pages.home', [
+            'posts' => $posts,
+            'pageTitle' => 'Movies'
+        ]);
     }
 
 
@@ -34,8 +39,8 @@ class MovieController extends Controller
         $results = $this->movieService->searchMovies($query);
         $movies = $results['results'] ?? [];
 
-        // enable director fetching
-        $formattedMovies = $this->movieService->formatMovieData($movies, true);
+        // disable director fetching for search results to improve performance
+        $formattedMovies = $this->movieService->formatMovieData($movies, false);
 
         return response()->json($formattedMovies);
     }

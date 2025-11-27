@@ -22,23 +22,23 @@
         <script src="{{ asset('js/app.js') }}" defer></script>
         @stack('scripts')
     </head>
-   <body class="flex h-screen">
+   <body class="flex h-screen bg-[#F1EBF4]">
         
         <!-- sidebar -->
-        <aside class="w-80 bg-[#38157a] text-white flex flex-col">
-            <div class="p-4">
-                <h1><a href="/" class="text-4xl font-bold">junto.</a></h1>
+        <aside class="w-1/6 bg-[#624452] text-white flex flex-col rounded-r-2xl shadow-2xl">
+            <div class="p-8">
+                <h1><a href="/" class="text-4xl font-bold hover:text-[#a17f8f]">junto.</a></h1>
             </div>
             
             <nav class="flex-1 px-4">
                 @auth
                 <ul class="space-y-2">
-                    <li><a href="#" class="block py-2 px-4 rounded hover:bg-[#7455ad] hover:text-white">Friends Feed</a></li>
-                    <li><a href="{{ route('friends.index') }}" class="block py-2 px-4 rounded hover:bg-[#7455ad] hover:text-white">My Friends</a></li>
-                    <li><a href="{{ route('friend-requests.index') }}" class="block py-2 px-4 rounded hover:bg-[#7455ad] hover:text-white">Friend Requests</a></li>
-                    <li><a href="{{ route('movies') }}" class="block py-2 px-4 rounded hover:bg-[#7455ad] hover:text-white">Movies</a></li>
-                    <li><a href="#" class="block py-2 px-4 rounded hover:bg-[#7455ad] hover:text-white">Books</a></li>
-                    <li><a href="#" class="block py-2 px-4 rounded hover:bg-[#7455ad] hover:text-white">Music</a></li>
+                    <li><a href="{{ route('friends-feed') }}" class="block py-2 px-4 rounded hover:bg-[#7a5466] hover:text-white">Friends Feed</a></li>
+                    <li><a href="{{ route('friends.index') }}" class="block py-2 px-4 rounded hover:bg-[#7a5466] hover:text-white">My Friends</a></li>
+                    <li><a href="{{ route('friend-requests.index') }}" class="block py-2 px-4 rounded hover:bg-[#7a5466] hover:text-white">Friend Requests</a></li>
+                    <li><a href="{{ route('movies') }}" class="block py-2 px-4 rounded hover:bg-[#7a5466] hover:text-white">Movies</a></li>
+                    <li><a href="{{ route('books') }}" class="block py-2 px-4 rounded hover:bg-[#7a5466] hover:text-white">Books</a></li>
+                    <li><a href="{{ route('music') }}" class="block py-2 px-4 rounded hover:bg-[#7a5466] hover:text-white">Music</a></li>
                 </ul>
                 @endauth
             </nav>
@@ -48,14 +48,14 @@
             @auth
             <div class="px-4 mb-4 flex flex-col gap-2">
                 <x-button id="regular-button" variant="special"> + </x-button>
-                <div class="flex gap-2">
-                    <x-button id="movie-button" variant="special">
+                <div class="flex gap-2 w-full">
+                    <x-button id="movie-button" variant="special" class="flex-1 justify-center">
                         <i class="fa-solid fa-clapperboard text-2xl"></i>
                     </x-button>
-                    <x-button id="book-button" variant="special">
+                    <x-button id="book-button" variant="special" class="flex-1 justify-center">
                         <i class="fa-solid fa-book text-2xl"></i>
                     </x-button>
-                    <x-button id="music-button" variant="special">
+                    <x-button id="music-button" variant="special" class="flex-1 justify-center">
                         <i class="fa-solid fa-music text-2xl"></i>
                     </x-button>
                 </div>
@@ -73,8 +73,8 @@
         <!-- main content -->
         <main class="flex-1 flex flex-col overflow-hidden">
             @hasSection('title')
-            <header class="bg-white shadow-sm p-4 sticky top-0 z-10 mb-0 flex justify-between items-center">
-                <h2 class="font-semibold">@yield('title')</h2>
+            <header class="bg-transparent shadow-sm p-4 sticky top-0 z-10 mb-0 flex justify-between items-center">
+                <h2 class="text-[#624452] font-semibold">@yield('title')</h2>
                 @guest
                     <div class="flex gap-2">
                         <a href="{{ route('login') }}" class="bg-[#38157a] text-white px-4 py-2 rounded-lg hover:bg-[#7455ad] hover:text-white">Login</a>

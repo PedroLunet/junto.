@@ -11,26 +11,18 @@ class HomeController extends Controller
     public function index(): View
     {
         $posts = Post::getPostsWithDetails(auth()->id());
-        return view('pages.home', compact('posts'));
-    }
-
-    public function getComments($id)
-    {
-        $comments = Post::getCommentsForPost($id);
-        return response()->json($comments);
-    }
-
-    public function addComment(Request $request, $id)
-    {
-        $request->validate([
-            'content' => 'required|string|max:1000'
+        return view('pages.home', [
+            'posts' => $posts,
+            'pageTitle' => 'Home'
         ]);
+    }
 
-        $comment = Post::addComment($id, auth()->id(), $request->input('content'));
-
-        return response()->json([
-            'success' => true,
-            'comment' => $comment
+    public function friendsFeed(): View
+    {
+        $posts = Post::getFriendsPostsWithDetails(auth()->id());
+        return view('pages.home', [
+            'posts' => $posts,
+            'pageTitle' => 'Friends Feed'
         ]);
     }
 
