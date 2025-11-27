@@ -192,24 +192,26 @@
     if (post.post_type === 'review') {
         let starsHtml = '';
         for(let i = 0; i < post.rating; i++) {
-            starsHtml += '<i class="fas fa-star"></i>';
+            starsHtml += '<i class="fas fa-star text-4xl"></i>';
         }
 
         html = `
             <div class="flex flex-col sm:flex-row gap-6">
                 <div class="shrink-0 mx-auto sm:mx-0">
                     <img src="${post.media_poster}" 
-                         class="rounded-xl shadow-lg object-cover ${post.media_type === 'music' ? 'w-48 h-48' : 'w-48 h-72'}" 
+                         class="rounded-xl shadow-lg object-cover ${post.media_type === 'music' ? 'w-96 h-96' : 'w-96 h-[36rem]'}" 
                          alt="${post.media_title}">
                 </div>
-                <div class="flex-1 relative text-center sm:text-left">
-                    <div class="sm:absolute top-0 right-0 text-yellow-400 text-xl mb-2 sm:mb-0">
-                        ${starsHtml}
+                <div class="flex-1 text-center sm:text-left">
+                    <div class="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-4 mb-2">
+                        <h3 class="text-6xl font-bold text-gray-900 leading-tight">${post.media_title}</h3>
+                        <div class="text-yellow-400 shrink-0 mt-4">
+                            ${starsHtml}
+                        </div>
                     </div>
-                    <h3 class="text-4xl font-bold text-gray-900 sm:pr-24 mb-1">${post.media_title}</h3>
-                    <p class="text-xl text-gray-600 font-medium mb-1">${post.media_creator}</p>
-                    <p class="text-lg text-gray-500 mb-6">${post.media_year}</p>
-                    <p class="text-gray-800 leading-relaxed">${post.content}</p>
+                    <p class="text-2xl text-gray-600 font-medium mb-1">${post.media_creator}</p>
+                    <p class="text-xl text-gray-500 mb-6">${post.media_year}</p>
+                    <p class="text-gray-800">${post.content}</p>
                 </div>
             </div>
         `;
