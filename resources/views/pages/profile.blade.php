@@ -66,74 +66,9 @@
 
                 <!-- 3 favorites -->
                 <div class="flex gap-8 md:gap-12 lg:gap-16 justify-end">
-                    <!-- fav book -->
-                    @if ($user->favoriteBookMedia || Auth::id() === $user->id)
-                        <div class="w-36 h-54 md:w-40 md:h-60 lg:w-48 lg:h-72 bg-gray-300 flex items-center justify-center relative"
-                            @if ($user->favoriteBookMedia) title="{{ $user->favoriteBookMedia->title }}{{ $user->favoriteBookMedia->creator ? ' - ' . $user->favoriteBookMedia->creator : '' }}" @endif>
-                            @if ($user->favoriteBookMedia)
-                                @if (Auth::id() === $user->id)
-                                    <x-button onclick="removeFavorite('book')" variant="danger"
-                                        class="absolute -top-5 -right-5 w-10 h-10 rounded-full flex items-center justify-center text-3xl font-bold z-10 px-0 py-0">-</x-button>
-                                @endif
-                                @if ($user->favoriteBookMedia->coverimage && filter_var($user->favoriteBookMedia->coverimage, FILTER_VALIDATE_URL))
-                                    <img src="{{ $user->favoriteBookMedia->coverimage }}"
-                                        alt="{{ $user->favoriteBookMedia->title }}" class="w-full h-full object-cover">
-                                @else
-                                    <span
-                                        class="text-gray-600 text-2xl md:text-xl text-center px-2">{{ $user->favoriteBookMedia->title }}</span>
-                                @endif
-                            @else
-                                <x-button onclick="openAddFavModal('book')" variant="ghost"
-                                    class="w-full h-full text-gray-600 text-5xl md:text-6xl lg:text-7xl font-light hover:text-gray-800 hover:bg-gray-400 cursor-pointer px-0 py-0">+</x-button>
-                            @endif
-                        </div>
-                    @endif
-
-                    <!-- fav movie -->
-                    @if ($user->favoriteFilmMedia || Auth::id() === $user->id)
-                        <div class="w-36 h-54 md:w-40 md:h-60 lg:w-48 lg:h-72 bg-gray-300 flex items-center justify-center relative"
-                            @if ($user->favoriteFilmMedia) title="{{ $user->favoriteFilmMedia->title }}{{ $user->favoriteFilmMedia->creator ? ' - ' . $user->favoriteFilmMedia->creator : '' }}" @endif>
-                            @if ($user->favoriteFilmMedia)
-                                @if (Auth::id() === $user->id)
-                                    <x-button onclick="removeFavorite('movie')" variant="danger"
-                                        class="absolute -top-5 -right-5 w-10 h-10 rounded-full flex items-center justify-center text-3xl font-bold z-10 px-0 py-0">-</x-button>
-                                @endif
-                                @if ($user->favoriteFilmMedia->coverimage && filter_var($user->favoriteFilmMedia->coverimage, FILTER_VALIDATE_URL))
-                                    <img src="{{ $user->favoriteFilmMedia->coverimage }}"
-                                        alt="{{ $user->favoriteFilmMedia->title }}" class="w-full h-full object-cover">
-                                @else
-                                    <span
-                                        class="text-gray-600 text-2xl md:text-xl text-center px-2">{{ $user->favoriteFilmMedia->title }}</span>
-                                @endif
-                            @else
-                                <x-button onclick="openAddFavModal('movie')" variant="ghost"
-                                    class="w-full h-full text-gray-600 text-5xl md:text-6xl lg:text-7xl font-light hover:text-gray-800 hover:bg-gray-400 cursor-pointer px-0 py-0">+</x-button>
-                            @endif
-                        </div>
-                    @endif
-
-                    <!-- fav music -->
-                    @if ($user->favoriteSongMedia || Auth::id() === $user->id)
-                        <div class="w-48 h-56 md:w-56 md:h-56 lg:w-72 lg:h-72 bg-gray-300 flex items-center justify-center relative"
-                            @if ($user->favoriteSongMedia) title="{{ $user->favoriteSongMedia->title }}{{ $user->favoriteSongMedia->creator ? ' - ' . $user->favoriteSongMedia->creator : '' }}" @endif>
-                            @if ($user->favoriteSongMedia)
-                                @if (Auth::id() === $user->id)
-                                    <x-button onclick="removeFavorite('music')" variant="danger"
-                                        class="absolute -top-5 -right-5 w-10 h-10 rounded-full flex items-center justify-center text-3xl font-bold z-10 px-0 py-0">-</x-button>
-                                @endif
-                                @if ($user->favoriteSongMedia->coverimage && filter_var($user->favoriteSongMedia->coverimage, FILTER_VALIDATE_URL))
-                                    <img src="{{ $user->favoriteSongMedia->coverimage }}"
-                                        alt="{{ $user->favoriteSongMedia->title }}" class="w-full h-full object-cover">
-                                @else
-                                    <span
-                                        class="text-gray-600 text-2xl md:text-xl text-center px-2">{{ $user->favoriteSongMedia->title }}</span>
-                                @endif
-                            @else
-                                <x-button onclick="openAddFavModal('music')" variant="ghost"
-                                    class="w-full h-full text-gray-600 text-5xl md:text-6xl lg:text-7xl font-light hover:text-gray-800 hover:bg-gray-400 cursor-pointer px-0 py-0">+</x-button>
-                            @endif
-                        </div>
-                    @endif
+                    <x-profile.fav :user="$user" :media="$user->favoriteBookMedia" type="book" />
+                    <x-profile.fav :user="$user" :media="$user->favoriteFilmMedia" type="movie" />
+                    <x-profile.fav :user="$user" :media="$user->favoriteSongMedia" type="music" />
                 </div>
             </div>
 
