@@ -21,13 +21,32 @@
         </script>
         <script src="{{ asset('js/app.js') }}" defer></script>
         @stack('scripts')
+        <script>
+            function toggleMobileMenu() {
+                const sidebar = document.getElementById('sidebar');
+                const overlay = document.getElementById('mobile-overlay');
+                const menuButton = document.getElementById('mobile-menu-button');
+                sidebar.classList.toggle('-translate-x-full');
+                overlay.classList.toggle('hidden');
+                menuButton.classList.toggle('hidden');
+            }
+        </script>
     </head>
-   <body class="flex h-screen bg-[#F1EBF4]">
+   <body class="flex h-screen bg-[#F1EBF4] overflow-hidden">
+        
+        <x-button id="mobile-menu-button" variant="ghost" onclick="toggleMobileMenu()" class="lg:hidden fixed top-4 left-4 z-50">
+            <i class="fa-solid fa-bars text-xl"></i>
+        </x-button>
+
+        <div id="mobile-overlay" class="hidden lg:hidden fixed inset-0 bg-black bg-opacity-50 z-30" onclick="toggleMobileMenu()"></div>
         
         <!-- sidebar -->
-        <aside class="w-1/6 bg-[#624452] text-white flex flex-col rounded-r-2xl shadow-2xl">
-            <div class="p-8">
+        <aside id="sidebar" class="fixed lg:relative w-64 lg:w-1/6 h-full bg-[#624452] text-white flex flex-col rounded-r-2xl shadow-2xl z-40 transform -translate-x-full lg:translate-x-0 transition-transform duration-300">
+            <div class="p-8 flex justify-between items-center">
                 <h1><a href="/" class="text-4xl font-bold hover:text-[#a17f8f]">junto.</a></h1>
+                <button onclick="toggleMobileMenu()" class="lg:hidden text-white">
+                    <i class="fa-solid fa-times text-2xl"></i>
+                </button>
             </div>
             
             <nav class="flex-1 px-4">
@@ -45,7 +64,7 @@
 
             <div class="px-4 mb-4 flex flex-col gap-2">
                 <x-button id="regular-button" variant="special"> + </x-button>
-                <div class="flex gap-2 w-full">
+                <div class="hidden lg:flex gap-2 w-full">
                     <x-button id="movie-button" variant="special" class="flex-1 justify-center">
                         <i class="fa-solid fa-clapperboard text-2xl"></i>
                     </x-button>
@@ -72,10 +91,10 @@
         </aside>
 
         <!-- main content -->
-        <main class="flex-1 flex flex-col overflow-hidden">
+        <main class="flex-1 flex flex-col overflow-hidden w-full lg:w-auto">
             @hasSection('title')
             <header class="bg-transparent shadow-sm p-4 sticky top-0 z-10 mb-0 flex justify-between items-center">
-                <h2 class="text-[#624452] font-semibold">@yield('title')</h2>
+                <h2 class="text-[#624452] font-semibold ml-16 lg:ml-0">@yield('title')</h2>
             </header>
             @endif
             
