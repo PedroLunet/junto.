@@ -2,6 +2,8 @@
     $showUnfriendButton = $attributes->get('showUnfriendButton', false);
     $unfriendRoute = $attributes->get('unfriendRoute', '');
     $confirmMessage = $attributes->get('confirmMessage', 'Are you sure?');
+    $showBefriendButton = $attributes->get('showBefriendButton', false);
+    $friendButtonData = $attributes->get('friendButtonData', null);
 @endphp
 
 <div
@@ -26,6 +28,13 @@
                     Unfriend
                 </x-button>
             </form>
+        @elseif ($showBefriendButton && $user->id !== auth()->id() && $friendButtonData)
+            <div class="ml-4">
+                @include('components.profile.friend-button', [
+                    'user' => $user,
+                    'friendButtonData' => $friendButtonData,
+                ])
+            </div>
         @endif
 
         {{ $slot }}

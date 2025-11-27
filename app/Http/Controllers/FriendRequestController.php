@@ -6,12 +6,19 @@ use App\Models\FriendRequest;
 use App\Models\Friendship;
 use App\Models\User;
 use App\Models\Request;
+use App\Services\FriendService;
 use Illuminate\Http\Request as HttpRequest;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class FriendRequestController extends Controller
 {
+    protected $friendService;
+
+    public function __construct(FriendService $friendService)
+    {
+        $this->friendService = $friendService;
+    }
     /**
      * Display a listing of received friend requests for the authenticated user.
      */
@@ -222,7 +229,10 @@ class FriendRequestController extends Controller
 
         $friends = $friendsAsUser1->merge($friendsAsUser2);
 
-        return view('friends.index', compact('friends', 'user'));
+        // Empty friends data for own friends list
+        $friendsData = [];
+
+        return view('friends.index', compact('friends', 'user', 'friendsData'));
     }
 
     // display a list of friends for a specific user by username
@@ -243,6 +253,14 @@ class FriendRequestController extends Controller
 
         $friends = $friendsAsUser1->merge($friendsAsUser2);
 
-        return view('friends.index', compact('friends', 'user'));
+        // Get friend button data for each friend if viewing someone else's list
+        $friendsData = [];
+        if (Auth::id() !== $user->id) {
+            foreach ($friends as $friend) {
+                $friendsData[$friend->id] = $this->friendService->getFriendButtonData($friend);
+            }
+        }
+
+        return view('friends.index', compact('friends', 'user', 'friendsData'));
     }
 }
