@@ -24,7 +24,7 @@
                         </div>
 
                         <!-- timestamp -->
-                        <div class="text-lg text-gray-800">
+                        <div class="text-lg text-gray-800 text-right">
                             {{ \Carbon\Carbon::parse($post->created_at)->format('H:i') }} <br>
                             {{ \Carbon\Carbon::parse($post->created_at)->format('d/m/Y') }}
                         </div>
@@ -89,14 +89,14 @@
                             class="bg-transparent border-0 shadow-none p-0 h-auto leading-none flex items-center gap-1 hover:text-red-500 hover:bg-transparent focus:bg-transparent focus:outline-none transition-colors {{ $post->is_liked ? 'text-red-500 focus:text-red-500' : 'text-gray-600 focus:text-gray-600' }}"
                             id="like-btn-{{ $post->id }}"
                         >
-                            <span class="text-2xl" id="like-count-{{ $post->id }}">{{ $post->likes_count ?? 0 }}</span>
                             <i class="{{ $post->is_liked ? 'fas' : 'far' }} fa-heart text-2xl" id="like-icon-{{ $post->id }}"></i>
+                            <span class="text-2xl" id="like-count-{{ $post->id }}">{{ $post->likes_count ?? 0 }}</span>
                         </button>
 
                         <!-- comments -->
                         <div class="flex items-center gap-1">
-                            <span class="text-2xl">{{ $post->comments_count ?? 0 }}</span>
                             <i class="far fa-comment text-2xl"></i>
+                            <span class="text-2xl">{{ $post->comments_count ?? 0 }}</span>
                         </div>
                     </div>
 

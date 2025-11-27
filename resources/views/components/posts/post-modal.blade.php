@@ -17,7 +17,7 @@
                         </div>
                         @auth
                             <button id="modalEditButton" class="text-gray-400 hover:text-gray-600 transition-colors p-2 rounded-full hover:bg-gray-100 hidden">
-                                <i class="fas fa-edit text-2xl"></i>
+                                <i class="fas fa-edit text-3xl"></i>
                             </button>
                         @endauth
                     </div>
@@ -31,18 +31,18 @@
                     <div id="postActions" class="p-8 flex items-center gap-6 shrink-0">
                          <!-- Like Button -->
                          <button onclick="likePost(event)" class="group flex items-center gap-2 text-gray-600 hover:text-red-500 transition-colors">
-                            <i class="far fa-heart text-2xl group-hover:scale-110 transition-transform" id="modalLikeIcon"></i>
-                            <span id="likesCount" class="text-xl font-medium">0</span>
+                            <i class="far fa-heart text-4xl group-hover:scale-110 transition-transform" id="modalLikeIcon"></i>
+                            <span id="likesCount" class="text-2xl font-medium">0</span>
                          </button>
                          
                          <!-- Comment Indicator -->
                          <div class="flex items-center gap-2 text-gray-600">
-                            <i class="far fa-comment text-2xl"></i>
-                            <span id="commentsCount" class="text-xl font-medium">0</span>
+                            <i class="far fa-comment text-4xl"></i>
+                            <span id="commentsCount" class="text-2xl font-medium">0</span>
                          </div>
 
                          <!-- Report Button -->
-                         <button onclick="openReportModal(event)" id="reportButton" class="ml-auto text-gray-400 hover:text-red-600 transition-colors flex items-center gap-2 px-3 py-1.5 rounded-xl hover:bg-red-50">
+                         <button onclick="openReportModal(event)" id="reportButton" class="ml-auto text-gray-500 hover:text-red-600 transition-colors flex items-center gap-2 px-3 py-1.5 rounded-xl hover:bg-red-50">
                             <i class="fas fa-flag"></i>
                             <span>Report</span>
                          </button>
@@ -154,10 +154,10 @@
 
     // author info in header
     authorDiv.innerHTML = `
-        <div class="w-10 h-10 bg-gray-200 rounded-full shrink-0"></div>
+        <div class="w-12 h-12 bg-gray-200 rounded-full shrink-0"></div>
         <div class="flex flex-col">
-            <span class="font-semibold text-black text-2xl">${post.author_name}</span>
-            <span class="text-gray-500 text-xl">@${post.username}</span>
+            <span class="font-semibold text-black text-3xl">${post.author_name}</span>
+            <span class="text-gray-600 text-xl">@${post.username}</span>
         </div>
     `;
 
@@ -211,7 +211,7 @@
                     </div>
                     <p class="text-2xl text-gray-600 font-medium mb-1">${post.media_creator}</p>
                     <p class="text-xl text-gray-500 mb-6">${post.media_year}</p>
-                    <p class="text-gray-800">${post.content}</p>
+                    <p class="text-black">${post.content}</p>
                 </div>
             </div>
         `;
@@ -226,7 +226,7 @@
                 </div>
             `;
         }
-        html += `<p class="text-gray-800 text-lg leading-relaxed whitespace-pre-wrap">${post.content}</p>`;
+        html += `<p class="text-black whitespace-pre-wrap">${post.content}</p>`;
     }
 
     if (post.created_at) {
@@ -285,8 +285,8 @@
           commentsSection.innerHTML = `
             <div class="flex flex-col items-center justify-center py-12 text-gray-400">
                 <i class="far fa-comments text-4xl mb-3"></i>
-                <p>No comments yet</p>
-                <p class="text-sm">Be the first to share your thoughts!</p>
+                <p class="text-4xl">No comments yet</p>
+                <p class="text-xl">Be the first to share your thoughts!</p>
             </div>
           `;
           return;
