@@ -106,13 +106,12 @@ class User extends Authenticatable
      */
     public function friends()
     {
-        // Friends where this user is user1
         $friends1 = $this->belongsToMany(
             User::class,
             'friendship',
             'userid1',
             'userid2'
-        );
+        )->get(); // fetch as collection
 
         // Friends where this user is user2
         $friends2 = $this->belongsToMany(
@@ -120,10 +119,10 @@ class User extends Authenticatable
             'friendship',
             'userid2',
             'userid1'
-        );
+        )->get(); // fetch as collection
 
         // Merge both collections
-        return $friends1->union($friends2->getQuery());
+        return $friends1->merge($friends2);
     }
 
     /**

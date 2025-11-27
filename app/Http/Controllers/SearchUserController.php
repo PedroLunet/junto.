@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\User;
 
 use Illuminate\Http\Request;
-
+use App\Services\FriendService;
 use function Laravel\Prompts\search;
 
 class SearchUserController extends Controller
@@ -25,7 +25,9 @@ class SearchUserController extends Controller
                     ->orderByRaw("ts_rank(fts_document, plainto_tsquery('english', ?)) DESC", [$search]);
             })
             ->get();
-
-        return view("pages.search.index", ['users' => $users]);
+        
+        $friends = auth()->user()->friends()->pluck('id')->toArray();
+        $friendService = app(FriendService::class);
+        return view("pages.search.index", ['users' => $users,"friends" => $friends,"friendService" => $friendService]);
     }
 }
