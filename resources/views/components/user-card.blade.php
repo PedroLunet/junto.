@@ -4,7 +4,8 @@
     $confirmMessage = $attributes->get('confirmMessage', 'Are you sure?');
 @endphp
 
-<div class="bg-white shadow-sm rounded-3xl overflow-hidden hover:shadow-md transition-shadow border border-gray-100">
+<div
+    class="bg-white shadow-sm rounded-3xl overflow-hidden hover:shadow-md transition-shadow border border-gray-100 w-full">
     <div class="flex items-center justify-between p-6">
         <a href="{{ route('profile.show', $user->username) }}" class="flex items-center space-x-4 flex-1">
             <div class="w-32 h-32 rounded-full bg-[#F1EBF4] flex items-center justify-center shrink-0">
@@ -12,7 +13,7 @@
             </div>
             <div class="min-w-0 flex-1">
                 <h3 class="font-semibold text-3xl text-gray-900 truncate">{{ $user->name }}</h3>
-                <p class="text-gray-500 text-2xl truncate">@<!-- -->{{ $user -> username }}</p>
+                <p class="text-gray-500 text-2xl truncate">@<!-- -->{{ $user->username }}</p>
             </div>
         </a>
 
@@ -21,7 +22,7 @@
                 class="ml-4">
                 @csrf
                 @method('DELETE')
-                <x-button type="submit" variant="danger" class="px-4 py-1.5 text-xl">
+                <x-button type="submit" variant="danger" class="px-4 py-1.5 text-2xl">
                     Unfriend
                 </x-button>
             </form>

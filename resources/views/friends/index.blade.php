@@ -24,7 +24,7 @@
                 </x-button>
             </div>
         @else
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div class="space-y-4">
                 @foreach ($friends as $friend)
                     <x-user-card :user="$friend" :showUnfriendButton="true" :unfriendRoute="route('friends.unfriend', $friend->id)" :confirmMessage="'Are you sure you want to unfriend ' . $friend->name . '?'" />
                 @endforeach
