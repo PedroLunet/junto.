@@ -55,6 +55,7 @@
             </div>
         </div>
 
+
         <nav class="flex-1 px-4">
             <ul class="space-y-2">
                 <li>
@@ -68,9 +69,22 @@
                         class="block py-2 px-4 rounded  hover:bg-[#7a5466] hover:text-white {{ request()->routeIs('admin.users') ? 'bg-[#a17f8f]' : '' }}">
                         Users
                     </a>
-                </li>             
+                </li>
             </ul>
         </nav>
+
+        @auth
+            <div class="p-4 border-t border-gray-700">
+                <a href="{{ route('profile.show', Auth::user()->username) }}"
+                    class="text-gray-300 mb-2">{{ Auth::user()->name }}</a>
+                <a href="{{ url('/logout') }}" class="text-red-400 hover:text-red-300 text-xl">Logout</a>
+            </div>
+        @else
+            <div class="p-4 border-t border-gray-700 flex flex-col gap-2">
+                <x-button href="{{ route('login') }}" variant="primary" class="w-full text-center">Login</x-button>
+                <x-button href="{{ route('register') }}" variant="secondary" class="w-full text-center">Register</x-button>
+            </div>
+        @endauth
     </aside>
 
     <!-- main content -->
