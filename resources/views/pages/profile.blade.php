@@ -118,34 +118,49 @@
 
     <script>
         function removeFavorite(type) {
-            if (!confirm(`Are you sure you want to remove your favorite ${type}?`)) {
-                return;
-            }
-
-            fetch('/profile/remove-favorite', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-                        'Accept': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        type: type
-                    })
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        // reload the page to show the updated favorites
-                        window.location.reload();
-                    } else {
-                        alert('Error removing favorite: ' + (data.message || 'Unknown error'));
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    alert('Error removing favorite');
-                });
+            window.showAlert({
+                title: 'Remove Favorite',
+                message: `Are you sure you want to remove your favorite ${type}?`,
+                confirmText: 'Remove',
+                cancelText: 'Cancel',
+                showCancel: true,
+                type: 'danger',
+                onConfirm: function() {
+                    fetch('/profile/remove-favorite', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')
+                                    .getAttribute('content'),
+                                'Accept': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                type: type
+                            })
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                window.location.reload();
+                            } else {
+                                window.showAlert({
+                                    title: 'Error',
+                                    message: 'Error removing favorite: ' + (data.message ||
+                                        'Unknown error'),
+                                    type: 'danger'
+                                });
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            window.showAlert({
+                                title: 'Error',
+                                message: 'Error removing favorite',
+                                type: 'danger'
+                            });
+                        });
+                }
+            });
         }
 
         function toggleLike(postId) {
