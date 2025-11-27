@@ -146,69 +146,50 @@
 
 <script>
     let currentPostId = null;
-
-    function openPostModal(post) {
+    window.openPostModal = function(post) {
         const modal = document.getElementById('postModal');
         const content = document.getElementById('modalContent');
         const authorDiv = document.getElementById('modalAuthor');
         const commentsSection = document.getElementById('commentsSection');
         const editBtn = document.getElementById('modalEditButton');
         const likeIcon = document.getElementById('modalLikeIcon');
-
         currentPostId = post.id;
-
-    // author info in header
-    authorDiv.innerHTML = `
-        <a href="/${post.username}" class="w-12 h-12 bg-gray-200 rounded-full shrink-0"></a>
-        <div class="flex flex-col">
-            <a href="/${post.username}" class="font-semibold text-black text-3xl hover:text-[#38157a] transition">${post.author_name}</a>
-            <a href="/${post.username}" class="text-gray-600 text-xl">@${post.username}</a>
-        </div>
-    `;
-
-    // Set edit button if author
-    if (editBtn) {
-        editBtn.style.display = 'none';
-        if (window.isAuthenticated && window.currentUserUsername === post.username) {
-            editBtn.style.display = 'block';
-            editBtn.onclick = function() {
-                closePostModal();
-                if (post.post_type === 'review') {
-                    openEditReviewModal(
-                        post.id, 
-                        post.content, 
-                        post.rating, 
-                        post.media_title, 
-                        post.media_poster, 
-                        post.media_year, 
-                        post.media_creator
-                    );
-                } else {
-                    const imageUrl = post.image_url ? `/post/${post.image_url}` : '';
-                    openEditModal(post.id, post.content, imageUrl);
-                }
-            };
+        authorDiv.innerHTML = `
+            <a href="/${post.username}" class="w-12 h-12 bg-gray-200 rounded-full shrink-0"></a>
+            <div class="flex flex-col">
+                <a href="/${post.username}" class="font-semibold text-black text-3xl hover:text-[#38157a] transition">${post.author_name}</a>
+                <a href="/${post.username}" class="text-gray-600 text-xl">@${post.username}</a>
+            </div>
+        `;
+        if (editBtn) {
+            editBtn.style.display = 'none';
+            if (window.isAuthenticated && window.currentUserUsername === post.username) {
+                editBtn.style.display = 'block';
+                editBtn.onclick = function() {
+                    window.closePostModal();
+                    if (post.post_type === 'review') {
+                        window.openEditReviewModal(
+                            post.id,
+                            post.content,
+                            post.rating,
+                            post.media_title,
+                            post.media_poster,
+                            post.media_year,
+                            post.media_creator
+                        );
+                    } else {
+                        const imageUrl = post.image_url ? `/post/${post.image_url}` : '';
+                        window.openEditModal(post.id, post.content, imageUrl);
+                    }
+                };
+            }
         }
-    }
-
-    // Set content
-    let html = '';
-
-    if (post.post_type === 'review') {
-        let starsHtml = '';
-        for(let i = 0; i < post.rating; i++) {
-            starsHtml += '<i class="fas fa-star text-4xl"></i>';
-        }
-
-        // Set content
         let html = '';
-
         if (post.post_type === 'review') {
             let starsHtml = '';
             for (let i = 0; i < post.rating; i++) {
                 starsHtml += '<i class="fas fa-star text-4xl"></i>';
             }
-
             html = `
             <div class="flex flex-col sm:flex-row gap-6">
                 <div class="shrink-0 mx-auto sm:mx-0">
@@ -242,7 +223,6 @@
             }
             html += `<p class="text-black whitespace-pre-wrap">${post.content}</p>`;
         }
-
         if (post.created_at) {
             const date = new Date(post.created_at);
             html += `
@@ -252,13 +232,9 @@
             </div>
         `;
         }
-
         content.innerHTML = html;
-
-        // Set likes count and icon state
         document.getElementById('likesCount').textContent = post.likes_count || 0;
         document.getElementById('commentsCount').textContent = post.comments_count || 0;
-
         if (post.is_liked) {
             likeIcon.classList.remove('far');
             likeIcon.classList.add('fas', 'text-red-500');
@@ -266,11 +242,7 @@
             likeIcon.classList.remove('fas', 'text-red-500');
             likeIcon.classList.add('far');
         }
-
-        // Load comments from server
-        loadComments(post.id);
-
-        // Handle guest view
+        window.loadComments(post.id);
         if (!window.isAuthenticated) {
             document.getElementById('postActions').style.display = 'flex';
             document.getElementById('addCommentSection').style.display = 'none';
@@ -280,18 +252,15 @@
             document.getElementById('addCommentSection').style.display = 'block';
             document.getElementById('reportButton').style.display = 'flex';
         }
-
         modal.classList.remove('hidden');
     }
-
-    function loadComments(postId) {
+    window.loadComments = function(postId) {
         const commentsSection = document.getElementById('commentsSection');
         commentsSection.innerHTML = `
         <div class="flex justify-center items-center py-8 text-gray-400">
             <i class="fas fa-circle-notch fa-spin text-2xl"></i>
         </div>
     `;
-
         fetch(`/posts/${postId}/comments`)
             .then(response => response.json())
             .then(comments => {
@@ -305,18 +274,14 @@
           `;
                     return;
                 }
-
                 commentsSection.innerHTML = '';
                 const template = document.getElementById('commentTemplate');
-
                 comments.forEach(comment => {
                     const date = new Date(comment.created_at);
                     const clone = template.content.cloneNode(true);
-
                     clone.querySelector('.comment-author').textContent = comment.author_name;
                     clone.querySelector('.comment-date').textContent = date.toLocaleDateString();
                     clone.querySelector('.comment-content').textContent = comment.content;
-
                     commentsSection.appendChild(clone);
                 });
             })
@@ -325,35 +290,27 @@
                 commentsSection.innerHTML = `
             <div class="text-center py-8 text-red-500">
                 <p>Error loading comments</p>
-                <button onclick="loadComments(${postId})" class="text-sm underline mt-2">Try again</button>
+                <button onclick="window.loadComments(${postId})" class="text-sm underline mt-2">Try again</button>
             </div>
         `;
             });
     }
-
-    function closePostModal() {
+    window.closePostModal = function() {
         const modal = document.getElementById('postModal');
         modal.classList.add('hidden');
         currentPostId = null;
-
-        // Clear the comment input
         document.getElementById('commentInput').value = '';
     }
-
-    function likePost(event) {
+    window.likePost = function(event) {
         event.stopPropagation();
-
         if (!currentPostId) return;
-
         if (!window.isAuthenticated) {
             window.location.href = '/login';
             return;
         }
-
         const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
         const likeIcon = document.getElementById('modalLikeIcon');
         const likesCount = document.getElementById('likesCount');
-
         fetch(`/posts/${currentPostId}/like`, {
                 method: 'POST',
                 headers: {
@@ -365,7 +322,6 @@
             .then(data => {
                 if (data.success) {
                     likesCount.textContent = data.likes_count;
-
                     if (data.liked) {
                         likeIcon.classList.remove('far');
                         likeIcon.classList.add('fas', 'text-red-500');
@@ -373,15 +329,11 @@
                         likeIcon.classList.remove('fas', 'text-red-500');
                         likeIcon.classList.add('far');
                     }
-
-                    // Also update the timeline button if it exists
                     const timelineBtn = document.getElementById(`like-btn-${currentPostId}`);
                     if (timelineBtn) {
                         const timelineCount = document.getElementById(`like-count-${currentPostId}`);
                         const timelineIcon = document.getElementById(`like-icon-${currentPostId}`);
-
                         if (timelineCount) timelineCount.textContent = data.likes_count;
-
                         if (data.liked) {
                             timelineBtn.classList.remove('text-gray-600', 'focus:text-gray-600');
                             timelineBtn.classList.add('text-red-500', 'focus:text-red-500');
@@ -404,26 +356,19 @@
                 console.error('Error liking post:', error);
             });
     }
-
-
-
-    function handleCommentKeyPress(event) {
+    window.handleCommentKeyPress = function(event) {
         if (event.key === 'Enter') {
             event.preventDefault();
-            submitComment();
+            window.submitComment();
         }
     }
-
-    function submitComment() {
+    window.submitComment = function() {
         const input = document.getElementById('commentInput');
         const commentText = input.value.trim();
-
         if (!commentText) {
             return;
         }
-
         const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-
         fetch(`/posts/${currentPostId}/comments`, {
                 method: 'POST',
                 headers: {
@@ -438,14 +383,11 @@
             .then(data => {
                 if (data.success) {
                     input.value = '';
-                    loadComments(currentPostId);
-
-                    // Update comment count in modal and timeline
+                    window.loadComments(currentPostId);
                     const modalCountElem = document.getElementById('commentsCount');
                     modalCountElem.textContent = parseInt(modalCountElem.textContent) + 1;
-
-                    // Also update timeline comment count if it exists
-                    const timelineCommentCount = document.querySelector(`#post-${currentPostId} .comments-count`);
+                    const timelineCommentCount = document.querySelector(
+                        `#post-${currentPostId} .comments-count`);
                     if (timelineCommentCount) {
                         timelineCommentCount.textContent = parseInt(timelineCommentCount.textContent) + 1;
                     }
@@ -456,33 +398,26 @@
                 alert('Failed to post comment. Please try again.');
             });
     }
-
-    function openReportModal(event) {
+    window.openReportModal = function(event) {
         event.stopPropagation();
         if (!currentPostId) return;
         document.getElementById('reportModal').classList.remove('hidden');
         document.getElementById('reportReason').value = '';
     }
-
-    function closeReportModal() {
+    window.closeReportModal = function() {
         document.getElementById('reportModal').classList.add('hidden');
     }
-
-    function submitReport() {
+    window.submitReport = function() {
         const reason = document.getElementById('reportReason').value.trim();
-
         if (!reason) {
             alert('Please provide a reason for reporting this post.');
             return;
         }
-
         if (reason.length < 10) {
             alert('Please provide a more detailed reason (at least 10 characters).');
             return;
         }
-
         const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-
         fetch(`/posts/${currentPostId}/report`, {
                 method: 'POST',
                 headers: {
@@ -496,7 +431,7 @@
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    closeReportModal();
+                    window.closeReportModal();
                     alert(data.message ||
                         'Report submitted successfully. Thank you for helping keep our community safe.');
                 } else {
@@ -508,4 +443,5 @@
                 alert('Failed to submit report. Please try again.');
             });
     }
+</script>
 </script>
