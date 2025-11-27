@@ -31,7 +31,6 @@
             </div>
             
             <nav class="flex-1 px-4">
-                @auth
                 <ul class="space-y-2">
                     <li><a href="{{ route('friends-feed') }}" class="block py-2 px-4 rounded hover:bg-[#7a5466] hover:text-white">Friends Feed</a></li>
                     <li><a href="{{ route('friends.index') }}" class="block py-2 px-4 rounded hover:bg-[#7a5466] hover:text-white">My Friends</a></li>
@@ -40,12 +39,10 @@
                     <li><a href="{{ route('books') }}" class="block py-2 px-4 rounded hover:bg-[#7a5466] hover:text-white">Books</a></li>
                     <li><a href="{{ route('music') }}" class="block py-2 px-4 rounded hover:bg-[#7a5466] hover:text-white">Music</a></li>
                 </ul>
-                @endauth
             </nav>
 
     
 
-            @auth
             <div class="px-4 mb-4 flex flex-col gap-2">
                 <x-button id="regular-button" variant="special"> + </x-button>
                 <div class="flex gap-2 w-full">
@@ -60,12 +57,16 @@
                     </x-button>
                 </div>
             </div>
-            @endauth
             
             @auth
                 <div class="p-4 border-t border-gray-700">
                     <a href="{{ route('profile.show', Auth::user()->username) }}" class=" text-gray-300 mb-2">{{ Auth::user()->name }}</a>
                     <a href="{{ url('/logout') }}" class="text-red-400 hover:text-red-300 text-xl">Logout</a>
+                </div>
+            @else
+                <div class="p-4 border-t border-gray-700">
+                    <x-button href="{{ route('login') }}" variant="primary" class="w-full mb-2">Login</x-button>
+                    <x-button href="{{ route('register') }}" variant="secondary" class="w-full">Register</x-button>
                 </div>
             @endauth
         </aside>
