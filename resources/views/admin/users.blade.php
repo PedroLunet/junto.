@@ -9,8 +9,7 @@
             <!-- search bar -->
             <div class="flex items-center space-x-4">
                 <div class="relative">
-                    <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
-                    <input type="text" placeholder="Search User"
+                    <input type="text" id="searchUser" placeholder="Search User"
                         class="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 w-80">
                 </div>
                 <div class="flex items-center space-x-2 text-2xl text-gray-600" id="selection-info" style="display: none;">
@@ -151,6 +150,74 @@
 
             // start count
             updateSelectionCount();
+
+            // search functionality
+            const searchInput = document.getElementById('searchUser');
+            const userRows = document.querySelectorAll('tbody tr');
+
+            function filterUsers() {
+                const searchTerm = searchInput.value.toLowerCase().trim();
+                let visibleCount = 0;
+
+                userRows.forEach(row => {
+                    // skip the "No users found" row
+                    if (row.querySelector('td[colspan]')) {
+                        return;
+                    }
+
+                    const name = row.querySelector('td:nth-child(2) div').textContent.toLowerCase();
+                    const username = row.querySelector('td:nth-child(3) div').textContent.toLowerCase();
+                    const email = row.querySelector('td:nth-child(4) div').textContent.toLowerCase();
+
+                    const matches = name.includes(searchTerm) ||
+                        username.includes(searchTerm) ||
+                        email.includes(searchTerm);
+
+                    if (matches) {
+                        row.style.display = '';
+                        visibleCount++;
+                    } else {
+                        row.style.display = 'none';
+                        // uncheck hidden rows
+                        const checkbox = row.querySelector('.user-checkbox');
+                        if (checkbox && checkbox.checked) {
+                            checkbox.checked = false;
+                        }
+                    }
+                });
+
+                // update selection count after filtering
+                updateSelectionCount();
+
+                // show/hide "No users found" message
+                const noUsersRow = document.querySelector('tbody tr td[colspan]');
+                if (noUsersRow) {
+                    const noUsersRowElement = noUsersRow.parentElement;
+                    if (visibleCount === 0 && searchTerm !== '') {
+                        // show custom "No results found" message
+                        noUsersRow.textContent = `No users found matching "${searchTerm}"`;
+                        noUsersRowElement.style.display = '';
+                    } else if (visibleCount === 0 && searchTerm === '') {
+                        // show original "No users found" message
+                        noUsersRow.textContent = 'No users found.';
+                        noUsersRowElement.style.display = '';
+                    } else {
+                        // hide the message when there are results
+                        noUsersRowElement.style.display = 'none';
+                    }
+                }
+            }
+
+            // add event listener for search input
+            searchInput.addEventListener('input', filterUsers);
+
+            // clear search functionality 
+            searchInput.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    this.value = '';
+                    filterUsers();
+                }
+            });
         });
     </script>
 @endpush
