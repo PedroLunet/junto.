@@ -2,7 +2,12 @@
 
 @section('content')
 <div class="container mx-auto px-4 py-8">
-    <h1 class="text-3xl font-bold mb-6">Friend Requests</h1>
+    <div class="flex items-center mb-6 gap-10">
+        <button onclick="history.back()" class="text-gray-600 hover:text-gray-800">
+            <i class="fas fa-arrow-left text-4xl"></i>
+        </button>
+        <h1 class="text-4xl font-bold">Friend Requests</h1>
+    </div>
 
     @if(session('success'))
         <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
@@ -17,7 +22,7 @@
     @endif
 
     @if($friendRequests->isEmpty())
-        <div class="bg-gray-100 p-6 rounded text-center">
+        <div class="p-6 rounded text-center">
             <p class="text-gray-600">You have no pending friend requests.</p>
         </div>
     @else
