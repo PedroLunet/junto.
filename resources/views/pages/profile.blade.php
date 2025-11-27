@@ -3,6 +3,15 @@
 @section('content')
     <div class="container mx-auto px-32 py-10">
         <div class="flex items-start justify-between gap-10 md:gap-12 lg:gap-16 mb-10 md:mb-12">
+            @if (Auth::id() === $user->id)
+                <!-- inbox button -->
+                <div class="absolute top-2 right-2">
+                    <x-button onclick="window.location='{{ route('friend-requests.index') }}'" variant="secondary" class="p-3">
+                        <i class="fas fa-inbox text-2xl"></i>
+                    </x-button>
+                </div>
+            @endif
+            
             <!-- profile header -->
             <div class="flex items-center gap-8 md:gap-10">
                 @auth
