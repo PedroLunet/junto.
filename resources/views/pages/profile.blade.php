@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="h-screen flex flex-col">
+    <div class="h-screen flex flex-col overflow-hidden">
         <!-- Fixed Header Section -->
         <div class="shrink-0 px-32 py-10">
             <div class="flex items-start justify-between gap-10 md:gap-12 lg:gap-16 mb-10 md:mb-12">
