@@ -6,7 +6,7 @@
 @endphp
 
 @if ($media || Auth::id() === $user->id)
-    <div class="{{ $sizeClasses }} bg-gray-300 flex items-center justify-center relative"
+    <div class="{{ $sizeClasses }} bg-gray-300 rounded-xl flex items-center justify-center relative"
         @if ($media) title="{{ $media->title }}{{ $media->creator ? ' - ' . $media->creator : '' }}" @endif>
 
         @if ($media)
@@ -20,7 +20,8 @@
 
             <!-- Media image or title -->
             @if ($media->coverimage && filter_var($media->coverimage, FILTER_VALIDATE_URL))
-                <img src="{{ $media->coverimage }}" alt="{{ $media->title }}" class="w-full h-full object-cover">
+                <img src="{{ $media->coverimage }}" alt="{{ $media->title }}"
+                    class="w-full h-full object-cover rounded-xl">
             @else
                 <span class="text-gray-600 text-2xl md:text-xl text-center px-2">
                     {{ $media->title }}
