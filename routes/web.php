@@ -26,6 +26,7 @@ Route::controller(HomeController::class)->group(function () {
 
 // Home page (authentication required)
 Route::middleware('auth')->controller(HomeController::class)->group(function () {
+    Route::get('/friends-feed', 'friendsFeed')->name('friends-feed');
     Route::post('/posts/{id}/comments', 'addComment')->name('post.comments.add');
     Route::post('/posts/{id}/like', 'toggleLike')->name('post.like');
 });
@@ -113,3 +114,4 @@ Route::middleware('auth')->controller(ReportController::class)->group(function (
 Route::controller('auth')->controller(ProfileController::class)->group(function () {
     Route::get('/{username}', 'show')->name('profile.show');
 });
+

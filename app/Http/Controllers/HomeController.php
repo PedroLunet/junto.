@@ -11,7 +11,19 @@ class HomeController extends Controller
     public function index(): View
     {
         $posts = Post::getPostsWithDetails(auth()->id());
-        return view('pages.home', compact('posts'));
+        return view('pages.home', [
+            'posts' => $posts,
+            'pageTitle' => 'Home'
+        ]);
+    }
+
+    public function friendsFeed(): View
+    {
+        $posts = Post::getFriendsPostsWithDetails(auth()->id());
+        return view('pages.home', [
+            'posts' => $posts,
+            'pageTitle' => 'Friends Feed'
+        ]);
     }
 
     public function getComments($id)

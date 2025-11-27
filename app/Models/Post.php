@@ -65,6 +65,50 @@ class Post extends Model
         return DB::select($sql, $params);
     }
 
+    public static function getFriendsPostsWithDetails($currentUserId)
+    {
+        $sql = "
+            SELECT 
+                p.id,
+                p.createdAt as created_at,
+                u.name as author_name,
+                u.username,
+                u.profilePicture as author_image,
+                COALESCE(sp.text, r.content) as content,
+                CASE 
+                    WHEN sp.postId IS NOT NULL THEN 'standard'
+                    WHEN r.postId IS NOT NULL THEN 'review'
+                END as post_type,
+                r.rating,
+                m.title as media_title,
+                m.coverImage as media_poster,
+                m.releaseYear as media_year,
+                m.creator as media_creator,
+                CASE
+                    WHEN EXISTS (SELECT 1 FROM lbaw2544.book b WHERE b.mediaId = m.id) THEN 'book'
+                    WHEN EXISTS (SELECT 1 FROM lbaw2544.film f WHERE f.mediaId = m.id) THEN 'movie'
+                    WHEN EXISTS (SELECT 1 FROM lbaw2544.music mu WHERE mu.mediaId = m.id) THEN 'music'
+                END as media_type,
+                (SELECT COUNT(*) FROM lbaw2544.post_like pl WHERE pl.postId = p.id) as likes_count,
+                (SELECT COUNT(*) > 0 FROM lbaw2544.post_like pl WHERE pl.postId = p.id AND pl.userId = ?) as is_liked,
+                (SELECT COUNT(*) FROM lbaw2544.comment c WHERE c.postId = p.id) as comments_count,
+                sp.imageUrl as image_url
+            FROM lbaw2544.post p
+            JOIN lbaw2544.users u ON p.userId = u.id
+            LEFT JOIN lbaw2544.standard_post sp ON p.id = sp.postId
+            LEFT JOIN lbaw2544.review r ON p.id = r.postId
+            LEFT JOIN lbaw2544.media m ON r.mediaId = m.id
+            WHERE p.userId IN (
+                SELECT userId2 FROM lbaw2544.friendship WHERE userId1 = ?
+                UNION
+                SELECT userId1 FROM lbaw2544.friendship WHERE userId2 = ?
+            )
+            ORDER BY p.id DESC
+        ";
+
+        return DB::select($sql, [$currentUserId, $currentUserId, $currentUserId]);
+    }
+
     public static function getCommentsForPost($postId)
     {
         return DB::select("
