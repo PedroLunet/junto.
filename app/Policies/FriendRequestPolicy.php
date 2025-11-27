@@ -33,6 +33,11 @@ class FriendRequestPolicy
       return false;
     }
 
+    // Cannot send if the other user has already sent a request
+    if ($user->hasReceivedFriendRequestFrom($receiver->id)) {
+      return false;
+    }
+
     return true;
   }
 
