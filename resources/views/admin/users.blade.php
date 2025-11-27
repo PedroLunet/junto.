@@ -20,9 +20,10 @@
             </div>
 
             <!-- Add User Button -->
-            <button class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2">
+            <button onclick="openAddUserModal()"
+                class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2">
                 <i class="fas fa-plus"></i>
-                <span>ADD USER</span>
+                <span>Add User</span>
             </button>
         </div>
 
@@ -55,14 +56,7 @@
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <div class="flex items-center">
-                                    <div class="shrink-0 h-10 w-10">
-                                        <div class="h-10 w-10 rounded-full bg-gray-300 flex items-center justify-center">
-                                            <i class="fas fa-user text-gray-600"></i>
-                                        </div>
-                                    </div>
-                                    <div class="ml-4">
-                                        <div class="text-2xl font-medium text-gray-900">{{ $user->name }}</div>
-                                    </div>
+                                    <div class="text-2xl font-medium text-gray-900">{{ $user->name }}</div>
                                 </div>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
@@ -105,6 +99,9 @@
             </table>
         </div>
     </div>
+
+    <!-- Include Add User Modal -->
+    <x-admin.add-user-modal />
 @endsection
 
 @push('scripts')
@@ -126,7 +123,7 @@
                     selectionInfo.style.display = 'none';
                 }
 
-                // Update select all checkbox state
+                // update select all checkbox state
                 if (count === userCheckboxes.length && userCheckboxes.length > 0) {
                     selectAllCheckbox.checked = true;
                     selectAllCheckbox.indeterminate = false;
@@ -139,7 +136,7 @@
                 }
             }
 
-            // Handle select all checkbox
+            // handle select all checkbox
             selectAllCheckbox.addEventListener('change', function() {
                 userCheckboxes.forEach(checkbox => {
                     checkbox.checked = this.checked;
@@ -147,12 +144,12 @@
                 updateSelectionCount();
             });
 
-            // Handle individual checkboxes
+            // handle individual checkboxes
             userCheckboxes.forEach(checkbox => {
                 checkbox.addEventListener('change', updateSelectionCount);
             });
 
-            // Initialize count
+            // start count
             updateSelectionCount();
         });
     </script>

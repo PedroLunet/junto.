@@ -8,6 +8,7 @@ use App\Models\Post;
 use App\Models\FriendRequest;
 use App\Models\Friendship;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class AdminController extends Controller
 {
@@ -71,5 +72,51 @@ class AdminController extends Controller
     {
         $users = User::orderBy('createdat', 'desc')->get();
         return view('admin.users', compact('users'));
+    }
+
+    // create a new user
+    public function createUser(Request $request)
+    {
+        try {
+            $request->validate([
+                'name' => 'required|string|max:255',
+                'username' => 'required|string|max:255|unique:users',
+                'email' => 'required|string|email|max:255|unique:users',
+                'password' => 'required|string|min:8',
+                'bio' => 'nullable|string|max:1000',
+                'is_admin' => 'boolean'
+            ]);
+
+            $user = User::create([
+                'name' => $request->name,
+                'username' => $request->username,
+                'email' => $request->email,
+                'passwordhash' => bcrypt($request->password),
+                'bio' => $request->bio,
+                'isadmin' => $request->boolean('is_admin', false),
+                'isblocked' => false,
+                'isprivate' => false,
+                'createdat' => now(),
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'User created successfully',
+                'user' => $user
+            ]);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            Log::error('Validation failed: ', $e->errors());
+            return response()->json([
+                'success' => false,
+                'errors' => $e->errors()
+            ], 422);
+        } catch (\Exception $e) {
+            Log::error('Exception creating user: ' . $e->getMessage());
+            Log::error('Exception trace: ' . $e->getTraceAsString());
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to create user: ' . $e->getMessage()
+            ], 500);
+        }
     }
 }
