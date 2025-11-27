@@ -84,7 +84,8 @@ Route::middleware('auth')->controller(MusicController::class)->group(function ()
 
 // books routes
 Route::middleware('auth')->controller(BookController::class)->group(function () {
-    Route::get('/books', 'search')->name('books.search');
+    Route::get('/books', 'index')->name('books');
+    Route::get('/books/search', 'search')->name('books.search');
     Route::post('/books', 'store')->name('books.store');
 });
 

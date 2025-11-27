@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Services\BookService;
 use App\Services\FavoriteService;
+use App\Models\Post;
 
 class BookController extends Controller
 {
@@ -16,6 +17,15 @@ class BookController extends Controller
     {
         $this->bookService = $bookService;
         $this->favoriteService = $favoriteService;
+    }
+
+    public function index()
+    {
+        $posts = Post::getBookReviewPosts(auth()->id());
+        return view('pages.home', [
+            'posts' => $posts,
+            'pageTitle' => 'Book Reviews'
+        ]);
     }
 
     public function search(Request $request)
