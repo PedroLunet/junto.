@@ -18,12 +18,11 @@
                 </div>
             </div>
 
-            <!-- Add User Button -->
-            <button onclick="openAddUserModal()"
-                class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2">
+            <!-- add user button -->
+            <x-button variant="primary" onclick="openAddUserModal()" class="flex items-center space-x-2">
                 <i class="fas fa-plus"></i>
                 <span>Add User</span>
-            </button>
+            </x-button>
         </div>
 
         <!-- Users Table -->

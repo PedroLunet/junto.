@@ -59,14 +59,12 @@
 
         <!-- footer -->
         <div class="flex justify-end gap-4 p-8">
-            <button type="button" onclick="closeEditUserModal()"
-                class="px-8 py-3 rounded-lg text-lg font-medium transition-colors">
+            <x-button variant="secondary" type="button" onclick="closeEditUserModal()" class="text-lg">
                 Cancel
-            </button>
-            <button type="submit" form="editUserForm"
-                class="bg-[#38157a] text-white px-8 py-3 rounded-lg text-lg font-medium hover:bg-[#2d1060] transition-colors">
+            </x-button>
+            <x-button variant="primary" type="submit" form="editUserForm" class="text-lg">
                 Update User
-            </button>
+            </x-button>
         </div>
     </div>
 </div>
