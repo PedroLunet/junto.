@@ -64,14 +64,14 @@ class AdminController extends Controller
             'totalFriendships' => $totalFriendships,
         ];
 
-        return view('admin.dashboard', compact('stats'));
+        return view('pages.admin.dashboard', compact('stats'));
     }
 
     // display the admin users page
     public function users()
     {
         $users = User::orderBy('createdat', 'desc')->get();
-        return view('admin.users', compact('users'));
+        return view('pages.admin.users', compact('users'));
     }
 
     // create a new user
