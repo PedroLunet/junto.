@@ -99,11 +99,12 @@
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-2xl font-medium">
                                 <div class="flex space-x-6">
-                                    <button class="text-blue-600 hover:text-blue-900">
+                                    <button class="edit-user-btn text-blue-600 hover:text-blue-900"
+                                        data-user-id="{{ $user->id }}" data-user-name="{{ $user->name }}"
+                                        data-user-username="{{ $user->username }}" data-user-email="{{ $user->email }}"
+                                        data-user-bio="{{ $user->bio }}"
+                                        data-user-isadmin="{{ $user->isadmin ? 'true' : 'false' }}">
                                         <i class="fas fa-edit"></i>
-                                    </button>
-                                    <button class="text-red-600 hover:text-red-900">
-                                        <i class="fas fa-trash"></i>
                                     </button>
                                 </div>
                             </td>
@@ -122,6 +123,9 @@
 
     <!-- Include Add User Modal -->
     <x-admin.add-user-modal />
+
+    <!-- Include Edit User Modal -->
+    <x-admin.edit-user-modal />
 @endsection
 
 @push('scripts')
@@ -361,6 +365,22 @@
 
                     // update selection count after sorting
                     updateSelectionCount();
+                });
+            });
+
+            //=== EDIT USER ===
+            // attach event listeners to edit buttons
+            document.querySelectorAll('.edit-user-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    const userData = {
+                        id: this.getAttribute('data-user-id'),
+                        name: this.getAttribute('data-user-name'),
+                        username: this.getAttribute('data-user-username'),
+                        email: this.getAttribute('data-user-email'),
+                        bio: this.getAttribute('data-user-bio'),
+                        isadmin: this.getAttribute('data-user-isadmin') === 'true'
+                    };
+                    openEditUserModal(userData);
                 });
             });
         });

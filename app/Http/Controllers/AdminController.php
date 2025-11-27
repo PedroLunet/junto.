@@ -119,4 +119,55 @@ class AdminController extends Controller
             ], 500);
         }
     }
+
+    // update a user
+    public function updateUser(Request $request, $id)
+    {
+        try {
+            $user = User::findOrFail($id);
+
+            $request->validate([
+                'name' => 'required|string|max:255',
+                'username' => 'required|string|max:255|unique:users,username,' . $user->id,
+                'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
+                'bio' => 'nullable|string|max:1000',
+                'is_admin' => 'boolean'
+            ]);
+
+            $user->update([
+                'name' => $request->name,
+                'username' => $request->username,
+                'email' => $request->email,
+                'bio' => $request->bio,
+                'isadmin' => $request->boolean('is_admin', false),
+            ]);
+
+            Log::info('User updated successfully: ' . $user->username . ' (ID: ' . $user->id . ')');
+
+            return response()->json([
+                'success' => true,
+                'message' => 'User updated successfully',
+                'user' => $user
+            ]);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            Log::error('User not found for update: ID ' . $id);
+            return response()->json([
+                'success' => false,
+                'message' => 'User not found'
+            ], 404);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            Log::error('Validation failed: ', $e->errors());
+            return response()->json([
+                'success' => false,
+                'errors' => $e->errors()
+            ], 422);
+        } catch (\Exception $e) {
+            Log::error('Exception updating user: ' . $e->getMessage());
+            Log::error('Exception trace: ' . $e->getTraceAsString());
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to update user: ' . $e->getMessage()
+            ], 500);
+        }
+    }
 }

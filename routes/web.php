@@ -118,6 +118,7 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/admin/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
     Route::get('/admin/users', [AdminController::class, 'users'])->name('admin.users');
     Route::post('/admin/users/create', [AdminController::class, 'createUser'])->name('admin.users.create');
+    Route::put('/admin/users/{id}', [AdminController::class, 'updateUser'])->name('admin.users.update');
 });
 
 Route::middleware('regular.user')->controller(ProfileController::class)->group(function () {
