@@ -48,15 +48,21 @@
         class="fixed lg:relative w-64 lg:w-1/6 h-full bg-[#624452] text-white flex flex-col rounded-r-2xl shadow-2xl z-50 transform -translate-x-full lg:translate-x-0 transition-transform duration-300">
         <div class="p-8 flex justify-between items-center">
             <h1><a href="/" class="text-4xl font-bold hover:text-[#a17f8f]">junto.</a></h1>
-            <button onclick="toggleMobileMenu()" class="lg:hidden text-white">
-                <i class="fa-solid fa-times text-2xl"></i>
-            </button>
+            <div class="flex items-center gap-2">
+                <x-button href="{{ route('friend-requests.index') }}" variant="ghost" class="p-2" title="Inbox">
+                    <i class="fa-solid fa-inbox text-2xl"></i>
+                </x-button>
+                <x-button href="{{ route('search.users') }}" variant="ghost" class="p-2" title="Search">
+                    <i class="fa-solid fa-magnifying-glass text-2xl"></i>
+                </x-button>
+                <button onclick="toggleMobileMenu()" class="lg:hidden text-white">
+                    <i class="fa-solid fa-times text-2xl"></i>
+                </button>
+            </div>
         </div>
 
         <nav class="flex-1 px-4">
             <ul class="space-y-2">
-                <li><a href="{{ route('search.users') }}"
-                        class="block py-2 px-4 rounded hover:bg-[#7a5466] hover:text-white">Search</a></li>
                 <li><a href="{{ route('friends-feed') }}"
                         class="block py-2 px-4 rounded hover:bg-[#7a5466] hover:text-white">Friends Feed</a></li>
                 <li><a href="{{ route('movies') }}"

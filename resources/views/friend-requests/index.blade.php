@@ -2,12 +2,9 @@
 
 @section('content')
     <div class="container mx-auto px-4 py-8">
-        <div class="flex items-center mb-10 gap-10">
-            <button onclick="history.back()" class="text-gray-600 hover:text-gray-800">
-                <i class="fas fa-arrow-left text-4xl"></i>
-            </button>
-            <h1 class="text-4xl font-bold">Friend Requests</h1>
-        </div>
+
+        <h1 class="text-4xl font-bold py-10 px-20 text-gray-900">Friend Requests</h1>
+
 
         <x-tabs :tabs="[
             'received' => [

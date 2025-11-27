@@ -5,20 +5,6 @@
         <!-- Fixed Header Section -->
         <div class="shrink-0 px-32 pt-20 pb-10">
             <div class="flex items-start justify-between gap-10 md:gap-12 lg:gap-16 mb-10 md:mb-12">
-                @if (Auth::id() === $user->id)
-                    <!-- inbox button -->
-                    <div class="absolute top-2 right-2">
-                        <x-button onclick="window.location='{{ route('friend-requests.index') }}'" variant="secondary"
-                            class="p-3">
-                            <i class="fas fa-inbox text-2xl"></i>
-                        </x-button>
-                        @if ($pendingRequestsCount > 0)
-                            <div class="absolute -top-0.5 -right-0.5 w-3 h-3 bg-[#F75C03] rounded-full">
-                            </div>
-                        @endif
-                    </div>
-                @endif
-
                 <!-- profile header -->
                 <div class="flex items-center gap-8 md:gap-10">
                     @auth
