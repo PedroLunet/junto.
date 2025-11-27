@@ -154,10 +154,10 @@
 
     // author info in header
     authorDiv.innerHTML = `
-        <div class="w-12 h-12 bg-gray-200 rounded-full shrink-0"></div>
+        <a href="/${post.username}" class="w-12 h-12 bg-gray-200 rounded-full shrink-0"></a>
         <div class="flex flex-col">
-            <span class="font-semibold text-black text-3xl">${post.author_name}</span>
-            <span class="text-gray-600 text-xl">@${post.username}</span>
+            <a href="/${post.username}" class="font-semibold text-black text-3xl hover:text-[#38157a] transition">${post.author_name}</a>
+            <a href="/${post.username}" class="text-gray-600 text-xl">@${post.username}</a>
         </div>
     `;
 
