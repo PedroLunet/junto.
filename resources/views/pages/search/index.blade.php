@@ -2,8 +2,10 @@
 
 @section('content')
     <main class="w-full max-w-4xl mx-auto flex flex-col items-center gap-8 px-4 py-8">
-        <h1 class="text-4xl font-black text-center">Search for a user</h1>
-        <p class="-mt-12 text-center">Start by typing your friend's name!</p>
+        <div>
+            <h1 class="text-4xl font-black text-center">Search for a user</h1>
+            <p class="text-center">Start by typing your friend's name!</p>
+        </div>
 
         <form method="get" class="flex flex-row gap-4 items-start w-full">
             <input value="{{ old('query', request('query')) }}" type="text" name="query" class="max-w-3/4 w-full" />
@@ -17,7 +19,7 @@
                         :confirmMessage="'Are you sure you want to unfriend ' . $user->name . '?'" />
                 @endunless
             @empty
-                <div class="col-span-full text-left text-gray-500 text-sm">
+                <div class="col-span-full text-left text-gray-500 text-xl">
                     <p>No results match your filters, try adjusting them.</p>
                 </div>
             @endforelse
