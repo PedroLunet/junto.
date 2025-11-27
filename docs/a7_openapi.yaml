@@ -1,0 +1,793 @@
+info:
+  version: '1.0'
+  title: 'Junto Web API'
+  description: 'Web Resources Specification for Junto.'
+
+servers:
+  - url: <http://localhost:8001>
+    description: Production server
+
+tags:
+  - name: 'M01: Authentication and Profile Management'
+    description: 'User identity, profile customization, and favorites.'
+  - name: 'M02: Social Feed and Interactions'
+    description: 'Timeline, posts, reviews, likes, and comments.'
+  - name: 'M03: Media Library'
+    description: 'Movie, Book, and Music discovery and data.'
+  - name: 'M04: Social Network'
+    description: 'Friendships and user search.'
+  - name: 'M05: Administration'
+    description: 'User management and content moderation.'
+
+paths:
+  # ==========================================
+  # M01: Authentication and Profile Management
+  # ==========================================
+  /login:
+    get:
+      operationId: R101
+      summary: 'R101: Login Form'
+      description: 'Show the login form. Access: PUB'
+      tags:
+        - 'M01: Authentication and Profile Management'
+      responses:
+        '200':
+          description: 'Login UI displayed'
+
+    post:
+      operationId: R102
+      summary: 'R102: Login Action'
+      description: 'Authenticate user. Access: PUB'
+      tags:
+        - 'M01: Authentication and Profile Management'
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+                  format: password
+              required:
+                - email
+                - password
+      responses:
+        '302':
+          description: 'Success: Redirect to home. Error: Redirect back to login with flash errors.'
+
+  /logout:
+    get:
+      operationId: R103
+      summary: 'R103: Logout Action'
+      description: 'Logout the current user. Access: USR, ADM'
+      tags:
+        - 'M01: Authentication and Profile Management'
+      responses:
+        '302':
+          description: 'Redirect to login page'
+
+  /register:
+    get:
+      operationId: R104
+      summary: 'R104: Register Form'
+      description: 'Show registration form. Access: PUB'
+      tags:
+        - 'M01: Authentication and Profile Management'
+      responses:
+        '200':
+          description: 'Registration UI displayed'
+
+    post:
+      operationId: R105
+      summary: 'R105: Register Action'
+      description: 'Create a new user account. Access: PUB'
+      tags:
+        - 'M01: Authentication and Profile Management'
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/UserRegistration'
+      responses:
+        '302':
+          description: 'Success: Redirect to home. Error: Redirect back to register with validation errors.'
+
+  /profile/update:
+    put:
+      operationId: R106
+      summary: 'R106: Update Profile'
+      description: 'Update user profile details. Access: OWN'
+      tags:
+        - 'M01: Authentication and Profile Management'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                username:
+                  type: string
+                bio:
+                  type: string
+      responses:
+        '200':
+          description: 'Profile updated successfully'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  redirect_url:
+                    type: string
+        '401':
+          description: 'Unauthorized'
+        '422':
+          description: 'Validation Error (e.g. username taken)'
+        '500':
+          description: 'Server Error'
+
+  /profile/add-favorite:
+    post:
+      operationId: R107
+      summary: 'R107: Add Favorite'
+      description: 'Add a media item to user favorites. Access: OWN'
+      tags:
+        - 'M01: Authentication and Profile Management'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FavoriteItem'
+      responses:
+        '200':
+          description: 'Favorite added'
+        '400':
+          description: 'Invalid media type or missing fields'
+
+  /profile/remove-favorite:
+    post:
+      operationId: R108
+      summary: 'R108: Remove Favorite'
+      description: 'Remove a favorite media item. Access: OWN'
+      tags:
+        - 'M01: Authentication and Profile Management'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                type:
+                  type: string
+                  enum: [movie, book, music]
+      responses:
+        '200':
+          description: 'Favorite removed'
+        '400':
+          description: 'Invalid favorite type'
+
+  /{username}:
+    get:
+      operationId: R109
+      summary: 'R109: View Profile'
+      description: 'View a specific user profile. Access: USR'
+      tags:
+        - 'M01: Authentication and Profile Management'
+      parameters:
+        - in: path
+          name: username
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: 'Profile page displayed'
+        '404':
+          description: 'User not found'
+
+  # ==========================================
+  # M02: Social Feed and Interactions
+  # ==========================================
+  /:
+    get:
+      operationId: R201
+      summary: 'R201: Home Feed'
+      description: 'Get global post feed. Access: USR'
+      tags:
+        - 'M02: Social Feed and Interactions'
+      responses:
+        '200':
+          description: 'Home page with posts'
+
+  /friends-feed:
+    get:
+      operationId: R202
+      summary: 'R202: Friends Feed'
+      description: 'Get feed of posts from friends only. Access: USR'
+      tags:
+        - 'M02: Social Feed and Interactions'
+      responses:
+        '200':
+          description: 'Friends feed displayed'
+
+  /posts:
+    post:
+      operationId: R203
+      summary: 'R203: Create Post'
+      description: 'Create a standard post (text/image). Access: USR'
+      tags:
+        - 'M02: Social Feed and Interactions'
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                content:
+                  type: string
+                image:
+                  type: string
+                  format: binary
+      responses:
+        '200':
+          description: 'Post created'
+        '422':
+          description: 'Validation Error (No content/image provided)'
+        '500':
+          description: 'Server Error'
+
+  /posts/{id}:
+    put:
+      operationId: R204
+      summary: 'R204: Update Post'
+      description: 'Update an existing post. Access: OWN'
+      tags:
+        - 'M02: Social Feed and Interactions'
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                content:
+                  type: string
+                image:
+                  type: string
+                  format: binary
+      responses:
+        '200':
+          description: 'Post updated'
+        '403':
+          description: 'Forbidden (Not the owner)'
+        '404':
+          description: 'Post not found'
+
+    delete:
+      operationId: R205
+      summary: 'R205: Delete Post'
+      description: 'Delete a post. Access: OWN, ADM'
+      tags:
+        - 'M02: Social Feed and Interactions'
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: 'Post deleted'
+        '403':
+          description: 'Forbidden'
+        '404':
+          description: 'Post not found'
+
+  /reviews:
+    post:
+      operationId: R206
+      summary: 'R206: Create Review'
+      description: 'Create a review for a media item. Access: USR'
+      tags:
+        - 'M02: Social Feed and Interactions'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReviewCreate'
+      responses:
+        '200':
+          description: 'Review created'
+        '404':
+          description: 'Media item not found in external API'
+        '422':
+          description: 'Validation Error'
+
+  /reviews/{id}:
+    put:
+      operationId: R207
+      summary: 'R207: Update Review'
+      description: 'Update an existing review. Access: OWN'
+      tags:
+        - 'M02: Social Feed and Interactions'
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                rating:
+                  type: integer
+                content:
+                  type: string
+      responses:
+        '200':
+          description: 'Review updated'
+        '403':
+          description: 'Forbidden'
+
+  /posts/{id}/like:
+    post:
+      operationId: R208
+      summary: 'R208: Toggle Like'
+      description: 'Like or unlike a post. Access: USR'
+      tags:
+        - 'M02: Social Feed and Interactions'
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: 'Like status toggled'
+        '401':
+          description: 'Unauthorized'
+
+  /posts/{id}/comments:
+    get:
+      operationId: R209
+      summary: 'R209: Get Comments'
+      description: 'Retrieve comments for a specific post. Access: USR'
+      tags:
+        - 'M02: Social Feed and Interactions'
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: 'List of comments'
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Comment'
+
+    post:
+      operationId: R210
+      summary: 'R210: Add Comment'
+      description: 'Add a comment to a post. Access: USR'
+      tags:
+        - 'M02: Social Feed and Interactions'
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                content:
+                  type: string
+      responses:
+        '200':
+          description: 'Comment added'
+        '422':
+          description: 'Validation Error (Empty content)'
+
+  /posts/{id}/report:
+    post:
+      operationId: R211
+      summary: 'R211: Report Post'
+      description: 'Report a post to admins. Access: USR'
+      tags:
+        - 'M02: Social Feed and Interactions'
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                reason:
+                  type: string
+      responses:
+        '200':
+          description: 'Report submitted'
+        '500':
+          description: 'Server Error'
+
+  # ==========================================
+  # M03: Media Library
+  # ==========================================
+  /movies/search:
+    get:
+      operationId: R301
+      summary: 'R301: Search Movies'
+      description: 'Search TMDB for movies. Access: USR'
+      tags:
+        - 'M03: Media Library'
+      parameters:
+        - in: query
+          name: q
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: 'JSON list of movies'
+        '422':
+          description: 'Validation Error (Missing query)'
+
+  /books/search:
+    get:
+      operationId: R302
+      summary: 'R302: Search Books'
+      description: 'Search Google Books API. Access: USR'
+      tags:
+        - 'M03: Media Library'
+      parameters:
+        - in: query
+          name: q
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: 'JSON list of books'
+
+  /music/search:
+    get:
+      operationId: R303
+      summary: 'R303: Search Music'
+      description: 'Search Spotify API. Access: USR'
+      tags:
+        - 'M03: Media Library'
+      parameters:
+        - in: query
+          name: q
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: 'JSON list of music tracks'
+
+  # ==========================================
+  # M04: Social Network
+  # ==========================================
+  /search-users:
+    get:
+      operationId: R401
+      summary: 'R401: Search Users'
+      description: 'Search for users by name/username. Access: USR'
+      tags:
+        - 'M04: Social Network'
+      parameters:
+        - in: query
+          name: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: 'User search results UI'
+
+  /friend-requests:
+    get:
+      operationId: R402
+      summary: 'R402: List Friend Requests'
+      description: 'View received friend requests. Access: USR'
+      tags:
+        - 'M04: Social Network'
+      responses:
+        '200':
+          description: 'Friend requests list'
+
+    post:
+      operationId: R403
+      summary: 'R403: Send Friend Request'
+      description: 'Send a friend request to a user. Access: USR'
+      tags:
+        - 'M04: Social Network'
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                receiver_id:
+                  type: integer
+      responses:
+        '302':
+          description: 'Success: Redirect back with success flash. Error: Redirect back with error flash.'
+
+  /friend-requests/{requestId}/accept:
+    post:
+      operationId: R404
+      summary: 'R404: Accept Request'
+      description: 'Accept a pending friend request. Access: USR'
+      tags:
+        - 'M04: Social Network'
+      parameters:
+        - in: path
+          name: requestId
+          required: true
+          schema:
+            type: integer
+      responses:
+        '302':
+          description: 'Success: Redirect back. Error: Redirect back.'
+
+  /friend-requests/{requestId}/reject:
+    post:
+      operationId: R405
+      summary: 'R405: Reject Request'
+      description: 'Reject a pending friend request. Access: USR'
+      tags:
+        - 'M04: Social Network'
+      parameters:
+        - in: path
+          name: requestId
+          required: true
+          schema:
+            type: integer
+      responses:
+        '302':
+          description: 'Success: Redirect back. Error: Redirect back.'
+
+  /friends/{userId}:
+    delete:
+      operationId: R406
+      summary: 'R406: Unfriend'
+      description: 'Remove a user from friend list. Access: USR'
+      tags:
+        - 'M04: Social Network'
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: integer
+      responses:
+        '302':
+          description: 'Success: Redirect back. Error: Redirect back.'
+
+  # ==========================================
+  # M05: Administration
+  # ==========================================
+  /admin/dashboard:
+    get:
+      operationId: R501
+      summary: 'R501: Admin Dashboard'
+      description: 'View system statistics. Access: ADM'
+      tags:
+        - 'M05: Administration'
+      responses:
+        '200':
+          description: 'Dashboard UI'
+        '403':
+          description: 'Forbidden (Non-admin)'
+
+  /admin/users:
+    get:
+      operationId: R502
+      summary: 'R502: Manage Users'
+      description: 'View all users list. Access: ADM'
+      tags:
+        - 'M05: Administration'
+      responses:
+        '200':
+          description: 'User management UI'
+        '403':
+          description: 'Forbidden (Non-admin)'
+
+  /admin/users/create:
+    post:
+      operationId: R503
+      summary: 'R503: Create User (Admin)'
+      description: 'Admin creates a new user. Access: ADM'
+      tags:
+        - 'M05: Administration'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserRegistration'
+      responses:
+        '200':
+          description: 'User created'
+        '422':
+          description: 'Validation Error'
+        '500':
+          description: 'Server Error'
+
+  /admin/users/{id}:
+    put:
+      operationId: R504
+      summary: 'R504: Update User (Admin)'
+      description: 'Admin updates user details/permissions. Access: ADM'
+      tags:
+        - 'M05: Administration'
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                username:
+                  type: string
+                email:
+                  type: string
+                is_admin:
+                  type: boolean
+      responses:
+        '200':
+          description: 'User updated'
+        '404':
+          description: 'User not found'
+        '422':
+          description: 'Validation Error'
+
+  /reports/{id}/status:
+    post:
+      operationId: R505
+      summary: 'R505: Update Report Status'
+      description: 'Accept or reject a content report. Access: ADM'
+      tags:
+        - 'M05: Administration'
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status:
+                  type: string
+                  enum: [accepted, rejected]
+      responses:
+        '200':
+          description: 'Report processed'
+        '500':
+          description: 'Server Error'
+
+components:
+  schemas:
+    UserRegistration:
+      type: object
+      properties:
+        name:
+          type: string
+        username:
+          type: string
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          format: password
+      required:
+        - name
+        - username
+        - email
+        - password
+
+    FavoriteItem:
+      type: object
+      properties:
+        type:
+          type: string
+          enum: [movie, book, music]
+        title:
+          type: string
+        creator:
+          type: string
+        releaseYear:
+          type: integer
+        coverImage:
+          type: string
+      required:
+        - type
+        - title
+
+    ReviewCreate:
+      type: object
+      properties:
+        type:
+          type: string
+          enum: [movie, book, music]
+        rating:
+          type: integer
+          minimum: 1
+          maximum: 5
+        content:
+          type: string
+        tmdb_id:
+          type: integer
+          description: Required if type is movie
+        google_book_id:
+          type: string
+          description: Required if type is book
+        spotify_id:
+          type: string
+          description: Required if type is music
+      required:
+        - type
+        - rating
+
+    Comment:
+      type: object
+      properties:
+        id:
+          type: integer
+        content:
+          type: string
+        author_name:
+          type: string
+        created_at:
+          type: string
+          format: date-time
