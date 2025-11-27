@@ -891,8 +891,9 @@ INSERT INTO users (
     profilePicture, isPrivate, isAdmin, 
     favoriteFilm, favoriteBook, favoriteSong
 ) VALUES 
+    ('Admin', 'admin', 'admin@example.org', '$2y$10$HfzIhGCCaxqyaIdGgjARSuOKAcm1Uy82YfLuNaajn6JrjLWy9Sj/W', NULL, NULL, FALSE, TRUE, NULL, NULL, NULL),
     ('Alice Martins', 'alice', 'alice@example.org', '$2y$10$HfzIhGCCaxqyaIdGgjARSuOKAcm1Uy82YfLuNaajn6JrjLWy9Sj/W', 'Movie lover and aspiring filmmaker 🎬', 'alice.jpg', FALSE, FALSE, 1, 2, 3),
-    ('Bruno Silva', 'bruno', 'bruno@example.org', '$2y$10$HfzIhGCCaxqyaIdGgjARSuOKAcm1Uy82YfLuNaajn6JrjLWy9Sj/W', 'Reader & gamer. Tech enthusiast 💻', 'bruno.jpg', FALSE, TRUE, 4, 5, 3),
+    ('Bruno Silva', 'bruno', 'bruno@example.org', '$2y$10$HfzIhGCCaxqyaIdGgjARSuOKAcm1Uy82YfLuNaajn6JrjLWy9Sj/W', 'Reader & gamer. Tech enthusiast 💻', 'bruno.jpg', FALSE, FALSE, 4, 5, 3),
     ('Carla Dias', 'carla', 'carla@example.org', '$2y$10$HfzIhGCCaxqyaIdGgjARSuOKAcm1Uy82YfLuNaajn6JrjLWy9Sj/W', 'Music addict 🎵 Concerts are life!', 'carla.jpg', TRUE, FALSE, 1, 2, 7),
     ('David Costa', 'david', 'david@example.org', '$2y$10$HfzIhGCCaxqyaIdGgjARSuOKAcm1Uy82YfLuNaajn6JrjLWy9Sj/W', 'Cinephile. Nolan fanboy.', 'david.jpg', FALSE, FALSE, 6, NULL, NULL),
     ('Eva Rocha', 'eva', 'eva@example.org', '$2y$10$HfzIhGCCaxqyaIdGgjARSuOKAcm1Uy82YfLuNaajn6JrjLWy9Sj/W', 'Book enthusiast 📚 Coffee lover ☕', 'eva.jpg', TRUE, FALSE, 4, 8, 7),
