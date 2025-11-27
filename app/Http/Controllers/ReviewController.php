@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\DB;
 use App\Services\MovieService;
 use App\Services\BookService;
 use App\Services\MusicService;
+use App\Models\Post;
 
 class ReviewController extends Controller
 {
@@ -183,16 +184,8 @@ class ReviewController extends Controller
         try {
             DB::beginTransaction();
 
-            // Check ownership
-            $post = DB::selectOne("SELECT userId FROM lbaw2544.post WHERE id = ?", [$id]);
-            
-            if (!$post) {
-                return response()->json(['success' => false, 'message' => 'Post not found'], 404);
-            }
-
-            if ($post->userid !== Auth::id()) {
-                return response()->json(['success' => false, 'message' => 'Unauthorized'], 403);
-            }
+            $post = Post::findOrFail($id);
+            $this->authorize('update', $post);
 
             // Update Review
             DB::table('lbaw2544.review')
