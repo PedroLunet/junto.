@@ -27,18 +27,18 @@
         <!-- sidebar -->
         <aside class="w-1/6 bg-[#624452] text-white flex flex-col rounded-r-2xl">
             <div class="p-8">
-                <h1><a href="/" class="text-4xl font-bold">junto.</a></h1>
+                <h1><a href="/" class="text-4xl font-bold hover:text-[#a17f8f]">junto.</a></h1>
             </div>
             
             <nav class="flex-1 px-4">
                 @auth
                 <ul class="space-y-2">
-                    <li><a href="{{ route('friends-feed') }}" class="block py-2 px-4 rounded hover:bg-[#7455ad] hover:text-white">Friends Feed</a></li>
-                    <li><a href="{{ route('friends.index') }}" class="block py-2 px-4 rounded hover:bg-[#7455ad] hover:text-white">My Friends</a></li>
-                    <li><a href="{{ route('friend-requests.index') }}" class="block py-2 px-4 rounded hover:bg-[#7455ad] hover:text-white">Friend Requests</a></li>
-                    <li><a href="{{ route('movies') }}" class="block py-2 px-4 rounded hover:bg-[#7455ad] hover:text-white">Movies</a></li>
-                    <li><a href="{{ route('books') }}" class="block py-2 px-4 rounded hover:bg-[#7455ad] hover:text-white">Books</a></li>
-                    <li><a href="{{ route('music') }}" class="block py-2 px-4 rounded hover:bg-[#7455ad] hover:text-white">Music</a></li>
+                    <li><a href="{{ route('friends-feed') }}" class="block py-2 px-4 rounded hover:bg-[#7a5466] hover:text-white">Friends Feed</a></li>
+                    <li><a href="{{ route('friends.index') }}" class="block py-2 px-4 rounded hover:bg-[#7a5466] hover:text-white">My Friends</a></li>
+                    <li><a href="{{ route('friend-requests.index') }}" class="block py-2 px-4 rounded hover:bg-[#7a5466] hover:text-white">Friend Requests</a></li>
+                    <li><a href="{{ route('movies') }}" class="block py-2 px-4 rounded hover:bg-[#7a5466] hover:text-white">Movies</a></li>
+                    <li><a href="{{ route('books') }}" class="block py-2 px-4 rounded hover:bg-[#7a5466] hover:text-white">Books</a></li>
+                    <li><a href="{{ route('music') }}" class="block py-2 px-4 rounded hover:bg-[#7a5466] hover:text-white">Music</a></li>
                 </ul>
                 @endauth
             </nav>
