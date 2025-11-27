@@ -38,7 +38,7 @@
                     <li><a href="{{ route('friend-requests.index') }}" class="block py-2 px-4 rounded hover:bg-[#7455ad] hover:text-white">Friend Requests</a></li>
                     <li><a href="{{ route('movies') }}" class="block py-2 px-4 rounded hover:bg-[#7455ad] hover:text-white">Movies</a></li>
                     <li><a href="{{ route('books') }}" class="block py-2 px-4 rounded hover:bg-[#7455ad] hover:text-white">Books</a></li>
-                    <li><a href="#" class="block py-2 px-4 rounded hover:bg-[#7455ad] hover:text-white">Music</a></li>
+                    <li><a href="{{ route('music') }}" class="block py-2 px-4 rounded hover:bg-[#7455ad] hover:text-white">Music</a></li>
                 </ul>
                 @endauth
             </nav>

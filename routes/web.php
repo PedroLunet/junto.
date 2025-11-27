@@ -78,7 +78,8 @@ Route::middleware('auth')->controller(MovieController::class)->group(function ()
 
 // temporary music routes
 Route::middleware('auth')->controller(MusicController::class)->group(function () {
-    Route::get('/music', 'search')->name('music.search');
+    Route::get('/music', 'index')->name('music');
+    Route::get('/music/search', 'search')->name('music.search');
     Route::post('/music', 'store')->name('music.store');
 });
 
