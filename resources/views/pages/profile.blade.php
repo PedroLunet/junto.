@@ -18,8 +18,10 @@
                         <!-- friends and posts count -->
                         <div class="flex gap-8 md:gap-10 mb-4 md:mb-6">
                             <div>
-                                <span class="font-bold text-gray-900 text-xl md:text-2xl">{{ $friendsCount }}</span>
-                                <span class="text-gray-600 text-xl md:text-2xl">Friends</span>
+                                <a href="{{ route('friends.index') }}" class="hover:underline">
+                                    <span class="font-bold text-gray-900 text-xl md:text-2xl">{{ $friendsCount }}</span>
+                                    <span class="text-gray-600 text-xl md:text-2xl">Friends</span>
+                                </a>
                             </div>
                             <div>
                                 <span class="font-bold text-gray-900 text-xl md:text-2xl">{{ $postsCount }}</span>
