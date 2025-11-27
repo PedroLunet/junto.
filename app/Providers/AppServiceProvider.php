@@ -6,10 +6,12 @@ use App\Models\User;
 use App\Models\FriendRequest;
 use App\Models\Post;
 use App\Models\Report;
+use App\Models\Comment;
 use App\Policies\UserPolicy;
 use App\Policies\FriendRequestPolicy;
 use App\Policies\PostPolicy;
 use App\Policies\ReportPolicy;
+use App\Policies\CommentPolicy;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -19,6 +21,7 @@ class AppServiceProvider extends ServiceProvider
         FriendRequest::class => FriendRequestPolicy::class,
         Post::class => PostPolicy::class,
         Report::class => ReportPolicy::class,
+        Comment::class => CommentPolicy::class,
     ];
 
     /**

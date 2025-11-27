@@ -14,6 +14,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\CommentController;
 
 use App\Http\Controllers\SearchUserController;
 use Illuminate\Support\Facades\Route;
@@ -21,16 +22,16 @@ use Illuminate\Support\Facades\Route;
 // Home
 // Route::redirect('/', '/login');
 
-Route::middleware('regular.user')->controller(HomeController::class)->group(function () {
-    Route::get('/', 'index')->name('home');
-    Route::get('/posts/{id}/comments', 'getComments')->name('post.comments');
+Route::middleware('regular.user')->group(function () {
+    Route::get('/', [HomeController::class, 'index'])->name('home');
+    Route::get('/posts/{id}/comments', [CommentController::class, 'index'])->name('post.comments');
 });
 
 // Home page (authentication required)
-Route::middleware(['auth', 'regular.user'])->controller(HomeController::class)->group(function () {
-    Route::get('/friends-feed', 'friendsFeed')->name('friends-feed');
-    Route::post('/posts/{id}/comments', 'addComment')->name('post.comments.add');
-    Route::post('/posts/{id}/like', 'toggleLike')->name('post.like');
+Route::middleware(['auth', 'regular.user'])->group(function () {
+    Route::get('/friends-feed', [HomeController::class, 'friendsFeed'])->name('friends-feed');
+    Route::post('/posts/{id}/comments', [CommentController::class, 'store'])->name('post.comments.add');
+    Route::post('/posts/{id}/like', [HomeController::class, 'toggleLike'])->name('post.like');
 });
 
 Route::middleware(['auth', 'regular.user'])->controller(ProfileController::class)->group(function () {
