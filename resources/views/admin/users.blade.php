@@ -34,14 +34,35 @@
                         <th class="pl-16 pr-6 py-3 text-left">
                             <input type="checkbox" id="select-all" class="rounded border-gray-300 ml-8">
                         </th>
-                        <th class="px-6 py-3 text-left text-xl font-medium text-gray-500 uppercase tracking-wider">Name</th>
-                        <th class="px-6 py-3 text-left text-xl font-medium text-gray-500 uppercase tracking-wider">Username
+                        <th class="px-6 py-3 text-left text-xl font-medium text-gray-500 uppercase tracking-wider">
+                            <button class="flex items-center space-x-2 hover:text-gray-700 sort-btn" data-column="name">
+                                <span>Name</span>
+                                <i class="fas fa-caret-down text-sm sort-icon" data-direction="none"></i>
+                            </button>
                         </th>
-                        <th class="px-6 py-3 text-left text-xl font-medium text-gray-500 uppercase tracking-wider">Email
+                        <th class="px-6 py-3 text-left text-xl font-medium text-gray-500 uppercase tracking-wider">
+                            <button class="flex items-center space-x-2 hover:text-gray-700 sort-btn" data-column="username">
+                                <span>Username</span>
+                                <i class="fas fa-caret-down text-sm sort-icon" data-direction="none"></i>
+                            </button>
                         </th>
-                        <th class="px-6 py-3 text-left text-xl font-medium text-gray-500 uppercase tracking-wider">Joined
+                        <th class="px-6 py-3 text-left text-xl font-medium text-gray-500 uppercase tracking-wider">
+                            <button class="flex items-center space-x-2 hover:text-gray-700 sort-btn" data-column="email">
+                                <span>Email</span>
+                                <i class="fas fa-caret-down text-sm sort-icon" data-direction="none"></i>
+                            </button>
                         </th>
-                        <th class="px-6 py-3 text-left text-xl font-medium text-gray-500 uppercase tracking-wider">Status
+                        <th class="px-6 py-3 text-left text-xl font-medium text-gray-500 uppercase tracking-wider">
+                            <button class="flex items-center space-x-2 hover:text-gray-700 sort-btn" data-column="date">
+                                <span>Joined</span>
+                                <i class="fas fa-caret-down text-sm sort-icon" data-direction="none"></i>
+                            </button>
+                        </th>
+                        <th class="px-6 py-3 text-left text-xl font-medium text-gray-500 uppercase tracking-wider">
+                            <button class="flex items-center space-x-2 hover:text-gray-700 sort-btn" data-column="status">
+                                <span>Status</span>
+                                <i class="fas fa-caret-down text-sm sort-icon" data-direction="none"></i>
+                            </button>
                         </th>
                         <th class="px-6 py-3 text-left text-xl font-medium text-gray-500 uppercase tracking-wider">Edit</th>
                     </tr>
@@ -106,6 +127,8 @@
 @push('scripts')
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+
+            //=== CHECKBOXES ===
             const selectAllCheckbox = document.getElementById('select-all');
             const userCheckboxes = document.querySelectorAll('.user-checkbox');
             const selectionInfo = document.getElementById('selection-info');
@@ -151,7 +174,8 @@
             // start count
             updateSelectionCount();
 
-            // search functionality
+
+            //=== SEARCH ===
             const searchInput = document.getElementById('searchUser');
             const userRows = document.querySelectorAll('tbody tr');
 
@@ -211,12 +235,133 @@
             // add event listener for search input
             searchInput.addEventListener('input', filterUsers);
 
-            // clear search functionality 
+            // clear search
             searchInput.addEventListener('keydown', function(e) {
                 if (e.key === 'Escape') {
                     this.value = '';
                     filterUsers();
                 }
+            });
+
+            //=== SORTING ===
+            const sortButtons = document.querySelectorAll('.sort-btn');
+            let currentSort = {
+                column: null,
+                direction: 'none'
+            };
+
+            function sortTable(column, direction) {
+                const tbody = document.querySelector('tbody');
+                const rows = Array.from(tbody.querySelectorAll('tr:not([style*="display: none"])'));
+                const noUsersRow = tbody.querySelector('tr td[colspan]')?.parentElement;
+
+                // remove no users row from sorting
+                const dataRows = rows.filter(row => !row.querySelector('td[colspan]'));
+
+                if (dataRows.length === 0) return;
+
+                dataRows.sort((a, b) => {
+                    let aValue, bValue;
+
+                    switch (column) {
+                        case 'name':
+                            aValue = a.querySelector('td:nth-child(2) div').textContent.toLowerCase();
+                            bValue = b.querySelector('td:nth-child(2) div').textContent.toLowerCase();
+                            break;
+                        case 'username':
+                            aValue = a.querySelector('td:nth-child(3) div').textContent.toLowerCase();
+                            bValue = b.querySelector('td:nth-child(3) div').textContent.toLowerCase();
+                            break;
+                        case 'email':
+                            aValue = a.querySelector('td:nth-child(4) div').textContent.toLowerCase();
+                            bValue = b.querySelector('td:nth-child(4) div').textContent.toLowerCase();
+                            break;
+                        case 'date':
+                            aValue = a.querySelector('td:nth-child(5) div').textContent;
+                            bValue = b.querySelector('td:nth-child(5) div').textContent;
+                            // Handle N/A dates
+                            if (aValue === 'N/A') aValue = '1900-01-01';
+                            if (bValue === 'N/A') bValue = '1900-01-01';
+                            aValue = new Date(aValue);
+                            bValue = new Date(bValue);
+                            break;
+                        case 'status':
+                            const statusOrder = {
+                                'Admin': 0,
+                                'Active': 1,
+                                'Blocked': 2
+                            };
+                            const aStatusText = a.querySelector('td:nth-child(6) span').textContent.trim();
+                            const bStatusText = b.querySelector('td:nth-child(6) span').textContent.trim();
+                            aValue = statusOrder[aStatusText] !== undefined ? statusOrder[aStatusText] : 3;
+                            bValue = statusOrder[bStatusText] !== undefined ? statusOrder[bStatusText] : 3;
+                            break;
+                    }
+
+                    if (column === 'date') {
+                        return direction === 'asc' ? aValue - bValue : bValue - aValue;
+                    } else if (column === 'status') {
+                        return direction === 'asc' ? aValue - bValue : bValue - aValue;
+                    } else {
+                        if (aValue < bValue) return direction === 'asc' ? -1 : 1;
+                        if (aValue > bValue) return direction === 'asc' ? 1 : -1;
+                        return 0;
+                    }
+                });
+
+                // clear tbody and re-append sorted rows
+                tbody.innerHTML = '';
+                dataRows.forEach(row => tbody.appendChild(row));
+
+                // add back no users row if it exists
+                if (noUsersRow) {
+                    tbody.appendChild(noUsersRow);
+                }
+            }
+
+            function updateSortIcons(activeColumn, direction) {
+                // reset all icons
+                document.querySelectorAll('.sort-icon').forEach(icon => {
+                    icon.className = 'fas fa-caret-down text-sm sort-icon';
+                    icon.setAttribute('data-direction', 'none');
+                });
+
+                // update active column icon
+                const activeIcon = document.querySelector(`[data-column="${activeColumn}"] .sort-icon`);
+                if (activeIcon) {
+                    if (direction === 'asc') {
+                        activeIcon.className = 'fas fa-caret-up text-sm sort-icon';
+                    } else if (direction === 'desc') {
+                        activeIcon.className = 'fas fa-caret-down text-sm sort-icon';
+                    }
+                    activeIcon.setAttribute('data-direction', direction);
+                }
+            }
+
+            // click listeners to sort buttons
+            sortButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const column = this.getAttribute('data-column');
+                    const icon = this.querySelector('.sort-icon');
+                    const currentDirection = icon.getAttribute('data-direction');
+
+                    let newDirection;
+                    if (currentDirection === 'none' || currentDirection === 'desc') {
+                        newDirection = 'asc';
+                    } else {
+                        newDirection = 'desc';
+                    }
+
+                    currentSort = {
+                        column,
+                        direction: newDirection
+                    };
+                    sortTable(column, newDirection);
+                    updateSortIcons(column, newDirection);
+
+                    // update selection count after sorting
+                    updateSelectionCount();
+                });
             });
         });
     </script>
