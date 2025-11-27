@@ -232,6 +232,20 @@
                         // hide the message when there are results
                         noUsersRowElement.style.display = 'none';
                     }
+                } else if (visibleCount === 0 && searchTerm !== '') {
+                    // create and insert "No results found" message if it doesn't exist
+                    const tbody = document.querySelector('tbody');
+                    const noResultsRow = document.createElement('tr');
+                    noResultsRow.innerHTML =
+                        `<td colspan="7" class="px-6 py-4 text-center text-gray-500">No users found matching "${searchTerm}"</td>`;
+                    noResultsRow.id = 'no-results-row';
+                    tbody.appendChild(noResultsRow);
+                } else {
+                    // remove any dynamically created no results row
+                    const dynamicNoResultsRow = document.getElementById('no-results-row');
+                    if (dynamicNoResultsRow) {
+                        dynamicNoResultsRow.remove();
+                    }
                 }
             }
 
