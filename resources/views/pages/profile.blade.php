@@ -226,5 +226,43 @@
                     alert('Error removing favorite');
                 });
         }
+
+        function toggleLike(postId) {
+            if (!window.isAuthenticated) {
+                window.location.href = '/login';
+                return;
+            }
+
+            fetch(`/posts/${postId}/like`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                        'Accept': 'application/json'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        const likeBtn = document.getElementById(`like-btn-${postId}`);
+                        const likeCount = document.getElementById(`like-count-${postId}`);
+                        const likeIcon = document.getElementById(`like-icon-${postId}`);
+
+                        likeCount.textContent = data.likes_count;
+
+                        if (data.liked) {
+                            likeBtn.classList.remove('text-gray-600', 'focus:text-gray-600');
+                            likeBtn.classList.add('text-red-500', 'focus:text-red-500');
+                            likeIcon.classList.remove('far');
+                            likeIcon.classList.add('fas');
+                        } else {
+                            likeBtn.classList.remove('text-red-500', 'focus:text-red-500');
+                            likeBtn.classList.add('text-gray-600', 'focus:text-gray-600');
+                            likeIcon.classList.remove('fas');
+                            likeIcon.classList.add('far');
+                        }
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+        }
     </script>
 @endsection
