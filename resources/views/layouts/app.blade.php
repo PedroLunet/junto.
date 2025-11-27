@@ -19,7 +19,7 @@
             window.isAuthenticated = {{ auth()->check() ? 'true' : 'false' }};
             window.currentUserUsername = "{{ auth()->check() ? auth()->user()->username : '' }}";
         </script>
-        <script src="{{ asset('js/app.js') }}" defer></script>
+        <script src="{{ asset('js/app.js') }}"></script>
         @stack('scripts')
         <script>
             function toggleMobileMenu() {
@@ -41,7 +41,7 @@
         <div id="mobile-overlay" class="hidden lg:hidden fixed inset-0 bg-black bg-opacity-50 z-30" onclick="toggleMobileMenu()"></div>
         
         <!-- sidebar -->
-        <aside id="sidebar" class="fixed lg:relative w-64 lg:w-1/6 h-full bg-[#624452] text-white flex flex-col rounded-r-2xl shadow-2xl z-40 transform -translate-x-full lg:translate-x-0 transition-transform duration-300">
+        <aside id="sidebar" class="fixed lg:relative w-64 lg:w-1/6 h-full bg-[#624452] text-white flex flex-col rounded-r-2xl shadow-2xl z-50 transform -translate-x-full lg:translate-x-0 transition-transform duration-300">
             <div class="p-8 flex justify-between items-center">
                 <h1><a href="/" class="text-4xl font-bold hover:text-[#a17f8f]">junto.</a></h1>
                 <button onclick="toggleMobileMenu()" class="lg:hidden text-white">
@@ -63,17 +63,33 @@
     
 
             <div class="px-4 mb-4 flex flex-col gap-2">
-                <x-button id="regular-button" variant="special"> + </x-button>
+                @auth
+                    <x-button id="regular-button" variant="special"> + </x-button>
+                @else
+                    <x-button href="{{ route('login') }}" variant="special"> + </x-button>
+                @endauth
                 <div class="hidden lg:flex gap-2 w-full">
-                    <x-button id="movie-button" variant="special" class="flex-1 justify-center">
-                        <i class="fa-solid fa-clapperboard text-2xl"></i>
-                    </x-button>
-                    <x-button id="book-button" variant="special" class="flex-1 justify-center">
-                        <i class="fa-solid fa-book text-2xl"></i>
-                    </x-button>
-                    <x-button id="music-button" variant="special" class="flex-1 justify-center">
-                        <i class="fa-solid fa-music text-2xl"></i>
-                    </x-button>
+                    @auth
+                        <x-button id="movie-button" variant="special" class="flex-1 justify-center">
+                            <i class="fa-solid fa-clapperboard text-2xl"></i>
+                        </x-button>
+                        <x-button id="book-button" variant="special" class="flex-1 justify-center">
+                            <i class="fa-solid fa-book text-2xl"></i>
+                        </x-button>
+                        <x-button id="music-button" variant="special" class="flex-1 justify-center">
+                            <i class="fa-solid fa-music text-2xl"></i>
+                        </x-button>
+                    @else
+                        <x-button href="{{ route('login') }}" variant="special" class="flex-1 justify-center">
+                            <i class="fa-solid fa-clapperboard text-2xl"></i>
+                        </x-button>
+                        <x-button href="{{ route('login') }}" variant="special" class="flex-1 justify-center">
+                            <i class="fa-solid fa-book text-2xl"></i>
+                        </x-button>
+                        <x-button href="{{ route('login') }}" variant="special" class="flex-1 justify-center">
+                            <i class="fa-solid fa-music text-2xl"></i>
+                        </x-button>
+                    @endauth
                 </div>
             </div>
             
@@ -83,9 +99,9 @@
                     <a href="{{ url('/logout') }}" class="text-red-400 hover:text-red-300 text-xl">Logout</a>
                 </div>
             @else
-                <div class="p-4 border-t border-gray-700">
-                    <x-button href="{{ route('login') }}" variant="primary" class="w-full mb-2">Login</x-button>
-                    <x-button href="{{ route('register') }}" variant="secondary" class="w-full">Register</x-button>
+                <div class="p-4 border-t border-gray-700 flex flex-col gap-2">
+                    <x-button href="{{ route('login') }}" variant="primary" class="w-full text-center">Login</x-button>
+                    <x-button href="{{ route('register') }}" variant="secondary" class="w-full text-center">Register</x-button>
                 </div>
             @endauth
         </aside>

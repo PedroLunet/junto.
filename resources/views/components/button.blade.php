@@ -9,6 +9,8 @@
     ];
     $variant = $attributes->get('variant', 'primary');
     $classes = $base . ' ' . ($variants[$variant] ?? $variants['primary']);
+    $href = $attributes->get('href');
+    $tag = $href ? 'a' : 'button';
 @endphp
 @php
     $defaultStyle = '';
@@ -23,10 +25,10 @@
         $finalStyle = $defaultStyle . ' ' . $userStyle;
     }
 @endphp
-<button
+<{{ $tag }}
     @if($finalStyle)
         style="{{ $finalStyle }}"
     @endif
     {{ $attributes->merge(['class' => $classes])->except('variant')->except('style') }}>
     {{ $slot }}
-</button>
+</{{ $tag }}>
