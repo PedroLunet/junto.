@@ -1,5 +1,7 @@
 @extends('layouts.app')
 
+@section('title', 'Home')
+
 @section('content')
     <div class="container mx-auto px-4 py-8">
         <div class="max-w-4xl mx-auto space-y-6">
@@ -24,7 +26,7 @@
                         </div>
 
                         <!-- timestamp -->
-                        <div class="text-lg text-gray-800">
+                        <div class="text-lg text-gray-800 text-right">
                             {{ \Carbon\Carbon::parse($post->created_at)->format('H:i') }} <br>
                             {{ \Carbon\Carbon::parse($post->created_at)->format('d/m/Y') }}
                         </div>
@@ -42,15 +44,15 @@
                             </div>
                             
                           
-                            <div class="flex-1 relative">
-                                 <!-- stars -->
-                                 <div class="absolute top-0 right-0 text-yellow-400 text-2xl">
-                                    @for($i = 0; $i < $post->rating; $i++)
-                                        <i class="fas fa-star"></i>
-                                    @endfor
+                            <div class="flex-1">
+                                 <div class="flex justify-between items-start gap-4 mb-1">
+                                     <h3 class="text-4xl font-bold text-gray-900">{{ $post->media_title }}</h3>
+                                     <div class="flex gap-0.5 text-yellow-400 text-2xl shrink-0 pt-1">
+                                        @for($i = 0; $i < $post->rating; $i++)
+                                            <i class="fas fa-star"></i>
+                                        @endfor
+                                     </div>
                                  </div>
-                    
-                                 <h3 class="text-4xl font-bold text-gray-900 pr-24 mb-1">{{ $post->media_title }}</h3>
                                  <p class="text-xl text-gray-700 font-medium mb-0.5">{{ $post->media_creator }}</p>
                                  <p class="text-lg text-gray-700 mb-3">{{ $post->media_year }}</p>
                                  
@@ -65,14 +67,18 @@
                         <!-- image -->
                         @if($post->image_url)
                             <div class="w-full bg-gray-200 rounded-xl overflow-hidden mb-4">
-                                <img src="{{ asset('storage/' . $post->image_url) }}" class="w-full h-auto object-cover">
+                                <img src="{{ asset('post/' . $post->image_url) }}" 
+                                     onerror="this.src='{{ asset('post/default.jpg') }}'"
+                                     class="w-full h-auto object-cover">
                             </div>
                         @endif
 
                         <!-- text -->
-                        <p class="text-black">
-                            {{ $post->content }}
-                        </p>
+                        @if($post->content)
+                            <p class="text-black">
+                                {{ $post->content }}
+                            </p>
+                        @endif
                     @endif
 
 
@@ -85,14 +91,14 @@
                             class="bg-transparent border-0 shadow-none p-0 h-auto leading-none flex items-center gap-1 hover:text-red-500 hover:bg-transparent focus:bg-transparent focus:outline-none transition-colors {{ $post->is_liked ? 'text-red-500 focus:text-red-500' : 'text-gray-600 focus:text-gray-600' }}"
                             id="like-btn-{{ $post->id }}"
                         >
-                            <span class="text-2xl" id="like-count-{{ $post->id }}">{{ $post->likes_count ?? 0 }}</span>
                             <i class="{{ $post->is_liked ? 'fas' : 'far' }} fa-heart text-2xl" id="like-icon-{{ $post->id }}"></i>
+                            <span class="text-2xl" id="like-count-{{ $post->id }}">{{ $post->likes_count ?? 0 }}</span>
                         </button>
 
                         <!-- comments -->
                         <div class="flex items-center gap-1">
-                            <span class="text-2xl">{{ $post->comments_count ?? 0 }}</span>
                             <i class="far fa-comment text-2xl"></i>
+                            <span class="text-2xl">{{ $post->comments_count ?? 0 }}</span>
                         </div>
                     </div>
 

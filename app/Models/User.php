@@ -2,10 +2,7 @@
 
 namespace App\Models;
 
-use App\Models\Friendship;
-use App\Models\FriendRequest;
-use App\Models\Notification;
-use App\Models\Request;
+use App\Http\Controllers\FileController;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -198,5 +195,10 @@ class User extends Authenticatable
             ->where('status', 'pending')
             ->whereHas('friendRequest')
             ->exists();
+    }
+
+    public function getProfileImage()
+    {
+        return FileController::get('profile', $this->id);
     }
 }

@@ -1,24 +1,22 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
-use App\Models\Post;
-
-use App\Http\Controllers\HomeController;
-use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\FriendRequestController;
-use App\Http\Controllers\ReportController;
-
 use App\Http\Controllers\Auth\LoginController;
-use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\LogoutController;
-use App\Http\Controllers\SearchUserController;
+use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\BookController;
+use App\Http\Controllers\FileController;
+use App\Http\Controllers\FriendRequestController;
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\MovieController;
 use App\Http\Controllers\MusicController;
-use App\Http\Controllers\BookController;
 use App\Http\Controllers\PostController;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ReportController;
 use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\AdminController;
 
+use App\Http\Controllers\SearchUserController;
+use Illuminate\Support\Facades\Route;
 
 // Home
 // Route::redirect('/', '/login');
@@ -33,8 +31,6 @@ Route::middleware(['auth', 'regular.user'])->controller(HomeController::class)->
     Route::post('/posts/{id}/comments', 'addComment')->name('post.comments.add');
     Route::post('/posts/{id}/like', 'toggleLike')->name('post.like');
 });
-
-
 
 Route::middleware(['auth', 'regular.user'])->controller(ProfileController::class)->group(function () {
     Route::get('/profile', 'index')->name('profile');
@@ -100,6 +96,12 @@ Route::middleware(['auth', 'regular.user'])->group(function () {
     Route::put('/reviews/{id}', [ReviewController::class, 'update'])->name('reviews.update');
     Route::put('/posts/{id}', [PostController::class, 'update'])->name('posts.update');
     Route::delete('/posts/{id}', [PostController::class, 'destroy'])->name('posts.destroy');
+});
+
+// file upload routes
+Route::middleware('auth')->controller(FileController::class)->group(function () {
+    Route::post('/file/upload', 'upload')->name('file.upload');
+    Route::post('/file/delete', 'delete')->name('file.delete');
 });
 
 // reports routes
