@@ -73,6 +73,24 @@ class ProfileController extends Controller
                     $transformedPost->content = $post->review->content;
                     $transformedPost->rating = $post->review->rating;
                     $transformedPost->media_title = $post->review->media ? $post->review->media->title : 'Unknown Media';
+                    $transformedPost->media_poster = $post->review->media ? $post->review->media->coverimage : null;
+                    $transformedPost->media_creator = $post->review->media ? $post->review->media->creator : null;
+                    $transformedPost->media_year = $post->review->media ? $post->review->media->releaseyear : null;
+
+                    // Determine media type by checking related tables
+                    if ($post->review->media) {
+                        $mediaId = $post->review->media->id;
+                        if (\App\Models\Book::where('mediaid', $mediaId)->exists()) {
+                            $transformedPost->media_type = 'book';
+                        } elseif (\App\Models\Music::where('mediaid', $mediaId)->exists()) {
+                            $transformedPost->media_type = 'music';
+                        } else {
+                            $transformedPost->media_type = 'movie'; // default for films
+                        }
+                    } else {
+                        $transformedPost->media_type = 'movie';
+                    }
+
                     $transformedPost->post_type = 'review';
                 }
 
