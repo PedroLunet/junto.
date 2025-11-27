@@ -36,7 +36,12 @@ class ProfileController extends Controller
             ->where('username', $username)
             ->firstOrFail();
 
-        $canViewPosts = Auth::check() ? Gate::allows('viewPosts', $user) : false;
+        // Guests can view posts if profile is public
+        if (!$user->isprivate) {
+            $canViewPosts = true;
+        } else {
+            $canViewPosts = Auth::check() ? Gate::allows('viewPosts', $user) : false;
+        }
 
         // get posts only if user can view them
         $posts = collect();
