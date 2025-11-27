@@ -42,15 +42,15 @@
                             </div>
                             
                           
-                            <div class="flex-1 relative">
-                                 <!-- stars -->
-                                 <div class="absolute top-0 right-0 text-yellow-400 text-2xl">
-                                    @for($i = 0; $i < $post->rating; $i++)
-                                        <i class="fas fa-star"></i>
-                                    @endfor
+                            <div class="flex-1">
+                                 <div class="flex justify-between items-start gap-4 mb-1">
+                                     <h3 class="text-4xl font-bold text-gray-900">{{ $post->media_title }}</h3>
+                                     <div class="flex gap-0.5 text-yellow-400 text-2xl shrink-0 pt-1">
+                                        @for($i = 0; $i < $post->rating; $i++)
+                                            <i class="fas fa-star"></i>
+                                        @endfor
+                                     </div>
                                  </div>
-                    
-                                 <h3 class="text-4xl font-bold text-gray-900 pr-24 mb-1">{{ $post->media_title }}</h3>
                                  <p class="text-xl text-gray-700 font-medium mb-0.5">{{ $post->media_creator }}</p>
                                  <p class="text-lg text-gray-700 mb-3">{{ $post->media_year }}</p>
                                  
