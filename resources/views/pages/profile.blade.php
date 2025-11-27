@@ -28,9 +28,10 @@
                         </div>
 
                         @if (Auth::id() === $user->id)
-                            <button onclick="openEditProfileModal()"
-                                class="px-6 py-2 rounded-lg text-xl md:text-2xl font-medium transition-colors">Edit
-                                Profile</button>
+                            <x-button onclick="openEditProfileModal()" variant="primary"
+                                class="text-xl md:text-2xl font-medium">
+                                Edit Profile
+                            </x-button>
                         @else
                             <!-- Friend request button -->
                             <div class="mt-4 md:mt-6">
@@ -52,8 +53,8 @@
                         @if ($user->favoriteBookMedia) title="{{ $user->favoriteBookMedia->title }}{{ $user->favoriteBookMedia->creator ? ' - ' . $user->favoriteBookMedia->creator : '' }}" @endif>
                         @if ($user->favoriteBookMedia)
                             @if (Auth::id() === $user->id)
-                                <button onclick="removeFavorite('book')"
-                                    class="absolute -top-5 -right-5 w-10 h-10 bg-red-500 text-white rounded-full flex items-center justify-center text-3xl font-bold hover:bg-red-600 transition-colors z-10">-</button>
+                                <x-button onclick="removeFavorite('book')" variant="danger"
+                                    class="absolute -top-5 -right-5 w-10 h-10 rounded-full flex items-center justify-center text-3xl font-bold z-10 px-0 py-0">-</x-button>
                             @endif
                             @if ($user->favoriteBookMedia->coverimage && filter_var($user->favoriteBookMedia->coverimage, FILTER_VALIDATE_URL))
                                 <img src="{{ $user->favoriteBookMedia->coverimage }}"
@@ -63,8 +64,8 @@
                                     class="text-gray-600 text-lg md:text-xl text-center px-2">{{ $user->favoriteBookMedia->title }}</span>
                             @endif
                         @else
-                            <button onclick="openAddFavModal('book')"
-                                class="w-full h-full text-gray-600 text-5xl md:text-6xl lg:text-7xl font-light hover:text-gray-800 hover:bg-gray-400 transition-all cursor-pointer">+</button>
+                            <x-button onclick="openAddFavModal('book')" variant="ghost"
+                                class="w-full h-full text-gray-600 text-5xl md:text-6xl lg:text-7xl font-light hover:text-gray-800 hover:bg-gray-400 cursor-pointer px-0 py-0">+</x-button>
                         @endif
                     </div>
                 @endif
@@ -75,8 +76,8 @@
                         @if ($user->favoriteFilmMedia) title="{{ $user->favoriteFilmMedia->title }}{{ $user->favoriteFilmMedia->creator ? ' - ' . $user->favoriteFilmMedia->creator : '' }}" @endif>
                         @if ($user->favoriteFilmMedia)
                             @if (Auth::id() === $user->id)
-                                <button onclick="removeFavorite('movie')"
-                                    class="absolute -top-5 -right-5 w-10 h-10 bg-red-500 text-white rounded-full flex items-center justify-center text-3xl font-bold hover:bg-red-600 transition-colors z-10">-</button>
+                                <x-button onclick="removeFavorite('movie')" variant="danger"
+                                    class="absolute -top-5 -right-5 w-10 h-10 rounded-full flex items-center justify-center text-3xl font-bold z-10 px-0 py-0">-</x-button>
                             @endif
                             @if ($user->favoriteFilmMedia->coverimage && filter_var($user->favoriteFilmMedia->coverimage, FILTER_VALIDATE_URL))
                                 <img src="{{ $user->favoriteFilmMedia->coverimage }}"
@@ -86,8 +87,8 @@
                                     class="text-gray-600 text-lg md:text-xl text-center px-2">{{ $user->favoriteFilmMedia->title }}</span>
                             @endif
                         @else
-                            <button onclick="openAddFavModal('movie')"
-                                class="w-full h-full text-gray-600 text-5xl md:text-6xl lg:text-7xl font-light hover:text-gray-800 hover:bg-gray-400 transition-all cursor-pointer">+</button>
+                            <x-button onclick="openAddFavModal('movie')" variant="ghost"
+                                class="w-full h-full text-gray-600 text-5xl md:text-6xl lg:text-7xl font-light hover:text-gray-800 hover:bg-gray-400 cursor-pointer px-0 py-0">+</x-button>
                         @endif
                     </div>
                 @endif
@@ -98,8 +99,8 @@
                         @if ($user->favoriteSongMedia) title="{{ $user->favoriteSongMedia->title }}{{ $user->favoriteSongMedia->creator ? ' - ' . $user->favoriteSongMedia->creator : '' }}" @endif>
                         @if ($user->favoriteSongMedia)
                             @if (Auth::id() === $user->id)
-                                <button onclick="removeFavorite('music')"
-                                    class="absolute -top-5 -right-5 w-10 h-10 bg-red-500 text-white rounded-full flex items-center justify-center text-3xl font-bold hover:bg-red-600 transition-colors z-10">-</button>
+                                <x-button onclick="removeFavorite('music')" variant="danger"
+                                    class="absolute -top-5 -right-5 w-10 h-10 rounded-full flex items-center justify-center text-3xl font-bold z-10 px-0 py-0">-</x-button>
                             @endif
                             @if ($user->favoriteSongMedia->coverimage && filter_var($user->favoriteSongMedia->coverimage, FILTER_VALIDATE_URL))
                                 <img src="{{ $user->favoriteSongMedia->coverimage }}"
@@ -109,8 +110,8 @@
                                     class="text-gray-600 text-lg md:text-xl text-center px-2">{{ $user->favoriteSongMedia->title }}</span>
                             @endif
                         @else
-                            <button onclick="openAddFavModal('music')"
-                                class="w-full h-full text-gray-600 text-5xl md:text-6xl lg:text-7xl font-light hover:text-gray-800 hover:bg-gray-400 transition-all cursor-pointer">+</button>
+                            <x-button onclick="openAddFavModal('music')" variant="ghost"
+                                class="w-full h-full text-gray-600 text-5xl md:text-6xl lg:text-7xl font-light hover:text-gray-800 hover:bg-gray-400 cursor-pointer px-0 py-0">+</x-button>
                         @endif
                     </div>
                 @endif
