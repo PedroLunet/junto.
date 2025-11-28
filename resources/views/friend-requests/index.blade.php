@@ -9,13 +9,13 @@
         <x-tabs :tabs="[
             'received' => [
                 'title' => 'Received',
-                'content' => view('friend-requests.partials.received', [
+                'content' => view('components.friend-requests.received-requests', [
                     'friendRequests' => $friendRequests,
                 ])->render(),
             ],
             'sent' => [
                 'title' => 'Sent',
-                'content' => view('friend-requests.partials.sent', [
+                'content' => view('components.friend-requests.sent-requests', [
                     'sentRequests' => $sentRequests,
                 ])->render(),
             ],
