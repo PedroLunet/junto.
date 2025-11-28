@@ -45,7 +45,7 @@ class FriendRequestController extends Controller
             ->with(['request.notification'])
             ->get();
 
-        return view('friend-requests.index', compact('friendRequests', 'sentRequests'));
+        return view('pages.friend-requests.index', compact('friendRequests', 'sentRequests'));
     }
 
     /**
@@ -178,7 +178,7 @@ class FriendRequestController extends Controller
         // Empty friends data for own friends list
         $friendsData = [];
 
-        return view('friends.index', compact('friends', 'user', 'friendsData'));
+        return view('pages.friends', compact('friends', 'user', 'friendsData'));
     }
 
     /**
@@ -209,6 +209,6 @@ class FriendRequestController extends Controller
             }
         }
 
-        return view('friends.index', compact('friends', 'user', 'friendsData'));
+        return view('pages.friends', compact('friends', 'user', 'friendsData'));
     }
 }
