@@ -30,10 +30,7 @@
             </form>
         @elseif ($showBefriendButton && $user->id !== auth()->id() && $friendButtonData)
             <div class="ml-4">
-                @include('components.profile.friend-button', [
-                    'user' => $user,
-                    'friendButtonData' => $friendButtonData,
-                ])
+                <x-profile.friend-button :user="$user" :friendButtonData="$friendButtonData" />
             </div>
         @endif
 

@@ -40,10 +40,7 @@
                                 @else
                                     <!-- Friend request button -->
                                     <div class="mt-4 md:mt-6">
-                                        @include('components.profile.friend-button', [
-                                            'user' => $user,
-                                            'friendButtonData' => $friendButtonData,
-                                        ])
+                                        <x-profile.friend-button :user="$user" :friendButtonData="$friendButtonData" />
                                     </div>
                             @endif
                         @else
@@ -118,8 +115,8 @@
 
         <!-- Modals (outside scrollable area) -->
         <x-posts.post-modal />
-        @include('components.profile.add-fav-modal')
-        @include('components.profile.edit-profile-modal')
+        <x-profile.add-fav-modal />
+        <x-profile.edit-profile-modal />
         <x-ui.alert />
     </div>
 
