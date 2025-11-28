@@ -14,9 +14,9 @@
                         class="inline">
                         @csrf
                         @method('DELETE')
-                        <x-button type="submit" variant="secondary" class="px-4 py-2 text-2xl">
+                        <x-ui.button type="submit" variant="secondary" class="px-4 py-2 text-2xl">
                             Cancel Request
-                        </x-button>
+                            </x-button>
                     </form>
                 </div>
             </x-user-card>

@@ -24,9 +24,9 @@
                 class="ml-4">
                 @csrf
                 @method('DELETE')
-                <x-button type="submit" variant="danger" class="px-4 py-1.5 text-2xl">
+                <x-ui.button type="submit" variant="danger" class="px-4 py-1.5 text-2xl">
                     Unfriend
-                </x-button>
+                    </x-button>
             </form>
         @elseif ($showBefriendButton && $user->id !== auth()->id() && $friendButtonData)
             <div class="ml-4">

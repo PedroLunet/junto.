@@ -3,12 +3,12 @@
         <!-- header -->
         <div class="flex items-center justify-between p-8">
             <h2 class="text-4xl font-bold text-gray-900">Edit Profile</h2>
-            <x-button id="closeEditProfileModal" variant="ghost" class="text-gray-400 hover:text-gray-600 p-1">
+            <x-ui.button id="closeEditProfileModal" variant="ghost" class="text-gray-400 hover:text-gray-600 p-1">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12">
                     </path>
                 </svg>
-            </x-button>
+                </x-button>
         </div>
 
         <!-- body -->
@@ -41,12 +41,13 @@
 
         <!-- footer -->
         <div class="flex justify-end gap-4 p-8">
-            <x-button type="button" onclick="closeEditProfileModal()" variant="secondary" class="text-2xl font-medium">
+            <x-ui.button type="button" onclick="closeEditProfileModal()" variant="secondary"
+                class="text-2xl font-medium">
                 Cancel
-            </x-button>
-            <x-button type="submit" form="editProfileForm" variant="primary" class="text-2xl font-medium">
-                Save Changes
-            </x-button>
+                </x-button>
+                <x-ui.button type="submit" form="editProfileForm" variant="primary" class="text-2xl font-medium">
+                    Save Changes
+                    </x-button>
         </div>
     </div>
 </div>

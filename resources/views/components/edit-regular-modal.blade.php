@@ -7,39 +7,47 @@
             <div class="flex justify-between items-center p-8 border-b">
                 <h3 class="text-4xl font-semibold">Edit Post</h3>
             </div>
-            
+
             <!-- modal body -->
             <div class="p-8">
                 <form id="edit-post-form" method="POST">
                     @csrf
                     @method('PUT')
                     <input type="hidden" id="edit-post-id" name="post_id">
-                    
+
                     <div class="mb-4">
                         <label class="block font-medium text-gray-700 mb-2">What would you like to share?</label>
-                        <textarea id="edit-content" name="content" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#38157a]" rows="4" placeholder="Share your thoughts..."></textarea>
+                        <textarea id="edit-content" name="content"
+                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#38157a]"
+                            rows="4" placeholder="Share your thoughts..."></textarea>
                     </div>
 
                     <div class="mb-4" id="current-image-container" style="display: none;">
                         <label class="block font-medium text-gray-700 mb-2">Current Image:</label>
                         <div class="relative inline-block">
                             <img id="current-image" src="" alt="current image" class="max-w-xs h-auto rounded">
-                            <x-button type="button" id="remove-current-image" class="absolute top-2 right-2 bg-red-500 text-white p-1 hover:bg-red-600">X</x-button>
+                            <x-ui.button type="button" id="remove-current-image"
+                                class="absolute top-2 right-2 bg-red-500 text-white p-1 hover:bg-red-600">X</x-button>
                         </div>
                     </div>
 
                     <div class="mb-4">
                         <input type="file" name="image" id="edit-image-input" accept="image/*" class="hidden">
-                        <x-button type="button" id="edit-add-image-button" class="px-4 py-2 text-gray-800 border border-gray-300 rounded">Add Photo</x-button>
-                        <span id="edit-file-name" class="ml-3 text-sm text-gray-600"></span>
+                        <x-ui.button type="button" id="edit-add-image-button"
+                            class="px-4 py-2 text-gray-800 border border-gray-300 rounded">Add Photo</x-button>
+                            <span id="edit-file-name" class="ml-3 text-sm text-gray-600"></span>
                     </div>
-                    
+
                     <div class="flex justify-between items-center">
-                        <x-button type="button" id="delete-button" class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700">Delete</x-button>
-                        <div class="flex space-x-3">
-                            <x-button type="button" id="edit-cancel-button" class="px-4 py-2 text-gray-800 border border-gray-300 rounded">Cancel</x-button>
-                            <x-button type="submit" class="px-4 py-2 bg-[#38157a] text-white rounded hover:bg-[#7455ad]">Update Post</x-button>
-                        </div>
+                        <x-ui.button type="button" id="delete-button"
+                            class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700">Delete</x-button>
+                            <div class="flex space-x-3">
+                                <x-ui.button type="button" id="edit-cancel-button"
+                                    class="px-4 py-2 text-gray-800 border border-gray-300 rounded">Cancel</x-button>
+                                    <x-ui.button type="submit"
+                                        class="px-4 py-2 bg-[#38157a] text-white rounded hover:bg-[#7455ad]">Update
+                                        Post</x-button>
+                            </div>
                     </div>
                 </form>
             </div>
@@ -48,7 +56,7 @@
 </div>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function (){
+    document.addEventListener('DOMContentLoaded', function() {
         const editModal = document.getElementById('edit-post-modal');
         const editCancelButton = document.getElementById('edit-cancel-button');
         const editTextarea = document.getElementById('edit-content');
@@ -61,24 +69,24 @@
         const removeCurrentImageBtn = document.getElementById('remove-current-image');
         const editPostIdInput = document.getElementById('edit-post-id');
         const deleteButton = document.getElementById('delete-button');
-        
+
         window.openEditModal = function(postId, content, imagePath = null) {
             editPostIdInput.value = postId;
             editTextarea.value = content;
             editForm.action = `/posts/${postId}`;
-            
+
             if (imagePath) {
                 currentImage.src = imagePath;
                 currentImageContainer.style.display = 'block';
             } else {
                 currentImageContainer.style.display = 'none';
             }
-            
+
             editModal.style.display = 'block';
         };
 
         if (editCancelButton) {
-            editCancelButton.addEventListener('click', function (){
+            editCancelButton.addEventListener('click', function() {
                 editModal.style.display = 'none';
                 resetEditForm();
             });
@@ -89,25 +97,26 @@
                 if (confirm('Are you sure you want to delete this post?')) {
                     const postId = editPostIdInput.value;
                     fetch(`/posts/${postId}`, {
-                        method: 'DELETE',
-                        headers: {
-                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-                            'Content-Type': 'application/json'
-                        }
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            editModal.style.display = 'none';
-                            window.location.reload();
-                        } else {
-                            alert(data.message || 'Error deleting post');
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error deleting post:', error);
-                        alert('An error occurred while deleting the post.');
-                    });
+                            method: 'DELETE',
+                            headers: {
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')
+                                    .getAttribute('content'),
+                                'Content-Type': 'application/json'
+                            }
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                editModal.style.display = 'none';
+                                window.location.reload();
+                            } else {
+                                alert(data.message || 'Error deleting post');
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error deleting post:', error);
+                            alert('An error occurred while deleting the post.');
+                        });
                 }
             });
         }
@@ -121,7 +130,7 @@
                 if (this.files && this.files[0]) {
                     const file = this.files[0];
                     editFileName.textContent = file.name;
-                    
+
                     // update the preview image
                     const reader = new FileReader();
                     reader.onload = function(e) {
@@ -136,7 +145,7 @@
         if (removeCurrentImageBtn) {
             removeCurrentImageBtn.addEventListener('click', function() {
                 currentImageContainer.style.display = 'none';
-              
+
                 const removeImageInput = document.createElement('input');
                 removeImageInput.type = 'hidden';
                 removeImageInput.name = 'remove_image';
@@ -145,31 +154,32 @@
             });
         }
 
-  
+
         if (editForm) {
-            editForm.addEventListener('submit', function (e) {
+            editForm.addEventListener('submit', function(e) {
                 e.preventDefault();
 
                 const formData = new FormData(editForm);
 
                 fetch(editForm.action, {
-                    method: 'POST',
-                    body: formData,
-                    headers: {
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                    }
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        editModal.style.display = 'none';
-                        resetEditForm();
-                        window.location.reload();
-                    }
-                })
-                .catch(error => {
-                    console.error('Error updating post:', error);
-                });
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')
+                                .getAttribute('content')
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            editModal.style.display = 'none';
+                            resetEditForm();
+                            window.location.reload();
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error updating post:', error);
+                    });
             });
         }
 

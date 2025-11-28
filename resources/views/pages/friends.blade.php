@@ -28,12 +28,12 @@
             <div class="p-6 rounded text-center">
                 @if (auth()->id() === $user->id)
                     <p class="text-gray-600">You don't have any friends yet. Start by sending some friend requests!</p>
-                    <x-button onclick="window.location='{{ route('search.users') }}'" variant="primary"
+                    <x-ui.button onclick="window.location='{{ route('search.users') }}'" variant="primary"
                         class="mt-4 px-6 py-2">
                         Find Friends
-                    </x-button>
-                @else
-                    <p class="text-gray-600">{{ $user->name }} doesn't have any friends yet.</p>
+                        </x-button>
+                    @else
+                        <p class="text-gray-600">{{ $user->name }} doesn't have any friends yet.</p>
                 @endif
             </div>
         @else
@@ -49,5 +49,5 @@
         @endif
     </div>
 
-    <x-alert />
+    <x-ui.alert />
 @endsection

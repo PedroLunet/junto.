@@ -19,10 +19,10 @@
             </div>
 
             <!-- add user button -->
-            <x-button variant="primary" onclick="openAddUserModal()" class="flex items-center space-x-2">
+            <x-ui.button variant="primary" onclick="openAddUserModal()" class="flex items-center space-x-2">
                 <i class="fas fa-plus"></i>
                 <span>Add User</span>
-            </x-button>
+                </x-button>
         </div>
 
         <!-- Users Table -->

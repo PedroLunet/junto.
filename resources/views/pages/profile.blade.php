@@ -33,26 +33,26 @@
 
                         @auth
                             @if (Auth::id() === $user->id)
-                                <x-button onclick="openEditProfileModal()" variant="primary"
+                                <x-ui.button onclick="openEditProfileModal()" variant="primary"
                                     class="text-xl md:text-2xl font-medium">
                                     Edit Profile
-                                </x-button>
-                            @else
-                                <!-- Friend request button -->
-                                <div class="mt-4 md:mt-6">
-                                    @include('components.profile.friend-button', [
-                                        'user' => $user,
-                                        'friendButtonData' => $friendButtonData,
-                                    ])
-                                </div>
+                                    </x-button>
+                                @else
+                                    <!-- Friend request button -->
+                                    <div class="mt-4 md:mt-6">
+                                        @include('components.profile.friend-button', [
+                                            'user' => $user,
+                                            'friendButtonData' => $friendButtonData,
+                                        ])
+                                    </div>
                             @endif
                         @else
                             <!-- Befriend button for guests -->
                             <div class="mt-4 md:mt-6">
-                                <x-button variant="primary" onclick="window.location.href='/login'"
+                                <x-ui.button variant="primary" onclick="window.location.href='/login'"
                                     class="text-xl md:text-2xl font-medium">
                                     Befriend
-                                </x-button>
+                                    </x-button>
                             </div>
                         @endauth
                     </div>
@@ -95,7 +95,7 @@
                 </div>
             @else
                 <!-- tabs with scrollable content -->
-                <x-tabs :tabs="[
+                <x-ui.tabs :tabs="[
                     'posts' => [
                         'title' => 'Posts',
                         'content' => view('components.posts.post-list', [
@@ -120,7 +120,7 @@
         <x-posts.post-modal />
         @include('components.profile.add-fav-modal')
         @include('components.profile.edit-profile-modal')
-        <x-alert />
+        <x-ui.alert />
     </div>
 
     <script>

@@ -6,7 +6,7 @@
         <h1 class="text-4xl font-bold py-10 px-20 text-gray-900">Friend Requests</h1>
 
 
-        <x-tabs :tabs="[
+        <x-ui.tabs :tabs="[
             'received' => [
                 'title' => 'Received',
                 'content' => view('components.friend-requests.received-requests', [

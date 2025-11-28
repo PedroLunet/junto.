@@ -12,10 +12,10 @@
         @if ($media)
             <!-- Remove button (only for own profile) -->
             @if (Auth::id() === $user->id)
-                <x-button onclick="removeFavorite('{{ $type }}')" variant="danger"
+                <x-ui.button onclick="removeFavorite('{{ $type }}')" variant="danger"
                     class="absolute -top-5 -right-5 w-10 h-10 rounded-full flex items-center justify-center text-3xl font-bold z-10 px-0 py-0">
                     -
-                </x-button>
+                    </x-button>
             @endif
 
             <!-- Media image or title -->
@@ -29,10 +29,10 @@
             @endif
         @else
             <!-- Add button (only for own profile) -->
-            <x-button onclick="openAddFavModal('{{ $type }}')" variant="ghost"
+            <x-ui.button onclick="openAddFavModal('{{ $type }}')" variant="ghost"
                 class="w-full h-full text-gray-600 text-5xl md:text-6xl lg:text-7xl font-light hover:text-gray-800 hover:bg-gray-400 cursor-pointer px-0 py-0">
                 +
-            </x-button>
+                </x-button>
         @endif
     </div>
 @endif

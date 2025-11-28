@@ -14,12 +14,12 @@
         <!-- header -->
         <div class="flex items-center justify-between p-8">
             <h2 id="alertTitle" class="text-4xl font-bold text-gray-900 mt-2">{{ $title }}</h2>
-            <x-button id="closeAlert" variant="ghost" class="text-gray-400 hover:text-gray-600 p-1">
+            <x-ui.button id="closeAlert" variant="ghost" class="text-gray-400 hover:text-gray-600 p-1">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12">
                     </path>
                 </svg>
-            </x-button>
+                </x-button>
         </div>
 
         <!-- body -->
@@ -28,12 +28,12 @@
 
             <!-- buttons -->
             <div id="alertButtons" class="flex justify-end gap-6">
-                <x-button id="alertCancel" variant="secondary" class="hidden">
+                <x-ui.button id="alertCancel" variant="secondary" class="hidden">
                     Cancel
-                </x-button>
-                <x-button id="alertConfirm" variant="primary">
-                    OK
-                </x-button>
+                    </x-button>
+                    <x-ui.button id="alertConfirm" variant="primary">
+                        OK
+                        </x-button>
             </div>
         </div>
     </div>

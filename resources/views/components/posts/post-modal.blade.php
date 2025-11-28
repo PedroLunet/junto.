@@ -132,12 +132,12 @@
                     maxlength="1000"></textarea>
 
                 <div class="flex justify-end gap-3">
-                    <x-button onclick="closeReportModal()" variant="secondary">
+                    <x-ui.button onclick="closeReportModal()" variant="secondary">
                         Cancel
-                    </x-button>
-                    <x-button onclick="submitReport()" variant="danger">
-                        Submit Report
-                    </x-button>
+                        </x-button>
+                        <x-ui.button onclick="submitReport()" variant="danger">
+                            Submit Report
+                            </x-button>
                 </div>
             </div>
         </div>

@@ -35,111 +35,116 @@
 
 <body class="flex h-screen bg-[#F1EBF4] overflow-hidden">
 
-    <x-button id="mobile-menu-button" variant="ghost" onclick="toggleMobileMenu()"
+    <x-ui.button id="mobile-menu-button" variant="ghost" onclick="toggleMobileMenu()"
         class="lg:hidden fixed top-4 left-4 z-50">
         <i class="fa-solid fa-bars text-xl"></i>
-    </x-button>
+        </x-button>
 
-    <div id="mobile-overlay" class="hidden lg:hidden fixed inset-0 bg-black bg-opacity-50 z-30"
-        onclick="toggleMobileMenu()"></div>
+        <div id="mobile-overlay" class="hidden lg:hidden fixed inset-0 bg-black bg-opacity-50 z-30"
+            onclick="toggleMobileMenu()"></div>
 
-    <!-- sidebar -->
-    <aside id="sidebar"
-        class="fixed lg:relative w-64 lg:w-1/6 h-full bg-[#624452] text-white flex flex-col rounded-r-2xl shadow-2xl z-50 transform -translate-x-full lg:translate-x-0 transition-transform duration-300">
-        <div class="p-8 flex lg:flex-row flex-col justify-between items-center">
-            <h1><a href="/" class="text-4xl font-bold hover:text-[#a17f8f]">junto.</a></h1>
-            <div class="flex items-center gap-2 w-full overflow-hidden justify-end">
-                <x-button href="{{ route('friend-requests.index') }}" variant="ghost" class="p-2" title="Inbox">
-                    <i class="fa-solid fa-inbox text-2xl"></i>
-                </x-button>
-                <x-button href="{{ route('search.users') }}" variant="ghost" class="p-2" title="Search">
-                    <i class="fa-solid fa-magnifying-glass text-2xl"></i>
-                </x-button>
-                <button onclick="toggleMobileMenu()" class="lg:hidden text-white">
-                    <i class="fa-solid fa-times text-2xl"></i>
-                </button>
+        <!-- sidebar -->
+        <aside id="sidebar"
+            class="fixed lg:relative w-64 lg:w-1/6 h-full bg-[#624452] text-white flex flex-col rounded-r-2xl shadow-2xl z-50 transform -translate-x-full lg:translate-x-0 transition-transform duration-300">
+            <div class="p-8 flex lg:flex-row flex-col justify-between items-center">
+                <h1><a href="/" class="text-4xl font-bold hover:text-[#a17f8f]">junto.</a></h1>
+                <div class="flex items-center gap-2 w-full overflow-hidden justify-end">
+                    <x-ui.button href="{{ route('friend-requests.index') }}" variant="ghost" class="p-2"
+                        title="Inbox">
+                        <i class="fa-solid fa-inbox text-2xl"></i>
+                        </x-button>
+                        <x-ui.button href="{{ route('search.users') }}" variant="ghost" class="p-2" title="Search">
+                            <i class="fa-solid fa-magnifying-glass text-2xl"></i>
+                            </x-button>
+                            <button onclick="toggleMobileMenu()" class="lg:hidden text-white">
+                                <i class="fa-solid fa-times text-2xl"></i>
+                            </button>
+                </div>
             </div>
-        </div>
 
-        <nav class="flex-1 px-4">
-            <ul class="space-y-2">
-                <li><a href="{{ route('friends-feed') }}"
-                        class="block py-2 px-4 rounded hover:bg-[#7a5466] hover:text-white">Friends Feed</a></li>
-                <li><a href="{{ route('movies') }}"
-                        class="block py-2 px-4 rounded hover:bg-[#7a5466] hover:text-white">Movies</a></li>
-                <li><a href="{{ route('books') }}"
-                        class="block py-2 px-4 rounded hover:bg-[#7a5466] hover:text-white">Books</a></li>
-                <li><a href="{{ route('music') }}"
-                        class="block py-2 px-4 rounded hover:bg-[#7a5466] hover:text-white">Music</a></li>
-            </ul>
-        </nav>
+            <nav class="flex-1 px-4">
+                <ul class="space-y-2">
+                    <li><a href="{{ route('friends-feed') }}"
+                            class="block py-2 px-4 rounded hover:bg-[#7a5466] hover:text-white">Friends Feed</a></li>
+                    <li><a href="{{ route('movies') }}"
+                            class="block py-2 px-4 rounded hover:bg-[#7a5466] hover:text-white">Movies</a></li>
+                    <li><a href="{{ route('books') }}"
+                            class="block py-2 px-4 rounded hover:bg-[#7a5466] hover:text-white">Books</a></li>
+                    <li><a href="{{ route('music') }}"
+                            class="block py-2 px-4 rounded hover:bg-[#7a5466] hover:text-white">Music</a></li>
+                </ul>
+            </nav>
 
 
-        <div class="px-4 mb-4 flex flex-col gap-2">
-            @auth
-                <x-button id="regular-button" variant="special"> + </x-button>
-            @else
-                <x-button href="{{ route('login') }}" variant="special"> + </x-button>
-            @endauth
-            <div class="hidden lg:flex gap-2 w-full">
+            <div class="px-4 mb-4 flex flex-col gap-2">
                 @auth
-                    <x-button id="movie-button" variant="special" class="flex-1 justify-center">
-                        <i class="fa-solid fa-clapperboard text-2xl"></i>
-                    </x-button>
-                    <x-button id="book-button" variant="special" class="flex-1 justify-center">
-                        <i class="fa-solid fa-book text-2xl"></i>
-                    </x-button>
-                    <x-button id="music-button" variant="special" class="flex-1 justify-center">
-                        <i class="fa-solid fa-music text-2xl"></i>
-                    </x-button>
-                @else
-                    <x-button href="{{ route('login') }}" variant="special" class="flex-1 justify-center">
-                        <i class="fa-solid fa-clapperboard text-2xl"></i>
-                    </x-button>
-                    <x-button href="{{ route('login') }}" variant="special" class="flex-1 justify-center">
-                        <i class="fa-solid fa-book text-2xl"></i>
-                    </x-button>
-                    <x-button href="{{ route('login') }}" variant="special" class="flex-1 justify-center">
-                        <i class="fa-solid fa-music text-2xl"></i>
-                    </x-button>
-                @endauth
+                    <x-ui.button id="regular-button" variant="special"> + </x-button>
+                    @else
+                        <x-ui.button href="{{ route('login') }}" variant="special"> + </x-button>
+                        @endauth
+                        <div class="hidden lg:flex gap-2 w-full">
+                            @auth
+                                <x-ui.button id="movie-button" variant="special" class="flex-1 justify-center">
+                                    <i class="fa-solid fa-clapperboard text-2xl"></i>
+                                    </x-button>
+                                    <x-ui.button id="book-button" variant="special" class="flex-1 justify-center">
+                                        <i class="fa-solid fa-book text-2xl"></i>
+                                        </x-button>
+                                        <x-ui.button id="music-button" variant="special" class="flex-1 justify-center">
+                                            <i class="fa-solid fa-music text-2xl"></i>
+                                            </x-button>
+                                        @else
+                                            <x-ui.button href="{{ route('login') }}" variant="special"
+                                                class="flex-1 justify-center">
+                                                <i class="fa-solid fa-clapperboard text-2xl"></i>
+                                                </x-button>
+                                                <x-ui.button href="{{ route('login') }}" variant="special"
+                                                    class="flex-1 justify-center">
+                                                    <i class="fa-solid fa-book text-2xl"></i>
+                                                    </x-button>
+                                                    <x-ui.button href="{{ route('login') }}" variant="special"
+                                                        class="flex-1 justify-center">
+                                                        <i class="fa-solid fa-music text-2xl"></i>
+                                                        </x-button>
+                                                    @endauth
+                        </div>
             </div>
-        </div>
+
+            @auth
+                <div class="p-4 border-t border-gray-700">
+                    <a href="{{ route('profile.show', Auth::user()->username) }}"
+                        class=" text-gray-300 mb-2">{{ Auth::user()->name }}</a>
+                    <a href="{{ url('/logout') }}" class="text-red-400 hover:text-red-300 text-xl">Logout</a>
+                </div>
+            @else
+                <div class="p-4 border-t border-gray-700 flex flex-col gap-2">
+                    <x-ui.button href="{{ route('login') }}" variant="primary" class="w-full text-center">Login</x-button>
+                        <x-ui.button href="{{ route('register') }}" variant="secondary"
+                            class="w-full text-center">Register</x-button>
+                </div>
+            @endauth
+        </aside>
+
+        <!-- main content -->
+        <main class="flex-1 flex flex-col overflow-hidden w-full lg:w-auto">
+            @hasSection('title')
+                <header class="bg-transparent shadow-sm p-4 sticky top-0 z-10 mb-0 flex justify-between items-center">
+                    <h2 class="text-[#624452] font-semibold ml-16 lg:ml-0">@yield('title')</h2>
+                </header>
+            @endif
+
+            <section class="flex-1 overflow-y-auto p-6">
+                @yield('content')
+            </section>
+        </main>
+
 
         @auth
-            <div class="p-4 border-t border-gray-700">
-                <a href="{{ route('profile.show', Auth::user()->username) }}"
-                    class=" text-gray-300 mb-2">{{ Auth::user()->name }}</a>
-                <a href="{{ url('/logout') }}" class="text-red-400 hover:text-red-300 text-xl">Logout</a>
-            </div>
-        @else
-            <div class="p-4 border-t border-gray-700 flex flex-col gap-2">
-                <x-button href="{{ route('login') }}" variant="primary" class="w-full text-center">Login</x-button>
-                <x-button href="{{ route('register') }}" variant="secondary" class="w-full text-center">Register</x-button>
-            </div>
+            <x-create-regular-modal />
+            <x-create-movie-review-modal />
+            <x-create-book-review-modal />
+            <x-create-music-review-modal />
         @endauth
-    </aside>
-
-    <!-- main content -->
-    <main class="flex-1 flex flex-col overflow-hidden w-full lg:w-auto">
-        @hasSection('title')
-            <header class="bg-transparent shadow-sm p-4 sticky top-0 z-10 mb-0 flex justify-between items-center">
-                <h2 class="text-[#624452] font-semibold ml-16 lg:ml-0">@yield('title')</h2>
-            </header>
-        @endif
-
-        <section class="flex-1 overflow-y-auto p-6">
-            @yield('content')
-        </section>
-    </main>
-
-
-    @auth
-        <x-create-regular-modal />
-        <x-create-movie-review-modal />
-        <x-create-book-review-modal />
-        <x-create-music-review-modal />
-    @endauth
 </body>
 
 </html>

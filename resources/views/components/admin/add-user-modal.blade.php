@@ -64,12 +64,12 @@
 
         <!-- footer -->
         <div class="flex justify-end gap-4 p-8">
-            <x-button variant="secondary" type="button" onclick="closeAddUserModal()" class="text-2xl">
+            <x-ui.button variant="secondary" type="button" onclick="closeAddUserModal()" class="text-2xl">
                 Cancel
-            </x-button>
-            <x-button variant="primary" type="submit" form="addUserForm" class="text-2xl px-10 py-4">
-                Create User
-            </x-button>
+                </x-button>
+                <x-ui.button variant="primary" type="submit" form="addUserForm" class="text-2xl px-10 py-4">
+                    Create User
+                    </x-button>
         </div>
     </div>
 </div>
