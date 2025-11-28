@@ -8,7 +8,7 @@
             @php
                 $receiver = \App\Models\User::find($sentRequest->request->notification->receiverid);
             @endphp
-            <x-user-card :user="$receiver">
+            <x-ui.user-card :user="$receiver">
                 <div class="ml-4">
                     <form action="{{ route('friend-requests.cancel', $sentRequest->requestid) }}" method="POST"
                         class="inline">
@@ -19,7 +19,7 @@
                             </x-button>
                     </form>
                 </div>
-            </x-user-card>
+                </x-user-card>
         @endforeach
     </div>
 @endif

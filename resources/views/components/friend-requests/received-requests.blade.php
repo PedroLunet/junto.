@@ -8,7 +8,7 @@
             @php
                 $sender = $friendRequest->request->sender;
             @endphp
-            <x-user-card :user="$sender">
+            <x-ui.user-card :user="$sender">
                 <div class="flex space-x-2 ml-4">
                     <form action="{{ route('friend-requests.accept', $friendRequest->requestid) }}" method="POST"
                         class="inline">
@@ -25,7 +25,7 @@
                             </x-button>
                     </form>
                 </div>
-            </x-user-card>
+                </x-user-card>
         @endforeach
     </div>
 @endif

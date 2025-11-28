@@ -22,8 +22,8 @@
                 @endphp
 
                 @if (!$isCurrentUser)
-                    <x-user-card :user="$user" :showUnfriendButton="$isLoggedIn && $isFriend" :showBefriendButton="$isLoggedIn && !$isFriend" :friendButtonData="$friendButtonData" :unfriendRoute="$isLoggedIn ? route('friends.unfriend', $user->id) : route('login')"
-                        :confirmMessage="$isLoggedIn ? 'Are you sure you want to unfriend ' . $user->name . '?' : ''" />
+                    <x-ui.user-card :user="$user" :showUnfriendButton="$isLoggedIn && $isFriend" :showBefriendButton="$isLoggedIn && !$isFriend" :friendButtonData="$friendButtonData"
+                        :unfriendRoute="$isLoggedIn ? route('friends.unfriend', $user->id) : route('login')" :confirmMessage="$isLoggedIn ? 'Are you sure you want to unfriend ' . $user->name . '?' : ''" />
                 @endif
 
             @empty

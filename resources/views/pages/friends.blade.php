@@ -40,10 +40,10 @@
             <h1 class="text-3xl font-bold text-gray-900 mb-6">Friends</h1>
             <div class="space-y-4">
                 @foreach ($friends as $friend)
-                    <x-user-card :user="$friend" :showUnfriendButton="auth()->id() === $user->id" :showBefriendButton="auth()->id() !== $user->id" :friendButtonData="isset($friendsData) && isset($friendsData[$friend->id])
+                    <x-ui.user-card :user="$friend" :showUnfriendButton="auth()->id() === $user->id" :showBefriendButton="auth()->id() !== $user->id" :friendButtonData="isset($friendsData) && isset($friendsData[$friend->id])
                         ? $friendsData[$friend->id]
-                        : null" :unfriendRoute="route('friends.unfriend', $friend->id)"
-                        :confirmMessage="'Are you sure you want to unfriend ' . $friend->name . '?'" />
+                        : null"
+                        :unfriendRoute="route('friends.unfriend', $friend->id)" :confirmMessage="'Are you sure you want to unfriend ' . $friend->name . '?'" />
                 @endforeach
             </div>
         @endif
