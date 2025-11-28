@@ -25,8 +25,8 @@
     </div>
 
     <x-posts.post-modal />
-    <x-edit-regular-modal />
-    <x-edit-review-modal />
+    <x-posts.edit-regular-modal />
+    <x-posts.edit-review-modal />
 
     @yield('modal-overlay')
 

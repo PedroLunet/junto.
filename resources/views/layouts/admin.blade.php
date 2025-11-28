@@ -103,10 +103,10 @@
 
 
         @auth
-            <x-create-regular-modal />
-            <x-create-movie-review-modal />
-            <x-create-book-review-modal />
-            <x-create-music-review-modal />
+            <x-posts.create-regular-modal />
+            <x-posts.create-movie-review-modal />
+            <x-posts.create-book-review-modal />
+            <x-posts.create-music-review-modal />
         @endauth
 </body>
 
