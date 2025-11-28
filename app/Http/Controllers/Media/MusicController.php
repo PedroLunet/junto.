@@ -1,12 +1,13 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Media;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Services\MusicService;
 use App\Services\FavoriteService;
 use App\Models\Post;
+use App\Http\Controllers\Controller;
 
 class MusicController extends Controller
 {

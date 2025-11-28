@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Friendship;
 
 use App\Models\FriendRequest;
 use App\Models\Friendship;
@@ -10,6 +10,7 @@ use App\Services\FriendService;
 use Illuminate\Http\Request as HttpRequest;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use App\Http\Controllers\Controller;
 
 class FriendRequestController extends Controller
 {

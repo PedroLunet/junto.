@@ -1,10 +1,11 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Home;
 
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 use App\Models\Post;
+use App\Http\Controllers\Controller;
 
 class HomeController extends Controller
 {

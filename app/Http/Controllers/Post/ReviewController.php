@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Post;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -9,6 +9,7 @@ use App\Services\MovieService;
 use App\Services\BookService;
 use App\Services\MusicService;
 use App\Models\Post;
+use App\Http\Controllers\Controller;
 
 class ReviewController extends Controller
 {

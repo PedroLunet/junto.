@@ -3,20 +3,20 @@
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\LogoutController;
 use App\Http\Controllers\Auth\RegisterController;
-use App\Http\Controllers\BookController;
+use App\Http\Controllers\Media\BookController;
 use App\Http\Controllers\FileController;
-use App\Http\Controllers\FriendRequestController;
-use App\Http\Controllers\HomeController;
-use App\Http\Controllers\MovieController;
-use App\Http\Controllers\MusicController;
-use App\Http\Controllers\PostController;
-use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\ReportController;
-use App\Http\Controllers\ReviewController;
-use App\Http\Controllers\AdminController;
-use App\Http\Controllers\CommentController;
+use App\Http\Controllers\Friendship\FriendRequestController;
+use App\Http\Controllers\Home\HomeController;
+use App\Http\Controllers\Media\MovieController;
+use App\Http\Controllers\Media\MusicController;
+use App\Http\Controllers\Post\PostController;
+use App\Http\Controllers\User\ProfileController;
+use App\Http\Controllers\Post\ReportController;
+use App\Http\Controllers\Post\ReviewController;
+use App\Http\Controllers\Admin\AdminController;
+use App\Http\Controllers\Post\CommentController;
 
-use App\Http\Controllers\SearchUserController;
+use App\Http\Controllers\Search\SearchUserController;
 use Illuminate\Support\Facades\Route;
 
 // Home
@@ -135,4 +135,3 @@ Route::middleware(['auth', 'admin'])->group(function () {
 Route::middleware('regular.user')->controller(ProfileController::class)->group(function () {
     Route::get('/{username}', 'show')->name('profile.show');
 });
-
