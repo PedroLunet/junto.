@@ -4,9 +4,9 @@ namespace App\Http\Controllers\User;
 
 use Illuminate\Http\Request;
 use Illuminate\View\View;
-use App\Models\User;
-use App\Models\Post;
-use App\Models\Friendship;
+use App\Models\User\User;
+use App\Models\Post\Post;
+use App\Models\User\Friendship;
 use App\Services\FriendService;
 use App\Services\FavoriteService;
 use Illuminate\Support\Facades\Auth;
@@ -108,9 +108,9 @@ class ProfileController extends Controller
                     // Determine media type by checking related tables
                     if ($post->review->media) {
                         $mediaId = $post->review->media->id;
-                        if (\App\Models\Book::where('mediaid', $mediaId)->exists()) {
+                        if (\App\Models\Media\Book::where('mediaid', $mediaId)->exists()) {
                             $transformedPost->media_type = 'book';
-                        } elseif (\App\Models\Music::where('mediaid', $mediaId)->exists()) {
+                        } elseif (\App\Models\Media\Music::where('mediaid', $mediaId)->exists()) {
                             $transformedPost->media_type = 'music';
                         } else {
                             $transformedPost->media_type = 'movie'; // default for films
@@ -147,7 +147,7 @@ class ProfileController extends Controller
         // get pending friend requests count for notification dot
         $pendingRequestsCount = 0;
         if (Auth::id() === $user->id) {
-            $pendingRequestsCount = \App\Models\FriendRequest::whereHas('request.notification', function ($query) use ($user) {
+            $pendingRequestsCount = \App\Models\User\FriendRequest::whereHas('request.notification', function ($query) use ($user) {
                 $query->where('receiverid', $user->id);
             })
                 ->whereHas('request', function ($query) {

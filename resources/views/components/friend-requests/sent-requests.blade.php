@@ -6,7 +6,7 @@
     <div class="space-y-4">
         @foreach ($sentRequests as $sentRequest)
             @php
-                $receiver = \App\Models\User::find($sentRequest->request->notification->receiverid);
+                $receiver = \App\Models\User\User::find($sentRequest->request->notification->receiverid);
             @endphp
             <x-ui.user-card :user="$receiver">
                 <div class="ml-4">

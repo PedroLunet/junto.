@@ -1,8 +1,11 @@
 <?php
 
-namespace App\Models;
+namespace App\Models\User;
 
 use App\Http\Controllers\FileController;
+
+use App\Models\Media\Media;
+
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;

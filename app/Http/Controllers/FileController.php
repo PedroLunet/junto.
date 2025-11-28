@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\StandardPost;
-use App\Models\User;
+use App\Models\Post\StandardPost;
+use App\Models\User\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -25,7 +25,7 @@ class FileController extends Controller
 
     private static function defaultAsset(string $type)
     {
-        return asset($type.'/'.self::$default);
+        return asset($type . '/' . self::$default);
     }
 
     private static function getFileName(string $type, int $id)
@@ -55,8 +55,8 @@ class FileController extends Controller
 
         // Validation: file exists
         $fileName = self::getFileName($type, $id);
-        if ($fileName && Storage::disk(self::$diskName)->exists($type.'/'.$fileName)) {
-            return asset($type.'/'.$fileName);
+        if ($fileName && Storage::disk(self::$diskName)->exists($type . '/' . $fileName)) {
+            return asset($type . '/' . $fileName);
         }
 
         // Not found: returns default asset
@@ -83,12 +83,12 @@ class FileController extends Controller
 
         // Validation: extension is valid for this type
         if (! in_array(strtolower($extension), self::$systemTypes[$type])) {
-            return redirect()->back()->with('error', 'Invalid file extension for '.$type);
+            return redirect()->back()->with('error', 'Invalid file extension for ' . $type);
         }
 
         // Validation: file is a valid image
         $validator = \Validator::make($request->all(), [
-            'file' => 'required|image|mimes:'.implode(',', self::$systemTypes[$type]).'|max:2048',
+            'file' => 'required|image|mimes:' . implode(',', self::$systemTypes[$type]) . '|max:2048',
         ]);
 
         if ($validator->fails()) {
@@ -99,7 +99,7 @@ class FileController extends Controller
             // Delete old file if exists
             $oldFileName = self::getFileName($type, $id);
             if ($oldFileName && $oldFileName !== self::$default) {
-                Storage::disk(self::$diskName)->delete($type.'/'.$oldFileName);
+                Storage::disk(self::$diskName)->delete($type . '/' . $oldFileName);
             }
 
             // Hashing - generate a random unique id
@@ -112,9 +112,8 @@ class FileController extends Controller
             self::updateDatabase($type, $id, $fileName);
 
             return redirect()->back()->with('success', 'File uploaded successfully');
-
         } catch (\Exception $e) {
-            return redirect()->back()->with('error', 'Error uploading file: '.$e->getMessage());
+            return redirect()->back()->with('error', 'Error uploading file: ' . $e->getMessage());
         }
     }
 
@@ -153,7 +152,7 @@ class FileController extends Controller
 
             if ($fileName && $fileName !== self::$default) {
                 // Delete from storage
-                Storage::disk(self::$diskName)->delete($type.'/'.$fileName);
+                Storage::disk(self::$diskName)->delete($type . '/' . $fileName);
 
                 // Update database
                 self::updateDatabase($type, $id, null);
@@ -162,9 +161,8 @@ class FileController extends Controller
             }
 
             return redirect()->back()->with('info', 'No file to delete');
-
         } catch (\Exception $e) {
-            return redirect()->back()->with('error', 'Error deleting file: '.$e->getMessage());
+            return redirect()->back()->with('error', 'Error deleting file: ' . $e->getMessage());
         }
     }
 }

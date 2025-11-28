@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers\Friendship;
 
-use App\Models\FriendRequest;
-use App\Models\Friendship;
-use App\Models\User;
-use App\Models\Request;
+use App\Models\User\FriendRequest;
+use App\Models\User\Friendship;
+use App\Models\User\User;
+use App\Models\User\Request;
 use App\Services\FriendService;
 use Illuminate\Http\Request as HttpRequest;
 use Illuminate\Support\Facades\Auth;

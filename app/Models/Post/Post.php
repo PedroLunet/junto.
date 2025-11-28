@@ -1,6 +1,8 @@
 <?php
 
-namespace App\Models;
+namespace App\Models\Post;
+
+use App\Models\User\User;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;

@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\DB;
 use App\Services\MovieService;
 use App\Services\BookService;
 use App\Services\MusicService;
-use App\Models\Post;
+use App\Models\Post\Post;
 use App\Http\Controllers\Controller;
 
 class ReviewController extends Controller
@@ -58,14 +58,13 @@ class ReviewController extends Controller
                 $releaseDate = $volumeInfo['publishedDate'] ?? null;
                 $releaseYear = $releaseDate ? (int)substr($releaseDate, 0, 4) : null;
                 $coverImage = $volumeInfo['imageLinks']['thumbnail'] ?? null;
-                
-                
+
+
                 if ($coverImage) {
                     $coverImage = str_replace('http://', 'https://', $coverImage);
                 }
 
                 $mediaType = 'book';
-
             } elseif ($request->input('type') === 'movie') {
                 $request->validate([
                     'tmdb_id' => 'required|integer',
@@ -73,7 +72,7 @@ class ReviewController extends Controller
 
                 // 1. get movie details from tmdb
                 $tmdbMovie = $this->movieService->getMovie($request->tmdb_id);
-                
+
                 if (!$tmdbMovie || (isset($tmdbMovie['success']) && $tmdbMovie['success'] === false)) {
                     return response()->json(['success' => false, 'message' => 'Movie not found on TMDB'], 404);
                 }
@@ -84,7 +83,7 @@ class ReviewController extends Controller
                 $posterPath = $tmdbMovie['poster_path'] ?? null;
                 $coverImage = $posterPath ? "https://image.tmdb.org/t/p/w500{$posterPath}" : null;
                 $mediaType = 'film';
-                
+
                 // Get Director
                 $creator = "Unknown";
                 if (isset($tmdbMovie['credits']['crew'])) {
@@ -112,7 +111,6 @@ class ReviewController extends Controller
                 $releaseYear = $releaseDate ? (int)substr($releaseDate, 0, 4) : null;
                 $coverImage = $track['album']['images'][0]['url'] ?? null;
                 $mediaType = 'music';
-
             } else {
                 return response()->json(['success' => false, 'message' => 'Media type not supported yet'], 400);
             }
@@ -129,7 +127,7 @@ class ReviewController extends Controller
                 $mediaId = $existingMedia->id;
             } else {
                 // create media
-             
+
                 $mediaId = DB::table('lbaw2544.media')->insertGetId([
                     'title' => $title,
                     'creator' => $creator,
@@ -164,11 +162,10 @@ class ReviewController extends Controller
             DB::commit();
 
             return response()->json([
-                'success' => true, 
+                'success' => true,
                 'message' => 'Review posted successfully',
                 'post_id' => $postId
             ]);
-
         } catch (\Exception $e) {
             DB::rollback();
             return response()->json(['success' => false, 'message' => 'Server Error: ' . $e->getMessage()], 500);
@@ -199,7 +196,6 @@ class ReviewController extends Controller
             DB::commit();
 
             return response()->json(['success' => true, 'message' => 'Review updated successfully']);
-
         } catch (\Exception $e) {
             DB::rollback();
             return response()->json(['success' => false, 'message' => 'Server Error: ' . $e->getMessage()], 500);

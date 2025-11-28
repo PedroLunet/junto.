@@ -3,10 +3,10 @@
 namespace App\Http\Controllers\Admin;
 
 use Illuminate\Http\Request;
-use App\Models\User;
-use App\Models\Post;
-use App\Models\FriendRequest;
-use App\Models\Friendship;
+use App\Models\User\User;
+use App\Models\Post\Post;
+use App\Models\User\FriendRequest;
+use App\Models\User\Friendship;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;

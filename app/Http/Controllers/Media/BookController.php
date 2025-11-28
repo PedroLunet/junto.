@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Services\BookService;
 use App\Services\FavoriteService;
-use App\Models\Post;
+use App\Models\Post\Post;
 use App\Http\Controllers\Controller;
 
 class BookController extends Controller

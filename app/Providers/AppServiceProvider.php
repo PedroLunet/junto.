@@ -2,11 +2,11 @@
 
 namespace App\Providers;
 
-use App\Models\User;
-use App\Models\FriendRequest;
-use App\Models\Post;
-use App\Models\Report;
-use App\Models\Comment;
+use App\Models\User\User;
+use App\Models\Post\FriendRequest;
+use App\Models\Post\Post;
+use App\Models\Post\Report;
+use App\Models\Post\Comment;
 use App\Policies\UserPolicy;
 use App\Policies\FriendRequestPolicy;
 use App\Policies\PostPolicy;

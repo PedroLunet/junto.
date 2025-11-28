@@ -24,7 +24,7 @@
         <div class="space-y-4">
             @foreach($sentRequests as $sentRequest)
                 @php
-                    $receiver = \App\Models\User::find($sentRequest->request->notification->receiverid);
+                    $receiver = \App\Models\User\User::find($sentRequest->request->notification->receiverid);
                 @endphp
                 <div class="bg-white shadow rounded-lg p-6 flex items-center justify-between">
                     <div class="flex items-center space-x-4">

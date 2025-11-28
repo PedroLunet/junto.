@@ -2,8 +2,8 @@
 
 namespace App\Policies;
 
-use App\Models\Comment;
-use App\Models\User;
+use App\Models\Post\Comment;
+use App\Models\User\User;
 
 class CommentPolicy
 {
@@ -46,8 +46,8 @@ class CommentPolicy
     {
         // User can delete their own comment, admins can delete any comment,
         // and post owners can delete comments on their posts.
-        return $user->id === $comment->userid || 
-               $user->isadmin || 
-               $user->id === $comment->post->userid;
+        return $user->id === $comment->userid ||
+            $user->isadmin ||
+            $user->id === $comment->post->userid;
     }
 }

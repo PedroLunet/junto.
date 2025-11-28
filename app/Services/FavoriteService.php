@@ -2,8 +2,8 @@
 
 namespace App\Services;
 
-use App\Models\User;
-use App\Models\Media;
+use App\Models\User\User;
+use App\Models\Media\Media;
 use App\Services\MovieService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
