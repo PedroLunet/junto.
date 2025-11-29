@@ -15,7 +15,7 @@ class CommentController extends Controller
     {
         $comments = Comment::getCommentsForPost($postId);
         // If needed, eager load author: $comments = $comments->load('author');
-        return view('components.posts.comments-list', compact('comments'))->render();
+        return view('components.posts.comment.comments-list', compact('comments'))->render();
     }
 
     /**
