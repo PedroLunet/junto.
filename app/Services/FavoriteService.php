@@ -4,7 +4,7 @@ namespace App\Services;
 
 use App\Models\User\User;
 use App\Models\Media\Media;
-use App\Services\MovieService;
+use App\Services\Media\MovieService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;

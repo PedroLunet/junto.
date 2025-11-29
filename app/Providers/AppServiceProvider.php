@@ -31,9 +31,9 @@ class AppServiceProvider extends ServiceProvider
     {
         // register services as singletons for better performance
         $this->app->singleton(\App\Services\FavoriteService::class);
-        $this->app->singleton(\App\Services\MovieService::class);
-        $this->app->singleton(\App\Services\BookService::class);
-        $this->app->singleton(\App\Services\MusicService::class);
+        $this->app->singleton(\App\Services\Media\MovieService::class);
+        $this->app->singleton(\App\Services\Media\BookService::class);
+        $this->app->singleton(\App\Services\Media\MusicService::class);
         $this->app->singleton(\App\Services\FriendService::class);
     }
 

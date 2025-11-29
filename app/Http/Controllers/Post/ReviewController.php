@@ -5,9 +5,9 @@ namespace App\Http\Controllers\Post;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use App\Services\MovieService;
-use App\Services\BookService;
-use App\Services\MusicService;
+use App\Services\Media\MovieService;
+use App\Services\Media\BookService;
+use App\Services\Media\MusicService;
 use App\Models\Post\Post;
 use App\Http\Controllers\Controller;
 

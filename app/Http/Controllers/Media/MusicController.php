@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Media;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use App\Services\MusicService;
+use App\Services\Media\MusicService;
 use App\Services\FavoriteService;
 use App\Models\Post\Post;
 use App\Http\Controllers\Controller;

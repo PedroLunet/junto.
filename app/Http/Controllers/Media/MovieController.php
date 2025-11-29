@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Media;
 
-use App\Services\MovieService;
+use App\Services\Media\MovieService;
 use App\Services\FavoriteService;
 use App\Models\Post\Post;
 use Illuminate\Http\Request;
