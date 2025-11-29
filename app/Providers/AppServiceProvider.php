@@ -2,11 +2,11 @@
 
 namespace App\Providers;
 
-use App\Models\User;
-use App\Models\FriendRequest;
-use App\Models\Post;
-use App\Models\Report;
-use App\Models\Comment;
+use App\Models\User\User;
+use App\Models\Post\FriendRequest;
+use App\Models\Post\Post;
+use App\Models\Post\Report;
+use App\Models\Post\Comment;
 use App\Policies\UserPolicy;
 use App\Policies\FriendRequestPolicy;
 use App\Policies\PostPolicy;
@@ -31,9 +31,9 @@ class AppServiceProvider extends ServiceProvider
     {
         // register services as singletons for better performance
         $this->app->singleton(\App\Services\FavoriteService::class);
-        $this->app->singleton(\App\Services\MovieService::class);
-        $this->app->singleton(\App\Services\BookService::class);
-        $this->app->singleton(\App\Services\MusicService::class);
+        $this->app->singleton(\App\Services\Media\MovieService::class);
+        $this->app->singleton(\App\Services\Media\BookService::class);
+        $this->app->singleton(\App\Services\Media\MusicService::class);
         $this->app->singleton(\App\Services\FriendService::class);
     }
 

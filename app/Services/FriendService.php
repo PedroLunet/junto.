@@ -2,8 +2,8 @@
 
 namespace App\Services;
 
-use App\Models\User;
-use App\Models\Request;
+use App\Models\User\User;
+use App\Models\User\Request;
 use Illuminate\Support\Facades\Auth;
 
 class FriendService

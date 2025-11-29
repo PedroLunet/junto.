@@ -10,8 +10,8 @@ use Illuminate\Support\Facades\Hash;
 
 use Illuminate\View\View;
 
-use App\Models\User;
-use App\Models\Post;
+use App\Models\User\User;
+use App\Models\Post\Post;
 
 class RegisterController extends Controller
 {

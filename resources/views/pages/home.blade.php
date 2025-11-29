@@ -7,9 +7,9 @@
         @if (isset($pageTitle) && $pageTitle === 'Friends Feed' && empty($posts))
             <div class="p-6 rounded text-center">
                 <p class="text-gray-600">You don't have any friends yet. Start by sending some friend requests!</p>
-                <x-button onclick="window.location='{{ route('search.users') }}'" variant="primary" class="mt-4 px-6 py-2">
+                <x-ui.button onclick="window.location='{{ route('search.users') }}'" variant="primary" class="mt-4 px-6 py-2">
                     Find Friends
-                </x-button>
+                    </x-button>
             </div>
         @else
             <div class="max-w-4xl mx-auto space-y-6">
@@ -25,8 +25,8 @@
     </div>
 
     <x-posts.post-modal />
-    <x-edit-regular-modal />
-    <x-edit-review-modal />
+    <x-posts.edit.edit-regular-modal />
+    <x-posts.edit.edit-review-modal />
 
     @yield('modal-overlay')
 

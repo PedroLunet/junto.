@@ -2,8 +2,8 @@
 
 namespace App\Policies;
 
-use App\Models\Report;
-use App\Models\User;
+use App\Models\Post\Report;
+use App\Models\User\User;
 
 class ReportPolicy
 {

@@ -69,7 +69,9 @@
 
                     <!-- Comments List -->
                     <div id="commentsSection" class="flex-1 overflow-y-auto p-4 space-y-4 custom-scrollbar">
-                        <!-- js will inject comments here !! -->
+                        @isset($comments)
+                            <x-posts.comment.comments-list :comments="$comments" />
+                        @endisset
                     </div>
 
                     <!-- Add Comment Input -->
@@ -94,55 +96,8 @@
     </div>
 </div>
 
-<!-- Comment Template  -->
-<template id="commentTemplate">
-    <div
-        class="group flex gap-3 p-3 rounded-xl hover:bg-white hover:shadow-sm transition-all border border-transparent hover:border-gray-100">
-        <div class="w-10 h-10 bg-gray-200 rounded-full shrink-0 mt-1"></div>
-        <div class="flex-1 min-w-0">
-            <div class="flex items-baseline justify-between mb-1">
-                <span class="font-semibold text-gray-900 truncate comment-author"></span>
-                <span class="text-lg text-gray-600 ml-2 shrink-0 comment-date"></span>
-            </div>
-            <p class="text-gray-700 text leading-relaxed wrap-break-word comment-content"></p>
-        </div>
-    </div>
-</template>
-
-<!-- Report Modal -->
-<div id="reportModal" class="fixed inset-0 z-50 hidden" onclick="closeReportModal()">
-    <div class="fixed inset-0 bg-gray-900/60 backdrop-blur-sm transition-opacity"></div>
-    <div class="fixed inset-0 z-10 w-screen overflow-y-auto">
-        <div class="flex min-h-full items-center justify-center p-6">
-            <div class="relative transform overflow-hidden rounded-xl bg-white text-left shadow-xl transition-all sm:w-full sm:max-w-2xl p-6"
-                onclick="event.stopPropagation()">
-
-                <div class="flex justify-between items-center mb-6">
-                    <h2 class="text-4xl font-bold text-gray-900">Report Post</h2>
-                    <button onclick="closeReportModal()" class="text-gray-400 hover:text-gray-600 transition-colors">
-                        <i class="fas fa-times text-xl"></i>
-                    </button>
-                </div>
-
-                <p class="text-gray-600 mb-4 font-medium">Please provide a reason for reporting this post. Our team will
-                    review it.</p>
-
-                <textarea id="reportReason" placeholder="Describe why you're reporting this post (minimum 10 characters)..."
-                    class="w-full min-h-[120px] p-3 border border-gray-300 rounded-lg focus:border-[#38157a] focus:ring-[#38157a] mb-6 resize-none"
-                    maxlength="1000"></textarea>
-
-                <div class="flex justify-end gap-3">
-                    <x-button onclick="closeReportModal()" variant="secondary">
-                        Cancel
-                    </x-button>
-                    <x-button onclick="submitReport()" variant="danger">
-                        Submit Report
-                    </x-button>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+<!-- Report Modal Component -->
+<x-posts.report.report-modal />
 
 <script>
     let currentPostId = null;
@@ -262,28 +217,9 @@
         </div>
     `;
         fetch(`/posts/${postId}/comments`)
-            .then(response => response.json())
-            .then(comments => {
-                if (comments.length === 0) {
-                    commentsSection.innerHTML = `
-            <div class="flex flex-col items-center justify-center py-12 text-gray-400">
-                <i class="far fa-comments text-4xl mb-3"></i>
-                <p class="text-2xl">No comments yet</p>
-                <p class="text-lg">Be the first to share your thoughts!</p>
-            </div>
-          `;
-                    return;
-                }
-                commentsSection.innerHTML = '';
-                const template = document.getElementById('commentTemplate');
-                comments.forEach(comment => {
-                    const date = new Date(comment.created_at);
-                    const clone = template.content.cloneNode(true);
-                    clone.querySelector('.comment-author').textContent = comment.author_name;
-                    clone.querySelector('.comment-date').textContent = date.toLocaleDateString();
-                    clone.querySelector('.comment-content').textContent = comment.content;
-                    commentsSection.appendChild(clone);
-                });
+            .then(response => response.text())
+            .then(html => {
+                commentsSection.innerHTML = html;
             })
             .catch(error => {
                 console.error('Error loading comments:', error);
@@ -443,5 +379,4 @@
                 alert('Failed to submit report. Please try again.');
             });
     }
-</script>
 </script>
