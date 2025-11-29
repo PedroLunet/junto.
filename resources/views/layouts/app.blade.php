@@ -140,10 +140,10 @@
 
 
         @auth
-            <x-posts.create-regular-modal />
-            <x-posts.create-movie-review-modal />
-            <x-posts.create-book-review-modal />
-            <x-posts.create-music-review-modal />
+            <x-posts.create.create-regular-modal />
+            <x-posts.create.create-movie-review-modal />
+            <x-posts.create.create-book-review-modal />
+            <x-posts.create.create-music-review-modal />
         @endauth
 </body>
 
