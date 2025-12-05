@@ -1202,12 +1202,8 @@ INSERT INTO friendship (userId1, userId2) VALUES
 
 -- REQUESTS
 INSERT INTO request (notificationId, status, senderId) VALUES 
-    (7, 'pending', 2),
     (3, 'accepted', 1),
     (8, 'pending', 3);
-
-INSERT INTO friend_request (requestId) VALUES 
-    (7);
 
 INSERT INTO group_invite_request (requestId, groupId) VALUES 
     (3, 1);
