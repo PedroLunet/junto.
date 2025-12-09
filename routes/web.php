@@ -1,22 +1,22 @@
 <?php
 
+use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\LogoutController;
 use App\Http\Controllers\Auth\RegisterController;
-use App\Http\Controllers\Media\BookController;
 use App\Http\Controllers\FileController;
 use App\Http\Controllers\Friendship\FriendRequestController;
+use App\Http\Controllers\GroupController;
 use App\Http\Controllers\Home\HomeController;
+use App\Http\Controllers\Media\BookController;
 use App\Http\Controllers\Media\MovieController;
 use App\Http\Controllers\Media\MusicController;
+use App\Http\Controllers\Post\CommentController;
 use App\Http\Controllers\Post\PostController;
-use App\Http\Controllers\User\ProfileController;
 use App\Http\Controllers\Post\ReportController;
 use App\Http\Controllers\Post\ReviewController;
-use App\Http\Controllers\Admin\AdminController;
-use App\Http\Controllers\Post\CommentController;
-
 use App\Http\Controllers\Search\SearchUserController;
+use App\Http\Controllers\User\ProfileController;
 use Illuminate\Support\Facades\Route;
 
 // Home
@@ -126,10 +126,22 @@ Route::middleware(['auth', 'admin'])->controller(ReportController::class)->group
 
 // admin routes
 Route::middleware(['auth', 'admin'])->group(function () {
-    Route::get('/admin/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
-    Route::get('/admin/users', [AdminController::class, 'users'])->name('admin.users');
-    Route::post('/admin/users/create', [AdminController::class, 'createUser'])->name('admin.users.create');
-    Route::put('/admin/users/{id}', [AdminController::class, 'updateUser'])->name('admin.users.update');
+    Route::get('/admin', [AdminController::class, 'showDashboard'])->name('admin.dashboard');
+    Route::get('/admin/users', [AdminController::class, 'listUsers'])->name('admin.users');
+    Route::post('/admin/users/{id}/block', [AdminController::class, 'blockUser'])->name('admin.users.block');
+    Route::post('/admin/users/{id}/unblock', [AdminController::class, 'unblockUser'])->name('admin.users.unblock');
+    Route::get('/admin/reports', [AdminController::class, 'listReports'])->name('admin.reports');
+    Route::post('/admin/reports/{id}/accept', [AdminController::class, 'acceptReport'])->name('admin.reports.accept');
+    Route::post('/admin/reports/{id}/reject', [AdminController::class, 'rejectReport'])->name('admin.reports.reject');
+});
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/groups', [GroupController::class, 'index'])->name('groups.index');
+    Route::get('/groups/create', [GroupController::class, 'create'])->name('groups.create');
+    Route::post('/groups', [GroupController::class, 'store'])->name('groups.store');
+    Route::get('/groups/{group}', [GroupController::class, 'show'])->name('groups.show');
+    Route::post('/groups/{group}/join', [GroupController::class, 'join'])->name('groups.join');
+    Route::post('/groups/{group}/leave', [GroupController::class, 'leave'])->name('groups.leave');
 });
 
 Route::middleware('regular.user')->controller(ProfileController::class)->group(function () {
