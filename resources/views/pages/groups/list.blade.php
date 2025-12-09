@@ -1,15 +1,24 @@
 @extends('layouts.app')
 
 @section('content')
-    <h1>Groups</h1>
+    <div class="container mx-auto px-4 py-8">
+        <div class="flex justify-between items-center mb-6">
+            <h1 class="text-3xl font-bold text-gray-800">Groups</h1>
+            <x-ui.button href="{{ route('groups.create') }}" variant="primary">Create Group</x-ui.button>
+        </div>
 
-    <a href="{{ route('groups.create') }}">Create Group</a>
-
-    <ul>
-        @foreach ($groups as $group)
-            <li>
-                <a href="{{ route('groups.show', $group) }}">{{ $group->name }}</a>
-            </li>
-        @endforeach
-    </ul>
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            @foreach ($groups as $group)
+                <div class="bg-white rounded-lg shadow-md overflow-hidden transform hover:scale-105 transition-transform duration-300">
+                    <div class="p-6">
+                        <h2 class="text-xl font-semibold mb-2">
+                            <a href="{{ route('groups.show', $group) }}" class="text-gray-800 hover:text-[#820263]">{{ $group->name }}</a>
+                        </h2>
+                        <p class="text-gray-600">{{ Str::limit($group->description, 100) }}</p>
+                    </div>
+                </div>
+            @endforeach
+        </div>
+    </div>
 @endsection
+
