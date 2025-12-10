@@ -2,6 +2,12 @@
 
 @section('content')
     <div class="container mx-auto px-4 py-8">
+        @if (session('error'))
+            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
+                <span class="block sm:inline">{{ session('error') }}</span>
+            </div>
+        @endif
+
         <div class="flex justify-between items-center mb-6">
             <h1 class="text-3xl font-bold text-gray-800">Groups</h1>
             <x-ui.button href="{{ route('groups.create') }}" variant="primary">Create Group</x-ui.button>

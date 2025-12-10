@@ -12,7 +12,7 @@
                 <div class="mb-4">
                     <label for="name" class="block text-gray-700 font-semibold mb-2">Group Name</label>
                     <input type="text" name="name" id="name" value="{{ old('name') }}" required
-                           class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#820263]">
+                          class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#820263]">
                     @error('name')
                         <div class="text-red-500 mt-2 text-sm">{{ $message }}</div>
                     @enderror
