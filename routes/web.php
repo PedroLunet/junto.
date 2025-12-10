@@ -142,6 +142,9 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/groups/{group}', [GroupController::class, 'show'])->name('groups.show');
     Route::post('/groups/{group}/join', [GroupController::class, 'join'])->name('groups.join');
     Route::post('/groups/{group}/leave', [GroupController::class, 'leave'])->name('groups.leave');
+    Route::post('/groups/{group}/cancel-request', [GroupController::class, 'cancelRequest'])->name('groups.cancelRequest');
+    Route::post('/groups/{group}/accept-request/{requestId}', [GroupController::class, 'acceptRequest'])->name('groups.acceptRequest');
+    Route::post('/groups/{group}/reject-request/{requestId}', [GroupController::class, 'rejectRequest'])->name('groups.rejectRequest');
 });
 
 Route::middleware('regular.user')->controller(ProfileController::class)->group(function () {
