@@ -27,6 +27,6 @@ class Group extends Model
 
     public function owner()
     {
-        return $this->members()->wherePivot('isOwner', true);
+        return $this->members()->wherePivot('isowner', true);
     }
 }
