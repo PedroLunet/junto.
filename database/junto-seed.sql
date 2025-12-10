@@ -68,10 +68,29 @@ CREATE TABLE users (
     createdAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
--- POSTS
+-- GROUPS (Moved UP so POST can reference it)
+CREATE TABLE groups (
+    id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    description TEXT,
+    isPrivate BOOLEAN NOT NULL DEFAULT FALSE,
+    icon VARCHAR(255),
+    createdAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE membership (
+    userId INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    groupId INTEGER NOT NULL REFERENCES groups(id) ON DELETE CASCADE,
+    isOwner BOOLEAN DEFAULT FALSE,
+    joinedAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (userId, groupId)
+);
+
+-- POSTS (Modified to include groupId)
 CREATE TABLE post (
     id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     userId INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    groupId INTEGER REFERENCES groups(id) ON DELETE CASCADE, -- New Column: NULL = Profile Post, ID = Group Post
     createdAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -119,24 +138,6 @@ CREATE TABLE comment_like (
     userId INTEGER REFERENCES users(id) ON DELETE CASCADE,
     createdAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (commentId, userId)
-);
-
--- GROUPS
-CREATE TABLE groups (
-    id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    name VARCHAR(100) NOT NULL,
-    description TEXT,
-    isPrivate BOOLEAN NOT NULL DEFAULT FALSE,
-    icon VARCHAR(255),
-    createdAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
-);
-
-CREATE TABLE membership (
-    userId INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-    groupId INTEGER NOT NULL REFERENCES groups(id) ON DELETE CASCADE,
-    isOwner BOOLEAN DEFAULT FALSE,
-    joinedAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    PRIMARY KEY (userId, groupId)
 );
 
 -- NOTIFICATIONS
@@ -224,7 +225,10 @@ CLUSTER post USING post_created_at_idx;
 -- IDX02: User Profile Feed
 CREATE INDEX post_user_created_at_idx ON post USING btree (userId, createdAt DESC);
 
--- IDX03: Post Comments
+-- IDX03: Group Feed (NEW - Added for group posts)
+CREATE INDEX post_group_created_at_idx ON post USING btree (groupId, createdAt DESC) WHERE groupId IS NOT NULL;
+
+-- IDX04: Post Comments
 CREATE INDEX comment_post_created_at_idx ON comment USING btree (postId, createdAt ASC);
 
 -- == IDX11: User Search ==
@@ -234,22 +238,12 @@ ALTER TABLE users ADD COLUMN fts_document tsvector;
 -- 2. Create the trigger function for users
 CREATE FUNCTION users_search_update() RETURNS trigger AS $$ 
 BEGIN 
-    IF TG_OP = 'INSERT' THEN 
+    IF TG_OP = 'INSERT' OR (TG_OP = 'UPDATE' AND (NEW.name <> OLD.name OR NEW.username <> OLD.username OR NEW.bio <> OLD.bio)) THEN 
         NEW.fts_document = (
             setweight(to_tsvector('english', coalesce(NEW.name, '')), 'A') || 
             setweight(to_tsvector('english', coalesce(NEW.username, '')), 'A') || 
             setweight(to_tsvector('english', coalesce(NEW.bio, '')), 'B')
         );
-    END IF;
-    
-    IF TG_OP = 'UPDATE' THEN 
-        IF (NEW.name <> OLD.name OR NEW.username <> OLD.username OR NEW.bio <> OLD.bio) THEN 
-            NEW.fts_document = (
-                setweight(to_tsvector('english', coalesce(NEW.name, '')), 'A') || 
-                setweight(to_tsvector('english', coalesce(NEW.username, '')), 'A') || 
-                setweight(to_tsvector('english', coalesce(NEW.bio, '')), 'B')
-            );
-        END IF;
     END IF;
     RETURN NEW;
 END 
@@ -270,13 +264,8 @@ ALTER TABLE groups ADD COLUMN fts_document tsvector;
 -- 2. Create the trigger function for groups
 CREATE FUNCTION groups_search_update() RETURNS trigger AS $$ 
 BEGIN 
-    IF TG_OP = 'INSERT' THEN 
+    IF TG_OP = 'INSERT' OR (TG_OP = 'UPDATE' AND NEW.name <> OLD.name) THEN 
         NEW.fts_document = to_tsvector('english', coalesce(NEW.name, ''));
-    END IF;
-    IF TG_OP = 'UPDATE' THEN 
-        IF (NEW.name <> OLD.name) THEN 
-            NEW.fts_document = to_tsvector('english', coalesce(NEW.name, ''));
-        END IF;
     END IF;
     RETURN NEW;
 END 
@@ -297,13 +286,8 @@ ALTER TABLE standard_post ADD COLUMN fts_document tsvector;
 -- 2. Create the trigger function for standard posts
 CREATE FUNCTION standard_post_search_update() RETURNS trigger AS $$ 
 BEGIN 
-    IF TG_OP = 'INSERT' THEN 
+    IF TG_OP = 'INSERT' OR (TG_OP = 'UPDATE' AND NEW.text <> OLD.text) THEN 
         NEW.fts_document = to_tsvector('english', coalesce(NEW.text, ''));
-    END IF;
-    IF TG_OP = 'UPDATE' THEN 
-        IF (NEW.text <> OLD.text) THEN 
-            NEW.fts_document = to_tsvector('english', coalesce(NEW.text, ''));
-        END IF;
     END IF;
     RETURN NEW;
 END 
@@ -324,13 +308,8 @@ ALTER TABLE review ADD COLUMN fts_document tsvector;
 -- 2. Create the trigger function for review posts
 CREATE FUNCTION review_search_update() RETURNS trigger AS $$ 
 BEGIN 
-    IF TG_OP = 'INSERT' THEN 
+    IF TG_OP = 'INSERT' OR (TG_OP = 'UPDATE' AND NEW.content <> OLD.content) THEN 
         NEW.fts_document = to_tsvector('english', coalesce(NEW.content, ''));
-    END IF;
-    IF TG_OP = 'UPDATE' THEN 
-        IF (NEW.content <> OLD.content) THEN 
-            NEW.fts_document = to_tsvector('english', coalesce(NEW.content, ''));
-        END IF;
     END IF;
     RETURN NEW;
 END 
@@ -505,15 +484,20 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
--- US22 - Create Regular Post
-CREATE OR REPLACE FUNCTION fn_create_standard_post(p_user_id INT, p_text TEXT, p_image_url TEXT) RETURNS VOID AS $$
+-- US22 - Create Regular Post (Updated to allow Groups)
+CREATE OR REPLACE FUNCTION fn_create_standard_post(
+    p_user_id INT, 
+    p_text TEXT, 
+    p_image_url TEXT,
+    p_group_id INT DEFAULT NULL
+) RETURNS VOID AS $$
 DECLARE 
     new_post_id INT;
 BEGIN
     SET TRANSACTION ISOLATION LEVEL READ COMMITTED;
     -- Suitable: short insert transaction, no concurrency risk.
-    INSERT INTO post (userId)
-    VALUES (p_user_id)
+    INSERT INTO post (userId, groupId)
+    VALUES (p_user_id, p_group_id)
     RETURNING id INTO new_post_id;
     
     INSERT INTO standard_post (postId, text, imageUrl)
@@ -521,20 +505,21 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
--- US23 - Create Review Post
+-- US23 - Create Review Post (Updated to allow Groups)
 CREATE OR REPLACE FUNCTION fn_create_review_post(
     p_user_id INT,
     p_rating INT,
     p_media_id INT,
-    p_content TEXT
+    p_content TEXT,
+    p_group_id INT DEFAULT NULL
 ) RETURNS VOID AS $$
 DECLARE 
     new_post_id INT;
 BEGIN
     SET TRANSACTION ISOLATION LEVEL READ COMMITTED;
     -- Similar to standard post creation.
-    INSERT INTO post (userId)
-    VALUES (p_user_id)
+    INSERT INTO post (userId, groupId)
+    VALUES (p_user_id, p_group_id)
     RETURNING id INTO new_post_id;
     
     INSERT INTO review (postId, rating, mediaId, content)
@@ -542,61 +527,36 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
--- Create media
+-- Media Creation Functions
 CREATE OR REPLACE FUNCTION fn_create_music(
-    p_title VARCHAR(255),
-    p_creator VARCHAR(255),
-    p_release_year INT,
-    p_cover_image VARCHAR(255)
+    p_title VARCHAR(255), p_creator VARCHAR(255), p_release_year INT, p_cover_image VARCHAR(255)
 ) RETURNS INTEGER AS $$
-DECLARE
-    new_media_id INTEGER;
+DECLARE new_media_id INTEGER;
 BEGIN
-    INSERT INTO media (title, creator, releaseYear, coverImage)
-    VALUES (p_title, p_creator, p_release_year, p_cover_image)
-    RETURNING id INTO new_media_id;
-
-    INSERT INTO music (mediaId)
-    VALUES (new_media_id);
-
+    INSERT INTO media (title, creator, releaseYear, coverImage) VALUES (p_title, p_creator, p_release_year, p_cover_image) RETURNING id INTO new_media_id;
+    INSERT INTO music (mediaId) VALUES (new_media_id);
     RETURN new_media_id;
 END;
 $$ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION fn_create_book(
-    p_title VARCHAR(255),
-    p_creator VARCHAR(255),
-    p_release_year INT,
-    p_cover_image VARCHAR(255)
+    p_title VARCHAR(255), p_creator VARCHAR(255), p_release_year INT, p_cover_image VARCHAR(255)
 ) RETURNS INTEGER AS $$
-DECLARE
-    new_media_id INTEGER;
+DECLARE new_media_id INTEGER;
 BEGIN
-    INSERT INTO media (title, creator, releaseYear, coverImage)
-    VALUES (p_title, p_creator, p_release_year, p_cover_image)
-    RETURNING id INTO new_media_id;
-
-    INSERT INTO book (mediaId)
-    VALUES (new_media_id);
-
+    INSERT INTO media (title, creator, releaseYear, coverImage) VALUES (p_title, p_creator, p_release_year, p_cover_image) RETURNING id INTO new_media_id;
+    INSERT INTO book (mediaId) VALUES (new_media_id);
     RETURN new_media_id;
 END;
 $$ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION fn_create_film(
-        p_title VARCHAR(255),
-        p_creator VARCHAR(255),
-        p_release_year INT,
-        p_cover_image VARCHAR(255)
-    ) RETURNS INTEGER AS $$
+    p_title VARCHAR(255), p_creator VARCHAR(255), p_release_year INT, p_cover_image VARCHAR(255)
+) RETURNS INTEGER AS $$
 DECLARE new_media_id INTEGER;
 BEGIN
-    INSERT INTO media (title, creator, releaseYear, coverImage)
-    VALUES ( p_title, p_creator, p_release_year, p_cover_image)
-    RETURNING id INTO new_media_id;
-
-    INSERT INTO film (mediaId)
-    VALUES (new_media_id);
+    INSERT INTO media (title, creator, releaseYear, coverImage) VALUES ( p_title, p_creator, p_release_year, p_cover_image) RETURNING id INTO new_media_id;
+    INSERT INTO film (mediaId) VALUES (new_media_id);
     RETURN new_media_id;
 END;
 $$ LANGUAGE plpgsql;
@@ -605,17 +565,15 @@ $$ LANGUAGE plpgsql;
 CREATE OR REPLACE FUNCTION fn_report_post(p_post_id INT, p_reason TEXT) RETURNS VOID AS $$ 
 BEGIN
     SET TRANSACTION ISOLATION LEVEL READ COMMITTED;
-    -- Suitable: single insert, minimal concurrency impact.
     INSERT INTO report (reason, status, postId, createdAt)
     VALUES (p_reason, 'pending', p_post_id, CURRENT_TIMESTAMP);
 END;
 $$ LANGUAGE plpgsql;
 
--- US26 - Delete Account (Anonymization)
+-- US26 - Delete Account
 CREATE OR REPLACE FUNCTION fn_delete_account(p_user_id INT) RETURNS VOID AS $$ 
 BEGIN
     SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;
-    -- Critical operation across multiple tables; must prevent interference.
     PERFORM fn_anonymize_user_data(p_user_id);
 END;
 $$ LANGUAGE plpgsql;
@@ -626,16 +584,11 @@ DECLARE
     notif_id INT;
 BEGIN
     SET TRANSACTION ISOLATION LEVEL REPEATABLE READ;
-    -- Prevents duplicate requests between same users under concurrency.
     INSERT INTO notification (message, receiverId)
     VALUES (CONCAT('You received a friend request from ', (SELECT username FROM users WHERE id = p_sender_id)), p_receiver_id)
     RETURNING id INTO notif_id;
-    
-    INSERT INTO request (notificationId, status, senderId)
-    VALUES (notif_id, 'pending', p_sender_id);
-    
-    INSERT INTO friend_request (requestId)
-    VALUES (notif_id);
+    INSERT INTO request (notificationId, status, senderId) VALUES (notif_id, 'pending', p_sender_id);
+    INSERT INTO friend_request (requestId) VALUES (notif_id);
 END;
 $$ LANGUAGE plpgsql;
 
@@ -643,10 +596,8 @@ $$ LANGUAGE plpgsql;
 CREATE OR REPLACE FUNCTION fn_unfriend(p_user1_id INT, p_user2_id INT) RETURNS VOID AS $$ 
 BEGIN
     SET TRANSACTION ISOLATION LEVEL READ COMMITTED;
-    -- Simple delete operation; stronger isolation not needed.
     DELETE FROM friendship
-    WHERE (userId1 = p_user1_id AND userId2 = p_user2_id)
-       OR (userId1 = p_user2_id AND userId2 = p_user1_id);
+    WHERE (userId1 = p_user1_id AND userId2 = p_user2_id) OR (userId1 = p_user2_id AND userId2 = p_user1_id);
 END;
 $$ LANGUAGE plpgsql;
 
@@ -654,9 +605,7 @@ $$ LANGUAGE plpgsql;
 CREATE OR REPLACE FUNCTION fn_comment_on_post(p_post_id INT, p_user_id INT, p_content TEXT) RETURNS VOID AS $$ 
 BEGIN
     SET TRANSACTION ISOLATION LEVEL READ COMMITTED;
-    -- Simple insert, only depends on committed data.
-    INSERT INTO comment (postId, userId, content)
-    VALUES (p_post_id, p_user_id, p_content);
+    INSERT INTO comment (postId, userId, content) VALUES (p_post_id, p_user_id, p_content);
 END;
 $$ LANGUAGE plpgsql;
 
@@ -664,9 +613,7 @@ $$ LANGUAGE plpgsql;
 CREATE OR REPLACE FUNCTION fn_react_to_post(p_post_id INT, p_user_id INT) RETURNS VOID AS $$ 
 BEGIN
     SET TRANSACTION ISOLATION LEVEL REPEATABLE READ;
-    -- Prevents duplicate likes under concurrent transactions.
-    INSERT INTO post_like (postId, userId)
-    VALUES (p_post_id, p_user_id) ON CONFLICT DO NOTHING;
+    INSERT INTO post_like (postId, userId) VALUES (p_post_id, p_user_id) ON CONFLICT DO NOTHING;
 END;
 $$ LANGUAGE plpgsql;
 
@@ -674,9 +621,7 @@ $$ LANGUAGE plpgsql;
 CREATE OR REPLACE FUNCTION fn_react_to_comment(p_comment_id INT, p_user_id INT) RETURNS VOID AS $$ 
 BEGIN
     SET TRANSACTION ISOLATION LEVEL REPEATABLE READ;
-    -- Same reasoning as post reactions.
-    INSERT INTO comment_like (commentId, userId)
-    VALUES (p_comment_id, p_user_id) ON CONFLICT DO NOTHING;
+    INSERT INTO comment_like (commentId, userId) VALUES (p_comment_id, p_user_id) ON CONFLICT DO NOTHING;
 END;
 $$ LANGUAGE plpgsql;
 
@@ -691,11 +636,9 @@ DECLARE
     new_group_id INT;
 BEGIN
     SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;
-    -- Group creation and membership insert must be atomic.
     INSERT INTO groups (name, description, isPrivate)
     VALUES (p_name, p_description, p_is_private)
     RETURNING id INTO new_group_id;
-    
     INSERT INTO membership (userId, groupId, isOwner)
     VALUES (p_user_id, new_group_id, TRUE);
 END;
@@ -711,16 +654,11 @@ DECLARE
     notif_id INT;
 BEGIN
     SET TRANSACTION ISOLATION LEVEL REPEATABLE READ;
-    -- Prevents duplicate invitations for same user and group.
     INSERT INTO notification (message, receiverId)
     VALUES (CONCAT('You have been invited to join ', (SELECT name FROM groups WHERE id = p_group_id)), p_receiver_id)
     RETURNING id INTO notif_id;
-    
-    INSERT INTO request (notificationId, status, senderId)
-    VALUES (notif_id, 'pending', p_sender_id);
-    
-    INSERT INTO group_invite_request (requestId, groupId)
-    VALUES (notif_id, p_group_id);
+    INSERT INTO request (notificationId, status, senderId) VALUES (notif_id, 'pending', p_sender_id);
+    INSERT INTO group_invite_request (requestId, groupId) VALUES (notif_id, p_group_id);
 END;
 $$ LANGUAGE plpgsql;
 
@@ -729,15 +667,9 @@ CREATE OR REPLACE FUNCTION fn_manage_report(p_report_id INT, p_new_status TEXT) 
 DECLARE 
     post_target INT;
 BEGIN
-    -- Ensures two moderators can’t process the same report simultaneously.
     SET TRANSACTION ISOLATION LEVEL SERIALIZABLE; 
-    
-    UPDATE report
-    SET status = p_new_status
-    WHERE id = p_report_id;
-
+    UPDATE report SET status = p_new_status WHERE id = p_report_id;
     SELECT postId INTO post_target FROM report WHERE id = p_report_id;
-
     IF p_new_status = 'accepted' THEN
         DELETE FROM post WHERE id = post_target;
     END IF;
@@ -747,20 +679,15 @@ $$ LANGUAGE plpgsql;
 -- US53 - Block/Unblock User
 CREATE OR REPLACE FUNCTION fn_toggle_block_user(p_user_id INT, p_is_blocked BOOLEAN) RETURNS VOID AS $$ 
 BEGIN
-    SET TRANSACTION ISOLATION LEVEL READ COMMITTED; -- Simple update, no need for strong isolation.
-    
-    UPDATE users
-    SET isBlocked = p_is_blocked
-    WHERE id = p_user_id;
+    SET TRANSACTION ISOLATION LEVEL READ COMMITTED; 
+    UPDATE users SET isBlocked = p_is_blocked WHERE id = p_user_id;
 END;
 $$ LANGUAGE plpgsql;
 
 -- US54 - Admin Delete User Account
 CREATE OR REPLACE FUNCTION fn_admin_delete_user(p_user_id INT) RETURNS VOID AS $$ 
 BEGIN
-    -- Administrative critical operation; must be fully isolated.
     SET TRANSACTION ISOLATION LEVEL SERIALIZABLE; 
-    
     PERFORM fn_anonymize_user_data(p_user_id);
 END;
 $$ LANGUAGE plpgsql;
@@ -809,7 +736,6 @@ $$ LANGUAGE plpgsql;
 -- Insert values
 --
 
--- CLEAN CURRENT DATA
 TRUNCATE TABLE 
     friend_request,
     group_invite_request,
@@ -876,21 +802,12 @@ INSERT INTO media (title, creator, releaseYear, coverImage) VALUES
     ('Blinding Lights', 'The Weeknd', 2019, 'https://i.scdn.co/image/ab67616d0000b2738863bc11d2aa12b54f5aeb36'),
     ('Shape of You', 'Ed Sheeran', 2017, 'https://i.scdn.co/image/ab67616d0000b273ba5db46f4b838ef6027e6f96');
 
-INSERT INTO film (mediaId) VALUES 
-    (1), (4), (6), (9), (10), (11), (12), (13), (14), (15), (16);
-
-INSERT INTO book (mediaId) VALUES 
-    (2), (5), (8), (17), (18), (19), (20), (21), (22), (23), (24), (25);
-
-INSERT INTO music (mediaId) VALUES 
-    (3), (7), (26), (27), (28), (29), (30), (31), (32), (33), (34), (35);
+INSERT INTO film (mediaId) VALUES (1), (4), (6), (9), (10), (11), (12), (13), (14), (15), (16);
+INSERT INTO book (mediaId) VALUES (2), (5), (8), (17), (18), (19), (20), (21), (22), (23), (24), (25);
+INSERT INTO music (mediaId) VALUES (3), (7), (26), (27), (28), (29), (30), (31), (32), (33), (34), (35);
 
 -- USERS
-INSERT INTO users (
-    name, username, email, passwordHash, bio, 
-    profilePicture, isPrivate, isAdmin, 
-    favoriteFilm, favoriteBook, favoriteSong
-) VALUES 
+INSERT INTO users (name, username, email, passwordHash, bio, profilePicture, isPrivate, isAdmin, favoriteFilm, favoriteBook, favoriteSong) VALUES 
     ('Admin', 'admin', 'admin@example.org', '$2y$10$HfzIhGCCaxqyaIdGgjARSuOKAcm1Uy82YfLuNaajn6JrjLWy9Sj/W', NULL, NULL, FALSE, TRUE, NULL, NULL, NULL),
     ('Alice Martins', 'alice', 'alice@example.org', '$2y$10$HfzIhGCCaxqyaIdGgjARSuOKAcm1Uy82YfLuNaajn6JrjLWy9Sj/W', 'Movie lover and aspiring filmmaker 🎬', 'alice.jpg', FALSE, FALSE, 1, 2, 3),
     ('Bruno Silva', 'bruno', 'bruno@example.org', '$2y$10$HfzIhGCCaxqyaIdGgjARSuOKAcm1Uy82YfLuNaajn6JrjLWy9Sj/W', 'Reader & gamer. Tech enthusiast 💻', 'bruno.jpg', FALSE, FALSE, 4, 5, 3),
@@ -913,58 +830,104 @@ INSERT INTO users (
     ('Gonçalo Martins', 'goncalo_m', 'goncalo@example.org', '$2y$10$HfzIhGCCaxqyaIdGgjARSuOKAcm1Uy82YfLuNaajn6JrjLWy9Sj/W', 'Startup founder 🚀 Productivity nerd', 'goncalo.jpg', FALSE, FALSE, 1, 23, 35),
     ('Catarina Neves', 'cat_neves', 'catarina@example.org', '$2y$10$HfzIhGCCaxqyaIdGgjARSuOKAcm1Uy82YfLuNaajn6JrjLWy9Sj/W', 'Medical student ⚕️ Anime watcher', 'catarina.jpg', FALSE, FALSE, 16, 8, 7);
 
--- POSTS
-INSERT INTO post (userId, createdAt) VALUES 
-    (1, CURRENT_TIMESTAMP - INTERVAL '45 days'),
-    (2, CURRENT_TIMESTAMP - INTERVAL '42 days'),
-    (3, CURRENT_TIMESTAMP - INTERVAL '40 days'),
-    (4, CURRENT_TIMESTAMP - INTERVAL '38 days'),
-    (5, CURRENT_TIMESTAMP - INTERVAL '35 days'),
-    (6, CURRENT_TIMESTAMP - INTERVAL '33 days'),
-    (7, CURRENT_TIMESTAMP - INTERVAL '30 days'),
-    (8, CURRENT_TIMESTAMP - INTERVAL '28 days'),
-    (9, CURRENT_TIMESTAMP - INTERVAL '25 days'),
-    (10, CURRENT_TIMESTAMP - INTERVAL '23 days'),
-    (11, CURRENT_TIMESTAMP - INTERVAL '21 days'),
-    (12, CURRENT_TIMESTAMP - INTERVAL '19 days'),
-    (13, CURRENT_TIMESTAMP - INTERVAL '17 days'),
-    (14, CURRENT_TIMESTAMP - INTERVAL '15 days'),
-    (15, CURRENT_TIMESTAMP - INTERVAL '14 days'),
-    (16, CURRENT_TIMESTAMP - INTERVAL '13 days'),
-    (17, CURRENT_TIMESTAMP - INTERVAL '12 days'),
-    (18, CURRENT_TIMESTAMP - INTERVAL '11 days'),
-    (19, CURRENT_TIMESTAMP - INTERVAL '10 days'),
-    (20, CURRENT_TIMESTAMP - INTERVAL '9 days'),
-    (1, CURRENT_TIMESTAMP - INTERVAL '8 days'),
-    (2, CURRENT_TIMESTAMP - INTERVAL '7 days'),
-    (3, CURRENT_TIMESTAMP - INTERVAL '6 days'),
-    (4, CURRENT_TIMESTAMP - INTERVAL '5 days'),
-    (5, CURRENT_TIMESTAMP - INTERVAL '5 days' - INTERVAL '12 hours'),
-    (9, CURRENT_TIMESTAMP - INTERVAL '4 days'),
-    (10, CURRENT_TIMESTAMP - INTERVAL '4 days' - INTERVAL '6 hours'),
-    (11, CURRENT_TIMESTAMP - INTERVAL '3 days'),
-    (12, CURRENT_TIMESTAMP - INTERVAL '3 days' - INTERVAL '8 hours'),
-    (13, CURRENT_TIMESTAMP - INTERVAL '2 days'),
-    (14, CURRENT_TIMESTAMP - INTERVAL '2 days' - INTERVAL '10 hours'),
-    (15, CURRENT_TIMESTAMP - INTERVAL '2 days' - INTERVAL '4 hours'),
-    (16, CURRENT_TIMESTAMP - INTERVAL '1 day' - INTERVAL '18 hours'),
-    (17, CURRENT_TIMESTAMP - INTERVAL '1 day' - INTERVAL '12 hours'),
-    (18, CURRENT_TIMESTAMP - INTERVAL '1 day' - INTERVAL '6 hours'),
-    (19, CURRENT_TIMESTAMP - INTERVAL '1 day'),
-    (20, CURRENT_TIMESTAMP - INTERVAL '20 hours'),
-    (1, CURRENT_TIMESTAMP - INTERVAL '16 hours'),
-    (9, CURRENT_TIMESTAMP - INTERVAL '14 hours'),
-    (10, CURRENT_TIMESTAMP - INTERVAL '12 hours'),
-    (11, CURRENT_TIMESTAMP - INTERVAL '10 hours'),
-    (12, CURRENT_TIMESTAMP - INTERVAL '8 hours'),
-    (13, CURRENT_TIMESTAMP - INTERVAL '6 hours'),
-    (14, CURRENT_TIMESTAMP - INTERVAL '5 hours'),
-    (15, CURRENT_TIMESTAMP - INTERVAL '4 hours'),
-    (16, CURRENT_TIMESTAMP - INTERVAL '3 hours'),
-    (17, CURRENT_TIMESTAMP - INTERVAL '2 hours'),
-    (18, CURRENT_TIMESTAMP - INTERVAL '90 minutes'),
-    (19, CURRENT_TIMESTAMP - INTERVAL '45 minutes'),
-    (20, CURRENT_TIMESTAMP - INTERVAL '15 minutes');
+-- GROUPS (Moved Insert Up)
+INSERT INTO groups (name, description, isPrivate, icon) VALUES 
+    ('Film Buffs', 'Discuss your favorite movies', FALSE, 'film-buffs.jpg'),
+    ('Bookworms', 'Share and review your favorite books', TRUE, 'bookworms.jpg'),
+    ('Music Lovers', 'Everything about records and concerts', FALSE, 'music-lovers.jpg'),
+    ('Tech Talks', 'Software engineering and technology discussions', FALSE, 'tech-talks.jpg'),
+    ('Fitness Freaks', 'Workout tips, motivation, and health', FALSE, 'fitness.jpg'),
+    ('Art & Design', 'Share your creative work and get feedback', FALSE, 'art-design.jpg'),
+    ('Travel Buddies', 'Travel stories, tips, and meetups', FALSE, 'travel.jpg'),
+    ('Foodies Unite', 'Restaurant recommendations and recipes', FALSE, 'foodies.jpg'),
+    ('Study Group', 'Academic support and productivity tips', TRUE, 'study.jpg'),
+    ('Photography Club', 'Share photos and photography techniques', FALSE, 'photography.jpg');
+
+-- MEMBERSHIP (Moved Insert Up)
+INSERT INTO membership (userId, groupId, isOwner) VALUES 
+    (1, 1, TRUE),
+    (2, 1, FALSE),
+    (3, 3, TRUE),
+    (4, 1, FALSE),
+    (5, 2, TRUE),
+    (6, 3, FALSE),
+    (9, 1, FALSE),
+    (9, 10, TRUE),
+    (10, 7, TRUE),
+    (10, 8, FALSE),
+    (11, 5, TRUE),
+    (11, 4, FALSE),
+    (12, 6, TRUE),
+    (12, 3, FALSE),
+    (13, 4, TRUE),
+    (13, 5, FALSE),
+    (14, 1, FALSE),
+    (14, 9, TRUE),
+    (15, 8, TRUE),
+    (15, 1, FALSE),
+    (16, 3, FALSE),
+    (16, 7, FALSE),
+    (17, 2, FALSE),
+    (17, 1, FALSE),
+    (18, 2, FALSE),
+    (18, 6, FALSE),
+    (19, 4, FALSE),
+    (19, 9, FALSE),
+    (20, 5, FALSE),
+    (20, 9, FALSE);
+
+-- POSTS (Updated Insert with Group IDs)
+INSERT INTO post (userId, groupId, createdAt) VALUES 
+    (1, 1, CURRENT_TIMESTAMP - INTERVAL '45 days'),    -- Film Buffs
+    (2, 2, CURRENT_TIMESTAMP - INTERVAL '42 days'),    -- Bookworms
+    (3, 3, CURRENT_TIMESTAMP - INTERVAL '40 days'),    -- Music Lovers
+    (4, 3, CURRENT_TIMESTAMP - INTERVAL '38 days'),    -- Music Lovers
+    (5, 2, CURRENT_TIMESTAMP - INTERVAL '35 days'),    -- Bookworms
+    (6, 2, CURRENT_TIMESTAMP - INTERVAL '33 days'),    -- Bookworms
+    (7, 8, CURRENT_TIMESTAMP - INTERVAL '30 days'),    -- Foodies (Coffee)
+    (8, NULL, CURRENT_TIMESTAMP - INTERVAL '28 days'), -- Profile
+    (9, 10, CURRENT_TIMESTAMP - INTERVAL '25 days'),   -- Photography
+    (10, NULL, CURRENT_TIMESTAMP - INTERVAL '23 days'), -- Profile
+    (11, 5, CURRENT_TIMESTAMP - INTERVAL '21 days'),   -- Fitness
+    (12, 6, CURRENT_TIMESTAMP - INTERVAL '19 days'),   -- Art
+    (13, 4, CURRENT_TIMESTAMP - INTERVAL '17 days'),   -- Tech
+    (14, NULL, CURRENT_TIMESTAMP - INTERVAL '15 days'), -- Profile
+    (15, 8, CURRENT_TIMESTAMP - INTERVAL '14 days'),   -- Foodies
+    (16, 7, CURRENT_TIMESTAMP - INTERVAL '13 days'),   -- Travel
+    (17, 3, CURRENT_TIMESTAMP - INTERVAL '12 days'),   -- Music
+    (18, NULL, CURRENT_TIMESTAMP - INTERVAL '11 days'), -- Profile
+    (19, 9, CURRENT_TIMESTAMP - INTERVAL '10 days'),   -- Study
+    (20, NULL, CURRENT_TIMESTAMP - INTERVAL '9 days'), -- Profile
+    (1, NULL, CURRENT_TIMESTAMP - INTERVAL '8 days'),
+    (2, NULL, CURRENT_TIMESTAMP - INTERVAL '7 days'),
+    (3, NULL, CURRENT_TIMESTAMP - INTERVAL '6 days'),
+    (4, NULL, CURRENT_TIMESTAMP - INTERVAL '5 days'),
+    (5, NULL, CURRENT_TIMESTAMP - INTERVAL '5 days' - INTERVAL '12 hours'),
+    (9, 7, CURRENT_TIMESTAMP - INTERVAL '4 days'),      -- Travel
+    (10, 9, CURRENT_TIMESTAMP - INTERVAL '4 days' - INTERVAL '6 hours'), -- Study
+    (11, 8, CURRENT_TIMESTAMP - INTERVAL '3 days'),     -- Foodies
+    (12, NULL, CURRENT_TIMESTAMP - INTERVAL '3 days' - INTERVAL '8 hours'),
+    (13, 5, CURRENT_TIMESTAMP - INTERVAL '2 days'),     -- Fitness
+    (14, 10, CURRENT_TIMESTAMP - INTERVAL '2 days' - INTERVAL '10 hours'), -- Photo
+    (15, NULL, CURRENT_TIMESTAMP - INTERVAL '2 days' - INTERVAL '4 hours'),
+    (16, 4, CURRENT_TIMESTAMP - INTERVAL '1 day' - INTERVAL '18 hours'), -- Tech
+    (17, 10, CURRENT_TIMESTAMP - INTERVAL '1 day' - INTERVAL '12 hours'), -- Photo
+    (18, NULL, CURRENT_TIMESTAMP - INTERVAL '1 day' - INTERVAL '6 hours'),
+    (19, NULL, CURRENT_TIMESTAMP - INTERVAL '1 day'),
+    (20, NULL, CURRENT_TIMESTAMP - INTERVAL '20 hours'),
+    (1, 10, CURRENT_TIMESTAMP - INTERVAL '16 hours'),   -- Photo
+    (9, NULL, CURRENT_TIMESTAMP - INTERVAL '14 hours'),
+    (10, NULL, CURRENT_TIMESTAMP - INTERVAL '12 hours'),
+    (11, 1, CURRENT_TIMESTAMP - INTERVAL '10 hours'),   -- Film
+    (12, 3, CURRENT_TIMESTAMP - INTERVAL '8 hours'),    -- Music
+    (13, 1, CURRENT_TIMESTAMP - INTERVAL '6 hours'),    -- Film
+    (14, 1, CURRENT_TIMESTAMP - INTERVAL '5 hours'),    -- Film
+    (15, 3, CURRENT_TIMESTAMP - INTERVAL '4 hours'),    -- Music
+    (16, 1, CURRENT_TIMESTAMP - INTERVAL '3 hours'),    -- Film
+    (17, 2, CURRENT_TIMESTAMP - INTERVAL '2 hours'),    -- Book
+    (18, 1, CURRENT_TIMESTAMP - INTERVAL '90 minutes'), -- Film
+    (19, 2, CURRENT_TIMESTAMP - INTERVAL '45 minutes'), -- Book
+    (20, 3, CURRENT_TIMESTAMP - INTERVAL '15 minutes'); -- Music
 
 INSERT INTO standard_post (postId, text, imageUrl) VALUES 
     (1, 'Just watched Inception again. Still brilliant.', 'inception-post.jpg'),
@@ -1105,51 +1068,6 @@ INSERT INTO comment_like (commentId, userId) VALUES
     (5, 3),
     (6, 5);
 
--- GROUPS
-INSERT INTO groups (name, description, isPrivate, icon) VALUES 
-    ('Film Buffs', 'Discuss your favorite movies', FALSE, 'film-buffs.jpg'),
-    ('Bookworms', 'Share and review your favorite books', TRUE, 'bookworms.jpg'),
-    ('Music Lovers', 'Everything about records and concerts', FALSE, 'music-lovers.jpg'),
-    ('Tech Talks', 'Software engineering and technology discussions', FALSE, 'tech-talks.jpg'),
-    ('Fitness Freaks', 'Workout tips, motivation, and health', FALSE, 'fitness.jpg'),
-    ('Art & Design', 'Share your creative work and get feedback', FALSE, 'art-design.jpg'),
-    ('Travel Buddies', 'Travel stories, tips, and meetups', FALSE, 'travel.jpg'),
-    ('Foodies Unite', 'Restaurant recommendations and recipes', FALSE, 'foodies.jpg'),
-    ('Study Group', 'Academic support and productivity tips', TRUE, 'study.jpg'),
-    ('Photography Club', 'Share photos and photography techniques', FALSE, 'photography.jpg');
-
-INSERT INTO membership (userId, groupId, isOwner) VALUES 
-    (1, 1, TRUE),
-    (2, 1, FALSE),
-    (3, 3, TRUE),
-    (4, 1, FALSE),
-    (5, 2, TRUE),
-    (6, 3, FALSE),
-    (9, 1, FALSE),
-    (9, 10, TRUE),
-    (10, 7, TRUE),
-    (10, 8, FALSE),
-    (11, 5, TRUE),
-    (11, 4, FALSE),
-    (12, 6, TRUE),
-    (12, 3, FALSE),
-    (13, 4, TRUE),
-    (13, 5, FALSE),
-    (14, 1, FALSE),
-    (14, 9, TRUE),
-    (15, 8, TRUE),
-    (15, 1, FALSE),
-    (16, 3, FALSE),
-    (16, 7, FALSE),
-    (17, 2, FALSE),
-    (17, 1, FALSE),
-    (18, 2, FALSE),
-    (18, 6, FALSE),
-    (19, 4, FALSE),
-    (19, 9, FALSE),
-    (20, 5, FALSE),
-    (20, 9, FALSE);
-
 -- FRIENDSHIPS
 INSERT INTO friendship (userId1, userId2) VALUES 
     (1, 2),
@@ -1190,15 +1108,6 @@ INSERT INTO friendship (userId1, userId2) VALUES
     (17, 20),
     (18, 20),
     (19, 20);
-
--- NOTIFICATIONS
--- Note: Notifications are automatically created by triggers when:
--- - post_like inserts trigger fn_notify_post_like() 
--- - comment_like inserts trigger fn_notify_comment_like()
--- - comment inserts trigger fn_notify_comment()
--- - friend_request inserts trigger fn_notify_friend_request() 
--- - group_join_request inserts trigger fn_notify_group_join_request()
--- So we don't manually insert notifications here to avoid conflicts
 
 -- REQUESTS
 INSERT INTO request (notificationId, status, senderId) VALUES 

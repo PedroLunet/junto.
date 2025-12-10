@@ -145,6 +145,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/groups/{group}/cancel-request', [GroupController::class, 'cancelRequest'])->name('groups.cancelRequest');
     Route::post('/groups/{group}/accept-request/{requestId}', [GroupController::class, 'acceptRequest'])->name('groups.acceptRequest');
     Route::post('/groups/{group}/reject-request/{requestId}', [GroupController::class, 'rejectRequest'])->name('groups.rejectRequest');
+    Route::post('/groups/{group}/posts', [App\Http\Controllers\GroupController::class, 'storePost'])->name('groups.posts.store');
 });
 
 Route::middleware('regular.user')->controller(ProfileController::class)->group(function () {

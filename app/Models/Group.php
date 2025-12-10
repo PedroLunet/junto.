@@ -29,4 +29,10 @@ class Group extends Model
     {
         return $this->members()->wherePivot('isowner', true);
     }
+
+    // Relationship for group posts
+    public function posts()
+    {
+        return $this->hasMany(\App\Models\Post\Post::class, 'groupid');
+    }
 }

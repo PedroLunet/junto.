@@ -51,6 +51,9 @@ class GroupController extends Controller
 
     public function show(Group $group)
     {
+        // Eager load posts and their user
+        $group->load(['posts.user']);
+
         $friendsInGroup = collect();
         $pendingRequest = null;
         $pendingRequests = collect();
@@ -84,6 +87,7 @@ class GroupController extends Controller
 
         return view('pages.groups.show', [
             'group' => $group,
+            'posts' => $group->posts,
             'friendsInGroup' => $friendsInGroup,
             'pendingRequest' => $pendingRequest,
             'pendingRequests' => $pendingRequests,
