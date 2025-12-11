@@ -38,6 +38,7 @@ class User extends Authenticatable
         'isblocked',
         'isprivate',
         'createdat',
+        'google_id',
     ];
 
     /**
@@ -49,6 +50,7 @@ class User extends Authenticatable
     protected $hidden = [
         'passwordhash',
         'remember_token',
+        'google_id',
     ];
 
     protected $casts = [
