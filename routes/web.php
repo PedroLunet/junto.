@@ -56,6 +56,12 @@ Route::controller(RegisterController::class)->group(function () {
     Route::post('/register', 'register');
 });
 
+Route::controller(GoogleController::class)->group(function () {
+    Route::get('auth/google', 'redirect')->name('google-auth');
+    Route::get('auth/google/call-back', 'callbackGoogle')->name('google-call-back');
+});
+
+
 Route::middleware('regular.user')->controller(SearchUserController::class)->group(function () {
     Route::get('/search-users', 'index')->name('search.users');
 });
