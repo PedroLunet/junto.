@@ -15,6 +15,7 @@ use App\Http\Controllers\Post\ReportController;
 use App\Http\Controllers\Post\ReviewController;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Post\CommentController;
+use App\Http\Controllers\GoogleController;
 
 use App\Http\Controllers\Search\SearchUserController;
 use Illuminate\Support\Facades\Route;
