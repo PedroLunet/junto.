@@ -176,23 +176,21 @@
     @if(auth()->check() && $group->members->contains(auth()->user()))
         <div class="max-w-4xl mx-auto mb-10">
             <div class="bg-white rounded-2xl shadow-lg p-6 flex gap-6 items-center cursor-pointer hover:bg-gray-50 transition-all transform hover:-translate-y-1 border border-gray-100"
-                onclick="document.getElementById('create-post-modal').classList.remove('hidden')">
-                
-                <div class="h-16 w-16 rounded-full bg-gray-200 flex-shrink-0 overflow-hidden ring-4 ring-gray-50">
+                id="group-post-button">
+                <div class="h-16 w-16 rounded-full bg-gray-200 shrink-0 overflow-hidden ring-4 ring-gray-50">
                     <img src="{{ auth()->user()->avatar ?? asset('default-avatar.png') }}" alt="User" class="h-full w-full object-cover">
                 </div>
-                
-                <div class="flex-grow">
+                <div class="grow">
                     <div class="w-full bg-gray-100 text-gray-500 text-xl rounded-full px-8 py-4 border-transparent hover:ring-2 hover:ring-[#820263]/20 transition-all flex items-center shadow-inner">
                         <span>Write something to the community...</span>
                     </div>
                 </div>
-                
                 <div class="text-white bg-[#820263] h-14 w-14 rounded-full flex items-center justify-center shadow-lg hover:bg-[#600149] transition-colors">
                     <i class="fas fa-plus text-2xl"></i>
                 </div>
             </div>
         </div>
+        @include('components.groups.create-group-post-modal', ['group' => $group])
     @endif
 
     {{-- 5. The Feed --}}

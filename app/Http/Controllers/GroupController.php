@@ -225,4 +225,38 @@ class GroupController extends Controller
 
         return back()->with('error', 'Request not found or already processed.');
     }
+
+    public function storePost(Request $request, Group $group)
+    {
+        $user = Auth::user();
+        if (! $user || ! $group->members->contains($user)) {
+            return response()->json(['success' => false, 'message' => 'Only group members can post.'], 403);
+        }
+
+        $validated = $request->validate([
+            'content' => 'required_without:image|string|max:2000',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+        ]);
+
+        $post = new \App\Models\Post\Post;
+        $post->userid = $user->id;
+        $post->groupid = $group->id;
+        $post->createdat = now();
+        $post->save();
+
+        $imagePath = null;
+        if ($request->hasFile('image')) {
+            $fileName = $request->file('image')->hashName();
+            $request->file('image')->storeAs('post', $fileName, 'FileStorage');
+            $imagePath = $fileName;
+        }
+
+        $standardPost = new \App\Models\Post\StandardPost;
+        $standardPost->postid = $post->id;
+        $standardPost->text = $validated['content'] ?? null;
+        $standardPost->imageurl = $imagePath;
+        $standardPost->save();
+
+        return response()->json(['success' => true, 'message' => 'Post created!', 'post_id' => $post->id]);
+    }
 }
