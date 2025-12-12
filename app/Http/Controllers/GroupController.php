@@ -14,7 +14,10 @@ class GroupController extends Controller
 {
     public function index()
     {
-        $groups = Group::all();
+        $groups = Group::withCount('members')->get();
+        foreach ($groups as $group) {
+            $group->users_count = $group->members_count;
+        }
 
         return view('pages.groups.list', ['groups' => $groups]);
     }
