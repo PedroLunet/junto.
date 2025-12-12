@@ -106,7 +106,7 @@
                             <i class="fas fa-layer-group text-purple-500 text-xl"></i>
                         </div>
                         <div>
-                            <span class="font-bold text-gray-900 text-xl block">{{ $posts->count() }}</span>
+                            <span class="font-bold text-gray-900 text-xl block">{{ count($posts) }}</span>
                             <span class="text-sm">Posts</span>
                         </div>
                     </div>
@@ -205,7 +205,6 @@
                 </div>
                 <h3 class="text-4xl font-black text-gray-900 mb-4 tracking-tight">This Group is Private</h3>
                 <p class="text-gray-500 text-xl mb-10 max-w-lg mx-auto leading-relaxed">The content of this group is only visible to members. You need to be approved by an administrator to join.</p>
-                
                 @if(auth()->check())
                     @if(isset($pendingRequest) && $pendingRequest)
                         <div class="bg-amber-50 text-amber-800 px-8 py-4 rounded-xl inline-flex items-center font-bold text-lg border border-amber-200">
@@ -228,11 +227,7 @@
         @else
             {{-- Public or Member Feed --}}
             @forelse ($posts as $post)
-                @if ($post->post_type === 'review')
-                    <x-posts.post-review :post="$post" :showAuthor="true" />
-                @else
-                    <x-posts.post-standard :post="$post" :showAuthor="true" />
-                @endif
+                <x-posts.post-list :posts="[$post]" :showAuthor="true" />
             @empty
                 <div class="bg-white p-20 rounded-2xl shadow-lg text-center border border-gray-100">
                     <div class="inline-flex items-center justify-center w-28 h-28 rounded-full bg-gray-50 mb-8 text-gray-300">

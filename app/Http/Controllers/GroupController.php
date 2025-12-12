@@ -51,8 +51,11 @@ class GroupController extends Controller
 
     public function show(Group $group)
     {
-        // Eager load posts and their user
-        $group->load(['posts.user']);
+        $posts = \App\Models\Post\Post::getPostsWithDetails(auth()->id());
+        $posts = array_filter($posts, function ($post) use ($group) {
+            return isset($post->groupid) ? $post->groupid == $group->id : false;
+        });
+        $posts = array_values($posts);
 
         $friendsInGroup = collect();
         $pendingRequest = null;
@@ -87,7 +90,7 @@ class GroupController extends Controller
 
         return view('pages.groups.show', [
             'group' => $group,
-            'posts' => $group->posts,
+            'posts' => $posts,
             'friendsInGroup' => $friendsInGroup,
             'pendingRequest' => $pendingRequest,
             'pendingRequests' => $pendingRequests,
