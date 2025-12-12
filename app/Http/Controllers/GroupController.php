@@ -51,11 +51,19 @@ class GroupController extends Controller
 
     public function show(Group $group)
     {
-        $posts = \App\Models\Post\Post::getPostsWithDetails(auth()->id());
-        $posts = array_filter($posts, function ($post) use ($group) {
-            return isset($post->groupid) ? $post->groupid == $group->id : false;
-        });
-        $posts = array_values($posts);
+        $user = auth()->user();
+        $isMember = $user && $group->members->contains($user);
+        $isOwner = $user && $group->members()->wherePivot('isowner', true)->where('users.id', $user->id)->exists();
+
+        if (! $group->isprivate || $isMember || $isOwner) {
+            $posts = \App\Models\Post\Post::getPostsWithDetails(auth()->id());
+            $posts = array_filter($posts, function ($post) use ($group) {
+                return isset($post->groupid) ? $post->groupid == $group->id : false;
+            });
+            $posts = array_values($posts);
+        } else {
+            $posts = [];
+        }
 
         $friendsInGroup = collect();
         $pendingRequest = null;

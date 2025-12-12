@@ -16,8 +16,12 @@ class Group extends Model
     protected $fillable = [
         'name',
         'description',
-        'isPrivate',
+        'isprivate',
         'icon',
+    ];
+
+    protected $casts = [
+        'isprivate' => 'boolean',
     ];
 
     public function members()

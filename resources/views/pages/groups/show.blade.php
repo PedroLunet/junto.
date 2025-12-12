@@ -229,13 +229,23 @@
             @forelse ($posts as $post)
                 <x-posts.post-list :posts="[$post]" :showAuthor="true" />
             @empty
-                <div class="bg-white p-20 rounded-2xl shadow-lg text-center border border-gray-100">
-                    <div class="inline-flex items-center justify-center w-28 h-28 rounded-full bg-gray-50 mb-8 text-gray-300">
-                        <i class="fas fa-comments text-5xl"></i>
+                @if($group->isprivate && !(auth()->check() && $group->members->contains(auth()->user())))
+                    <div class="bg-white p-20 rounded-2xl shadow-lg text-center border border-gray-100">
+                        <div class="inline-flex items-center justify-center w-28 h-28 rounded-full bg-gray-50 mb-8 text-gray-300">
+                            <i class="fas fa-lock text-5xl"></i>
+                        </div>
+                        <h3 class="text-3xl font-bold text-gray-800 mb-4">This group is private</h3>
+                        <p class="text-gray-500 text-xl mb-8">Join to see the posts and participate in the conversation!</p>
                     </div>
-                    <h3 class="text-3xl font-bold text-gray-800 mb-4">No posts yet</h3>
-                    <p class="text-gray-500 text-xl mb-8">This feed is looking a little quiet. Be the first to start the conversation!</p>
-                </div>
+                @else
+                    <div class="bg-white p-20 rounded-2xl shadow-lg text-center border border-gray-100">
+                        <div class="inline-flex items-center justify-center w-28 h-28 rounded-full bg-gray-50 mb-8 text-gray-300">
+                            <i class="fas fa-comments text-5xl"></i>
+                        </div>
+                        <h3 class="text-3xl font-bold text-gray-800 mb-4">No posts yet</h3>
+                        <p class="text-gray-500 text-xl mb-8">This feed is looking a little quiet. Be the first to start the conversation!</p>
+                    </div>
+                @endif
             @endforelse
         @endif
     </div>
