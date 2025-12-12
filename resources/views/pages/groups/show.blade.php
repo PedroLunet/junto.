@@ -12,7 +12,7 @@
 
             @if($isOwner && isset($pendingRequests) && $pendingRequests->count())
                 <div class="mb-8 animate-fade-in-up">
-                    <div class="bg-linear-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-xl shadow-sm p-6">
+                    <div class="bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-xl shadow-sm p-6">
                         <div class="flex items-center justify-between mb-4">
                             <h2 class="text-lg font-bold text-gray-900 flex items-center">
                                 <span class="bg-amber-500 text-white w-6 h-6 rounded-full flex items-center justify-center text-xs mr-2">
@@ -58,10 +58,8 @@
                 </div>
             @endif
 
-
             <div class="space-y-6">
                 @if($group->isPrivate && !(auth()->check() && $group->members->contains(auth()->user())))
-
                     <div class="bg-white p-12 rounded-xl shadow-sm text-center border border-gray-200">
                         <div class="inline-flex items-center justify-center w-20 h-20 rounded-full bg-gray-50 mb-6 text-gray-300">
                             <i class="fas fa-lock text-4xl"></i>
@@ -91,7 +89,7 @@
                     @forelse ($posts as $post)
                         <x-posts.post-list :posts="[$post]" :showAuthor="true" />
                     @empty
-                        <div class="bg-white p-12 rounded-xl shadow-sm text-center border border-gray-200">
+                         <div class="bg-white p-12 rounded-xl shadow-sm text-center border border-gray-200">
                             <div class="inline-flex items-center justify-center w-20 h-20 rounded-full bg-gray-50 mb-6 text-gray-300">
                                 <i class="fas fa-comments text-4xl"></i>
                             </div>
@@ -104,8 +102,7 @@
         </div>
 
         <div class="lg:col-span-4 order-1 lg:order-2 space-y-6">
-
-
+            
             @if(auth()->check() && $group->members->contains(auth()->user()))
                     <div class="grid grid-cols-4 gap-3 pb-4">
                         <x-ui.button id="group-post-button" variant="special" class="aspect-square rounded-3xl transition-transform hover:scale-105" title="Post" data-modal="create-group-post-modal">
@@ -129,7 +126,7 @@
             @endif
 
             <div class="bg-white rounded-xl shadow-md border border-gray-200 overflow-hidden">
-                <div class="h-40 bg-linear-to-br from-gray-100 via-gray-200 to-gray-300 relative">
+                <div class="h-40 bg-gradient-to-br from-gray-100 via-gray-200 to-gray-300 relative">
                      <div class="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]"></div>
                 </div>
                 
@@ -215,9 +212,16 @@
 
                 @php
                     $showAll = !$group->isprivate || (auth()->check() && $group->members->contains(auth()->user()));
-                    $members = $showAll
-                        ? $group->members->take(4) 
-                        : (auth()->check() ? $group->members->intersect(auth()->user()->friends())->take(4) : collect());
+                    $baseMembers = $showAll
+                        ? $group->members
+                        : (auth()->check() ? $group->members->intersect(auth()->user()->friends()) : collect());
+
+
+                    $sortedMembers = $baseMembers->sortByDesc(function($member) use ($ownerId) {
+                        return isset($ownerId) && $member->id === $ownerId;
+                    });
+
+                    $members = $sortedMembers->take(4);
                 @endphp
 
                 @if($members->isEmpty())
@@ -225,14 +229,27 @@
                 @else
                     <div class="space-y-4">
                         @foreach($members as $member)
-                            <div class="flex items-center p-2.5 rounded-xl hover:bg-gray-50 transition-colors">
-                                <div class="w-12 h-12 rounded-full bg-indigo-50 text-indigo-600 flex items-center justify-center font-bold text-xl mr-4 shadow-sm border border-indigo-100 shrink-0">
+                            @php $isGroupOwner = (isset($ownerId) && $member->id === $ownerId); @endphp
+                            <div class="flex items-center p-2.5 rounded-xl hover:bg-gray-50 transition-colors {{ $isGroupOwner ? 'bg-amber-50/50 border border-amber-100' : '' }}">
+                                <div class="w-12 h-12 rounded-full flex items-center justify-center font-bold text-xl mr-4 shadow-sm border flex-shrink-0 {{ $isGroupOwner ? 'bg-amber-100 text-amber-700 border-amber-200' : 'bg-indigo-50 text-indigo-600 border-indigo-100' }}">
                                     {{ substr($member->name, 0, 1) }}
                                 </div>
                                 
                                 <div class="min-w-0 flex-1">
-                                    <p class="text-base font-bold text-gray-900 truncate">{{ $member->name }}</p>
-                                    <p class="text-sm text-gray-500 truncate">@ {{ $member->username }}</p>
+                                    <div class="flex items-center gap-2">
+                                        <p class="text-base font-bold text-gray-900 truncate">{{ $member->name }}</p>
+                                        @if($isGroupOwner)
+                                            <span class="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-bold bg-amber-100 text-amber-700 uppercase tracking-wide">
+                                                Owner
+                                            </span>
+                                        @endif
+                                    </div>
+                                    <div class="flex items-center text-sm text-gray-500 truncate">
+                                        <span>@ {{ $member->username }}</span>
+                                        @if($isGroupOwner)
+                                            <i class="fas fa-crown text-amber-400 ml-2 text-xs"></i>
+                                        @endif
+                                    </div>
                                 </div>
                             </div>
                         @endforeach
@@ -245,7 +262,6 @@
                     @endif
                 @endif
             </div>
-
 
         </div>
 

@@ -98,6 +98,8 @@ class GroupController extends Controller
 
         // Add users_count attribute for the view
         $group->users_count = $group->members()->count();
+        $owner = $group->owner()->first();
+        $ownerId = $owner ? $owner->id : null;
 
         return view('pages.groups.show', [
             'group' => $group,
@@ -106,6 +108,7 @@ class GroupController extends Controller
             'pendingRequest' => $pendingRequest,
             'pendingRequests' => $pendingRequests,
             'isOwner' => $isOwner,
+            'ownerId' => $ownerId,
         ]);
     }
 
