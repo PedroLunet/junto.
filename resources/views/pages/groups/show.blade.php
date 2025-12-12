@@ -175,16 +175,16 @@
     {{-- Only show this if the user is actually a member, otherwise it clutters the view --}}
     @if(auth()->check() && $group->members->contains(auth()->user()))
         <div class="max-w-4xl mx-auto mb-10 flex justify-start gap-4">
-            <x-ui.button id="group-post-button" variant="special" class="aspect-square"  title="Create Group Post">
+                <x-ui.button id="group-post-button" variant="special" class="aspect-square" title="Create Group Post" data-modal="create-group-post-modal">
                 <i class="fa-solid fa-plus text-2xl"></i>
             </x-ui.button>
-            <x-ui.button id="group-music-review-button" variant="special" class="aspect-square"  title="Create Group Music Review">
+                <x-ui.button id="group-music-review-button" variant="special" class="aspect-square" title="Create Group Music Review" data-modal="create-group-music-review-modal">
                 <i class="fa-solid fa-music text-2xl"></i>
             </x-ui.button>
-            <x-ui.button id="group-book-review-button" variant="special" class="aspect-square"  title="Create Group Book Review">
+                <x-ui.button id="group-book-review-button" variant="special" class="aspect-square" title="Create Group Book Review" data-modal="create-group-book-review-modal">
                 <i class="fa-solid fa-book text-2xl"></i>
             </x-ui.button>
-            <x-ui.button id="group-movie-review-button" variant="special" class="aspect-square"  title="Create Group Movie Review">
+                <x-ui.button id="group-movie-review-button" variant="special" class="aspect-square" title="Create Group Movie Review" data-modal="create-group-movie-review-modal">
                 <i class="fa-solid fa-clapperboard text-2xl"></i>
             </x-ui.button>
         </div>
@@ -303,74 +303,30 @@ document.addEventListener('DOMContentLoaded', function() {
     // MOVIE
     const movieBtn = document.getElementById('group-movie-review-button');
     const movieModal = document.getElementById('create-group-movie-review-modal');
-    const movieCancel = document.getElementById('cancel-group-movie-review-button');
-    const movieForm = document.getElementById('create-group-movie-review-form');
-    const movieTextarea = movieModal ? movieModal.querySelector('textarea') : null;
-    const movieSearchInput = document.getElementById('groupModalMovieSearch');
-    const movieResultsDiv = document.getElementById('groupModalSearchResults');
-    const movieSelectedDiv = document.getElementById('groupModalSelectedMovie');
-    const movieRemoveBtn = document.getElementById('groupRemoveMovieBtn');
-    const movieSelectedId = document.getElementById('groupSelectedMovieId');
-    const movieSelectedTitle = document.getElementById('groupSelectedMovieTitle');
-    const movieSelectedYear = document.getElementById('groupSelectedMovieYear');
-    const movieSelectedDirector = document.getElementById('groupSelectedMovieDirector');
-    const movieSelectedPoster = document.getElementById('groupSelectedMoviePoster');
-    const movieStarBtns = movieModal ? movieModal.querySelectorAll('.group-star-btn') : [];
-    const movieRatingInput = document.getElementById('group-rating-input');
-
     if (movieBtn && movieModal) {
         movieBtn.addEventListener('click', function() {
             movieModal.classList.remove('hidden');
             movieModal.style.display = 'block';
-        });
-    }
-    if (movieCancel) {
-        movieCancel.addEventListener('click', function() {
-            movieModal.style.display = 'none';
-            movieModal.classList.add('hidden');
-            if (movieTextarea) movieTextarea.value = '';
-            if (movieRatingInput) { movieRatingInput.value = ''; updateGroupStars(movieStarBtns, 0); }
-            movieSelectedId.value = '';
-            movieSelectedTitle.textContent = '';
-            movieSelectedYear.textContent = '';
-            movieSelectedDirector.textContent = '';
-            movieSelectedPoster.src = '';
-            movieSelectedDiv.classList.add('hidden');
-            movieSearchInput.value = '';
-        });
-    }
-    if (movieStarBtns && movieRatingInput) {
-        movieStarBtns.forEach(btn => {
-            btn.addEventListener('click', function() {
-                const rating = this.dataset.rating;
-                movieRatingInput.value = rating;
-                updateGroupStars(movieStarBtns, rating);
+
+        const movieBtn = document.getElementById('group-movie-review-button');
+        const movieModal = document.getElementById('create-group-movie-review-modal');
+        if (movieBtn && movieModal) {
+            movieBtn.addEventListener('click', function() {
+                movieModal.classList.remove('hidden');
+                movieModal.style.display = 'block';
             });
+        }
             btn.addEventListener('mouseenter', function() {
                 updateGroupStars(movieStarBtns, this.dataset.rating);
-            });
-            btn.addEventListener('mouseleave', function() {
-                updateGroupStars(movieStarBtns, movieRatingInput.value || 0);
-            });
-        });
-    }
-    function updateGroupStars(starBtns, rating) {
-        starBtns.forEach(btn => {
-            const star = btn.querySelector('i');
-            const btnRating = parseInt(btn.dataset.rating);
-            const currentRating = parseInt(rating);
-            if (btnRating <= currentRating) {
-                btn.classList.remove('text-gray-300', 'focus:text-gray-300');
-                btn.classList.add('text-yellow-400', 'focus:text-yellow-400');
-                star.classList.remove('fa-regular');
-                star.classList.add('fa-solid');
-            } else {
-                btn.classList.add('text-gray-300', 'focus:text-gray-300');
-                btn.classList.remove('text-yellow-400', 'focus:text-yellow-400');
-                star.classList.add('fa-regular');
-                star.classList.remove('fa-solid');
+
+            const bookBtn = document.getElementById('group-book-review-button');
+            const bookModal = document.getElementById('create-group-book-review-modal');
+            if (bookBtn && bookModal) {
+                bookBtn.addEventListener('click', function() {
+                    bookModal.classList.remove('hidden');
+                    bookModal.style.display = 'block';
+                });
             }
-        });
     }
     // Movie search logic
     let movieTimeoutId;
@@ -390,47 +346,17 @@ document.addEventListener('DOMContentLoaded', function() {
                             <div class='p-3 hover:bg-gray-100 cursor-pointer border-b flex items-center transition-colors' onclick='selectGroupModalMovie(${movie.id}, "${movie.title.replace(/'/g, "\\'")}", "${movie.poster_path || ''}", "${movie.release_date || ''}")'>
                                 ${movie.poster_path ? `<img src='https://image.tmdb.org/t/p/w92${movie.poster_path}' class='w-10 h-14 object-cover rounded mr-3' onerror='this.style.display=\'none\''>` : `<div class='w-10 h-14 bg-gray-200 rounded mr-3 flex items-center justify-center text-xs text-gray-500'>No Image</div>`}
                                 <div><div class='font-medium text-gray-800'>${movie.title}</div><div class='text-xs text-gray-500'>${movie.release_date ? new Date(movie.release_date).getFullYear() : 'N/A'}</div></div>
-                            </div>
-                        `).join('');
-                        movieResultsDiv.classList.remove('hidden');
-                    });
-            }, 300);
-        });
-    }
-    window.selectGroupModalMovie = function(id, title, posterPath, releaseDate) {
-        movieSelectedId.value = id;
-        movieSelectedTitle.textContent = title;
-        movieSelectedYear.textContent = releaseDate ? new Date(releaseDate).getFullYear() : 'N/A';
-        movieSelectedDirector.textContent = 'Loading...';
-        if (posterPath) {
-            movieSelectedPoster.src = `https://image.tmdb.org/t/p/w500${posterPath}`;
-            movieSelectedPoster.classList.remove('hidden');
-        } else {
-            movieSelectedPoster.classList.add('hidden');
-        }
-        fetch(`/movies/${id}`)
-            .then(response => response.json())
-            .then(data => {
-                let director = '';
-                if (data.credits && data.credits.crew) {
-                    const directorObj = data.credits.crew.find(person => person.job === 'Director');
-                    if (directorObj) director = directorObj.name;
-                }
-                movieSelectedDirector.textContent = director;
-            })
-            .catch(() => { movieSelectedDirector.textContent = 'Unknown Director'; });
-        movieSelectedDiv.classList.remove('hidden');
-        movieResultsDiv.classList.add('hidden');
-        movieSearchInput.value = '';
-    };
-    if (movieRemoveBtn) {
-        movieRemoveBtn.addEventListener('click', function() {
-            movieSelectedId.value = '';
-            movieSelectedDiv.classList.add('hidden');
-            movieSearchInput.focus();
-        });
-    }
-    document.addEventListener('click', function(e) {
+                            // Unified modal open logic for all group post/review buttons
+                            document.querySelectorAll('[data-modal]').forEach(function(btn) {
+                                btn.addEventListener('click', function() {
+                                    const modalSelector = btn.getAttribute('data-modal');
+                                    const modal = document.querySelector(modalSelector);
+                                    if (modal) {
+                                        modal.classList.remove('hidden');
+                                        modal.style.display = 'block';
+                                    }
+                                });
+                            });
         if (movieSearchInput && !movieSearchInput.contains(e.target) && !movieResultsDiv.contains(e.target)) {
             movieResultsDiv.classList.add('hidden');
         }
@@ -468,20 +394,6 @@ document.addEventListener('DOMContentLoaded', function() {
     // BOOK
     const bookBtn = document.getElementById('group-book-review-button');
     const bookModal = document.getElementById('create-group-book-review-modal');
-    const bookCancel = document.getElementById('cancel-group-book-review-button');
-    const bookForm = document.getElementById('create-group-book-review-form');
-    const bookTextarea = bookModal ? bookModal.querySelector('textarea') : null;
-    const bookSearchInput = document.getElementById('groupModalBookSearch');
-    const bookResultsDiv = document.getElementById('groupModalBookSearchResults');
-    const bookSelectedDiv = document.getElementById('groupModalSelectedBook');
-    const bookRemoveBtn = document.getElementById('groupRemoveBookBtn');
-    const bookSelectedId = document.getElementById('groupSelectedBookId');
-    const bookSelectedTitle = document.getElementById('groupSelectedBookTitle');
-    const bookSelectedAuthor = document.getElementById('groupSelectedBookAuthor');
-    const bookSelectedYear = document.getElementById('groupSelectedBookYear');
-    const bookSelectedCover = document.getElementById('groupSelectedBookCover');
-    const bookStarBtns = bookModal ? bookModal.querySelectorAll('.group-book-star-btn') : [];
-    const bookRatingInput = document.getElementById('group-book-rating-input');
     if (bookBtn && bookModal) {
         bookBtn.addEventListener('click', function() {
             bookModal.classList.remove('hidden');
@@ -602,20 +514,6 @@ document.addEventListener('DOMContentLoaded', function() {
     // MUSIC
     const musicBtn = document.getElementById('group-music-review-button');
     const musicModal = document.getElementById('create-group-music-review-modal');
-    const musicCancel = document.getElementById('cancel-group-music-review-button');
-    const musicForm = document.getElementById('create-group-music-review-form');
-    const musicTextarea = musicModal ? musicModal.querySelector('textarea') : null;
-    const musicSearchInput = document.getElementById('groupModalMusicSearch');
-    const musicResultsDiv = document.getElementById('groupModalMusicSearchResults');
-    const musicSelectedDiv = document.getElementById('groupModalSelectedMusic');
-    const musicRemoveBtn = document.getElementById('groupRemoveMusicBtn');
-    const musicSelectedId = document.getElementById('groupSelectedMusicId');
-    const musicSelectedTitle = document.getElementById('groupSelectedMusicTitle');
-    const musicSelectedArtist = document.getElementById('groupSelectedMusicArtist');
-    const musicSelectedYear = document.getElementById('groupSelectedMusicYear');
-    const musicSelectedCover = document.getElementById('groupSelectedMusicCover');
-    const musicStarBtns = musicModal ? musicModal.querySelectorAll('.group-music-star-btn') : [];
-    const musicRatingInput = document.getElementById('group-music-rating-input');
     if (musicBtn && musicModal) {
         musicBtn.addEventListener('click', function() {
             musicModal.classList.remove('hidden');

@@ -135,6 +135,7 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::post('/admin/reports/{id}/reject', [AdminController::class, 'rejectReport'])->name('admin.reports.reject');
 });
 
+// GROUPS ROUTES
 Route::middleware(['auth'])->group(function () {
     Route::get('/groups', [GroupController::class, 'index'])->name('groups.index');
     Route::get('/groups/create', [GroupController::class, 'create'])->name('groups.create');
@@ -145,7 +146,10 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/groups/{group}/cancel-request', [GroupController::class, 'cancelRequest'])->name('groups.cancelRequest');
     Route::post('/groups/{group}/accept-request/{requestId}', [GroupController::class, 'acceptRequest'])->name('groups.acceptRequest');
     Route::post('/groups/{group}/reject-request/{requestId}', [GroupController::class, 'rejectRequest'])->name('groups.rejectRequest');
-    Route::post('/groups/{group}/posts', [App\Http\Controllers\GroupController::class, 'storePost'])->name('groups.posts.store');
+    Route::post('/groups/{group}/posts', [GroupController::class, 'storePost'])->name('groups.posts.store');
+
+    // --- ADDED THIS LINE ---
+    Route::post('/groups/{group}/reviews', [ReviewController::class, 'store'])->name('groups.reviews.store');
 });
 
 Route::middleware('regular.user')->controller(ProfileController::class)->group(function () {
