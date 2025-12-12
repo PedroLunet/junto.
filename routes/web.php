@@ -137,6 +137,7 @@ Route::middleware(['auth', 'admin'])->group(function () {
 
 // GROUPS ROUTES
 Route::middleware(['auth'])->group(function () {
+    Route::delete('/groups/{group}/remove-member/{user}', [GroupController::class, 'removeMember'])->name('groups.removeMember');
     Route::get('/groups', [GroupController::class, 'index'])->name('groups.index');
     Route::get('/groups/create', [GroupController::class, 'create'])->name('groups.create');
     Route::post('/groups', [GroupController::class, 'store'])->name('groups.store');

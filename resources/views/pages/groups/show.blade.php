@@ -209,32 +209,27 @@
 
             <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
                 <h3 class="font-bold text-gray-900 text-xl mb-4">Members</h3>
-
                 @php
-                    $showAll = !$group->isprivate || (auth()->check() && $group->members->contains(auth()->user()));
-                    $baseMembers = $showAll
-                        ? $group->members
-                        : (auth()->check() ? $group->members->intersect(auth()->user()->friends()) : collect());
-
-
-                    $sortedMembers = $baseMembers->sortByDesc(function($member) use ($ownerId) {
+                    $isOwnerView = isset($isOwner) && $isOwner;
+                    $members = $isOwnerView ? $group->members :
+                        (!$group->isprivate || (auth()->check() && $group->members->contains(auth()->user()))
+                            ? $group->members
+                            : (auth()->check() ? $group->members->intersect(auth()->user()->friends()) : collect()));
+                    $sortedMembers = $members->sortByDesc(function($member) use ($ownerId) {
                         return isset($ownerId) && $member->id === $ownerId;
                     });
-
-                    $members = $sortedMembers->take(4);
                 @endphp
 
-                @if($members->isEmpty())
+                @if($sortedMembers->isEmpty())
                     <p class="text-gray-500 text-base italic">No visible members.</p>
                 @else
                     <div class="space-y-4">
-                        @foreach($members as $member)
+                        @foreach($sortedMembers as $member)
                             @php $isGroupOwner = (isset($ownerId) && $member->id === $ownerId); @endphp
                             <div class="flex items-center p-2.5 rounded-xl hover:bg-gray-50 transition-colors {{ $isGroupOwner ? 'bg-amber-50/50 border border-amber-100' : '' }}">
                                 <div class="w-12 h-12 rounded-full flex items-center justify-center font-bold text-xl mr-4 shadow-sm border flex-shrink-0 {{ $isGroupOwner ? 'bg-amber-100 text-amber-700 border-amber-200' : 'bg-indigo-50 text-indigo-600 border-indigo-100' }}">
                                     {{ substr($member->name, 0, 1) }}
                                 </div>
-                                
                                 <div class="min-w-0 flex-1">
                                     <div class="flex items-center gap-2">
                                         <p class="text-base font-bold text-gray-900 truncate">{{ $member->name }}</p>
@@ -251,15 +246,18 @@
                                         @endif
                                     </div>
                                 </div>
+                                @if($isOwnerView && !$isGroupOwner)
+                                    <form action="{{ route('groups.removeMember', ['group' => $group->id, 'user' => $member->id]) }}" method="POST" class="ml-4">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="text-red-600 hover:bg-red-50 p-2 rounded-full transition-colors" title="Remove from group">
+                                            <i class="fas fa-user-minus"></i>
+                                        </button>
+                                    </form>
+                                @endif
                             </div>
                         @endforeach
                     </div>
-                    
-                    @if($group->users_count > 4)
-                        <div class="mt-5 pt-4 border-t border-gray-100 text-center">
-                            <span class="text-base text-gray-500 font-medium">and {{ $group->users_count - 4 }} others...</span>
-                        </div>
-                    @endif
                 @endif
             </div>
 

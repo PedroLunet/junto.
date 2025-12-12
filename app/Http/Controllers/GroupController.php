@@ -91,6 +91,22 @@ class GroupController extends Controller
         return redirect()->route('groups.show', $group)->with('success', 'Group created successfully!');
     }
 
+    public function removeMember(Group $group, $userId)
+    {
+        $user = Auth::user();
+        $isOwner = $user && $group->members()->wherePivot('isowner', true)->where('users.id', $user->id)->exists();
+        if (! $isOwner) {
+            return redirect()->route('groups.show', $group)->with('error', 'Only the group owner can remove members.');
+        }
+        $owner = $group->owner()->first();
+        if ($owner && $owner->id == $userId) {
+            return redirect()->route('groups.show', $group)->with('error', 'You cannot remove yourself as the owner.');
+        }
+        $group->members()->detach($userId);
+
+        return redirect()->route('groups.show', $group)->with('success', 'Member removed from the group.');
+    }
+
     public function show(Group $group)
     {
         $user = auth()->user();
