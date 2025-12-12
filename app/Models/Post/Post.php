@@ -74,6 +74,7 @@ class Post extends Model
         $sql = "
             SELECT 
                 p.id,
+                p.groupId as groupid,
                 p.createdAt as created_at,
                 u.name as author_name,
                 u.username,

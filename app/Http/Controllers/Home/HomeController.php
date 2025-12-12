@@ -25,6 +25,10 @@ class HomeController extends Controller
     public function friendsFeed(): View
     {
         $posts = Post::getFriendsPostsWithDetails(auth()->id());
+        $posts = array_filter($posts, function ($post) {
+            return empty($post->groupid);
+        });
+        $posts = array_values($posts);
 
         return view('pages.home', [
             'posts' => $posts,

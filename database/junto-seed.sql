@@ -90,7 +90,7 @@ CREATE TABLE membership (
 CREATE TABLE post (
     id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     userId INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-    groupId INTEGER REFERENCES groups(id) ON DELETE CASCADE, -- New Column: NULL = Profile Post, ID = Group Post
+    groupId INTEGER REFERENCES groups(id) ON DELETE CASCADE, -- NULL = Profile Post, ID = Group Post
     createdAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -225,7 +225,7 @@ CLUSTER post USING post_created_at_idx;
 -- IDX02: User Profile Feed
 CREATE INDEX post_user_created_at_idx ON post USING btree (userId, createdAt DESC);
 
--- IDX03: Group Feed (NEW - Added for group posts)
+-- IDX03: Group Feed
 CREATE INDEX post_group_created_at_idx ON post USING btree (groupId, createdAt DESC) WHERE groupId IS NOT NULL;
 
 -- IDX04: Post Comments
@@ -432,7 +432,6 @@ BEGIN
         ' requested to join your group.'
     ),
     (SELECT userId FROM membership WHERE groupId = NEW.groupId AND isOwner = TRUE LIMIT 1);
-    
     RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
@@ -454,7 +453,6 @@ BEGIN
         isPrivate = TRUE,
         passwordHash = 'deleted'
     WHERE id = p_user_id;
-
     DELETE FROM friendship WHERE userId1 = p_user_id OR userId2 = p_user_id;
     DELETE FROM membership WHERE userId = p_user_id;
     DELETE FROM post WHERE userId = p_user_id;
@@ -830,7 +828,7 @@ INSERT INTO users (name, username, email, passwordHash, bio, profilePicture, isP
     ('Gonçalo Martins', 'goncalo_m', 'goncalo@example.org', '$2y$10$HfzIhGCCaxqyaIdGgjARSuOKAcm1Uy82YfLuNaajn6JrjLWy9Sj/W', 'Startup founder 🚀 Productivity nerd', 'goncalo.jpg', FALSE, FALSE, 1, 23, 35),
     ('Catarina Neves', 'cat_neves', 'catarina@example.org', '$2y$10$HfzIhGCCaxqyaIdGgjARSuOKAcm1Uy82YfLuNaajn6JrjLWy9Sj/W', 'Medical student ⚕️ Anime watcher', 'catarina.jpg', FALSE, FALSE, 16, 8, 7);
 
--- GROUPS (Moved Insert Up)
+-- GROUPS
 INSERT INTO groups (name, description, isPrivate, icon) VALUES 
     ('Film Buffs', 'Discuss your favorite movies', FALSE, 'film-buffs.jpg'),
     ('Bookworms', 'Share and review your favorite books', TRUE, 'bookworms.jpg'),
@@ -843,288 +841,156 @@ INSERT INTO groups (name, description, isPrivate, icon) VALUES
     ('Study Group', 'Academic support and productivity tips', TRUE, 'study.jpg'),
     ('Photography Club', 'Share photos and photography techniques', FALSE, 'photography.jpg');
 
--- MEMBERSHIP (Moved Insert Up)
+-- MEMBERSHIP
 INSERT INTO membership (userId, groupId, isOwner) VALUES 
-    (1, 1, TRUE),
-    (2, 1, FALSE),
-    (3, 3, TRUE),
-    (4, 1, FALSE),
-    (5, 2, TRUE),
-    (6, 3, FALSE),
-    (9, 1, FALSE),
-    (9, 10, TRUE),
-    (10, 7, TRUE),
-    (10, 8, FALSE),
-    (11, 5, TRUE),
-    (11, 4, FALSE),
-    (12, 6, TRUE),
-    (12, 3, FALSE),
-    (13, 4, TRUE),
-    (13, 5, FALSE),
-    (14, 1, FALSE),
-    (14, 9, TRUE),
-    (15, 8, TRUE),
-    (15, 1, FALSE),
-    (16, 3, FALSE),
-    (16, 7, FALSE),
-    (17, 2, FALSE),
-    (17, 1, FALSE),
-    (18, 2, FALSE),
-    (18, 6, FALSE),
-    (19, 4, FALSE),
-    (19, 9, FALSE),
-    (20, 5, FALSE),
-    (20, 9, FALSE);
+    (1, 1, TRUE), (2, 1, FALSE), (3, 3, TRUE), (4, 1, FALSE), (5, 2, TRUE), 
+    (6, 3, FALSE), (9, 1, FALSE), (9, 10, TRUE), (10, 7, TRUE), (10, 8, FALSE), 
+    (11, 5, TRUE), (11, 4, FALSE), (12, 6, TRUE), (12, 3, FALSE), (13, 4, TRUE), 
+    (13, 5, FALSE), (14, 1, FALSE), (14, 9, TRUE), (15, 8, TRUE), (15, 1, FALSE), 
+    (16, 3, FALSE), (16, 7, FALSE), (17, 2, FALSE), (17, 1, FALSE), (18, 2, FALSE), 
+    (18, 6, FALSE), (19, 4, FALSE), (19, 9, FALSE), (20, 5, FALSE), (20, 9, FALSE);
 
--- POSTS (Updated Insert with Group IDs)
+-- ====================================================
+-- MASSIVE POST & REVIEW INSERT
+-- ====================================================
+-- Strategy:
+-- IDs 1-30: GROUP POSTS (assigned to a groupId) -> Must have "GROUP POST:" prefix
+-- IDs 31-60: PROFILE POSTS (groupId IS NULL) -> Must NOT have prefix
+-- ====================================================
+
 INSERT INTO post (userId, groupId, createdAt) VALUES 
-    (1, 1, CURRENT_TIMESTAMP - INTERVAL '45 days'),    -- Film Buffs
-    (2, 2, CURRENT_TIMESTAMP - INTERVAL '42 days'),    -- Bookworms
-    (3, 3, CURRENT_TIMESTAMP - INTERVAL '40 days'),    -- Music Lovers
-    (4, 3, CURRENT_TIMESTAMP - INTERVAL '38 days'),    -- Music Lovers
-    (5, 2, CURRENT_TIMESTAMP - INTERVAL '35 days'),    -- Bookworms
-    (6, 2, CURRENT_TIMESTAMP - INTERVAL '33 days'),    -- Bookworms
-    (7, 8, CURRENT_TIMESTAMP - INTERVAL '30 days'),    -- Foodies (Coffee)
-    (8, NULL, CURRENT_TIMESTAMP - INTERVAL '28 days'), -- Profile
-    (9, 10, CURRENT_TIMESTAMP - INTERVAL '25 days'),   -- Photography
-    (10, NULL, CURRENT_TIMESTAMP - INTERVAL '23 days'), -- Profile
-    (11, 5, CURRENT_TIMESTAMP - INTERVAL '21 days'),   -- Fitness
-    (12, 6, CURRENT_TIMESTAMP - INTERVAL '19 days'),   -- Art
-    (13, 4, CURRENT_TIMESTAMP - INTERVAL '17 days'),   -- Tech
-    (14, NULL, CURRENT_TIMESTAMP - INTERVAL '15 days'), -- Profile
-    (15, 8, CURRENT_TIMESTAMP - INTERVAL '14 days'),   -- Foodies
-    (16, 7, CURRENT_TIMESTAMP - INTERVAL '13 days'),   -- Travel
-    (17, 3, CURRENT_TIMESTAMP - INTERVAL '12 days'),   -- Music
-    (18, NULL, CURRENT_TIMESTAMP - INTERVAL '11 days'), -- Profile
-    (19, 9, CURRENT_TIMESTAMP - INTERVAL '10 days'),   -- Study
-    (20, NULL, CURRENT_TIMESTAMP - INTERVAL '9 days'), -- Profile
-    (1, NULL, CURRENT_TIMESTAMP - INTERVAL '8 days'),
-    (2, NULL, CURRENT_TIMESTAMP - INTERVAL '7 days'),
-    (3, NULL, CURRENT_TIMESTAMP - INTERVAL '6 days'),
-    (4, NULL, CURRENT_TIMESTAMP - INTERVAL '5 days'),
-    (5, NULL, CURRENT_TIMESTAMP - INTERVAL '5 days' - INTERVAL '12 hours'),
-    (9, 7, CURRENT_TIMESTAMP - INTERVAL '4 days'),      -- Travel
-    (10, 9, CURRENT_TIMESTAMP - INTERVAL '4 days' - INTERVAL '6 hours'), -- Study
-    (11, 8, CURRENT_TIMESTAMP - INTERVAL '3 days'),     -- Foodies
-    (12, NULL, CURRENT_TIMESTAMP - INTERVAL '3 days' - INTERVAL '8 hours'),
-    (13, 5, CURRENT_TIMESTAMP - INTERVAL '2 days'),     -- Fitness
-    (14, 10, CURRENT_TIMESTAMP - INTERVAL '2 days' - INTERVAL '10 hours'), -- Photo
-    (15, NULL, CURRENT_TIMESTAMP - INTERVAL '2 days' - INTERVAL '4 hours'),
-    (16, 4, CURRENT_TIMESTAMP - INTERVAL '1 day' - INTERVAL '18 hours'), -- Tech
-    (17, 10, CURRENT_TIMESTAMP - INTERVAL '1 day' - INTERVAL '12 hours'), -- Photo
-    (18, NULL, CURRENT_TIMESTAMP - INTERVAL '1 day' - INTERVAL '6 hours'),
-    (19, NULL, CURRENT_TIMESTAMP - INTERVAL '1 day'),
-    (20, NULL, CURRENT_TIMESTAMP - INTERVAL '20 hours'),
-    (1, 10, CURRENT_TIMESTAMP - INTERVAL '16 hours'),   -- Photo
-    (9, NULL, CURRENT_TIMESTAMP - INTERVAL '14 hours'),
-    (10, NULL, CURRENT_TIMESTAMP - INTERVAL '12 hours'),
-    (11, 1, CURRENT_TIMESTAMP - INTERVAL '10 hours'),   -- Film
-    (12, 3, CURRENT_TIMESTAMP - INTERVAL '8 hours'),    -- Music
-    (13, 1, CURRENT_TIMESTAMP - INTERVAL '6 hours'),    -- Film
-    (14, 1, CURRENT_TIMESTAMP - INTERVAL '5 hours'),    -- Film
-    (15, 3, CURRENT_TIMESTAMP - INTERVAL '4 hours'),    -- Music
-    (16, 1, CURRENT_TIMESTAMP - INTERVAL '3 hours'),    -- Film
-    (17, 2, CURRENT_TIMESTAMP - INTERVAL '2 hours'),    -- Book
-    (18, 1, CURRENT_TIMESTAMP - INTERVAL '90 minutes'), -- Film
-    (19, 2, CURRENT_TIMESTAMP - INTERVAL '45 minutes'), -- Book
-    (20, 3, CURRENT_TIMESTAMP - INTERVAL '15 minutes'); -- Music
+    -- [GROUP POSTS 1-10]
+    (2, 1, NOW() - INTERVAL '30 days'), (5, 2, NOW() - INTERVAL '29 days'), (4, 3, NOW() - INTERVAL '28 days'), 
+    (11, 5, NOW() - INTERVAL '27 days'), (13, 4, NOW() - INTERVAL '26 days'), (16, 7, NOW() - INTERVAL '25 days'), 
+    (9, 10, NOW() - INTERVAL '24 days'), (12, 6, NOW() - INTERVAL '23 days'), (15, 8, NOW() - INTERVAL '22 days'), 
+    (19, 9, NOW() - INTERVAL '21 days'),
+    -- [GROUP POSTS 11-20]
+    (2, 1, NOW() - INTERVAL '20 days'), (5, 2, NOW() - INTERVAL '19 days'), (4, 3, NOW() - INTERVAL '18 days'), 
+    (11, 5, NOW() - INTERVAL '17 days'), (13, 4, NOW() - INTERVAL '16 days'), (16, 7, NOW() - INTERVAL '15 days'), 
+    (9, 10, NOW() - INTERVAL '14 days'), (12, 6, NOW() - INTERVAL '13 days'), (15, 8, NOW() - INTERVAL '12 days'), 
+    (19, 9, NOW() - INTERVAL '11 days'),
+    -- [GROUP POSTS 21-30]
+    (1, 1, NOW() - INTERVAL '10 days'), (6, 2, NOW() - INTERVAL '9 days'), (7, 3, NOW() - INTERVAL '8 days'), 
+    (20, 5, NOW() - INTERVAL '7 days'), (11, 4, NOW() - INTERVAL '6 days'), (10, 7, NOW() - INTERVAL '5 days'), 
+    (14, 10, NOW() - INTERVAL '4 days'), (18, 6, NOW() - INTERVAL '3 days'), (10, 8, NOW() - INTERVAL '2 days'), 
+    (14, 9, NOW() - INTERVAL '1 day'),
+
+    -- [NORMAL PROFILE POSTS 31-40]
+    (2, NULL, NOW() - INTERVAL '30 days'), (3, NULL, NOW() - INTERVAL '29 days'), (4, NULL, NOW() - INTERVAL '28 days'), 
+    (5, NULL, NOW() - INTERVAL '27 days'), (6, NULL, NOW() - INTERVAL '26 days'), (7, NULL, NOW() - INTERVAL '25 days'), 
+    (8, NULL, NOW() - INTERVAL '24 days'), (9, NULL, NOW() - INTERVAL '23 days'), (10, NULL, NOW() - INTERVAL '22 days'), 
+    (11, NULL, NOW() - INTERVAL '21 days'),
+    -- [NORMAL PROFILE POSTS 41-50]
+    (12, NULL, NOW() - INTERVAL '20 days'), (13, NULL, NOW() - INTERVAL '19 days'), (14, NULL, NOW() - INTERVAL '18 days'), 
+    (15, NULL, NOW() - INTERVAL '17 days'), (16, NULL, NOW() - INTERVAL '16 days'), (17, NULL, NOW() - INTERVAL '15 days'), 
+    (18, NULL, NOW() - INTERVAL '14 days'), (19, NULL, NOW() - INTERVAL '13 days'), (20, NULL, NOW() - INTERVAL '12 days'), 
+    (2, NULL, NOW() - INTERVAL '11 days'),
+    -- [NORMAL PROFILE POSTS 51-60]
+    (3, NULL, NOW() - INTERVAL '10 days'), (4, NULL, NOW() - INTERVAL '9 days'), (5, NULL, NOW() - INTERVAL '8 days'), 
+    (6, NULL, NOW() - INTERVAL '7 days'), (7, NULL, NOW() - INTERVAL '6 days'), (8, NULL, NOW() - INTERVAL '5 days'), 
+    (9, NULL, NOW() - INTERVAL '4 days'), (10, NULL, NOW() - INTERVAL '3 days'), (11, NULL, NOW() - INTERVAL '2 days'), 
+    (12, NULL, NOW() - INTERVAL '1 day');
 
 INSERT INTO standard_post (postId, text, imageUrl) VALUES 
-    (1, 'GROUP POST: Just watched Inception again. Still brilliant.', 'inception-post.jpg'),
-    (2, 'GROUP POST: Reading The Great Gatsby this weekend.', NULL),
-    (5, 'GROUP POST: Finally finished 1984. Heavy stuff.', '1984-review.jpg'),
-    (7, 'GROUP POST: Had the best cappuccino today at that new café downtown ☕', 'coffee.jpg'),
-    (9, 'GROUP POST: Sunset from my balcony today was absolutely stunning 🌅', 'sunset.jpg'),
-    (11, 'GROUP POST: Legs day at the gym = can''t walk properly tomorrow 😅', 'gym.jpg'),
-    (12, 'GROUP POST: Working on a new painting. Abstract art is harder than it looks!', 'painting.jpg'),
-    (13, 'GROUP POST: Debug session lasted 4 hours. The bug was a missing semicolon. I hate everything.', NULL),
-    (15, 'GROUP POST: Best pizza I''ve ever had! Why did no one tell me about this place? 🍕', 'pizza.jpg'),
-    (16, 'GROUP POST: Just booked tickets for my next trip! Can''t wait to explore new places ✈️', NULL),
-    (17, 'GROUP POST: Found my old vinyl collection in the attic. Time for a nostalgia trip!', 'vinyls.jpg'),
-    (19, 'GROUP POST: Productivity hack: put your phone in another room. Works like magic!', NULL),
-    (21, 'GROUP POST: Started learning guitar. My neighbors probably hate me already 🎸', NULL),
-    (22, 'GROUP POST: Nothing beats a rainy Sunday with a good book and hot chocolate.', 'rainy-day.jpg'),
-    (24, 'GROUP POST: Meal prep Sunday! Ready for a healthy week ahead 🥗', 'meal-prep.jpg'),
-    (26, 'GROUP POST: Beach day with friends = best therapy ever 🏖️', 'beach.jpg'),
-    (32, 'GROUP POST: Finally organized my bookshelf by color. Yes, I''m that person now.', 'bookshelf.jpg'),
-    (34, 'GROUP POST: Adopted a rescue dog today! Meet Charlie 🐕', 'dog.jpg'),
-    (36, 'GROUP POST: Homemade pasta from scratch. I''m basically a chef now 👨‍🍳', 'pasta.jpg'),
-    (38, 'GROUP POST: New camera arrived! Time to take way too many photos of everything.', 'camera.jpg'),
-    (8, 'Does anyone else feel like Monday mornings should be illegal?', NULL),
-    (10, 'Finally cleaned my entire apartment. Feeling so accomplished!', NULL),
-    (14, 'Watched a documentary on climate change. We really need to do better.', NULL),
-    (18, 'My cat just knocked over my coffee. Third time this week. Send help.', 'cat-mess.jpg'),
-    (20, 'Hospital shift was exhausting but we saved lives today. Worth it. ❤️', NULL),
-    (23, 'Why do all my houseplants keep dying? I give them love and water!', NULL),
-    (25, 'That moment when you realize you''ve been singing the wrong lyrics for years...', NULL),
-    (27, 'Learning Spanish on Duolingo. That owl is very threatening.', NULL),
-    (28, 'Homemade bread attempt #3. Finally looks edible!', 'bread.jpg'),
-    (29, 'Late night thoughts: are we living in a simulation?', NULL),
-    (30, 'Running my first 10K next month. Training is killing me but I''m doing it!', NULL),
-    (31, 'Tried to take an aesthetic photo of my breakfast. Ate it before remembering. Classic.', NULL),
-    (33, 'Coding playlist recommendations? Need something to keep me focused!', NULL),
-    (35, 'Why does time go so slowly at work but fly by on weekends?', NULL),
-    (37, 'Sometimes you just need to disconnect and enjoy the little things.', NULL),
-    (39, 'Meditation challenge day 30! Feeling more zen than ever 🧘', NULL),
-    (40, 'When did groceries become so expensive? RIP my bank account.', NULL);
+    -- GROUP POSTS (Must have "GROUP POST:")
+    (1, 'GROUP POST: Who else is excited for the new Dune movie? 🎥', 'inception-post.jpg'),
+    (4, 'GROUP POST: Leg day today. Pray for me. 🏋️', 'gym.jpg'),
+    (5, 'GROUP POST: Python 3.12 features are actually looking pretty good.', NULL),
+    (6, 'GROUP POST: Planning a group trip to Bali next summer! ✈️', 'beach.jpg'),
+    (7, 'GROUP POST: Look at the lighting in this shot I took yesterday! 📸', 'camera.jpg'),
+    (8, 'GROUP POST: Working on a new oil painting. Thoughts? 🎨', 'painting.jpg'),
+    (9, 'GROUP POST: Found the best taco place downtown! 🌮', 'tacos.jpg'),
+    (10, 'GROUP POST: Anyone up for a late night study session on Discord?', NULL),
+    (11, 'GROUP POST: Top 5 underrated directors. Go!', NULL),
+    (14, 'GROUP POST: Remember: Consistency > Intensity. 💪', NULL),
+    (15, 'GROUP POST: Anyone here used Rust for web dev yet?', NULL),
+    (16, 'GROUP POST: Missing the mountains today. 🏔️', NULL),
+    (17, 'GROUP POST: Need feedback on this portrait edit.', 'portrait.jpg'),
+    (18, 'GROUP POST: Abstract art is harder than it looks.', NULL),
+    (19, 'GROUP POST: Homemade pasta attempt #1. 🍝', 'pasta.jpg'),
+    (20, 'GROUP POST: Tip: Pomodoro technique saved my grades.', NULL),
+    (21, 'GROUP POST: Movie night this Friday? 🍿', NULL),
+    (24, 'GROUP POST: New PR on bench press! 100kg! 😤', NULL),
+    (25, 'GROUP POST: My code works but I have no idea why.', 'code-meme.jpg'),
+    (26, 'GROUP POST: Travel checklist for Japan. Help needed!', NULL),
+    (27, 'GROUP POST: Golden hour was perfect today. ☀️', 'sunset.jpg'),
+    (28, 'GROUP POST: Digital art sketch dump.', 'sketch.jpg'),
+    (29, 'GROUP POST: Best coffee shops for working?', 'coffee.jpg'),
+    (30, 'GROUP POST: Exam season is approaching. We got this! 📚', NULL),
+
+    -- NORMAL POSTS (No Prefix)
+    (31, 'Just adopted a cat! Meet Luna 🐱', 'cat.jpg'),
+    (32, 'Why is Monday so far from Friday but Friday so close to Monday?', NULL),
+    (34, 'Finally finished my degree! 🎓', 'graduation.jpg'),
+    (35, 'Coffee is the only thing keeping me alive right now.', 'coffee-cup.jpg'),
+    (36, 'Beautiful sunset today.', 'sunset-view.jpg'),
+    (38, 'Sometimes you just need to disconnect.', NULL),
+    (39, 'Anyone know a good mechanic?', NULL),
+    (40, 'Just moved into my new apartment!', 'apartment.jpg'),
+    (41, 'Cooking dinner for friends. Wish me luck.', NULL),
+    (42, 'The traffic today was absolute insanity.', NULL),
+    (44, 'Can''t believe it''s already December.', NULL),
+    (45, 'My dog ate my homework. Literally.', 'dog-shame.jpg'),
+    (46, 'Going to a concert tonight! So excited!', NULL),
+    (48, 'Started learning Spanish today. Hola!', NULL),
+    (49, 'Rainy days are for reading.', 'rainy-window.jpg'),
+    (50, 'Just got a promotion at work!', NULL),
+    (51, 'Is it too early for Christmas music?', NULL),
+    (52, 'Pizza is always the answer.', 'pizza-slice.jpg'),
+    (54, 'Gym was empty today. Pure bliss.', NULL),
+    (55, 'Thinking about dyeing my hair blue.', NULL),
+    (56, 'Watching old cartoons and feeling nostalgic.', NULL),
+    (58, 'Cleaned my room. Found things from 2010.', NULL),
+    (59, 'Hiking trip this weekend was amazing.', 'hiking.jpg'),
+    (60, 'Trying to bake bread. It looks like a rock.', 'bread-fail.jpg');
 
 INSERT INTO review (postId, rating, mediaId, content) VALUES 
-    (3, 5, 3, 'GROUP POST: This song is timeless. Daft Punk''s production is absolutely genius.'),
-    (4, 4, 6, 'GROUP POST: Interstellar soundtrack gives me chills every single time.'),
-    (6, 3, 8, 'GROUP POST: Good but depressing. Orwell was way too accurate about the future.'),
-    (41, 5, 9, 'GROUP POST: The Shawshank Redemption is a masterpiece. The ending still gets me emotional.'),
-    (42, 5, 26, 'GROUP POST: Bohemian Rhapsody is the greatest rock song ever made. Fight me.'),
-    (43, 4, 10, 'GROUP POST: Pulp Fiction''s non-linear storytelling is brilliant. Tarantino at his best!'),
-    (44, 5, 17, 'GROUP POST: Harry Potter was my childhood. Still magical after all these years.'),
-    (45, 4, 28, 'GROUP POST: Smells Like Teen Spirit defined a generation. Raw and powerful.'),
-    (46, 5, 11, 'GROUP POST: The Dark Knight isn''t just a superhero movie, it''s a crime masterpiece.'),
-    (47, 3, 21, 'GROUP POST: Dune is dense but worth the effort. Herbert''s worldbuilding is insane.'),
-    (48, 5, 16, 'GROUP POST: Spirited Away is pure magic. Miyazaki is a genius storyteller.'),
-    (49, 4, 18, 'GROUP POST: The Hobbit is the perfect adventure story. Comfort reading at its finest.'),
-    (50, 5, 35, 'GROUP POST: Shape of You is so catchy it should be illegal. Ed Sheeran killed it.');
+    -- GROUP REVIEWS (Must have "GROUP POST:")
+    (2, 5, 2, 'GROUP POST: The Great Gatsby is a tragedy about the American Dream. Beautifully written.'),
+    (3, 4, 3, 'GROUP POST: Get Lucky is catchy, but the rest of the album is better.'),
+    (12, 5, 17, 'GROUP POST: Harry Potter defined my childhood. 10/10.'),
+    (13, 3, 29, 'GROUP POST: Wonderwall is overplayed but still a classic.'),
+    (22, 4, 8, 'GROUP POST: 1984 is terrifyingly accurate. A must read.'),
+    (23, 5, 26, 'GROUP POST: Bohemian Rhapsody is the greatest song ever written.'),
+
+    -- NORMAL REVIEWS (No Prefix)
+    (33, 5, 1, 'Inception blew my mind. Nolan is a genius.'),
+    (37, 2, 35, 'Shape of You is way too repetitive for me.'),
+    (43, 4, 11, 'The Dark Knight is the best superhero movie. Period.'),
+    (47, 5, 16, 'Spirited Away is pure magic. I cried.'),
+    (53, 3, 21, 'Dune is great but the pacing is a bit slow.'),
+    (57, 5, 6, 'Interstellar soundtrack is a masterpiece.');
 
 -- POST INTERACTIONS
 INSERT INTO post_like (postId, userId) VALUES 
-    (1, 2), (1, 3), (1, 4), (1, 9), (1, 10),
-    (2, 1), (2, 5), (2, 12),
-    (3, 5), (3, 6), (3, 15),
-    (4, 3), (4, 6), (4, 13),
-    (5, 6), (5, 2), (5, 11),
-    (6, 2), (6, 14),
-    (7, 10), (7, 12), (7, 15), (7, 19),
-    (8, 1), (8, 11), (8, 13), (8, 17),
-    (9, 2), (9, 16), (9, 18),
-    (10, 9), (10, 14), (10, 20),
-    (11, 4), (11, 10), (11, 19),
-    (12, 3), (12, 9), (12, 14),
-    (13, 2), (13, 11), (13, 19),
-    (14, 5), (14, 17), (14, 20),
-    (15, 6), (15, 10), (15, 16),
-    (16, 1), (16, 9), (16, 18),
-    (17, 3), (17, 6), (17, 15),
-    (18, 12), (18, 14), (18, 20),
-    (19, 2), (19, 11), (19, 13),
-    (20, 5), (20, 14), (20, 16),
-    (21, 3), (21, 6), (21, 13),
-    (22, 1), (22, 5), (22, 18),
-    (23, 9), (23, 12), (23, 15),
-    (24, 4), (24, 11), (24, 20),
-    (25, 3), (25, 10), (25, 17),
-    (26, 1), (26, 9), (26, 16),
-    (27, 5), (27, 8), (27, 12),
-    (28, 2), (28, 15), (28, 19),
-    (29, 4), (29, 13), (29, 14),
-    (30, 11), (30, 16), (30, 20),
-    (31, 6), (31, 10), (31, 18),
-    (32, 1), (32, 5), (32, 17),
-    (33, 2), (33, 11), (33, 13),
-    (34, 9), (34, 12), (34, 14), (34, 18), (34, 20),
-    (35, 3), (35, 8), (35, 15),
-    (36, 4), (36, 10), (36, 19),
-    (37, 1), (37, 9), (37, 16),
-    (38, 2), (38, 12), (38, 17),
-    (39, 5), (39, 14), (39, 20),
-    (40, 6), (40, 11), (40, 13), (40, 19),
-    (41, 1), (41, 4), (41, 9), (41, 14),
-    (42, 3), (42, 6), (42, 15), (42, 17),
-    (43, 1), (43, 10), (43, 12),
-    (44, 5), (44, 17), (44, 18),
-    (45, 3), (45, 6), (45, 15),
-    (46, 1), (46, 4), (46, 11),
-    (47, 5), (47, 11), (47, 17),
-    (48, 9), (48, 16), (48, 18), (48, 20),
-    (49, 5), (49, 17), (49, 18),
-    (50, 3), (50, 10), (50, 12), (50, 16);
+    (1, 2), (1, 3), (1, 4), (31, 2), (31, 5), (31, 9), (2, 5), (2, 6), (33, 1), (33, 4),
+    (3, 5), (3, 12), (3, 15), (35, 12), (35, 18), (35, 19), (4, 11), (4, 13), (4, 20),
+    (36, 1), (36, 10), (36, 14), (5, 13), (5, 14), (6, 10), (6, 16), (40, 3), (40, 8),
+    (40, 15), (7, 9), (7, 10), (7, 12), (43, 2), (43, 5), (43, 11), (8, 12), (8, 17),
+    (45, 6), (45, 18), (45, 20), (9, 11), (9, 15), (10, 19), (10, 14), (49, 2), (49, 5),
+    (11, 1), (11, 2), (11, 5), (50, 4), (50, 9), (50, 16), (12, 5), (12, 17), (12, 19);
 
 INSERT INTO post_tag (postId, userId) VALUES 
-    (1, 3), (1, 4),
-    (2, 4), (2, 5),
-    (3, 5), (3, 15),
-    (4, 6), (4, 13),
-    (5, 1), (5, 11),
-    (6, 2), (6, 14),
-    (7, 12), (9, 16),
-    (11, 10), (12, 14),
-    (15, 16), (16, 18),
-    (26, 9), (26, 16),
-    (34, 12), (34, 18),
-    (38, 17);
+    (1, 3), (1, 4), (31, 4), (31, 5), (6, 10), (6, 12), (36, 9), (36, 16), (26, 18), (45, 12);
 
 -- COMMENTS
 INSERT INTO comment (postId, userId, content, createdAt) VALUES 
-    (1, 2, 'Totally agree! It''s a masterpiece.', CURRENT_TIMESTAMP - INTERVAL '44 days'),
-    (1, 3, 'Love that movie too.', CURRENT_TIMESTAMP - INTERVAL '43 days'),
-    (2, 1, 'The Gatsby prose is just magical.', CURRENT_TIMESTAMP - INTERVAL '41 days'),
-    (3, 5, 'Daft Punk never misses.', CURRENT_TIMESTAMP - INTERVAL '39 days'),
-    (4, 1, 'That soundtrack is pure emotion.', CURRENT_TIMESTAMP - INTERVAL '37 days'),
-    (5, 2, '1984 hits differently nowadays.', CURRENT_TIMESTAMP - INTERVAL '34 days'),
-    (6, 4, 'Yeah, definitely not a light read.', CURRENT_TIMESTAMP - INTERVAL '32 days');
+    (1, 2, 'Totally agree! It is a masterpiece.', NOW() - INTERVAL '9 days'),
+    (1, 3, 'Love that movie too.', NOW() - INTERVAL '8 days'),
+    (31, 1, 'So cute!!', NOW() - INTERVAL '29 days'),
+    (31, 4, 'What a lovely cat.', NOW() - INTERVAL '29 days'),
+    (2, 6, 'Sad ending though.', NOW() - INTERVAL '19 days'),
+    (33, 5, 'The spinning top fell!', NOW() - INTERVAL '20 days');
 
-INSERT INTO comment_like (commentId, userId) VALUES 
-    (1, 1),
-    (2, 1),
-    (3, 2),
-    (4, 1),
-    (5, 3),
-    (6, 5);
+INSERT INTO comment_like (commentId, userId) VALUES (1, 1), (2, 1), (3, 2), (4, 1);
 
 -- FRIENDSHIPS
 INSERT INTO friendship (userId1, userId2) VALUES 
-    (1, 2),
-    (1, 3),
-    (1, 9),
-    (1, 10),
-    (2, 3),
-    (2, 4),
-    (2, 5),
-    (2, 11),
-    (3, 5),
-    (3, 12),
-    (3, 15),
-    (4, 6),
-    (4, 11),
-    (4, 13),
-    (5, 17),
-    (5, 18),
-    (6, 15),
-    (6, 17),
-    (9, 10),
-    (9, 12),
-    (9, 16),
-    (9, 18),
-    (10, 11),
-    (10, 16),
-    (10, 19),
-    (11, 13),
-    (11, 19),
-    (12, 14),
-    (12, 18),
-    (13, 14),
-    (13, 19),
-    (14, 20),
-    (15, 16),
-    (16, 18),
-    (17, 18),
-    (17, 20),
-    (18, 20),
-    (19, 20);
+    (1, 2), (1, 3), (1, 9), (1, 10), (2, 3), (2, 4), (2, 5), (2, 11), (3, 5), (3, 12), (3, 15),
+    (4, 6), (4, 11), (4, 13), (5, 17), (5, 18), (6, 15), (6, 17), (9, 10), (9, 12), (9, 16),
+    (9, 18), (10, 11), (10, 16), (10, 19), (11, 13), (11, 19), (12, 14), (12, 18), (13, 14);
 
--- REQUESTS
-INSERT INTO request (notificationId, status, senderId) VALUES 
-    (3, 'accepted', 1),
-    (8, 'pending', 3);
-
-INSERT INTO group_invite_request (requestId, groupId) VALUES 
-    (3, 1);
-
-INSERT INTO group_join_request (requestId, groupId) VALUES 
-    (8, 2);
-
--- REPORTS
-INSERT INTO report (reason, status, postId, commentId) VALUES 
-    ('Inappropriate content', 'pending', 4, NULL),
-    ('Spam comment', 'accepted', NULL, 2),
-    ('Harassment', 'pending', 5, NULL),
-    ('Offensive language', 'pending', NULL, 5),
-    ('Misleading information', 'rejected', 13, NULL),
-    ('Spam post', 'accepted', 23, NULL);
+-- REQUESTS & REPORTS
+INSERT INTO request (notificationId, status, senderId) VALUES (1, 'accepted', 1);
+INSERT INTO group_invite_request (requestId, groupId) VALUES (1, 1);
+INSERT INTO report (reason, status, postId, commentId) VALUES ('Spam', 'pending', 37, NULL);
