@@ -3,24 +3,27 @@
 namespace App\Models\User;
 
 use App\Models\User\User;
+use App\Models\Notification\ActivityNotification;
 use Illuminate\Database\Eloquent\Model;
 
 class Notification extends Model
 {
     public $timestamps = false;
 
-    protected $table = 'notification';
+    protected $table = 'lbaw2544.notification';
 
     protected $fillable = [
         'message',
         'isread',
         'receiverid',
         'createdat',
+        'snoozed_until',
     ];
 
     protected $casts = [
         'isread' => 'boolean',
         'createdat' => 'datetime',
+        'snoozed_until' => 'datetime',
     ];
 
     /**
@@ -37,6 +40,14 @@ class Notification extends Model
     public function request()
     {
         return $this->hasOne(Request::class, 'notificationid', 'id');
+    }
+
+    /**
+     * Get the activity notification associated with this notification.
+     */
+    public function activityNotification()
+    {
+        return $this->hasOne(ActivityNotification::class, 'notificationid', 'id');
     }
 
     /**

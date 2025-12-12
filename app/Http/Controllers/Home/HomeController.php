@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Home;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 use App\Models\Post\Post;
+
 use App\Http\Controllers\Controller;
 
 class HomeController extends Controller
@@ -30,6 +31,8 @@ class HomeController extends Controller
     public function toggleLike($id)
     {
         $result = Post::toggleLike($id, auth()->id());
+
+       
 
         return response()->json([
             'success' => true,

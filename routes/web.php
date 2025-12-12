@@ -16,6 +16,7 @@ use App\Http\Controllers\Post\ReviewController;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Post\CommentController;
 use App\Http\Controllers\Auth\GoogleController;
+use App\Http\Controllers\Notification\NotificationController;
 
 use App\Http\Controllers\Search\SearchUserController;
 use Illuminate\Support\Facades\Route;
@@ -137,6 +138,15 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/admin/users', [AdminController::class, 'users'])->name('admin.users');
     Route::post('/admin/users/create', [AdminController::class, 'createUser'])->name('admin.users.create');
     Route::put('/admin/users/{id}', [AdminController::class, 'updateUser'])->name('admin.users.update');
+});
+
+// Notifications
+Route::middleware(['auth', 'regular.user'])->controller(NotificationController::class)->group(function () {
+    Route::get('/notifications', 'index')->name('notifications.index');
+    Route::post('/notifications/{id}/read', 'markAsRead')->name('notifications.mark-read');
+    Route::post('/notifications/read-all', 'markAllAsRead')->name('notifications.mark-all-read');
+    Route::post('/notifications/{id}/snooze', 'snooze')->name('notifications.snooze');
+    Route::get('/notifications/unread-count', 'getUnreadCount')->name('notifications.unread-count');
 });
 
 // Static pages
