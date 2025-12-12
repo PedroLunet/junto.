@@ -173,17 +173,17 @@ class GroupController extends Controller
         if ($isOwner) {
             if ($remainingMembers->count() > 0) {
                 $oldestMember = $group->members()
-                    ->withPivot('joinedAt')
-                    ->orderBy('membership.joinedAt', 'asc')
+                    ->withPivot('joinedat')
+                    ->orderBy('membership.joinedat', 'asc')
                     ->first();
                 if ($oldestMember) {
                     \DB::table('membership')
-                        ->where('groupId', $group->id)
-                        ->update(['isOwner' => false]);
+                        ->where('groupid', $group->id)
+                        ->update(['isowner' => false]);
                     \DB::table('membership')
-                        ->where('groupId', $group->id)
-                        ->where('userId', $oldestMember->id)
-                        ->update(['isOwner' => true]);
+                        ->where('groupid', $group->id)
+                        ->where('userid', $oldestMember->id)
+                        ->update(['isowner' => true]);
                 }
             } else {
                 if ($group->isprivate) {
