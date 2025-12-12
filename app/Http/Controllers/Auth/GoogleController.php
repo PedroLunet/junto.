@@ -25,14 +25,14 @@ class GoogleController extends Controller
             // Check if email already exists
             $existingUser = User::where('email', $google_user->getEmail())->first();
             if ($existingUser) {
-                // Link google_id to existing user
+                // link google_id to existing user
                 $existingUser->google_id = $google_user->getId();
                 $existingUser->save();
                 Auth::login($existingUser);
-                return redirect()->intended('/');
+                redirect()->route('home');
             }
 
-            // Generate unique username
+            // generate unique username
             $baseUsername = Str::slug($google_user->getName());
             $username = $baseUsername;
             $counter = 1;
@@ -56,8 +56,8 @@ class GoogleController extends Controller
             Auth::login($user);
         }
 
-        // After login, redirect to homepage
-        return redirect()->intended('/');
+        // after login, redirect to homepage
+        return redirect()->route('home');
     }
 
 }
