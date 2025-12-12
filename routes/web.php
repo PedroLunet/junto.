@@ -139,6 +139,16 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::put('/admin/users/{id}', [AdminController::class, 'updateUser'])->name('admin.users.update');
 });
 
+// Static pages
+Route::group([], function () {
+    Route::get('/about', function () {
+        return view('pages.about');
+    })->name('about');
+});
+
+
 Route::middleware('regular.user')->controller(ProfileController::class)->group(function () {
     Route::get('/{username}', 'show')->name('profile.show');
 });
+
+
