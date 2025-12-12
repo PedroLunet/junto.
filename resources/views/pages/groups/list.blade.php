@@ -1,72 +1,87 @@
 @extends('layouts.app')
 
+@section('title', 'Groups')
+
 @section('content')
     <div class="container mx-auto px-4 py-8">
-        {{-- Error/Success Handling --}}
+
         @if (session('error'))
-            <div class="max-w-4xl mx-auto bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-6" role="alert">
-                <span class="block sm:inline">{{ session('error') }}</span>
+            <div class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl relative mb-8" role="alert">
+                <span class="block sm:inline"><i class="fas fa-exclamation-circle mr-2"></i> {{ session('error') }}</span>
             </div>
         @endif
 
-        {{-- Header Section --}}
-        <div class="max-w-4xl mx-auto flex justify-between items-center mb-6">
-            <h1 class="text-3xl font-bold text-gray-800">Groups</h1>
-            <x-ui.button href="{{ route('groups.create') }}" variant="primary">
+        <div class="flex flex-col md:flex-row justify-between items-end mb-12 gap-4">
+            <div>
+                <h1 class="text-5xl font-black text-gray-900 tracking-tight">Groups</h1>
+                <p class="text-gray-500 mt-3 text-xl font-light">Discover communities and join the conversation.</p>
+            </div>
+            <x-ui.button href="{{ route('groups.create') }}" variant="primary" class="shadow-md bg-[#820263] hover:bg-[#600149] py-4 px-8 text-lg">
                 <i class="fas fa-plus mr-2"></i> Create Group
             </x-ui.button>
         </div>
 
-        {{-- Main Feed Area --}}
-        <div class="max-w-4xl mx-auto space-y-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
             @forelse ($groups as $group)
-                <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
-                    <div class="p-6">
-                        {{-- Group Header --}}
-                        <div class="flex justify-between items-start mb-4">
-                            <div>
-                                <h2 class="text-xl font-bold text-gray-900">
-                                    <a href="{{ route('groups.show', $group) }}" class="hover:text-[#820263] transition-colors">
-                                        {{ $group->name }}
-                                    </a>
-                                </h2>
-                                <div class="flex items-center mt-1 text-sm text-gray-500">
-                                    @if($group->isprivate)
-                                        <span class="flex items-center text-amber-600 bg-amber-50 px-2 py-0.5 rounded-full">
-                                            <i class="fas fa-lock mr-1.5 text-xs"></i> Private Group
-                                        </span>
-                                    @else
-                                        <span class="flex items-center text-green-600 bg-green-50 px-2 py-0.5 rounded-full">
-                                            <i class="fas fa-globe mr-1.5 text-xs"></i> Public Group
-                                        </span>
-                                    @endif
-                                    <span class="mx-2">•</span>
-                                    <span>Created {{ $group->created_at ? $group->created_at->diffForHumans() : '' }}</span>
+                <a href="{{ route('groups.show', $group) }}" class="flex flex-col bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-lg hover:-translate-y-2 transition-all duration-300 group cursor-pointer block">
+
+                    <div class="h-32 bg-linear-to-br from-gray-100 via-gray-200 to-gray-300 relative">
+                        <div class="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]"></div>
+                    </div>
+
+                    <div class="px-8 pb-8 flex-1 flex flex-col relative">
+
+                        <div class="-mt-16 mb-6">
+                            <div class="bg-white p-2 rounded-3xl shadow-sm inline-block">
+                                <div class="h-24 w-24 bg-[#820263] rounded-2xl flex items-center justify-center text-white text-5xl font-extrabold shadow-inner">
+                                    {{ substr($group->name, 0, 1) }}
                                 </div>
                             </div>
-                            
-                            {{-- Action Button --}}
-                            <x-ui.button href="{{ route('groups.show', $group) }}" variant="secondary" class="text-sm">
-                                View Group
-                            </x-ui.button>
                         </div>
 
-                        {{-- Group Body --}}
-                        <div class="text-gray-700 leading-relaxed">
-                            {{ Str::limit($group->description, 180) }}
+                        <div class="mb-4">
+                            <h2 class="text-3xl font-bold text-gray-900 leading-tight mb-3 group-hover:text-[#820263] transition-colors">
+                                {{ $group->name }}
+                            </h2>
+                            
+                            <div class="flex items-center gap-2">
+                                @if($group->isprivate)
+                                    <span class="inline-flex items-center bg-amber-50 text-amber-700 text-sm px-3 py-1 rounded-full font-bold border border-amber-200">
+                                        <i class="fas fa-lock mr-2"></i> Private
+                                    </span>
+                                @else
+                                    <span class="inline-flex items-center bg-green-50 text-green-700 text-sm px-3 py-1 rounded-full font-bold border border-green-200">
+                                        <i class="fas fa-globe mr-2"></i> Public
+                                    </span>
+                                @endif
+                            </div>
+                        </div>
+
+                        <p class="text-gray-600 mb-8 text-base leading-relaxed line-clamp-3 flex-1">
+                            {{ $group->description }}
+                        </p>
+
+                        <div class="pt-6 border-t border-gray-100 flex items-center justify-between">
+                            <div class="flex items-center text-gray-500 text-base font-medium">
+                                <i class="fas fa-users mr-2 text-gray-400"></i>
+                                {{ $group->users_count ?? 0 }} Members
+                            </div>
+                            
+                            <span class="text-[#820263] font-bold text-base group-hover:underline flex items-center">
+                                View Group <i class="fas fa-arrow-right ml-2 text-sm transition-transform group-hover:translate-x-1"></i>
+                            </span>
                         </div>
                     </div>
-                </div>
+                </a>
             @empty
-                {{-- Empty State (Matching your Friends Feed style) --}}
-                <div class="bg-white p-8 rounded-lg shadow-md text-center">
-                    <div class="text-gray-400 mb-4">
-                        <i class="fas fa-users text-6xl"></i>
+                <div class="col-span-full py-20 text-center">
+                    <div class="inline-flex items-center justify-center w-28 h-28 rounded-full bg-gray-50 mb-8 text-gray-300">
+                        <i class="fas fa-layer-group text-6xl"></i>
                     </div>
-                    <h3 class="text-xl font-semibold text-gray-800 mb-2">No groups found</h3>
-                    <p class="text-gray-600 mb-6">There are no groups yet. Why not start the first community?</p>
-                    <x-ui.button href="{{ route('groups.create') }}" variant="primary">
-                        Create New Group
+                    <h3 class="text-3xl font-bold text-gray-900 mb-3">No groups found</h3>
+                    <p class="text-gray-500 mb-10 max-w-lg mx-auto text-xl">There are no groups created yet. Be the pioneer and start the first community!</p>
+                    <x-ui.button href="{{ route('groups.create') }}" variant="primary" class="shadow-md bg-[#820263] hover:bg-[#600149] py-4 px-10 text-xl">
+                        <i class="fas fa-plus mr-2"></i> Create First Group
                     </x-ui.button>
                 </div>
             @endforelse
