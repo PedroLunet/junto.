@@ -21,5 +21,10 @@ class Membership extends Model
         'userId',
         'groupId',
         'isOwner',
+        'joinedAt',
+    ];
+
+    protected $dates = [
+        'joinedAt',
     ];
 }

@@ -147,14 +147,50 @@ class GroupController extends Controller
             return back()->with('error', 'Could not find an owner for this group.');
         }
 
-        $group->members()->attach(Auth::id());
+        $userId = Auth::id();
+        $membersCount = $group->members()->count();
+        $isOwner = false;
+        if (! $group->isprivate && $membersCount == 0) {
+            $isOwner = true;
+        }
+        $group->members()->attach($userId, ['isowner' => $isOwner]);
 
         return back()->with('success', 'You have joined the group!');
     }
 
     public function leave(Group $group)
     {
-        $group->members()->detach(Auth::id());
+        $userId = Auth::id();
+        $isOwner = $group->members()->wherePivot('isowner', true)->where('users.id', $userId)->exists();
+
+        $group->members()->detach($userId);
+
+        $remainingMembers = $group->members()->get();
+
+        if ($isOwner) {
+            if ($remainingMembers->count() > 0) {
+                $oldestMember = $group->members()
+                    ->withPivot('joinedAt')
+                    ->orderBy('membership.joinedAt', 'asc')
+                    ->first();
+                if ($oldestMember) {
+                    \DB::table('membership')
+                        ->where('groupId', $group->id)
+                        ->update(['isOwner' => false]);
+                    \DB::table('membership')
+                        ->where('groupId', $group->id)
+                        ->where('userId', $oldestMember->id)
+                        ->update(['isOwner' => true]);
+                }
+            } else {
+                if ($group->isprivate) {
+                    $group->isprivate = false;
+                    $group->save();
+
+                    return back()->with('success', 'You have left the group. The group is now public and will assign a new owner when someone joins.');
+                }
+            }
+        }
 
         return back()->with('success', 'You have left the group.');
     }
