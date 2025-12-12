@@ -12,6 +12,45 @@ use Illuminate\Support\Facades\Validator;
 
 class GroupController extends Controller
 {
+    public function edit(Group $group)
+    {
+        $user = Auth::user();
+        $isOwner = $user && $group->members()->wherePivot('isowner', true)->where('users.id', $user->id)->exists();
+        if (! $isOwner) {
+            return redirect()->route('groups.show', $group)->with('error', 'Only the group owner can edit the group.');
+        }
+
+        return view('pages.groups.edit', ['group' => $group]);
+    }
+
+    public function update(Request $request, Group $group)
+    {
+        $user = Auth::user();
+        $isOwner = $user && $group->members()->wherePivot('isowner', true)->where('users.id', $user->id)->exists();
+        if (! $isOwner) {
+            return redirect()->route('groups.show', $group)->with('error', 'Only the group owner can update the group.');
+        }
+
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|string|max:100',
+            'description' => 'nullable|string',
+            'isPrivate' => 'sometimes|boolean',
+        ]);
+
+        if ($validator->fails()) {
+            return redirect()->route('groups.edit', $group)
+                ->withErrors($validator)
+                ->withInput();
+        }
+
+        $group->name = $request->input('name');
+        $group->description = $request->input('description');
+        $group->isprivate = $request->has('isPrivate');
+        $group->save();
+
+        return redirect()->route('groups.show', $group)->with('success', 'Group updated successfully!');
+    }
+
     public function index()
     {
         $groups = Group::withCount('members')->get();

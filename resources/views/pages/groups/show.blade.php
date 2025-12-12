@@ -170,7 +170,7 @@
 
                     @if(auth()->check())
                         <div class="flex flex-col gap-3 pt-2">
-                            @if(auth()->id() === $group->owner_id)
+                            @if($isOwner)
                                 <x-ui.button href="{{ route('groups.edit', $group) }}" variant="secondary" class="w-full justify-center shadow-sm border border-gray-200 py-4 text-lg">
                                     <i class="fas fa-cog mr-2"></i> Settings
                                 </x-ui.button>
