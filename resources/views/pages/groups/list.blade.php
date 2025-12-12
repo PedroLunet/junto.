@@ -31,7 +31,7 @@
                                     </a>
                                 </h2>
                                 <div class="flex items-center mt-1 text-sm text-gray-500">
-                                    @if($group->isPrivate)
+                                    @if($group->isprivate)
                                         <span class="flex items-center text-amber-600 bg-amber-50 px-2 py-0.5 rounded-full">
                                             <i class="fas fa-lock mr-1.5 text-xs"></i> Private Group
                                         </span>

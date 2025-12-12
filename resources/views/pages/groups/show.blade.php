@@ -74,7 +74,7 @@
                     
                     {{-- Status Badges --}}
                     <div class="flex-shrink-0">
-                        @if($group->isPrivate)
+                        @if($group->isprivate)
                             <span class="inline-flex items-center bg-amber-50 text-amber-700 text-base px-4 py-2 rounded-full font-bold border border-amber-200 shadow-sm">
                                 <i class="fas fa-lock mr-2 text-amber-600"></i> Private
                             </span>
