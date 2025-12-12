@@ -96,6 +96,9 @@ class GroupController extends Controller
             }
         }
 
+        // Add users_count attribute for the view
+        $group->users_count = $group->members()->count();
+
         return view('pages.groups.show', [
             'group' => $group,
             'posts' => $posts,
