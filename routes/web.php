@@ -15,6 +15,7 @@ use App\Http\Controllers\Post\ReportController;
 use App\Http\Controllers\Post\ReviewController;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Post\CommentController;
+use App\Http\Controllers\GoogleController;
 
 use App\Http\Controllers\Search\SearchUserController;
 use Illuminate\Support\Facades\Route;
@@ -55,6 +56,12 @@ Route::controller(RegisterController::class)->group(function () {
     Route::get('/register', 'showRegistrationForm')->name('register');
     Route::post('/register', 'register');
 });
+
+Route::controller(GoogleController::class)->group(function () {
+    Route::get('auth/google', 'redirect')->name('google-auth');
+    Route::get('auth/google/call-back', 'callbackGoogle')->name('google-call-back');
+});
+
 
 Route::middleware('regular.user')->controller(SearchUserController::class)->group(function () {
     Route::get('/search-users', 'index')->name('search.users');

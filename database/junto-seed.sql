@@ -55,7 +55,7 @@ CREATE TABLE users (
     name VARCHAR(100) NOT NULL,
     username VARCHAR(50) UNIQUE NOT NULL,
     email VARCHAR(100) UNIQUE NOT NULL,
-    passwordHash VARCHAR(255) NOT NULL,
+    passwordHash VARCHAR(255),
     bio TEXT,
     profilePicture VARCHAR(255),
     isPrivate BOOLEAN DEFAULT FALSE,
@@ -65,7 +65,8 @@ CREATE TABLE users (
     favoriteBook INTEGER REFERENCES media(id),
     favoriteSong INTEGER REFERENCES media(id),
     remember_token VARCHAR(100),
-    createdAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+    createdAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    google_id VARCHAR
 );
 
 -- POSTS
