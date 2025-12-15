@@ -2,19 +2,21 @@
 
 namespace App\Http\Controllers\Post;
 
+use App\Http\Controllers\Controller;
+use App\Models\Post\Post;
+use App\Services\Media\BookService;
+use App\Services\Media\MovieService;
+use App\Services\Media\MusicService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use App\Services\Media\MovieService;
-use App\Services\Media\BookService;
-use App\Services\Media\MusicService;
-use App\Models\Post\Post;
-use App\Http\Controllers\Controller;
 
 class ReviewController extends Controller
 {
     protected $movieService;
+
     protected $bookService;
+
     protected $musicService;
 
     public function __construct(MovieService $movieService, BookService $bookService, MusicService $musicService)
@@ -40,6 +42,7 @@ class ReviewController extends Controller
             $releaseYear = null;
             $coverImage = null;
             $mediaType = null;
+            $groupId = $request->input('group_id');
 
             if ($request->input('type') === 'book') {
                 $request->validate([
@@ -48,7 +51,7 @@ class ReviewController extends Controller
 
                 $googleBook = $this->bookService->getBook($request->google_book_id);
 
-                if (!$googleBook || isset($googleBook['error'])) {
+                if (! $googleBook || isset($googleBook['error'])) {
                     return response()->json(['success' => false, 'message' => 'Book not found on Google Books'], 404);
                 }
 
@@ -56,9 +59,8 @@ class ReviewController extends Controller
                 $title = $volumeInfo['title'] ?? 'Unknown Title';
                 $creator = isset($volumeInfo['authors']) ? implode(', ', $volumeInfo['authors']) : 'Unknown Author';
                 $releaseDate = $volumeInfo['publishedDate'] ?? null;
-                $releaseYear = $releaseDate ? (int)substr($releaseDate, 0, 4) : null;
+                $releaseYear = $releaseDate ? (int) substr($releaseDate, 0, 4) : null;
                 $coverImage = $volumeInfo['imageLinks']['thumbnail'] ?? null;
-
 
                 if ($coverImage) {
                     $coverImage = str_replace('http://', 'https://', $coverImage);
@@ -73,19 +75,19 @@ class ReviewController extends Controller
                 // 1. get movie details from tmdb
                 $tmdbMovie = $this->movieService->getMovie($request->tmdb_id);
 
-                if (!$tmdbMovie || (isset($tmdbMovie['success']) && $tmdbMovie['success'] === false)) {
+                if (! $tmdbMovie || (isset($tmdbMovie['success']) && $tmdbMovie['success'] === false)) {
                     return response()->json(['success' => false, 'message' => 'Movie not found on TMDB'], 404);
                 }
 
                 $title = $tmdbMovie['title'];
                 $releaseDate = $tmdbMovie['release_date'] ?? null;
-                $releaseYear = $releaseDate ? (int)substr($releaseDate, 0, 4) : null;
+                $releaseYear = $releaseDate ? (int) substr($releaseDate, 0, 4) : null;
                 $posterPath = $tmdbMovie['poster_path'] ?? null;
                 $coverImage = $posterPath ? "https://image.tmdb.org/t/p/w500{$posterPath}" : null;
                 $mediaType = 'film';
 
                 // Get Director
-                $creator = "Unknown";
+                $creator = 'Unknown';
                 if (isset($tmdbMovie['credits']['crew'])) {
                     foreach ($tmdbMovie['credits']['crew'] as $crew) {
                         if ($crew['job'] === 'Director') {
@@ -101,14 +103,14 @@ class ReviewController extends Controller
 
                 $track = $this->musicService->getTrack($request->spotify_id);
 
-                if (!$track || isset($track['error'])) {
+                if (! $track || isset($track['error'])) {
                     return response()->json(['success' => false, 'message' => 'Track not found on Spotify'], 404);
                 }
 
                 $title = $track['name'];
                 $creator = $track['artists'][0]['name'] ?? 'Unknown Artist';
                 $releaseDate = $track['album']['release_date'] ?? null;
-                $releaseYear = $releaseDate ? (int)substr($releaseDate, 0, 4) : null;
+                $releaseYear = $releaseDate ? (int) substr($releaseDate, 0, 4) : null;
                 $coverImage = $track['album']['images'][0]['url'] ?? null;
                 $mediaType = 'music';
             } else {
@@ -116,10 +118,10 @@ class ReviewController extends Controller
             }
 
             // 2. check if media exists in the db or create it
-            $existingMedia = DB::selectOne("
+            $existingMedia = DB::selectOne('
                 SELECT id FROM lbaw2544.media 
                 WHERE title = ? AND releaseyear = ? AND creator = ?
-            ", [$title, $releaseYear, $creator]);
+            ', [$title, $releaseYear, $creator]);
 
             $mediaId = null;
 
@@ -132,7 +134,7 @@ class ReviewController extends Controller
                     'title' => $title,
                     'creator' => $creator,
                     'releaseyear' => $releaseYear,
-                    'coverimage' => $coverImage
+                    'coverimage' => $coverImage,
                 ]);
 
                 // create specific media entry
@@ -146,17 +148,21 @@ class ReviewController extends Controller
             }
 
             // 3. create post
-            $postId = DB::table('lbaw2544.post')->insertGetId([
+            $postData = [
                 'userid' => Auth::id(),
-                'createdat' => now()
-            ]);
+                'createdat' => now(),
+            ];
+            if ($groupId) {
+                $postData['groupid'] = $groupId;
+            }
+            $postId = DB::table('lbaw2544.post')->insertGetId($postData);
 
             // 4. create review
             DB::table('lbaw2544.review')->insert([
                 'postid' => $postId,
                 'rating' => $request->rating,
                 'mediaid' => $mediaId,
-                'content' => $request->input('content')
+                'content' => $request->input('content'),
             ]);
 
             DB::commit();
@@ -164,11 +170,12 @@ class ReviewController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => 'Review posted successfully',
-                'post_id' => $postId
+                'post_id' => $postId,
             ]);
         } catch (\Exception $e) {
             DB::rollback();
-            return response()->json(['success' => false, 'message' => 'Server Error: ' . $e->getMessage()], 500);
+
+            return response()->json(['success' => false, 'message' => 'Server Error: '.$e->getMessage()], 500);
         }
     }
 
@@ -190,7 +197,7 @@ class ReviewController extends Controller
                 ->where('postid', $id)
                 ->update([
                     'rating' => $request->rating,
-                    'content' => $request->input('content')
+                    'content' => $request->input('content'),
                 ]);
 
             DB::commit();
@@ -198,7 +205,8 @@ class ReviewController extends Controller
             return response()->json(['success' => true, 'message' => 'Review updated successfully']);
         } catch (\Exception $e) {
             DB::rollback();
-            return response()->json(['success' => false, 'message' => 'Server Error: ' . $e->getMessage()], 500);
+
+            return response()->json(['success' => false, 'message' => 'Server Error: '.$e->getMessage()], 500);
         }
     }
 }

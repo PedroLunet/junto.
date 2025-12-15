@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers\Post;
 
+use App\Http\Controllers\Controller;
 use App\Models\Post\Post;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
-use App\Http\Controllers\Controller;
 
 class PostController extends Controller
 {
@@ -60,7 +60,7 @@ class PostController extends Controller
 
             return response()->json([
                 'success' => false,
-                'message' => 'Server Error: ' . $e->getMessage(),
+                'message' => 'Server Error: '.$e->getMessage(),
             ], 500);
         }
     }
@@ -83,7 +83,7 @@ class PostController extends Controller
             // image removal
             if ($request->has('remove_image') && $request->remove_image == '1') {
                 if ($imagePath && $imagePath !== 'default.jpg') {
-                    Storage::disk('FileStorage')->delete('post/' . $imagePath);
+                    Storage::disk('FileStorage')->delete('post/'.$imagePath);
                     $imagePath = null;
                 }
             }
@@ -92,7 +92,7 @@ class PostController extends Controller
             if ($request->hasFile('image')) {
                 // delete old image if exists
                 if ($imagePath && $imagePath !== 'default.jpg') {
-                    Storage::disk('FileStorage')->delete('post/' . $imagePath);
+                    Storage::disk('FileStorage')->delete('post/'.$imagePath);
                 }
                 $fileName = $request->file('image')->hashName();
                 $request->file('image')->storeAs('post', $fileName, 'FileStorage');
@@ -102,7 +102,7 @@ class PostController extends Controller
             // update the post
             $post->standardPost->update([
                 'text' => $request->input('content'),
-                'imageurl' => $imagePath
+                'imageurl' => $imagePath,
             ]);
 
             DB::commit();
@@ -113,7 +113,7 @@ class PostController extends Controller
 
             return response()->json([
                 'success' => false,
-                'message' => 'Server Error: ' . $e->getMessage(),
+                'message' => 'Server Error: '.$e->getMessage(),
             ], 500);
         }
     }
@@ -127,7 +127,7 @@ class PostController extends Controller
             $this->authorize('delete', $post);
 
             if ($post->standardPost && $post->standardPost->imageUrl && $post->standardPost->imageUrl !== 'default.jpg') {
-                Storage::disk('FileStorage')->delete('post/' . $post->standardPost->imageUrl);
+                Storage::disk('FileStorage')->delete('post/'.$post->standardPost->imageUrl);
             }
 
             $post->delete();
@@ -140,7 +140,7 @@ class PostController extends Controller
 
             return response()->json([
                 'success' => false,
-                'message' => 'Server Error: ' . $e->getMessage(),
+                'message' => 'Server Error: '.$e->getMessage(),
             ], 500);
         }
     }

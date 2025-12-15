@@ -3,13 +3,13 @@
 namespace App\Models\Post;
 
 use App\Models\User\User;
-
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 
 class Post extends Model
 {
     protected $table = 'lbaw2544.post';
+
     public $timestamps = false;
 
     public function standardPost()
@@ -32,6 +32,7 @@ class Post extends Model
         $sql = "
             SELECT 
                 p.id,
+                p.groupId as groupid,
                 p.createdAt as created_at,
                 u.name as author_name,
                 u.username,
@@ -52,7 +53,7 @@ class Post extends Model
                     WHEN EXISTS (SELECT 1 FROM lbaw2544.music mu WHERE mu.mediaId = m.id) THEN 'music'
                 END as media_type,
                 (SELECT COUNT(*) FROM lbaw2544.post_like pl WHERE pl.postId = p.id) as likes_count,
-                " . ($currentUserId ? "(SELECT COUNT(*) > 0 FROM lbaw2544.post_like pl WHERE pl.postId = p.id AND pl.userId = ?) as is_liked," : "FALSE as is_liked,") . "
+                ".($currentUserId ? '(SELECT COUNT(*) > 0 FROM lbaw2544.post_like pl WHERE pl.postId = p.id AND pl.userId = ?) as is_liked,' : 'FALSE as is_liked,').'
                 (SELECT COUNT(*) FROM lbaw2544.comment c WHERE c.postId = p.id) as comments_count,
                 sp.imageUrl as image_url
             FROM lbaw2544.post p
@@ -61,9 +62,10 @@ class Post extends Model
             LEFT JOIN lbaw2544.review r ON p.id = r.postId
             LEFT JOIN lbaw2544.media m ON r.mediaId = m.id
             ORDER BY p.id DESC
-        ";
+        ';
 
         $params = $currentUserId ? [$currentUserId] : [];
+
         return DB::select($sql, $params);
     }
 
@@ -72,6 +74,7 @@ class Post extends Model
         $sql = "
             SELECT 
                 p.id,
+                p.groupId as groupid,
                 p.createdAt as created_at,
                 u.name as author_name,
                 u.username,
@@ -132,7 +135,7 @@ class Post extends Model
                 m.creator as media_creator,
                 'movie' as media_type,
                 (SELECT COUNT(*) FROM lbaw2544.post_like pl WHERE pl.postId = p.id) as likes_count,
-                " . ($currentUserId ? "(SELECT COUNT(*) > 0 FROM lbaw2544.post_like pl WHERE pl.postId = p.id AND pl.userId = ?) as is_liked," : "FALSE as is_liked,") . "
+                ".($currentUserId ? '(SELECT COUNT(*) > 0 FROM lbaw2544.post_like pl WHERE pl.postId = p.id AND pl.userId = ?) as is_liked,' : 'FALSE as is_liked,').'
                 (SELECT COUNT(*) FROM lbaw2544.comment c WHERE c.postId = p.id) as comments_count,
                 sp.imageUrl as image_url
             FROM lbaw2544.post p
@@ -142,9 +145,10 @@ class Post extends Model
             JOIN lbaw2544.media m ON r.mediaId = m.id
             WHERE EXISTS (SELECT 1 FROM lbaw2544.film f WHERE f.mediaId = m.id)
             ORDER BY p.id DESC
-        ";
+        ';
 
         $params = $currentUserId ? [$currentUserId] : [];
+
         return DB::select($sql, $params);
     }
 
@@ -169,7 +173,7 @@ class Post extends Model
                 m.creator as media_creator,
                 'book' as media_type,
                 (SELECT COUNT(*) FROM lbaw2544.post_like pl WHERE pl.postId = p.id) as likes_count,
-                " . ($currentUserId ? "(SELECT COUNT(*) > 0 FROM lbaw2544.post_like pl WHERE pl.postId = p.id AND pl.userId = ?) as is_liked," : "FALSE as is_liked,") . "
+                ".($currentUserId ? '(SELECT COUNT(*) > 0 FROM lbaw2544.post_like pl WHERE pl.postId = p.id AND pl.userId = ?) as is_liked,' : 'FALSE as is_liked,').'
                 (SELECT COUNT(*) FROM lbaw2544.comment c WHERE c.postId = p.id) as comments_count,
                 sp.imageUrl as image_url
             FROM lbaw2544.post p
@@ -179,9 +183,10 @@ class Post extends Model
             JOIN lbaw2544.media m ON r.mediaId = m.id
             WHERE EXISTS (SELECT 1 FROM lbaw2544.book b WHERE b.mediaId = m.id)
             ORDER BY p.id DESC
-        ";
+        ';
 
         $params = $currentUserId ? [$currentUserId] : [];
+
         return DB::select($sql, $params);
     }
 
@@ -206,7 +211,7 @@ class Post extends Model
                 m.creator as media_creator,
                 'music' as media_type,
                 (SELECT COUNT(*) FROM lbaw2544.post_like pl WHERE pl.postId = p.id) as likes_count,
-                " . ($currentUserId ? "(SELECT COUNT(*) > 0 FROM lbaw2544.post_like pl WHERE pl.postId = p.id AND pl.userId = ?) as is_liked," : "FALSE as is_liked,") . "
+                ".($currentUserId ? '(SELECT COUNT(*) > 0 FROM lbaw2544.post_like pl WHERE pl.postId = p.id AND pl.userId = ?) as is_liked,' : 'FALSE as is_liked,').'
                 (SELECT COUNT(*) FROM lbaw2544.comment c WHERE c.postId = p.id) as comments_count,
                 sp.imageUrl as image_url
             FROM lbaw2544.post p
@@ -216,51 +221,52 @@ class Post extends Model
             JOIN lbaw2544.media m ON r.mediaId = m.id
             WHERE EXISTS (SELECT 1 FROM lbaw2544.music mu WHERE mu.mediaId = m.id)
             ORDER BY p.id DESC
-        ";
+        ';
 
         $params = $currentUserId ? [$currentUserId] : [];
+
         return DB::select($sql, $params);
     }
 
     public static function toggleLike($postId, $userId)
     {
         // Check if already liked
-        $existing = DB::select("
+        $existing = DB::select('
             SELECT * FROM lbaw2544.post_like
             WHERE postId = ? AND userId = ?
-        ", [$postId, $userId]);
+        ', [$postId, $userId]);
 
         if (count($existing) > 0) {
             // Unlike
-            DB::delete("
+            DB::delete('
                 DELETE FROM lbaw2544.post_like
                 WHERE postId = ? AND userId = ?
-            ", [$postId, $userId]);
+            ', [$postId, $userId]);
             $liked = false;
         } else {
             // Like
-            DB::insert("
+            DB::insert('
                 INSERT INTO lbaw2544.post_like (postId, userId, createdAt)
                 VALUES (?, ?, CURRENT_TIMESTAMP)
-            ", [$postId, $userId]);
+            ', [$postId, $userId]);
             $liked = true;
         }
 
         // Get updated likes count
-        $count = DB::select("
+        $count = DB::select('
             SELECT COUNT(*) as count FROM lbaw2544.post_like
             WHERE postId = ?
-        ", [$postId]);
+        ', [$postId]);
 
         return [
             'liked' => $liked,
-            'likes_count' => $count[0]->count
+            'likes_count' => $count[0]->count,
         ];
     }
 
     public static function getUserStandardPosts($userId)
     {
-        return DB::select("
+        return DB::select('
             SELECT 
                 p.id,
                 p.createdAt as created_at,
@@ -275,12 +281,12 @@ class Post extends Model
             JOIN lbaw2544.standard_post sp ON p.id = sp.postId
             WHERE p.userId = ?
             ORDER BY p.createdAt DESC
-        ", [$userId]);
+        ', [$userId]);
     }
 
     public static function getUserReviewPosts($userId)
     {
-        return DB::select("
+        return DB::select('
             SELECT 
                 p.id,
                 p.createdAt as created_at,
@@ -298,6 +304,6 @@ class Post extends Model
             JOIN lbaw2544.media m ON r.mediaId = m.id
             WHERE p.userId = ?
             ORDER BY p.createdAt DESC
-        ", [$userId]);
+        ', [$userId]);
     }
 }

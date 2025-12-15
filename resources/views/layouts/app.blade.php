@@ -72,6 +72,8 @@
                             class="block py-2 px-4 rounded hover:bg-[#7a5466] hover:text-white">Books</a></li>
                     <li><a href="{{ route('music') }}"
                             class="block py-2 px-4 rounded hover:bg-[#7a5466] hover:text-white">Music</a></li>
+                    <li><a href="{{ route('groups.index') }}"
+                            class="block py-2 px-4 rounded hover:bg-[#7a5466] hover:text-white">Groups</a></li>
                 </ul>
             </nav>
 
