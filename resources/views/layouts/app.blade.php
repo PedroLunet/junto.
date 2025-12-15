@@ -33,23 +33,25 @@
 
         function updateNotificationBadge() {
             if (!window.isAuthenticated) return;
-            
+
             fetch('/notifications/unread-count', {
-                headers: { 'Accept': 'application/json' }
-            })
-            .then(response => response.json())
-            .then(data => {
-                const badge = document.getElementById('notification-badge');
-                if (badge) {
-                    if (data.count > 0) {
-                        badge.textContent = data.count;
-                        badge.classList.remove('hidden');
-                    } else {
-                        badge.classList.add('hidden');
+                    headers: {
+                        'Accept': 'application/json'
                     }
-                }
-            })
-            .catch(error => console.error('Error fetching notifications:', error));
+                })
+                .then(response => response.json())
+                .then(data => {
+                    const badge = document.getElementById('notification-badge');
+                    if (badge) {
+                        if (data.count > 0) {
+                            badge.textContent = data.count;
+                            badge.classList.remove('hidden');
+                        } else {
+                            badge.classList.add('hidden');
+                        }
+                    }
+                })
+                .catch(error => console.error('Error fetching notifications:', error));
         }
 
         document.addEventListener('DOMContentLoaded', updateNotificationBadge);
@@ -77,21 +79,23 @@
                         <x-ui.button href="{{ route('notifications.index') }}" variant="ghost" class="p-2 relative"
                             title="Inbox">
                             <i class="fa-solid fa-inbox text-2xl"></i>
-                            <span id="notification-badge" class="absolute top-0 right-0 bg-red-600 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center hidden">0</span>
+                            <span id="notification-badge"
+                                class="absolute top-0 right-0 bg-red-600 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center hidden">0</span>
                             </x-button>
-                    @endauth
-                    @guest
-                        <x-ui.button href="{{ route('friend-requests.index') }}" variant="ghost" class="p-2"
-                            title="Inbox">
-                            <i class="fa-solid fa-inbox text-2xl"></i>
-                            </x-button>
-                    @endguest
-                        <x-ui.button href="{{ route('search.users') }}" variant="ghost" class="p-2" title="Search">
-                            <i class="fa-solid fa-magnifying-glass text-2xl"></i>
-                            </x-button>
-                            <button onclick="toggleMobileMenu()" class="lg:hidden text-white">
-                                <i class="fa-solid fa-times text-2xl"></i>
-                            </button>
+                        @endauth
+                        @guest
+                            <x-ui.button href="{{ route('friend-requests.index') }}" variant="ghost" class="p-2"
+                                title="Inbox">
+                                <i class="fa-solid fa-inbox text-2xl"></i>
+                                </x-button>
+                            @endguest
+                            <x-ui.button href="{{ route('search.users') }}" variant="ghost" class="p-2"
+                                title="Search">
+                                <i class="fa-solid fa-magnifying-glass text-2xl"></i>
+                                </x-button>
+                                <button onclick="toggleMobileMenu()" class="lg:hidden text-white">
+                                    <i class="fa-solid fa-times text-2xl"></i>
+                                </button>
                 </div>
             </div>
 
@@ -108,10 +112,6 @@
 
                     <li><a href="{{ route('groups.index') }}"
                             class="block py-2 px-4 rounded hover:bg-[#7a5466] hover:text-white">Groups</a></li>
-
-                    <li><a href="{{ route('about') }}"
-                            class="block py-2 px-4 rounded hover:bg-[#7a5466] hover:text-white">About Us</a></li>
-
                 </ul>
             </nav>
 
@@ -163,6 +163,10 @@
                             class="w-full text-center">Register</x-button>
                 </div>
             @endauth
+
+            <div class="w-full text-center text-white text-xl mb-4 mt-2">
+                <a href="{{ route('about') }}" class="hover:underline">About us</a> . Main Features . Contact Us
+            </div>
         </aside>
 
         <!-- main content -->

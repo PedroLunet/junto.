@@ -86,6 +86,10 @@
                             class="w-full text-center">Register</x-button>
                 </div>
             @endauth
+
+            <div class="w-full text-center text-white text-xl mb-4 mt-2">
+                <a href="{{ route('about') }}" class="hover:underline">About us</a> . Main Features . Contact Us
+            </div>
         </aside>
 
         <!-- main content -->
