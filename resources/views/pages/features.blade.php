@@ -12,7 +12,7 @@
                 <p class="text-2xl font-normal text-gray-700">
                     Share and read both regular posts and reviews for movies, books, and music in a single timeline. No need
                     to switch between platforms to track what you watch, read, listen to, or simply want to talk
-                    about—everything is in one place.
+                    about... Everything is in one place.
                 </p>
             </div>
             <!-- Box 2: Top right -->
@@ -28,7 +28,7 @@
             <div class="bg-yellow-100 rounded-2xl p-10 flex flex-col items-start justify-center shadow">
                 <h1 class="text-4xl font-extrabold mb-4 text-gray-900">Find Exactly What Matters</h1>
                 <p class="text-2xl font-normal text-gray-700">
-                    Don't just scroll—search. Use powerful filters to find users,
+                    Don't just scroll... Search. Use powerful filters to find users,
                     posts, and groups by specific attributes, interests, or location with pinpoint accuracy.
                 </p>
             </div>
