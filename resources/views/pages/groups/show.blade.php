@@ -7,7 +7,7 @@
 <div class="container mx-auto px-4 py-8"> 
     
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start relative">
-        
+
         <div class="lg:col-span-8 order-2 lg:order-1">
             @if($isOwner && isset($pendingRequests) && $pendingRequests->count())
                 <div class="mb-8 animate-fade-in-up">
@@ -131,7 +131,7 @@
                 
                 <div class="px-8 pb-10 relative">
                     <div class="-mt-24 mb-6">
-                        <div class="bg-white p-3 rounded-4xl shadow-sm inline-block">
+                        <div class="bg-[#820263]/40 p-3 rounded-[1.6em] shadow-sm inline-block">
                             <div class="h-40 w-40 bg-[#820263] rounded-[1.7rem] flex items-center justify-center text-white text-8xl font-extrabold shadow-inner">
                                 {{ substr($group->name, 0, 1) }}
                             </div>
@@ -217,46 +217,28 @@
                     $sortedMembers = $members->sortByDesc(function($member) use ($ownerId) {
                         return isset($ownerId) && $member->id === $ownerId;
                     });
+
+                    $visibleMembers = $sortedMembers->take(4);
+                    $remainingCount = $sortedMembers->count() - 4;
                 @endphp
 
                 @if($sortedMembers->isEmpty())
                     <p class="text-gray-500 text-lg italic">No visible members.</p>
                 @else
                     <div class="space-y-5">
-                        @foreach($sortedMembers as $member)
-                            @php $isGroupOwner = (isset($ownerId) && $member->id === $ownerId); @endphp
-                            <div class="flex items-center p-3 rounded-xl hover:bg-gray-50 transition-colors {{ $isGroupOwner ? 'bg-amber-50/50 border border-amber-100' : '' }}">
-                                <div class="w-16 h-16 rounded-full flex items-center justify-center font-bold text-2xl mr-5 shadow-sm border flex-shrink-0 {{ $isGroupOwner ? 'bg-amber-100 text-amber-700 border-amber-200' : 'bg-indigo-50 text-indigo-600 border-indigo-100' }}">
-                                    {{ substr($member->name, 0, 1) }}
-                                </div>
-                                <div class="min-w-0 flex-1">
-                                    <div class="flex items-center gap-2">
-                                        <p class="text-xl font-bold text-gray-900 truncate">{{ $member->name }}</p>
-                                        @if($isGroupOwner)
-                                            <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-bold bg-amber-100 text-amber-700 uppercase tracking-wide">
-                                                Owner
-                                            </span>
-                                        @endif
-                                    </div>
-                                    <div class="flex items-center text-base text-gray-500 truncate mt-1">
-                                        <span>@ {{ $member->username }}</span>
-                                        @if($isGroupOwner)
-                                            <i class="fas fa-crown text-amber-400 ml-2 text-sm"></i>
-                                        @endif
-                                    </div>
-                                </div>
-                                @if($isOwnerView && !$isGroupOwner)
-                                    <form action="{{ route('groups.removeMember', ['group' => $group->id, 'user' => $member->id]) }}" method="POST" class="ml-4">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="text-red-600 hover:bg-red-50 p-3 rounded-full transition-colors" title="Remove from group">
-                                            <i class="fas fa-user-minus text-xl"></i>
-                                        </button>
-                                    </form>
-                                @endif
-                            </div>
+                        @foreach($visibleMembers as $member)
+                            @include('components.groups.member-item', ['member' => $member, 'group' => $group, 'isOwnerView' => $isOwnerView, 'ownerId' => $ownerId])
                         @endforeach
                     </div>
+
+                    @if($remainingCount > 0)
+                        <div class="mt-6 pt-6 border-t border-gray-100">
+                            <button data-modal="all-members-modal" class="w-full py-3 bg-gray-50 hover:bg-gray-100 text-gray-700 font-bold rounded-xl transition-colors border border-gray-200 flex items-center justify-center gap-2">
+                                <span>View all members</span>
+                                <span class="bg-gray-200 text-gray-600 text-xs px-2 py-1 rounded-full">{{ $sortedMembers->count() }}</span>
+                            </button>
+                        </div>
+                    @endif
                 @endif
             </div>
 
@@ -268,6 +250,32 @@
 <x-posts.post-modal />
 <x-posts.edit.edit-regular-modal />
 <x-posts.edit.edit-review-modal />
+
+<div id="all-members-modal" class="hidden fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+    <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+        <div class="fixed inset-0 bg-gray-500/75 transition-opacity modal-close-trigger" aria-hidden="true"></div>
+        <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+
+        <div class="inline-block align-bottom bg-white rounded-2xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg w-full">
+            <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="text-2xl leading-6 font-bold text-gray-900" id="modal-title">
+                        Group Members <span class="text-gray-400 font-normal text-lg ml-2">({{ $sortedMembers->count() }})</span>
+                    </h3>
+                    <button type="button" class="modal-close-trigger text-gray-400 hover:text-gray-500 focus:outline-none">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
+                </div>
+
+                <div class="max-h-[60vh] overflow-y-auto pr-2 custom-scrollbar space-y-4">
+                    @foreach($sortedMembers as $member)
+                        @include('components.groups.member-item', ['member' => $member, 'group' => $group, 'isOwnerView' => $isOwnerView, 'ownerId' => $ownerId])
+                    @endforeach
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 @yield('modal-overlay')
 
@@ -282,9 +290,19 @@
                 const modal = document.getElementById(targetId);
                 if (modal) {
                     modal.classList.remove('hidden');
-                    modal.style.display = 'block';
+                    document.body.style.overflow = 'hidden';
                 }
             });
+        });
+
+        document.addEventListener('click', function(e) {
+            if (e.target.closest('.modal-close-trigger') || e.target.classList.contains('modal-close-trigger')) {
+                const modal = e.target.closest('[role="dialog"]');
+                if (modal) {
+                    modal.classList.add('hidden');
+                    document.body.style.overflow = 'auto';
+                }
+            }
         });
     });
 
@@ -326,4 +344,5 @@
             .catch(error => console.error('Error:', error));
     }
 </script>
+
 @endsection
