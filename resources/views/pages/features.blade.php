@@ -29,16 +29,15 @@
                 <h1 class="text-4xl font-extrabold mb-4 text-gray-900">Find Exactly What Matters</h1>
                 <p class="text-2xl font-normal text-gray-700">
                     Don't just scroll... Search. Use powerful filters to find users,
-                    posts, and groups by specific attributes, interests, or location with pinpoint accuracy.
+                    posts, and groups by specific attributes or interests with pinpoint accuracy.
                 </p>
             </div>
             <!-- Box 4: Middle far right -->
             <div class="bg-green-100 rounded-2xl p-10 flex flex-col items-start justify-center shadow">
-                <h1 class="text-4xl font-extrabold mb-4 text-gray-900">Your Feed, Your Way</h1>
+                <h1 class="text-4xl font-extrabold mb-4 text-gray-900">A Trusted Space</h1>
                 <p class="text-2xl font-normal text-gray-700">
-                    Toggle between a global public view, a personalized timeline
-                    with only your friends' posts, or just your friends' feeds. Need focus? Snooze notifications to browse
-                    without distraction.
+                    A platform built on respect. Advanced reporting features,
+                    contextual error handling, and a dedicated admin team ensure a welcoming environment for everyone.
                 </p>
             </div>
             <!-- Box 5: Bottom left -->
@@ -51,10 +50,11 @@
             </div>
             <!-- Box 6: Bottom right -->
             <div class="bg-blue-100 rounded-2xl p-10 col-span-2 flex flex-col items-start justify-center shadow">
-                <h1 class="text-4xl font-extrabold mb-4 text-gray-900">A Trusted Space</h1>
+                <h1 class="text-4xl font-extrabold mb-4 text-gray-900">Your Feed, Your Way</h1>
                 <p class="text-2xl font-normal text-gray-700">
-                    A platform built on respect. Advanced reporting features,
-                    contextual error handling, and a dedicated admin team ensure a welcoming environment for everyone.
+                    Toggle between a global public view, a personalized timeline
+                    with only your friends' posts, or just your friends' feeds. Need focus? Snooze notifications to browse
+                    without distraction.
                 </p>
             </div>
         </div>
