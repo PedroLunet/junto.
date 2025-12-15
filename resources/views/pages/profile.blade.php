@@ -116,7 +116,7 @@
         <!-- Modals (outside scrollable area) -->
         <x-posts.post-modal />
         <x-profile.add-fav-modal />
-        <x-profile.edit-profile-modal />
+        <x-profile.edit-profile-modal :user="$user" />
         <x-ui.alert />
     </div>
 
