@@ -16,6 +16,10 @@ use App\Http\Controllers\Post\CommentController;
 use App\Http\Controllers\Post\PostController;
 use App\Http\Controllers\Post\ReportController;
 use App\Http\Controllers\Post\ReviewController;
+use App\Http\Controllers\Admin\AdminController;
+use App\Http\Controllers\Post\CommentController;
+use App\Http\Controllers\Auth\GoogleController;
+use App\Http\Controllers\Notification\NotificationController;
 use App\Http\Controllers\Search\SearchUserController;
 use App\Http\Controllers\User\ProfileController;
 use Illuminate\Support\Facades\Route;
@@ -161,6 +165,25 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/groups/{group}/reviews', [ReviewController::class, 'store'])->name('groups.reviews.store');
 });
 
+// Notifications
+Route::middleware(['auth', 'regular.user'])->controller(NotificationController::class)->group(function () {
+    Route::get('/notifications', 'index')->name('notifications.index');
+    Route::post('/notifications/{id}/read', 'markAsRead')->name('notifications.mark-read');
+    Route::post('/notifications/read-all', 'markAllAsRead')->name('notifications.mark-all-read');
+    Route::post('/notifications/{id}/snooze', 'snooze')->name('notifications.snooze');
+    Route::get('/notifications/unread-count', 'getUnreadCount')->name('notifications.unread-count');
+});
+
+// Static pages
+Route::group([], function () {
+    Route::get('/about', function () {
+        return view('pages.about');
+    })->name('about');
+});
+
+
 Route::middleware('regular.user')->controller(ProfileController::class)->group(function () {
     Route::get('/{username}', 'show')->name('profile.show');
 });
+
+

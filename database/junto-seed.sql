@@ -333,11 +333,13 @@ CREATE OR REPLACE FUNCTION fn_notify_post_like() RETURNS TRIGGER AS $$
 DECLARE 
     notif_id INT;
     post_owner INT;
+    liker_name VARCHAR(100);
 BEGIN
     SELECT userId INTO post_owner FROM post WHERE id = NEW.postId;
+    SELECT name INTO liker_name FROM users WHERE id = NEW.userId;
     
     INSERT INTO notification (message, receiverId)
-    VALUES (CONCAT('Your post received a like from ', NEW.userId), post_owner)
+    VALUES (CONCAT('Your post received a like from ', liker_name), post_owner)
     RETURNING id INTO notif_id;
     
     INSERT INTO activity_notification (notificationId, postId)
@@ -361,13 +363,15 @@ DECLARE
     notif_id INTEGER;
     comment_owner INTEGER;
     post_ref INTEGER;
+    liker_name VARCHAR(100);
 BEGIN
     SELECT userId, postId INTO comment_owner, post_ref
     FROM comment
     WHERE id = NEW.commentId;
+    SELECT name INTO liker_name FROM users WHERE id = NEW.userId;
     
     INSERT INTO notification (message, receiverId)
-    VALUES (CONCAT('Your comment received a like from ', NEW.userId), comment_owner)
+    VALUES (CONCAT('Your comment received a like from ', liker_name), comment_owner)
     RETURNING id INTO notif_id;
     
     INSERT INTO activity_notification (notificationId, postId)
@@ -387,11 +391,13 @@ CREATE OR REPLACE FUNCTION fn_notify_comment() RETURNS TRIGGER AS $$
 DECLARE 
     notif_id INTEGER;
     post_owner INTEGER;
+    commenter_name VARCHAR(100);
 BEGIN
     SELECT userId INTO post_owner FROM post WHERE id = NEW.postId;
+    SELECT name INTO commenter_name FROM users WHERE id = NEW.userId;
     
     INSERT INTO notification (message, receiverId)
-    VALUES (CONCAT('Your post received a comment from ', NEW.userId), post_owner)
+    VALUES (CONCAT('Your post received a comment from ', commenter_name), post_owner)
     RETURNING id INTO notif_id;
     
     INSERT INTO activity_notification (notificationId, postId)

@@ -79,7 +79,6 @@ class FriendRequestController extends Controller
         $this->authorize('send', [FriendRequest::class, $receiver]);
 
         try {
-            // Send the friend request
             FriendRequest::send(Auth::id(), $receiver->id);
 
             return back()->with('success', 'Friend request sent successfully!');
