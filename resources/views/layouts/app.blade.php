@@ -165,7 +165,7 @@
             @endauth
 
             <div class="w-full text-center text-white text-xl mb-4 mt-2">
-                <a href="{{ route('about') }}" class="hover:underline">About us</a> . Main Features . Contact Us
+                <a href="{{ route('about') }}" class="hover:underline">About us</a> . <a href="{{ route('features') }}" class="hover:underline">Main Features</a> . Contact Us
             </div>
         </aside>
 

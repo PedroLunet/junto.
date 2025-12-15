@@ -158,7 +158,6 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/groups/{group}/reject-request/{requestId}', [GroupController::class, 'rejectRequest'])->name('groups.rejectRequest');
     Route::post('/groups/{group}/posts', [GroupController::class, 'storePost'])->name('groups.posts.store');
 
-    // --- ADDED THIS LINE ---
     Route::post('/groups/{group}/reviews', [ReviewController::class, 'store'])->name('groups.reviews.store');
 });
 
@@ -171,13 +170,14 @@ Route::middleware(['auth', 'regular.user'])->controller(NotificationController::
     Route::get('/notifications/unread-count', 'getUnreadCount')->name('notifications.unread-count');
 });
 
-// Static pages
-Route::group([], function () {
-    Route::get('/about', function () {
-        return view('pages.about');
-    })->name('about');
-});
+// Static Pages
+Route::get('/about', function () {
+    return view('pages.about');
+})->name('about');
 
+Route::get('/features', function () {
+    return view('pages.features');
+})->name('features');
 
 Route::middleware('regular.user')->controller(ProfileController::class)->group(function () {
     Route::get('/{username}', 'show')->name('profile.show');
