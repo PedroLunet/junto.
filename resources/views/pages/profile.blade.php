@@ -33,10 +33,11 @@
 
                         @auth
                             @if (Auth::id() === $user->id)
-                                <x-ui.button onclick="openEditProfileModal()" variant="primary"
-                                    class="text-xl md:text-2xl font-medium">
-                                    Edit Profile
-                                </x-ui.button>
+                                <a href="{{ route('profile.edit') }}">
+                                    <x-ui.button variant="primary" class="text-xl md:text-2xl font-medium">
+                                        Edit Profile
+                                    </x-ui.button>
+                                </a>
                             @else
                                 <!-- Friend request button -->
                                 <div class="mt-4 md:mt-6">
@@ -113,10 +114,8 @@
             @endif
         </div>
 
-        <!-- Modals (outside scrollable area) -->
         <x-posts.post-modal />
         <x-profile.add-fav-modal />
-        <x-profile.edit-profile-modal :user="$user" />
         <x-ui.alert />
     </div>
 

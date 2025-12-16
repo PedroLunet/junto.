@@ -232,4 +232,13 @@ class ProfileController extends Controller
             ], 500);
         }
     }
+
+    /**
+     * Show the form for editing the authenticated user's profile.
+     */
+    public function edit(): View
+    {
+        $user = Auth::user();
+        return view('pages.edit-profile', compact('user'));
+    }
 }

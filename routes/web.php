@@ -36,8 +36,10 @@ Route::middleware(['auth', 'regular.user'])->group(function () {
     Route::post('/posts/{id}/like', [HomeController::class, 'toggleLike'])->name('post.like');
 });
 
+
 Route::middleware(['auth', 'regular.user'])->controller(ProfileController::class)->group(function () {
     Route::get('/profile', 'index')->name('profile');
+    Route::get('/profile/edit', 'edit')->name('profile.edit');
     Route::put('/profile/update', 'update')->name('profile.update');
     Route::post('/profile/remove-favorite', 'removeFavorite')->name('profile.remove-favorite');
     Route::post('/profile/add-favorite', 'addFavorite')->name('profile.add-favorite');
@@ -182,5 +184,3 @@ Route::group([], function () {
 Route::middleware('regular.user')->controller(ProfileController::class)->group(function () {
     Route::get('/{username}', 'show')->name('profile.show');
 });
-
-
