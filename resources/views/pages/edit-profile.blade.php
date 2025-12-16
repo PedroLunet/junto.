@@ -119,13 +119,11 @@
                         .then(response => response.json())
                         .then(data => {
                             if (data.success) {
-                                successDiv.textContent = 'Profile updated successfully!';
-                                successDiv.classList.remove('hidden');
-                                // Optionally update username in the back button
+                                // If username changed, reload to the new edit profile page for the new username
                                 if (data.user && data.user.username) {
-                                    const backBtn = document.querySelector(
-                                        'a[href^="/"], a[href*="profile.show"]');
-                                    if (backBtn) backBtn.href = `/` + data.user.username;
+                                    window.location.href = `/${data.user.username}/edit`;
+                                } else {
+                                    window.location.reload();
                                 }
                             } else {
                                 errorDiv.textContent = data.message ||
