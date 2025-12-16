@@ -18,9 +18,20 @@
 
                 <div class="flex items-center gap-6">
                     <!-- profile picture -->
-                    <div class="shrink-0 w-40 h-40 rounded-full overflow-hidden relative">
-                        <img src="{{ $user->profile_picture ?? asset('profile/default.png') }}" alt="Profile Picture"
-                            class="absolute inset-0 w-full h-full object-cover">
+                    <div class="shrink-0 w-40 h-40 relative">
+                        <div class="w-full h-full rounded-full overflow-hidden relative">
+                            <img id="profileImagePreview"
+                                src="{{ $user->profile_picture ?? asset('profile/default.png') }}" alt="Profile Picture"
+                                class="absolute inset-0 w-full h-full object-cover">
+                        </div>
+                        <x-ui.button variant="outline"
+                            class="absolute -top-2 -right-2 w-10 h-10 rounded-full flex items-center justify-center text-2xl font-bold z-10 px-0 py-0 bg-white border border-gray-300 shadow-lg hover:bg-gray-100">
+                            <i class="fas fa-edit text-purple-500"></i>
+                        </x-ui.button>
+                        <x-ui.button variant="outline"
+                            class="absolute -top-2 -left-2 w-10 h-10 rounded-full flex items-center justify-center text-2xl font-bold z-10 px-0 py-0 bg-white border border-gray-300 shadow-lg hover:bg-gray-100">
+                            <i class="fas fa-trash text-red-500"></i>
+                        </x-ui.button>
                     </div>
 
                     <div class="flex-1 space-y-6">
