@@ -135,8 +135,8 @@ Route::middleware(['auth', 'admin'])->controller(ReportController::class)->group
 
 // admin routes
 Route::middleware(['auth', 'admin'])->group(function () {
-    Route::get('/admin', [AdminController::class, 'showDashboard'])->name('admin.dashboard');
-    Route::get('/admin/users', [AdminController::class, 'listUsers'])->name('admin.users');
+    Route::get('/admin', [AdminController::class, 'dashboard'])->name('admin.dashboard');
+    Route::get('/admin/users', [AdminController::class, 'users'])->name('admin.users');
     Route::post('/admin/users/{id}/block', [AdminController::class, 'blockUser'])->name('admin.users.block');
     Route::post('/admin/users/{id}/unblock', [AdminController::class, 'unblockUser'])->name('admin.users.unblock');
     Route::get('/admin/reports', [AdminController::class, 'listReports'])->name('admin.reports');
