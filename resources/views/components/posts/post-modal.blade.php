@@ -77,9 +77,10 @@
                     <div id="addCommentSection" class="p-4 border-t border-gray-200 bg-white shrink-0">
                         <div class="flex gap-3 items-center">
                             @php
-                                $currentUserProfilePicture = Auth::user()->profilePicture
-                                    ? asset('profile/' . Auth::user()->profilePicture)
-                                    : asset('profile/default.png');
+                                $currentUserProfilePicture =
+                                    Auth::check() && Auth::user()->profilePicture
+                                        ? asset('profile/' . Auth::user()->profilePicture)
+                                        : asset('profile/default.png');
                             @endphp
                             <img src="{{ $currentUserProfilePicture }}" alt="User Avatar"
                                 class="w-12 h-12 rounded-full object-cover">
