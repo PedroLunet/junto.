@@ -17,7 +17,7 @@
 
             <div class="flex items-center gap-6">
                 <!-- profile picture -->
-                <div class="shrink-0 w-40 h-40 relative">
+                <div class="shrink-0 w-54 h-54 md:w-60 md:h-60 lg:w-72 lg:h-72 relative mr-10">
                     <div class="w-full h-full rounded-full overflow-hidden relative">
                         <img id="profileImagePreview"
                             src="{{ $user->profilepicture ? asset('profile/' . $user->profilepicture) : asset('profile/default.png') }}"
@@ -26,11 +26,11 @@
                     <!-- Profile image upload button and hidden file input -->
                     <input type="file" id="profileImageInput" name="profilePicture" accept="image/*" class="hidden" />
                     <x-ui.button type="button" id="editProfileImageBtn" variant="outline"
-                        class="absolute -top-2 -right-2 w-10 h-10 rounded-full flex items-center justify-center text-2xl font-bold z-10 px-0 py-0 bg-white border border-gray-300 shadow-lg hover:bg-gray-100">
+                        class="absolute -top-2 -right-2 rounded-full flex items-center justify-center text-4xl font-bold z-10 px-0 py-0 bg-white border border-gray-300 shadow-lg hover:bg-gray-100">
                         <i class="fas fa-pencil text-purple-500"></i>
                     </x-ui.button>
                     <x-ui.button type="button" id="resetProfileImageBtn" variant="outline"
-                        class="absolute -top-2 -left-2 w-10 h-10 rounded-full flex items-center justify-center text-2xl font-bold z-10 px-0 py-0 bg-white border border-gray-300 shadow-lg hover:bg-gray-100">
+                        class="absolute -top-2 -left-2 rounded-full flex items-center justify-center text-4xl font-bold z-10 px-0 py-0 bg-white border border-gray-300 shadow-lg hover:bg-gray-100">
                         <i class="fas fa-trash text-red-500"></i>
                     </x-ui.button>
                 </div>
@@ -38,40 +38,40 @@
                 <div class="flex-1 space-y-6">
                     <!-- name -->
                     <div>
-                        <label for="editName" class="block text-2xl font-medium text-gray-700 mb-2">Name</label>
+                        <label for="editName" class="block text-3xl font-medium text-gray-700 mb-2">Name</label>
                         <input type="text" id="editName" name="name" value="{{ old('name', $user->name ?? '') }}"
-                            class="w-full px-4 py-3 text-2xl border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#38157a] focus:border-transparent">
+                            class="w-full px-4 py-3 text-3xl border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#38157a] focus:border-transparent">
                     </div>
 
                     <!-- username -->
                     <div>
-                        <label for="editUsername" class="block text-2xl font-medium text-gray-700 mb-2">Username</label>
+                        <label for="editUsername" class="block text-3xl font-medium text-gray-700 mb-2">Username</label>
                         <input type="text" id="editUsername" name="username"
                             value="{{ old('username', $user->username ?? '') }}"
-                            class="w-full px-4 py-3 text-2xl border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#38157a] focus:border-transparent">
+                            class="w-full px-4 py-3 text-3xl border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#38157a] focus:border-transparent">
                     </div>
                 </div>
             </div>
 
             <!-- bio -->
             <div>
-                <label for="editBio" class="block text-2xl font-medium text-gray-700 mb-2">Bio</label>
+                <label for="editBio" class="block text-3xl font-medium text-gray-700 mb-2">Bio</label>
                 <textarea id="editBio" name="bio" rows="4" placeholder="Tell others about yourself..."
-                    class="w-full px-4 py-3 text-2xl border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#38157a] focus:border-transparent resize-none">{{ old('bio', $user->bio ?? '') }}</textarea>
+                    class="w-full px-4 py-3 text-3xl border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#38157a] focus:border-transparent resize-none">{{ old('bio', $user->bio ?? '') }}</textarea>
             </div>
 
             <!-- password (fake input, styled like others) -->
             <div>
-                <label class="block text-2xl font-medium text-gray-700 mb-2">Password</label>
+                <label class="block text-3xl font-medium text-gray-700 mb-2">Password</label>
                 <div class="relative">
-                    <div class="w-full px-4 py-3 text-2xl border border-gray-300 rounded-lg bg-gray-100 focus:ring-2 focus:ring-[#38157a] focus:border-transparent flex items-center select-none pr-14"
+                    <div class="w-full px-4 py-3 text-3xl border border-gray-300 rounded-lg bg-gray-100 focus:ring-2 focus:ring-[#38157a] focus:border-transparent flex items-center select-none pr-14"
                         style="letter-spacing: 0.3em;">
                         <span aria-label="Password hidden" class="tracking-widest text-gray-500 flex-1">
                             <span
                                 class="inline-block mx-0.5 text-3xl align-middle">&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;</span>
                         </span>
                         <x-ui.button variant="outline"
-                            class="absolute right-2 top-0 bottom-0 my-auto h-12 w-12 p-2 flex items-center justify-center text-2xl font-bold px-0 py-0 bg-white border border-gray-300 shadow-lg hover:bg-gray-100"
+                            class="absolute right-2 top-0 bottom-0 my-auto h-12 w-12 p-2 flex items-center justify-center text-3xl font-bold px-0 py-0 bg-white border border-gray-300 shadow-lg hover:bg-gray-100"
                             title="Edit Password">
                             <i
                                 class="fas fa-pencil text-purple-500 leading-none align-middle flex items-center justify-center"></i>
@@ -87,8 +87,8 @@
                 </x-ui.button>
             </div>
         </form>
-        <div id="profileUpdateSuccess" class="hidden mt-6 text-green-600 text-2xl font-semibold"></div>
-        <div id="profileUpdateError" class="hidden mt-6 text-red-600 text-2xl font-semibold"></div>
+        <div id="profileUpdateSuccess" class="hidden mt-6 text-green-600 text-3xl font-semibold"></div>
+        <div id="profileUpdateError" class="hidden mt-6 text-red-600 text-3xl font-semibold"></div>
 
         <script>
             document.addEventListener('DOMContentLoaded', function() {
