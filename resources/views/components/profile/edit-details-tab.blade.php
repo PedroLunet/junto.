@@ -13,11 +13,11 @@
             </div>
             <!-- Profile image upload button and hidden file input -->
             <input type="file" id="profileImageInput" name="profilePicture" accept="image/*" class="hidden" />
-            <x-ui.button type="button" id="editProfileImageBtn" variant="outline"
+            <x-ui.button type="button" id="editProfileImageBtn" variant="outline" title="Upload photo"
                 class="absolute -top-2 -right-2 rounded-full flex items-center justify-center text-4xl font-bold z-10 px-0 py-0 bg-white border border-gray-300 shadow-lg hover:bg-gray-100">
-                <i class="fas fa-pencil text-purple-500"></i>
+                <i class="fas fa-pencil text-[#820273]"></i>
             </x-ui.button>
-            <x-ui.button type="button" id="resetProfileImageBtn" variant="outline"
+            <x-ui.button type="button" id="resetProfileImageBtn" variant="outline" title="Reset to Default"
                 class="absolute -top-2 -left-2 rounded-full flex items-center justify-center text-4xl font-bold z-10 px-0 py-0 bg-white border border-gray-300 shadow-lg hover:bg-gray-100">
                 <i class="fas fa-trash text-red-500"></i>
             </x-ui.button>
@@ -25,8 +25,7 @@
 
         <div class="flex-1 space-y-6">
             <!-- name -->
-            <x-ui.input label="Name" name="name" type="text" value="{{ old('name', $user->name ?? '') }}"
-             />
+            <x-ui.input label="Name" name="name" type="text" value="{{ old('name', $user->name ?? '') }}" />
 
             <!-- username -->
             <x-ui.input label="Username" name="username" type="text"
@@ -37,13 +36,6 @@
     <!-- bio -->
     <x-ui.input label="Bio" name="bio" type="textarea" value="{{ old('bio', $user->bio ?? '') }}"
         placeholder="Tell others about yourself..." rows="4" />
-
-    <!-- form actions -->
-    <div class="flex justify-end gap-4 pt-4">
-        <x-ui.button type="submit" variant="primary" class="3xl" id="saveProfileBtn">
-            Save Changes
-        </x-ui.button>
-    </div>
 </form>
 <div id="profileUpdateSuccess" class="hidden mt-6 text-green-600 text-3xl font-semibold"></div>
 <div id="profileUpdateError" class="hidden mt-6 text-red-600 text-3xl font-semibold"></div>

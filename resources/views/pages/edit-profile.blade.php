@@ -2,13 +2,18 @@
 
 @section('content')
     <div class="container mx-auto px-4 py-8">
-        <div class="flex items-center mb-20 gap-10">
-            <a href="{{ route('profile.show', $user->username) }}" class="mr-4 text-gray-600 hover:text-gray-800 p-3">
-                <i class="fas fa-arrow-left text-3xl"></i>
-            </a>
-            <div>
-                <h1 class="text-4xl font-bold text-gray-900">Edit Profile</h1>
+        <div class="flex items-center justify-between mb-20 gap-10">
+            <div class="flex items-center gap-10">
+                <a href="{{ route('profile.show', $user->username) }}" class="mr-4 text-gray-600 hover:text-gray-800 p-3">
+                    <i class="fas fa-arrow-left text-3xl"></i>
+                </a>
+                <div>
+                    <h1 class="text-4xl font-bold text-gray-900">Edit Profile</h1>
+                </div>
             </div>
+            <x-ui.button type="submit" variant="primary" class="text-3xl mr-20" id="saveProfileBtn" form="editProfileForm">
+                Save Changes
+            </x-ui.button>
         </div>
 
         <x-ui.tabs :tabs="[
