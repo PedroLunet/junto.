@@ -1,6 +1,6 @@
 <div class="flex flex-col h-full">
     <!-- Fixed tabs header -->
-    <div class="flex-shrink-0 flex gap-4 mb-6 px-20">
+    <div class="shrink-0 flex gap-4 mb-6 px-20">
         @foreach ($tabs as $key => $tab)
             <button id="{{ $key }}-tab"
                 class="flex-1 pb-4 px-6 text-2xl font-medium transition-colors text-center {{ $loop->first ? 'text-[#820273] border-b-4 border-[#820273]' : 'border-b-4 border-transparent text-gray-500 hover:text-gray-700' }}">
