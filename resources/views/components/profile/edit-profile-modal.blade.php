@@ -86,10 +86,10 @@
             <x-ui.button type="button" onclick="closeEditProfileModal()" variant="secondary"
                 class="text-2xl font-medium">
                 Cancel
-                </x-button>
-                <x-ui.button type="submit" form="editProfileForm" variant="primary" class="text-2xl font-medium">
-                    Save Changes
-                    </x-button>
+            </x-ui.button>
+            <x-ui.button type="submit" form="editProfileForm" variant="primary" class="text-2xl font-medium">
+                Save Changes
+            </x-ui.button>
         </div>
     </div>
 </div>

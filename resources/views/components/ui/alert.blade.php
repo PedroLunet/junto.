@@ -19,7 +19,7 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12">
                     </path>
                 </svg>
-                </x-button>
+            </x-ui.button>
         </div>
 
         <!-- body -->
@@ -30,10 +30,10 @@
             <div id="alertButtons" class="flex justify-end gap-6">
                 <x-ui.button id="alertCancel" variant="secondary" class="hidden">
                     Cancel
-                    </x-button>
-                    <x-ui.button id="alertConfirm" variant="primary">
-                        OK
-                        </x-button>
+                </x-ui.button>
+                <x-ui.button id="alertConfirm" variant="primary">
+                    OK
+                </x-ui.button>
             </div>
         </div>
     </div>

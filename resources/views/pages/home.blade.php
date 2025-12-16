@@ -9,7 +9,7 @@
                 <p class="text-gray-600">You don't have any friends yet. Start by sending some friend requests!</p>
                 <x-ui.button onclick="window.location='{{ route('search.users') }}'" variant="primary" class="mt-4 px-6 py-2">
                     Find Friends
-                    </x-button>
+                </x-ui.button>
             </div>
         @else
             <div class="max-w-4xl mx-auto space-y-6">

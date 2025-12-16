@@ -1,4 +1,3 @@
-
 <!-- modal overlay -->
 <div id="create-group-post-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50">
     <div class="flex items-center justify-center min-h-screen p-4">
@@ -9,25 +8,32 @@
             </div>
             <!-- modal body -->
             <div class="p-8">
-                <form id="create-group-post-form" action="{{ route('groups.posts.store', ['group' => $group->id]) }}" method="POST" enctype="multipart/form-data">
+                <form id="create-group-post-form" action="{{ route('groups.posts.store', ['group' => $group->id]) }}"
+                    method="POST" enctype="multipart/form-data">
                     @csrf
                     <input type="hidden" name="group_id" value="{{ $group->id }}">
                     <div class="mb-4">
-                        <label class="block font-medium text-gray-700 mb-2">What would you like to share with the group?</label>
-                        <textarea name="content" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#38157a]" rows="4" placeholder="Share your thoughts..."></textarea>
+                        <label class="block font-medium text-gray-700 mb-2">What would you like to share with the
+                            group?</label>
+                        <textarea name="content"
+                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#38157a]"
+                            rows="4" placeholder="Share your thoughts..."></textarea>
                     </div>
                     <div id="group-image-preview-container" class="mb-4 hidden relative">
-                        <img id="group-image-preview" src="#" alt="Preview" class="max-h-64 rounded-lg object-cover border border-gray-200">
-                        <x-ui.button type="button" id="remove-group-image-btn" variant="ghost">X</x-button>
+                        <img id="group-image-preview" src="#" alt="Preview"
+                            class="max-h-64 rounded-lg object-cover border border-gray-200">
+                        <x-ui.button type="button" id="remove-group-image-btn" variant="ghost">X</x-ui.button>
                     </div>
                     <div class="mb-4">
                         <input type="file" name="image" id="group-image-input" accept="image/*" class="hidden">
-                        <x-ui.button type="button" id="add-group-image-button" variant="secondary">Add Photo</x-button>
+                        <x-ui.button type="button" id="add-group-image-button" variant="secondary">Add
+                            Photo</x-ui.button>
                         <span id="group-file-name" class="ml-3 text-sm text-gray-600"></span>
                     </div>
                     <div class="flex justify-end space-x-3">
-                        <x-ui.button type="button" id="cancel-group-post-button" variant="secondary">Cancel</x-button>
-                        <x-ui.button type="submit">Post to Group</x-button>
+                        <x-ui.button type="button" id="cancel-group-post-button"
+                            variant="secondary">Cancel</x-ui.button>
+                        <x-ui.button type="submit">Post to Group</x-ui.button>
                     </div>
                 </form>
             </div>
@@ -114,7 +120,8 @@
                         method: 'POST',
                         body: formData,
                         headers: {
-                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')
+                                .getAttribute('content')
                         }
                     })
                     .then(response => response.json())
