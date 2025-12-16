@@ -10,7 +10,8 @@
                 <h1 class="text-4xl font-bold text-gray-900">Edit Profile</h1>
             </div>
         </div>
-        <form id="editProfileForm" class="space-y-6" method="POST" action="{{ route('profile.update') }}">
+        <form id="editProfileForm" class="space-y-6" method="POST" action="{{ route('profile.update') }}"
+            enctype="multipart/form-data">
             @csrf
             @method('PUT')
 
@@ -18,11 +19,12 @@
                 <!-- profile picture -->
                 <div class="shrink-0 w-40 h-40 relative">
                     <div class="w-full h-full rounded-full overflow-hidden relative">
-                        <img id="profileImagePreview" src="{{ $user->profile_picture ?? asset('profile/default.png') }}"
+                        <img id="profileImagePreview"
+                            src="{{ $user->profilepicture ? asset('profile/' . $user->profilepicture) : asset('profile/default.png') }}"
                             alt="Profile Picture" class="absolute inset-0 w-full h-full object-cover">
                     </div>
                     <!-- Profile image upload button and hidden file input -->
-                    <input type="file" id="profileImageInput" name="profile_picture" accept="image/*" class="hidden" />
+                    <input type="file" id="profileImageInput" name="profilePicture" accept="image/*" class="hidden" />
                     <x-ui.button type="button" id="editProfileImageBtn" variant="outline"
                         class="absolute -top-2 -right-2 w-10 h-10 rounded-full flex items-center justify-center text-2xl font-bold z-10 px-0 py-0 bg-white border border-gray-300 shadow-lg hover:bg-gray-100">
                         <i class="fas fa-pencil text-purple-500"></i>
@@ -108,6 +110,8 @@
                     e.preventDefault();
                     profileImagePreview.src = defaultImagePath;
                     profileImageInput.value = '';
+                    // Mark that the image should be reset to default
+                    form.setAttribute('data-reset-profile-picture', 'true');
                 });
 
                 editProfileImageBtn.addEventListener('click', function(e) {
@@ -123,6 +127,8 @@
                             profileImagePreview.src = ev.target.result;
                         };
                         reader.readAsDataURL(file);
+                        // Unset reset flag if a new image is chosen
+                        form.removeAttribute('data-reset-profile-picture');
                     }
                 });
 
@@ -133,17 +139,18 @@
                     successDiv.classList.add('hidden');
                     errorDiv.classList.add('hidden');
 
-                    // Use FormData to support file upload
                     const formData = new FormData(form);
-                    formData.set('name', form.name.value);
-                    formData.set('username', form.username.value);
-                    formData.set('bio', form.bio.value);
-                    if (profileImageInput.files[0]) {
-                        formData.set('profile_picture', profileImageInput.files[0]);
+                    // Remove profilePicture if no file is selected
+                    if (!profileImageInput.files[0]) {
+                        formData.delete('profilePicture');
+                    }
+                    // If reset to default, send a flag
+                    if (form.getAttribute('data-reset-profile-picture') === 'true') {
+                        formData.append('reset_profile_picture', '1');
                     }
 
                     fetch(form.action, {
-                            method: 'POST', // Use POST for file upload (with _method=PUT)
+                            method: 'POST',
                             headers: {
                                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')
                                     .getAttribute('content'),
@@ -154,7 +161,6 @@
                         .then(response => response.json())
                         .then(data => {
                             if (data.success) {
-                                // If username changed, reload to the new edit profile page for the new username
                                 if (data.user && data.user.username) {
                                     window.location.href = `/${data.user.username}/edit`;
                                 } else {

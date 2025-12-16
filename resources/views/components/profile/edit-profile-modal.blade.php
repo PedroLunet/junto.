@@ -21,8 +21,8 @@
                     <div class="shrink-0 w-40 h-40 relative">
                         <div class="w-full h-full rounded-full overflow-hidden relative">
                             <img id="profileImagePreview"
-                                src="{{ $user->profile_picture ?? asset('profile/default.png') }}" alt="Profile Picture"
-                                class="absolute inset-0 w-full h-full object-cover">
+                                src="{{ $user->profilepicture ? asset('profile/' . $user->profilepicture) : asset('profile/default.png') }}"
+                                alt="Profile Picture" class="absolute inset-0 w-full h-full object-cover">
                         </div>
                         <x-ui.button variant="outline"
                             class="absolute -top-2 -right-2 w-10 h-10 rounded-full flex items-center justify-center text-2xl font-bold z-10 px-0 py-0 bg-white border border-gray-300 shadow-lg hover:bg-gray-100">
@@ -66,11 +66,12 @@
                         <div class="w-full px-4 py-3 text-2xl border border-gray-300 rounded-lg bg-gray-100 focus:ring-2 focus:ring-[#38157a] focus:border-transparent flex items-center select-none pr-14"
                             style="letter-spacing: 0.3em;">
                             <span aria-label="Password hidden" class="tracking-widest text-gray-500 flex-1">
-                                <span class="inline-block mx-0.5 text-3xl align-middle">&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;</span>  
+                                <span
+                                    class="inline-block mx-0.5 text-3xl align-middle">&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;</span>
                             </span>
                             <x-ui.button variant="outline"
                                 class="absolute right-2 top-0 bottom-0 my-auto h-12 w-12 p-2 flex items-center justify-center text-2xl font-bold px-0 py-0 bg-white border border-gray-300 shadow-lg hover:bg-gray-100"
-                                 title="Edit Password">
+                                title="Edit Password">
                                 <i
                                     class="fas fa-edit text-purple-500 leading-none align-middle flex items-center justify-center"></i>
                             </x-ui.button>

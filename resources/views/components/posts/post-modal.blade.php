@@ -77,9 +77,11 @@
                     <div id="addCommentSection" class="p-4 border-t border-gray-200 bg-white shrink-0">
                         <div class="flex gap-3 items-center">
                             @php
-                                $authorProfilePicture = $post->user->profile_picture ?? asset('profile/default.png');
+                                $currentUserProfilePicture = Auth::user()->profilePicture
+                                    ? asset('profile/' . Auth::user()->profilePicture)
+                                    : asset('profile/default.png');
                             @endphp
-                            <img src="{{ $authorProfilePicture }}" alt="User Avatar"
+                            <img src="{{ $currentUserProfilePicture }}" alt="User Avatar"
                                 class="w-12 h-12 rounded-full object-cover">
                             <div class="flex-1 relative">
                                 <input type="text" id="commentInput"

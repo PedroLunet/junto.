@@ -7,9 +7,10 @@
             <div class="flex items-start justify-between gap-10 md:gap-12 lg:gap-16 mb-10 md:mb-12">
                 <!-- profile header -->
                 <div class="flex items-center gap-8 md:gap-10">
-                    <div class="w-54 h-54 md:w-60 md:h-60 lg:w-72 lg:h-72 rounded-full shrink-0 overflow-hidden relative bg-gray-300 border-2 border-gray-200 flex items-center justify-center">
-                        <img src="{{ $user->profile_picture ?? asset('profile/default.png') }}" alt="Profile Picture"
-                            class="absolute inset-0 w-full h-full object-cover">
+                    <div
+                        class="w-54 h-54 md:w-60 md:h-60 lg:w-72 lg:h-72 rounded-full shrink-0 overflow-hidden relative bg-gray-300 border-2 border-gray-200 flex items-center justify-center">
+                        <img src="{{ $user->profilepicture ? asset('profile/' . $user->profilepicture) : asset('profile/default.png') }}"
+                            alt="Profile Picture" class="absolute inset-0 w-full h-full object-cover">
                     </div>
 
                     <div class="flex-1">
