@@ -6,7 +6,8 @@
         <div class="flex items-center justify-between mb-8">
             <div class="flex items-center gap-3">
                 <!-- user avatar -->
-                <div class="w-12 h-12 bg-gray-200 rounded-full"></div>
+                <img src="{{ asset('profile/default.png') }}" alt="User Avatar"
+                    class="w-12 h-12 rounded-full object-cover bg-gray-200">
 
                 <div class="flex flex-col">
                     <span class="font-semibold text-gray-900">

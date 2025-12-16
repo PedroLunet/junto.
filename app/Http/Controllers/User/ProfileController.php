@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Log;
 
 class ProfileController extends Controller
 {
@@ -204,21 +205,36 @@ class ProfileController extends Controller
         $user = Auth::user();
 
         // Validate the input
+
         $request->validate([
             'name' => 'required|string|max:255',
             'username' => 'required|string|max:255|unique:users,username,' . $user->id,
-            'bio' => 'nullable|string|max:1000'
+            'bio' => 'nullable|string|max:1000',
+            'profilePicture' => 'nullable|image|max:4096', // max 4MB
         ]);
 
         try {
-            // Update user data using direct DB query
+            $updateData = [
+                'name' => $request->input('name'),
+                'username' => $request->input('username'),
+                'bio' => $request->input('bio'),
+            ];
+
+
+            // Handle profile picture upload or reset
+            if ($request->has('reset_profile_picture') && $request->input('reset_profile_picture') == '1') {
+                // User requested to reset to default
+                $updateData['profilepicture'] = null;
+            } else if ($request->hasFile('profilePicture')) {
+                $file = $request->file('profilePicture');
+                $fileName = $file->hashName();
+                $file->storeAs('profile', $fileName, 'FileStorage');
+                $updateData['profilepicture'] = $fileName;
+            }
+
             DB::table('users')
                 ->where('id', $user->id)
-                ->update([
-                    'name' => $request->input('name'),
-                    'username' => $request->input('username'),
-                    'bio' => $request->input('bio')
-                ]);
+                ->update($updateData);
 
             return response()->json([
                 'success' => true,
@@ -226,10 +242,20 @@ class ProfileController extends Controller
                 'redirect_url' => '/' . $request->input('username') // redirect to new username if changed
             ]);
         } catch (\Exception $e) {
+            Log::error('Profile update error: ' . $e->getMessage() . "\n" . $e->getTraceAsString());
             return response()->json([
                 'success' => false,
                 'message' => 'An error occurred while updating your profile'
             ], 500);
         }
+    }
+
+    /**
+     * Show the form for editing the authenticated user's profile.
+     */
+    public function edit(): View
+    {
+        $user = Auth::user();
+        return view('pages.edit-profile', compact('user'));
     }
 }

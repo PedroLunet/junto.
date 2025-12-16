@@ -22,10 +22,10 @@
                 <div class="flex justify-end gap-3">
                     <x-ui.button onclick="closeReportModal()" variant="secondary">
                         Cancel
-                        </x-button>
-                        <x-ui.button onclick="submitReport()" variant="danger">
-                            Submit Report
-                            </x-button>
+                    </x-ui.button>
+                    <x-ui.button onclick="submitReport()" variant="danger">
+                        Submit Report
+                    </x-ui.button>
                 </div>
             </div>
         </div>

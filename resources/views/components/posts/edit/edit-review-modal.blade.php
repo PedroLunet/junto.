@@ -49,12 +49,12 @@
                     </div>
 
                     <div class="flex justify-between items-center">
-                        <x-ui.button type="button" id="delete-review-button" variant="danger">Delete</x-button>
-                            <div class="flex space-x-3">
-                                <x-ui.button type="button" id="cancel-edit-review-button"
-                                    variant="secondary">Cancel</x-button>
-                                    <x-ui.button type="submit" variant="primary">Update Review</x-button>
-                            </div>
+                        <x-ui.button type="button" id="delete-review-button" variant="danger">Delete</x-ui.button>
+                        <div class="flex space-x-3">
+                            <x-ui.button type="button" id="cancel-edit-review-button"
+                                variant="secondary">Cancel</x-ui.button>
+                            <x-ui.button type="submit" variant="primary">Update Review</x-ui.button>
+                        </div>
                     </div>
                 </form>
             </div>

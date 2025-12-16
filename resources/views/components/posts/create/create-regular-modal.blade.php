@@ -23,18 +23,18 @@
                     <div id="image-preview-container" class="mb-4 hidden relative">
                         <img id="image-preview" src="#" alt="Preview"
                             class="max-h-64 rounded-lg object-cover border border-gray-200">
-                        <x-ui.button type="button" id="remove-image-btn" variant="ghost">X</x-button>
+                        <x-ui.button type="button" id="remove-image-btn" variant="ghost">X</x-ui.button>
                     </div>
 
                     <div class="mb-4">
                         <input type="file" name="image" id="image-input" accept="image/*" class="hidden">
-                        <x-ui.button type="button" id="add-image-button" variant="secondary">Add Photo</x-button>
-                            <span id="file-name" class="ml-3 text-sm text-gray-600"></span>
+                        <x-ui.button type="button" id="add-image-button" variant="secondary">Add Photo</x-ui.button>
+                        <span id="file-name" class="ml-3 text-sm text-gray-600"></span>
                     </div>
 
                     <div class="flex justify-end space-x-3">
-                        <x-ui.button type="button" id="cancel-button" variant="secondary">Cancel</x-button>
-                            <x-ui.button type="submit">Post</x-button>
+                        <x-ui.button type="button" id="cancel-button" variant="secondary">Cancel</x-ui.button>
+                        <x-ui.button type="submit">Post</x-ui.button>
                     </div>
                 </form>
             </div>

@@ -36,8 +36,10 @@ Route::middleware(['auth', 'regular.user'])->group(function () {
     Route::post('/posts/{id}/like', [HomeController::class, 'toggleLike'])->name('post.like');
 });
 
+
 Route::middleware(['auth', 'regular.user'])->controller(ProfileController::class)->group(function () {
     Route::get('/profile', 'index')->name('profile');
+    Route::get('/profile/edit', 'edit')->name('profile.edit');
     Route::put('/profile/update', 'update')->name('profile.update');
     Route::post('/profile/remove-favorite', 'removeFavorite')->name('profile.remove-favorite');
     Route::post('/profile/add-favorite', 'addFavorite')->name('profile.add-favorite');
@@ -133,8 +135,8 @@ Route::middleware(['auth', 'admin'])->controller(ReportController::class)->group
 
 // admin routes
 Route::middleware(['auth', 'admin'])->group(function () {
-    Route::get('/admin', [AdminController::class, 'showDashboard'])->name('admin.dashboard');
-    Route::get('/admin/users', [AdminController::class, 'listUsers'])->name('admin.users');
+    Route::get('/admin', [AdminController::class, 'dashboard'])->name('admin.dashboard');
+    Route::get('/admin/users', [AdminController::class, 'users'])->name('admin.users');
     Route::post('/admin/users/{id}/block', [AdminController::class, 'blockUser'])->name('admin.users.block');
     Route::post('/admin/users/{id}/unblock', [AdminController::class, 'unblockUser'])->name('admin.users.unblock');
     Route::get('/admin/reports', [AdminController::class, 'listReports'])->name('admin.reports');
@@ -182,5 +184,3 @@ Route::group([], function () {
 Route::middleware('regular.user')->controller(ProfileController::class)->group(function () {
     Route::get('/{username}', 'show')->name('profile.show');
 });
-
-

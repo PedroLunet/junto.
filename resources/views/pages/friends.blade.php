@@ -31,9 +31,9 @@
                     <x-ui.button onclick="window.location='{{ route('search.users') }}'" variant="primary"
                         class="mt-4 px-6 py-2">
                         Find Friends
-                        </x-button>
-                    @else
-                        <p class="text-gray-600">{{ $user->name }} doesn't have any friends yet.</p>
+                    </x-ui.button>
+                @else
+                    <p class="text-gray-600">{{ $user->name }} doesn't have any friends yet.</p>
                 @endif
             </div>
         @else

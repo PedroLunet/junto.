@@ -15,14 +15,14 @@
                         @csrf
                         <x-ui.button type="submit" variant="success" class="px-4 py-2 text-2xl">
                             Accept
-                            </x-button>
+                        </x-ui.button>
                     </form>
                     <form action="{{ route('friend-requests.reject', $friendRequest->requestid) }}" method="POST"
                         class="inline">
                         @csrf
                         <x-ui.button type="submit" variant="danger" class="px-4 py-2 text-2xl">
                             Reject
-                            </x-button>
+                        </x-ui.button>
                     </form>
                 </div>
                 </x-user-card>

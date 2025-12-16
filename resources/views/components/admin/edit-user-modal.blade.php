@@ -66,10 +66,10 @@
         <div class="flex justify-end gap-4 p-8">
             <x-ui.button variant="secondary" type="button" onclick="closeEditUserModal()" class="text-2xl">
                 Cancel
-                </x-button>
-                <x-ui.button variant="primary" type="submit" form="editUserForm" class="text-2xl px-10 py-4">
-                    Update User
-                    </x-button>
+            </x-ui.button>
+            <x-ui.button variant="primary" type="submit" form="editUserForm" class="text-2xl px-10 py-4">
+                Update User
+            </x-ui.button>
         </div>
     </div>
 </div>

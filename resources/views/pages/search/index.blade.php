@@ -9,7 +9,7 @@
 
         <form method="get" class="flex flex-row gap-4 items-start w-full">
             <input value="{{ old('query', request('query')) }}" type="text" name="query" class="max-w-3/4 w-full" />
-            <x-ui.button>Search</x-button>
+            <x-ui.button>Search</x-ui.button>
         </form>
 
         <div class="w-full flex flex-col gap-4">

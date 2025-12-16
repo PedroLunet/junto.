@@ -67,8 +67,9 @@
                     </div>
 
                     <div class="flex justify-end space-x-3">
-                        <x-ui.button type="button" id="cancel-book-review-button" variant="secondary">Cancel</x-button>
-                            <x-ui.button type="submit">Post</x-button>
+                        <x-ui.button type="button" id="cancel-book-review-button"
+                            variant="secondary">Cancel</x-ui.button>
+                        <x-ui.button type="submit">Post</x-ui.button>
                     </div>
                 </form>
             </div>
