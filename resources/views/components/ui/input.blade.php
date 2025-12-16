@@ -9,6 +9,7 @@
     'icon' => null,
     'iconAction' => null,
     'rows' => 4,
+    'disabled' => false,
 ])
 
 @php
@@ -26,15 +27,16 @@
     <div class="relative flex items-center">
         @if ($isTextarea)
             <textarea id="{{ $inputId }}" name="{{ $name }}" rows="{{ $rows }}" placeholder="{{ $placeholder }}"
-                {{ $required ? 'required' : '' }}
-                {{ $attributes->merge(['class' => 'w-full px-4 py-3 text-2xl text-gray-800 border rounded-lg outline-none transition-all duration-200 placeholder:text-gray-400 focus:border-[#820273] focus:ring-4 focus:ring-purple-100 resize-none ' . ($error ? 'border-red-500 pr-12 focus:border-red-500 focus:ring-red-100' : 'border-gray-300')]) }}>{{ old($name, $value) }}</textarea>
+                {{ $required ? 'required' : '' }} {{ $disabled ? 'disabled' : '' }}
+                {{ $attributes->merge(['class' => 'w-full px-4 py-3 text-2xl text-gray-800 border rounded-lg outline-none transition-all duration-200 placeholder:text-gray-400 focus:border-[#820273] focus:ring-4 focus:ring-purple-100 resize-none ' . ($disabled ? 'bg-gray-400 cursor-not-allowed' : '') . ' ' . ($error ? 'border-red-500 pr-12 focus:border-red-500 focus:ring-red-100' : 'border-gray-300')]) }}>{{ old($name, $value) }}</textarea>
         @else
             <input type="{{ $type }}" id="{{ $inputId }}" name="{{ $name }}"
                 value="{{ old($name, $value) }}" placeholder="{{ $placeholder }}" {{ $required ? 'required' : '' }}
-                {{ $attributes->merge(['class' => 'w-full px-4 py-3 text-2xl text-gray-800 border rounded-lg outline-none transition-all duration-200 placeholder:text-gray-400 focus:border-[#820273] focus:ring-4 focus:ring-purple-100 ' . ($error ? 'border-red-500 pr-12 focus:border-red-500 focus:ring-red-100' : 'border-gray-300')]) }} />
+                {{ $disabled ? 'disabled' : '' }}
+                {{ $attributes->merge(['class' => 'w-full px-4 py-3 text-2xl text-gray-800 border rounded-lg outline-none transition-all duration-200 placeholder:text-gray-400 focus:border-[#820273] focus:ring-4 focus:ring-purple-100 ' . ($disabled ? 'bg-gray-400 cursor-not-allowed' : '') . ' ' . ($error ? 'border-red-500 pr-12 focus:border-red-500 focus:ring-red-100' : 'border-gray-300')]) }} />
         @endif
 
-        @if ($type === 'password')
+        @if ($type === 'password' && !$disabled)
             <button type="button"
                 class="absolute right-4 flex items-center justify-center text-gray-400 hover:text-gray-600 transition-colors duration-200"
                 onclick="togglePassword('{{ $inputId }}', this)">
