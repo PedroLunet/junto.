@@ -21,11 +21,13 @@
                         <img id="profileImagePreview" src="{{ $user->profile_picture ?? asset('profile/default.png') }}"
                             alt="Profile Picture" class="absolute inset-0 w-full h-full object-cover">
                     </div>
-                    <x-ui.button variant="outline"
+                    <!-- Profile image upload button and hidden file input -->
+                    <input type="file" id="profileImageInput" name="profile_picture" accept="image/*" class="hidden" />
+                    <x-ui.button type="button" id="editProfileImageBtn" variant="outline"
                         class="absolute -top-2 -right-2 w-10 h-10 rounded-full flex items-center justify-center text-2xl font-bold z-10 px-0 py-0 bg-white border border-gray-300 shadow-lg hover:bg-gray-100">
                         <i class="fas fa-pencil text-purple-500"></i>
                     </x-ui.button>
-                    <x-ui.button variant="outline"
+                    <x-ui.button type="button" id="resetProfileImageBtn" variant="outline"
                         class="absolute -top-2 -left-2 w-10 h-10 rounded-full flex items-center justify-center text-2xl font-bold z-10 px-0 py-0 bg-white border border-gray-300 shadow-lg hover:bg-gray-100">
                         <i class="fas fa-trash text-red-500"></i>
                     </x-ui.button>
@@ -93,6 +95,37 @@
                 const successDiv = document.getElementById('profileUpdateSuccess');
                 const errorDiv = document.getElementById('profileUpdateError');
 
+                // Profile image upload logic
+                const editProfileImageBtn = document.getElementById('editProfileImageBtn');
+                const profileImageInput = document.getElementById('profileImageInput');
+                const profileImagePreview = document.getElementById('profileImagePreview');
+                const resetProfileImageBtn = document.getElementById('resetProfileImageBtn');
+
+                // Default image path
+                const defaultImagePath = "{{ asset('profile/default.png') }}";
+                // Reset profile image to default on trash button click
+                resetProfileImageBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    profileImagePreview.src = defaultImagePath;
+                    profileImageInput.value = '';
+                });
+
+                editProfileImageBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    profileImageInput.click();
+                });
+
+                profileImageInput.addEventListener('change', function(e) {
+                    const file = e.target.files[0];
+                    if (file) {
+                        const reader = new FileReader();
+                        reader.onload = function(ev) {
+                            profileImagePreview.src = ev.target.result;
+                        };
+                        reader.readAsDataURL(file);
+                    }
+                });
+
                 form.addEventListener('submit', function(e) {
                     e.preventDefault();
                     saveBtn.disabled = true;
@@ -100,21 +133,23 @@
                     successDiv.classList.add('hidden');
                     errorDiv.classList.add('hidden');
 
-                    const formData = {
-                        name: form.name.value,
-                        username: form.username.value,
-                        bio: form.bio.value
-                    };
+                    // Use FormData to support file upload
+                    const formData = new FormData(form);
+                    formData.set('name', form.name.value);
+                    formData.set('username', form.username.value);
+                    formData.set('bio', form.bio.value);
+                    if (profileImageInput.files[0]) {
+                        formData.set('profile_picture', profileImageInput.files[0]);
+                    }
 
                     fetch(form.action, {
-                            method: 'PUT',
+                            method: 'POST', // Use POST for file upload (with _method=PUT)
                             headers: {
-                                'Content-Type': 'application/json',
                                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')
                                     .getAttribute('content'),
                                 'Accept': 'application/json'
                             },
-                            body: JSON.stringify(formData)
+                            body: formData
                         })
                         .then(response => response.json())
                         .then(data => {
