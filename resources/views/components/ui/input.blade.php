@@ -57,13 +57,13 @@
         @if ($error)
             <span
                 class="absolute right-4 {{ $isTextarea ? 'top-4' : '' }} flex items-center justify-center pointer-events-none">
-                <i class="fas fa-exclamation-circle text-red-500 text-xl"></i>
+                <i class="fas fa-exclamation-circle text-red-500 text-3xl"></i>
             </span>
         @endif
     </div>
 
     @if ($error)
-        <p class="mt-2 text-sm text-red-500 font-medium">{{ $error }}</p>
+        <p class="mt-2 text-xl text-red-500 font-medium">{{ $error }}</p>
     @endif
 </div>
 

@@ -25,17 +25,18 @@
 
         <div class="flex-1 space-y-6">
             <!-- name -->
-            <x-ui.input label="Name" name="name" type="text" value="{{ old('name', $user->name ?? '') }}" />
+            <x-ui.input label="Name" name="name" type="text" value="{{ old('name', $user->name ?? '') }}"
+                :error="$errors->first('name')" />
 
             <!-- username -->
             <x-ui.input label="Username" name="username" type="text"
-                value="{{ old('username', $user->username ?? '') }}" />
+                value="{{ old('username', $user->username ?? '') }}" :error="$errors->first('username')" />
         </div>
     </div>
 
     <!-- bio -->
     <x-ui.input label="Bio" name="bio" type="textarea" value="{{ old('bio', $user->bio ?? '') }}"
-        placeholder="Tell others about yourself..." rows="4" />
+        placeholder="Tell others about yourself..." rows="4" :error="$errors->first('bio')" />
 </form>
 <div id="profileUpdateSuccess" class="hidden mt-6 text-green-600 text-3xl font-semibold"></div>
 <div id="profileUpdateError" class="hidden mt-6 text-red-600 text-3xl font-semibold"></div>
@@ -108,7 +109,12 @@
                     },
                     body: formData
                 })
-                .then(response => response.json())
+                .then(response => {
+                    if (!response.ok) {
+                        return response.json().then(err => Promise.reject(err));
+                    }
+                    return response.json();
+                })
                 .then(data => {
                     if (data.success) {
                         if (data.user && data.user.username) {
@@ -116,15 +122,74 @@
                         } else {
                             window.location.reload();
                         }
+                    }
+                })
+                .catch((error) => {
+                    // Clear previous errors
+                    document.querySelectorAll('.input-error-message').forEach(el => el.remove());
+                    document.querySelectorAll('.border-red-500').forEach(el => {
+                        el.classList.remove('border-red-500', 'focus:border-red-500',
+                            'focus:ring-red-100');
+                        el.classList.add('border-gray-300');
+                    });
+                    document.querySelectorAll('.input-error-icon').forEach(el => el.remove());
+
+                    // Handle validation errors
+                    if (error.errors) {
+                        Object.keys(error.errors).forEach(field => {
+                            const input = form.querySelector(`[name="${field}"]`);
+                            if (input) {
+                                // Add error border
+                                input.classList.remove('border-gray-300');
+                                input.classList.add('border-red-500',
+                                    'focus:border-red-500', 'focus:ring-red-100',
+                                    'pr-12', '!border-red-500');
+
+                                // Add error icon
+                                const iconHtml = `<span class="absolute right-4 ${input.tagName === 'TEXTAREA' ? 'top-4' : ''} flex items-center justify-center pointer-events-none input-error-icon">
+                                    <i class="fas fa-exclamation-circle text-red-500 text-3xl"></i>
+                                </span>`;
+                                input.parentElement.insertAdjacentHTML('beforeend',
+                                    iconHtml);
+
+                                // Add error message
+                                const errorMsg =
+                                    `<p class="mt-2 text-xl text-red-500 font-medium input-error-message">${error.errors[field][0]}</p>`;
+                                input.parentElement.parentElement.insertAdjacentHTML(
+                                    'beforeend', errorMsg);
+
+                                // Add input event listener to clear error on typing
+                                input.addEventListener('input', function clearError() {
+                                    // Remove error styling
+                                    input.classList.remove('border-red-500',
+                                        'focus:border-red-500',
+                                        'focus:ring-red-100', 'pr-12',
+                                        '!border-red-500');
+                                    input.classList.add('border-gray-300');
+
+                                    // Remove error icon
+                                    const errorIcon = input.parentElement
+                                        .querySelector('.input-error-icon');
+                                    if (errorIcon) errorIcon.remove();
+
+                                    // Remove error message
+                                    const errorMessage = input.parentElement
+                                        .parentElement.querySelector(
+                                            '.input-error-message');
+                                    if (errorMessage) errorMessage.remove();
+
+                                    // Remove this event listener after first use
+                                    input.removeEventListener('input', clearError);
+                                }, {
+                                    once: false
+                                });
+                            }
+                        });
                     } else {
-                        errorDiv.textContent = data.message ||
+                        errorDiv.textContent = error.message ||
                             'An error occurred while updating your profile.';
                         errorDiv.classList.remove('hidden');
                     }
-                })
-                .catch(() => {
-                    errorDiv.textContent = 'An error occurred while updating your profile.';
-                    errorDiv.classList.remove('hidden');
                 })
                 .finally(() => {
                     saveBtn.disabled = false;
