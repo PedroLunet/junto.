@@ -36,12 +36,12 @@
                                 <x-ui.button onclick="openEditProfileModal()" variant="primary"
                                     class="text-xl md:text-2xl font-medium">
                                     Edit Profile
-                                    </x-button>
-                                @else
-                                    <!-- Friend request button -->
-                                    <div class="mt-4 md:mt-6">
-                                        <x-profile.friend-button :user="$user" :friendButtonData="$friendButtonData" />
-                                    </div>
+                                </x-ui.button>
+                            @else
+                                <!-- Friend request button -->
+                                <div class="mt-4 md:mt-6">
+                                    <x-profile.friend-button :user="$user" :friendButtonData="$friendButtonData" />
+                                </div>
                             @endif
                         @else
                             <!-- Befriend button for guests -->
@@ -49,7 +49,7 @@
                                 <x-ui.button variant="primary" onclick="window.location.href='/login'"
                                     class="text-xl md:text-2xl font-medium">
                                     Befriend
-                                    </x-button>
+                                </x-ui.button>
                             </div>
                         @endauth
                     </div>

@@ -3,12 +3,12 @@
         <!-- header -->
         <div class="flex items-center justify-between p-8">
             <h2 class="text-4xl font-bold text-gray-900">Edit Profile</h2>
-            <x-ui.button id="closeEditProfileModal" variant="ghost" class="text-gray-400 hover:text-gray-600 p-1">
+            <x-ui.button id="closeEditProfileModal" variant="ghost">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12">
                     </path>
                 </svg>
-            </x-button>
+            </x-ui.button>
         </div>
 
         <!-- body -->
@@ -16,18 +16,29 @@
             <form id="editProfileForm" class="space-y-6">
                 @csrf
 
-                <!-- name -->
-                <div>
-                    <label for="editName" class="block text-2xl font-medium text-gray-700 mb-2">Name</label>
-                    <input type="text" id="editName" name="name" value="{{ $user->name ?? '' }}"
-                        class="w-full px-4 py-3 text-2xl border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#38157a] focus:border-transparent">
-                </div>
+                <div class="flex items-center gap-6">
+                    <!-- profile picture -->
+                    <div class="shrink-0 w-40 h-40 rounded-full overflow-hidden relative">
+                        <img src="{{ $user->profile_picture ?? asset('profile/image.png') }}" alt="Profile Picture"
+                            class="absolute inset-0 w-full h-full object-cover">
+                    </div>
 
-                <!-- username -->
-                <div>
-                    <label for="editUsername" class="block text-2xl font-medium text-gray-700 mb-2">Username</label>
-                    <input type="text" id="editUsername" name="username" value="{{ $user->username ?? '' }}"
-                        class="w-full px-4 py-3 text-2xl border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#38157a] focus:border-transparent">
+                    <div class="flex-1 space-y-6">
+                        <!-- name -->
+                        <div>
+                            <label for="editName" class="block text-2xl font-medium text-gray-700 mb-2">Name</label>
+                            <input type="text" id="editName" name="name" value="{{ $user->name ?? '' }}"
+                                class="w-full px-4 py-3 text-2xl border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#38157a] focus:border-transparent">
+                        </div>
+
+                        <!-- username -->
+                        <div>
+                            <label for="editUsername"
+                                class="block text-2xl font-medium text-gray-700 mb-2">Username</label>
+                            <input type="text" id="editUsername" name="username" value="{{ $user->username ?? '' }}"
+                                class="w-full px-4 py-3 text-2xl border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#38157a] focus:border-transparent">
+                        </div>
+                    </div>
                 </div>
 
                 <!-- bio -->
