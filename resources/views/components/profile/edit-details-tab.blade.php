@@ -25,32 +25,22 @@
 
         <div class="flex-1 space-y-6">
             <!-- name -->
-            <div>
-                <label for="editName" class="block text-3xl font-medium text-gray-700 mb-2">Name</label>
-                <input type="text" id="editName" name="name" value="{{ old('name', $user->name ?? '') }}"
-                    class="w-full px-4 py-3 text-3xl border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#38157a] focus:border-transparent">
-            </div>
+            <x-ui.input label="Name" name="name" type="text" value="{{ old('name', $user->name ?? '') }}"
+             />
 
             <!-- username -->
-            <div>
-                <label for="editUsername" class="block text-3xl font-medium text-gray-700 mb-2">Username</label>
-                <input type="text" id="editUsername" name="username"
-                    value="{{ old('username', $user->username ?? '') }}"
-                    class="w-full px-4 py-3 text-3xl border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#38157a] focus:border-transparent">
-            </div>
+            <x-ui.input label="Username" name="username" type="text"
+                value="{{ old('username', $user->username ?? '') }}" />
         </div>
     </div>
 
     <!-- bio -->
-    <div>
-        <label for="editBio" class="block text-3xl font-medium text-gray-700 mb-2">Bio</label>
-        <textarea id="editBio" name="bio" rows="4" placeholder="Tell others about yourself..."
-            class="w-full px-4 py-3 text-3xl border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#38157a] focus:border-transparent resize-none">{{ old('bio', $user->bio ?? '') }}</textarea>
-    </div>
+    <x-ui.input label="Bio" name="bio" type="textarea" value="{{ old('bio', $user->bio ?? '') }}"
+        placeholder="Tell others about yourself..." rows="4" />
 
     <!-- form actions -->
     <div class="flex justify-end gap-4 pt-4">
-        <x-ui.button type="submit" variant="primary" class="text-3xl" id="saveProfileBtn">
+        <x-ui.button type="submit" variant="primary" class="3xl" id="saveProfileBtn">
             Save Changes
         </x-ui.button>
     </div>
