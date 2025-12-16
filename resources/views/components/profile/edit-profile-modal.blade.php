@@ -19,7 +19,7 @@
                 <div class="flex items-center gap-6">
                     <!-- profile picture -->
                     <div class="shrink-0 w-40 h-40 rounded-full overflow-hidden relative">
-                        <img src="{{ $user->profile_picture ?? asset('profile/image.png') }}" alt="Profile Picture"
+                        <img src="{{ $user->profile_picture ?? asset('profile/default.png') }}" alt="Profile Picture"
                             class="absolute inset-0 w-full h-full object-cover">
                     </div>
 
