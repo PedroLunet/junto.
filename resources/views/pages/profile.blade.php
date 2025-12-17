@@ -10,7 +10,8 @@
                     <div
                         class="w-54 h-54 md:w-60 md:h-60 lg:w-72 lg:h-72 rounded-full shrink-0 overflow-hidden relative bg-gray-300 border-2 border-gray-200 flex items-center justify-center">
                         <img src="{{ $user->profilepicture ? asset('profile/' . $user->profilepicture) : asset('profile/default.png') }}"
-                            alt="Profile Picture" class="absolute inset-0 w-full h-full object-cover">
+                            alt="Profile Picture" class="absolute inset-0 w-full h-full object-cover"
+                            onerror="this.onerror=null; this.src='{{ asset('profile/default.png') }}';">
                     </div>
 
                     <div class="flex-1">

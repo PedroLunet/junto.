@@ -75,7 +75,8 @@
                 <a href="{{ route('profile.show', Auth::user()->username) }}" class="flex items-center gap-3 flex-1">
                     @if (Auth::user()->profilepicture)
                         <img src="{{ asset('profile/' . Auth::user()->profilepicture) }}" alt="{{ Auth::user()->name }}"
-                            class="w-24 h-24 rounded-full object-cover">
+                            class="w-24 h-24 rounded-full object-cover"
+                            onerror="this.onerror=null; this.src='{{ asset('profile/default.png') }}';">
                     @else
                         <img src="{{ asset('profile/default.png') }}" alt="{{ Auth::user()->name }}"
                             class="w-24 h-24 rounded-full object-cover">

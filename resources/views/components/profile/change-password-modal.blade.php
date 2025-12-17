@@ -75,27 +75,27 @@
 </div>
 
 <script>
-    // Open password modal
+    // open password modal
     window.openPasswordModal = function() {
         document.getElementById('changePasswordModal').classList.remove('hidden');
         document.getElementById('changePasswordForm').reset();
         clearPasswordValidation();
     };
 
-    // Close password modal
+    // close password modal
     window.closePasswordModal = function() {
         document.getElementById('changePasswordModal').classList.add('hidden');
         document.getElementById('changePasswordForm').reset();
         clearPasswordValidation();
     };
 
-    // Clear validation messages
+    // clear validation messages
     function clearPasswordValidation() {
         document.getElementById('old_password_check').textContent = '';
         document.getElementById('confirm_password_match').textContent = '';
         document.getElementById('password_error').classList.add('hidden');
 
-        // Reset old password styling
+        // reset old password styling
         const oldPasswordInput = document.querySelector('input[name="old_password"]');
         if (oldPasswordInput) {
             oldPasswordInput.classList.remove('!border-green-500', 'focus:!border-green-500', 'focus:!ring-green-100',
@@ -106,7 +106,7 @@
             oldPasswordIcon.remove();
         }
 
-        // Reset requirement styles
+        // reset requirement styles
         ['length', 'uppercase', 'lowercase', 'special', 'number'].forEach(req => {
             const elem = document.getElementById('req_' + req);
             elem.classList.remove('text-green-600', 'text-red-600');
@@ -114,7 +114,7 @@
         });
     }
 
-    // Validate password requirements
+    // validate password requirements
     function validatePasswordRequirements(password) {
         const requirements = {
             length: password.length >= 12,
@@ -124,7 +124,7 @@
             number: /[0-9]/.test(password)
         };
 
-        // Update UI for each requirement
+        // update UI for each requirement
         Object.keys(requirements).forEach(req => {
             const elem = document.getElementById('req_' + req);
             elem.classList.remove('text-gray-500', 'text-green-600', 'text-red-600');
@@ -138,23 +138,22 @@
         return Object.values(requirements).every(req => req);
     }
 
-    // Real-time validation for new password
+    // real-time validation for password
     document.addEventListener('DOMContentLoaded', function() {
         const oldPasswordInput = document.querySelector('input[name="old_password"]');
         const newPasswordInput = document.querySelector('input[name="new_password"]');
         const confirmPasswordInput = document.querySelector('input[name="confirm_password"]');
 
-        // Validate old password against server
+        // validate old password against server
         if (oldPasswordInput) {
             let validationTimeout;
             oldPasswordInput.addEventListener('input', function() {
                 const password = this.value;
                 const checkMessage = document.getElementById('old_password_check');
 
-                // Clear previous timeout
                 clearTimeout(validationTimeout);
 
-                // Remove existing icon if any
+                // remove existing icon if any
                 const existingIcon = document.getElementById('old_password_icon');
                 if (existingIcon) {
                     existingIcon.remove();
@@ -168,7 +167,7 @@
                     return;
                 }
 
-                // Debounce the validation request
+                // debounce the validation request
                 validationTimeout = setTimeout(() => {
                     fetch('{{ route('profile.validate-password') }}', {
                             method: 'POST',
@@ -192,13 +191,13 @@
                                 checkMessage.textContent = '✓ Password verified';
                                 checkMessage.className = 'mt-2 text-xl text-green-600';
 
-                                // Add green border
+                                // green border
                                 oldPasswordInput.classList.remove('!border-red-500',
                                     'focus:!border-red-500', 'focus:!ring-red-100');
                                 oldPasswordInput.classList.add('!border-green-500',
                                     'focus:!border-green-500', 'focus:!ring-green-100');
 
-                                // Add green check icon
+                                // green check icon
                                 const inputContainer = oldPasswordInput.closest(
                                     '.relative');
                                 if (inputContainer && !document.getElementById(
@@ -213,13 +212,13 @@
                                 checkMessage.textContent = '✗ Incorrect password';
                                 checkMessage.className = 'mt-2 text-xl text-red-600';
 
-                                // Add red border
+                                // red border
                                 oldPasswordInput.classList.remove('!border-green-500',
                                     'focus:!border-green-500', 'focus:!ring-green-100');
                                 oldPasswordInput.classList.add('!border-red-500',
                                     'focus:!border-red-500', 'focus:!ring-red-100');
 
-                                // Add red X icon
+                                // red x icon
                                 const inputContainer = oldPasswordInput.closest(
                                 '.relative');
                                 if (inputContainer && !document.getElementById(
@@ -264,7 +263,7 @@
             });
         }
 
-        // Handle form submission
+        // handle form submission
         const form = document.getElementById('changePasswordForm');
         if (form) {
             form.addEventListener('submit', function(e) {
@@ -275,21 +274,21 @@
                 const confirmPassword = document.querySelector('input[name="confirm_password"]').value;
                 const errorDiv = document.getElementById('password_error');
 
-                // Validate new password requirements
+                // validate new password requirements
                 if (!validatePasswordRequirements(newPassword)) {
                     errorDiv.querySelector('p').textContent = 'Please meet all password requirements';
                     errorDiv.classList.remove('hidden');
                     return;
                 }
 
-                // Check if passwords match
+                // check if passwords match
                 if (newPassword !== confirmPassword) {
                     errorDiv.querySelector('p').textContent = 'Passwords do not match';
                     errorDiv.classList.remove('hidden');
                     return;
                 }
 
-                // Check if new password is different from old
+                // check if new password is different from old
                 if (oldPassword === newPassword) {
                     errorDiv.querySelector('p').textContent =
                         'New password must be different from old password';
@@ -299,7 +298,7 @@
 
                 errorDiv.classList.add('hidden');
 
-                // Submit to server
+                // submit
                 fetch('{{ route('profile.change-password') }}', {
                         method: 'POST',
                         headers: {

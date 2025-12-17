@@ -12,6 +12,7 @@ use App\Services\FavoriteService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Hash;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Log;
@@ -307,7 +308,7 @@ class ProfileController extends Controller
         $user = Auth::user();
 
         // Verify old password
-        if (!\Hash::check($request->old_password, $user->passwordhash)) {
+        if (!Hash::check($request->old_password, $user->passwordhash)) {
             return response()->json([
                 'success' => false,
                 'message' => 'Current password is incorrect'
@@ -325,7 +326,7 @@ class ProfileController extends Controller
         try {
             DB::table('users')
                 ->where('id', $user->id)
-                ->update(['passwordhash' => \Hash::make($request->new_password)]);
+                ->update(['passwordhash' => Hash::make($request->new_password)]);
 
             return response()->json([
                 'success' => true,
@@ -350,7 +351,7 @@ class ProfileController extends Controller
         ]);
 
         $user = User::find(Auth::id());
-        $isValid = \Hash::check($request->password, $user->passwordhash);
+        $isValid = Hash::check($request->password, $user->passwordhash);
 
         return response()->json([
             'valid' => $isValid
