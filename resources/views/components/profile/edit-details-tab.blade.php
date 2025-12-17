@@ -9,7 +9,8 @@
             <div class="w-full h-full rounded-full overflow-hidden relative">
                 <img id="profileImagePreview"
                     src="{{ $user->profilepicture ? asset('profile/' . $user->profilepicture) : asset('profile/default.png') }}"
-                    alt="Profile Picture" class="absolute inset-0 w-full h-full object-cover">
+                    alt="Profile Picture" class="absolute inset-0 w-full h-full object-cover"
+                    onerror="this.onerror=null; this.src='{{ asset('profile/default.png') }}';">
             </div>
             <!-- Profile image upload button and hidden file input -->
             <input type="file" id="profileImageInput" name="profilePicture" accept="image/*" class="hidden" />
