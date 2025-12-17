@@ -1,5 +1,5 @@
 <div
-    class="group flex gap-3 p-3 rounded-xl hover:bg-white hover:shadow-sm transition-all border border-transparent hover:border-gray-100">
+    class="flex gap-3 p-3 rounded-xl {{ $isViewOnly ?? false ? 'border border-gray-100 bg-gray-50' : 'group hover:bg-white hover:shadow-sm transition-all border border-transparent hover:border-gray-100' }}">
     <div class="w-10 h-10 bg-gray-200 rounded-full shrink-0 mt-1"></div>
     <div class="flex-1 min-w-0">
         <div class="flex items-baseline justify-between mb-1">
