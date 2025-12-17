@@ -18,55 +18,20 @@
                 <form method="POST" action="{{ route('register') }}">
                     @csrf
 
-                    <div class="mb-4">
-                        <label for="name" class="block font-medium text-gray-700 mb-1">Name</label>
-                        <input id="name" type="text" name="name" value="{{ old('name') }}" required autofocus
-                            autocomplete="name"
-                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-violet-800">
-                        @error('name')
-                            <span id="name-error" class="text-red-500 text-sm mt-1 block"
-                                role="alert">{{ $message }}</span>
-                        @enderror
-                    </div>
+                    <x-ui.input label="Name" name="name" type="text" value="{{ old('name') }}" :error="$errors->first('name')"
+                        required autofocus class="text-xl" />
 
-                    <div class="mb-4">
-                        <label for="username" class="block font-medium text-gray-700 mb-1">Username</label>
-                        <input id="username" type="text" name="username" value="{{ old('username') }}" required
-                            autocomplete="username"
-                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-violet-800">
-                        @error('username')
-                            <span id="username-error" class="text-red-500 text-sm mt-1 block"
-                                role="alert">{{ $message }}</span>
-                        @enderror
-                    </div>
+                    <x-ui.input label="Username" name="username" type="text" value="{{ old('username') }}"
+                        :error="$errors->first('username')" required class="text-xl" />
 
-                    <div class="mb-4">
-                        <label for="email" class="block font-medium text-gray-700 mb-1">E-mail Address</label>
-                        <input id="email" type="email" name="email" value="{{ old('email') }}" required
-                            autocomplete="email" inputmode="email"
-                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-violet-800">
-                        @error('email')
-                            <span id="email-error" class="text-red-500 text-sm mt-1 block"
-                                role="alert">{{ $message }}</span>
-                        @enderror
-                    </div>
+                    <x-ui.input label="E-mail Address" name="email" type="email" value="{{ old('email') }}"
+                        :error="$errors->first('email')" required class="text-xl" />
 
-                    <div class="mb-4">
-                        <label for="password" class="block font-medium text-gray-700 mb-1">Password</label>
-                        <input id="password" type="password" name="password" required autocomplete="new-password"
-                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-violet-800">
-                        @error('password')
-                            <span id="password-error" class="text-red-500 text-sm mt-1 block"
-                                role="alert">{{ $message }}</span>
-                        @enderror
-                    </div>
+                    <x-ui.input label="Password" name="password" type="password" :error="$errors->first('password')" required
+                        class="text-xl" />
 
-                    <div class="mb-6">
-                        <label for="password-confirm" class="block font-medium text-gray-700 mb-1">Confirm Password</label>
-                        <input id="password-confirm" type="password" name="password_confirmation" required
-                            autocomplete="new-password"
-                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-violet-800">
-                    </div>
+                    <x-ui.input label="Confirm Password" name="password_confirmation" type="password" required
+                        class="text-xl" />
 
                     <div class="flex flex-col gap-6 items-center">
                         <x-ui.button type="submit" variant="primary">Register</x-ui.button>
