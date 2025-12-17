@@ -9,6 +9,7 @@ use App\Http\Controllers\FileController;
 use App\Http\Controllers\Friendship\FriendRequestController;
 use App\Http\Controllers\GroupController;
 use App\Http\Controllers\Home\HomeController;
+use App\Http\Controllers\MailController;
 use App\Http\Controllers\Media\BookController;
 use App\Http\Controllers\Media\MovieController;
 use App\Http\Controllers\Media\MusicController;
@@ -64,6 +65,8 @@ Route::controller(GoogleController::class)->group(function () {
     Route::get('auth/google', 'redirect')->name('google-auth');
     Route::get('auth/google/call-back', 'callbackGoogle')->name('google-call-back');
 });
+
+Route::post('/send', [MailController::class, 'send']);
 
 Route::middleware('regular.user')->controller(SearchUserController::class)->group(function () {
     Route::get('/search-users', 'index')->name('search.users');
