@@ -118,7 +118,7 @@
 
         <x-posts.post-modal />
         <x-profile.add-fav-modal />
-        <x-ui.alert />
+        <x-ui.confirm />
     </div>
 
     <script>
