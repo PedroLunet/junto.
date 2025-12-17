@@ -24,10 +24,13 @@
                     <x-ui.input label="Password" name="password" type="password" :error="$errors->first('password')" required
                         class="text-xl" />
 
-                    <div class="mb-6 flex items-center">
-                        <input type="checkbox" name="remember" value="1" @checked(old('remember'))
-                            class="mr-2 rounded text-violet-800 focus:ring-violet-700">
-                        <label class="text-xl text-gray-700 m-0 font-normal">Remember me</label>
+                    <div class="mb-6 flex items-center justify-between">
+                        <div class="flex items-center">
+                            <input type="checkbox" name="remember" value="1" @checked(old('remember'))
+                                class="mr-2 rounded text-violet-800 focus:ring-violet-700">
+                            <label class="text-xl text-gray-700 m-0 font-normal">Remember me</label>
+                        </div>
+                        <a href="#" id="forgot-password-link" class="text-sm text-violet-800 hover:text-violet-700 font-medium">Forgot Password?</a>
                     </div>
 
                     <div class="flex flex-col gap-8 items-center">
@@ -66,4 +69,61 @@
             </div>
         </div>
     </div>
+
+    <!-- Forgot Password Modal -->
+    <div id="forgot-password-modal" class="fixed inset-0 z-[60] hidden items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+        <div class="bg-white rounded-2xl shadow-xl w-full max-w-md relative overflow-hidden">
+            <div class="px-10 pt-10 pb-4">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-2xl font-bold text-gray-800 m-0">Reset Password</h2>
+                    <button type="button" id="close-forgot-password" class="text-gray-500 hover:text-gray-700 transition-colors">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                </div>
+                
+                <form>
+                    <x-ui.input label="E-mail" name="email" type="email" required class="text-xl" />
+                    
+                    <div class="mt-6 flex justify-end">
+                        <x-ui.button type="button" variant="primary">Send Reset Link</x-ui.button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const forgotPasswordLink = document.getElementById('forgot-password-link');
+            const forgotPasswordModal = document.getElementById('forgot-password-modal');
+            const closeForgotPasswordBtn = document.getElementById('close-forgot-password');
+
+            if (forgotPasswordLink && forgotPasswordModal) {
+                forgotPasswordLink.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    forgotPasswordModal.classList.remove('hidden');
+                    forgotPasswordModal.classList.add('flex');
+                });
+            }
+
+            if (closeForgotPasswordBtn && forgotPasswordModal) {
+                closeForgotPasswordBtn.addEventListener('click', function() {
+                    forgotPasswordModal.classList.add('hidden');
+                    forgotPasswordModal.classList.remove('flex');
+                });
+            }
+            
+            // Close on click outside
+            if (forgotPasswordModal) {
+                 forgotPasswordModal.addEventListener('click', function(e) {
+                    if (e.target === forgotPasswordModal) {
+                        forgotPasswordModal.classList.add('hidden');
+                        forgotPasswordModal.classList.remove('flex');
+                    }
+                });
+            }
+        });
+    </script>
 @endsection
