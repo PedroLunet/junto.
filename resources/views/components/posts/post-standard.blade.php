@@ -16,7 +16,7 @@
                         </span>
                         @if (!empty($post->group_name))
                             <span class="text-gray-600 text-lg">
-                                in <span class="font-medium">{{ $post->group_name }}</span>
+                                in <span class="font-medium text-[#38157a]">{{ $post->group_name }}</span>
                             </span>
                         @endif
                     </div>

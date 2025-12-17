@@ -1,6 +1,8 @@
-<div class="space-y-4">
+<div class="space-y-6">
     @forelse($reports as $report)
-        <x-admin.report-card :report="$report" />
+        <div class="report-item" data-status="{{ $report->status }}">
+            <x-admin.report-card :report="$report" />
+        </div>
     @empty
         <div class="bg-white rounded-lg shadow p-8 text-center">
             <i class="fas fa-inbox text-gray-400 text-5xl mb-4"></i>
