@@ -2,7 +2,7 @@
 
 @section('content')
     <!-- Alert Container -->
-    <div id="alertContainer" class="fixed top-20 right-8 z-50 w-96"></div>
+    <div id="alertContainer" class="fixed top-20 right-8 z-50 min-w-[500px]"></div>
 
     <div class="container mx-auto px-4 py-8">
         <div class="flex items-center mb-20 gap-10">
