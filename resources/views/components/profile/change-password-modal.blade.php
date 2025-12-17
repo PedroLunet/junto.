@@ -19,30 +19,34 @@
 
                     <form id="changePasswordForm" class="space-y-6">
                         <!-- Old Password -->
-                        <x-ui.input label="Old Password" type="password" name="old_password" id="old_password"
-                            placeholder="Enter your old password" required />
+                        <div>
+                            <x-ui.input label="Old Password" type="password" name="old_password" id="old_password"
+                                placeholder="Enter your old password" required />
+                            <p id="old_password_check" class="mt-2 text-xl"></p>
+                        </div>
 
                         <!-- New Password -->
                         <div>
                             <x-ui.input label="New Password" type="password" name="new_password" id="new_password"
                                 placeholder="Enter your new password" required />
                             <div id="password_requirements" class="mt-3 space-y-1 text-sm">
-                                <p class="text-gray-600 font-medium mb-2 text-xl">Please add all necessary characters to
-                                    create
-                                    safe password.</p>
-                                <p id="req_length" class="text-gray-500 text-xl"><span class="mr-2">•</span>Minimum
-                                    characters
-                                    12</p>
-                                <p id="req_uppercase" class="text-gray-500 text-xl"><span class="mr-2">•</span>One
-                                    uppercase
-                                    character</p>
-                                <p id="req_lowercase" class="text-gray-500 text-xl"><span class="mr-2">•</span>One
-                                    lowercase
-                                    character</p>
-                                <p id="req_special" class="text-gray-500 text-xl"><span class="mr-2">•</span>One
-                                    special
-                                    character</p>
-                                <p id="req_number" class="text-gray-500 text-xl"><span class="mr-2">•</span>One number
+                                <p class="text-gray-600 font-medium mb-2 text-xl">
+                                    Please add all necessary characters to create safe password.
+                                </p>
+                                <p id="req_length" class="text-gray-500 text-xl">
+                                    <span class="mr-2">•</span>Minimum characters: 12
+                                </p>
+                                <p id="req_uppercase" class="text-gray-500 text-xl">
+                                    <span class="mr-2">•</span>One uppercase character
+                                </p>
+                                <p id="req_lowercase" class="text-gray-500 text-xl">
+                                    <span class="mr-2">•</span>One lowercase character
+                                </p>
+                                <p id="req_special" class="text-gray-500 text-xl">
+                                    <span class="mr-2">•</span>One special character
+                                </p>
+                                <p id="req_number" class="text-gray-500 text-xl">
+                                    <span class="mr-2">•</span>One number
                                 </p>
                             </div>
                         </div>
@@ -87,8 +91,19 @@
 
     // Clear validation messages
     function clearPasswordValidation() {
+        document.getElementById('old_password_check').textContent = '';
         document.getElementById('confirm_password_match').textContent = '';
         document.getElementById('password_error').classList.add('hidden');
+
+        // Reset old password styling
+        const oldPasswordInput = document.querySelector('#old_password');
+        if (oldPasswordInput) {
+            oldPasswordInput.classList.remove('!border-green-500', 'focus:!border-green-500', 'focus:!ring-green-100');
+        }
+        const oldPasswordIcon = document.getElementById('old_password_icon');
+        if (oldPasswordIcon) {
+            oldPasswordIcon.remove();
+        }
 
         // Reset requirement styles
         ['length', 'uppercase', 'lowercase', 'special', 'number'].forEach(req => {
@@ -124,8 +139,85 @@
 
     // Real-time validation for new password
     document.addEventListener('DOMContentLoaded', function() {
-        const newPasswordInput = document.getElementById('new_password');
-        const confirmPasswordInput = document.getElementById('confirm_password');
+        const oldPasswordInput = document.querySelector('input[name="old_password"]');
+        const newPasswordInput = document.querySelector('input[name="new_password"]');
+        const confirmPasswordInput = document.querySelector('input[name="confirm_password"]');
+
+        // Validate old password against server
+        if (oldPasswordInput) {
+            let validationTimeout;
+            oldPasswordInput.addEventListener('input', function() {
+                const password = this.value;
+                const checkMessage = document.getElementById('old_password_check');
+
+                // Clear previous timeout
+                clearTimeout(validationTimeout);
+
+                // Remove existing icon if any
+                const existingIcon = document.getElementById('old_password_icon');
+                if (existingIcon) {
+                    existingIcon.remove();
+                }
+
+                if (password.length === 0) {
+                    checkMessage.textContent = '';
+                    oldPasswordInput.classList.remove('!border-green-500', 'focus:!border-green-500',
+                        'focus:!ring-green-100');
+                    return;
+                }
+
+                // Debounce the validation request
+                validationTimeout = setTimeout(() => {
+                    fetch('{{ route('profile.validate-password') }}', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': document.querySelector(
+                                    'meta[name="csrf-token"]').content,
+                                'Accept': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                password: password
+                            })
+                        })
+                        .then(response => {
+                            console.log('Response status:', response.status);
+                            return response.json();
+                        })
+                        .then(data => {
+                            console.log('Response data:', data);
+                            if (data.valid) {
+                                checkMessage.textContent = '✓ Password verified';
+                                checkMessage.className = 'mt-2 text-xl text-green-600';
+
+                                // Add green border
+                                oldPasswordInput.classList.add('!border-green-500',
+                                    'focus:!border-green-500', 'focus:!ring-green-100');
+
+                                // Add green check icon
+                                const inputContainer = oldPasswordInput.closest(
+                                    '.relative');
+                                if (inputContainer && !document.getElementById(
+                                        'old_password_icon')) {
+                                    const iconHtml = `<span id="old_password_icon" class="absolute right-16 top-1/2 -translate-y-1/2 pointer-events-none">
+                                    <i class="fas fa-check-circle text-green-500 text-2xl"></i>
+                                </span>`;
+                                    inputContainer.insertAdjacentHTML('beforeend',
+                                        iconHtml);
+                                }
+                            } else {
+                                checkMessage.textContent = '✗ Incorrect password';
+                                checkMessage.className = 'mt-2 text-xl text-red-600';
+                                oldPasswordInput.classList.remove('!border-green-500',
+                                    'focus:!border-green-500', 'focus:!ring-green-100');
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error validating password:', error);
+                        });
+                }, 100);
+            });
+        }
 
         if (newPasswordInput) {
             newPasswordInput.addEventListener('input', function() {
@@ -158,9 +250,9 @@
             form.addEventListener('submit', function(e) {
                 e.preventDefault();
 
-                const oldPassword = document.getElementById('old_password').value;
-                const newPassword = document.getElementById('new_password').value;
-                const confirmPassword = document.getElementById('confirm_password').value;
+                const oldPassword = document.querySelector('input[name="old_password"]').value;
+                const newPassword = document.querySelector('input[name="new_password"]').value;
+                const confirmPassword = document.querySelector('input[name="confirm_password"]').value;
                 const errorDiv = document.getElementById('password_error');
 
                 // Validate new password requirements

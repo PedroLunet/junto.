@@ -307,7 +307,7 @@ class ProfileController extends Controller
         $user = Auth::user();
 
         // Verify old password
-        if (!\Hash::check($request->old_password, $user->password)) {
+        if (!\Hash::check($request->old_password, $user->passwordhash)) {
             return response()->json([
                 'success' => false,
                 'message' => 'Current password is incorrect'
@@ -325,7 +325,7 @@ class ProfileController extends Controller
         try {
             DB::table('users')
                 ->where('id', $user->id)
-                ->update(['password' => \Hash::make($request->new_password)]);
+                ->update(['passwordhash' => \Hash::make($request->new_password)]);
 
             return response()->json([
                 'success' => true,
@@ -338,5 +338,22 @@ class ProfileController extends Controller
                 'message' => 'An error occurred while changing your password'
             ], 500);
         }
+    }
+
+    /**
+     * Validate if the provided password matches the user's current password.
+     */
+    public function validatePassword(Request $request)
+    {
+        $request->validate([
+            'password' => 'required|string'
+        ]);
+
+        $user = User::find(Auth::id());
+        $isValid = \Hash::check($request->password, $user->passwordhash);
+
+        return response()->json([
+            'valid' => $isValid
+        ]);
     }
 }
