@@ -19,7 +19,8 @@
                 <x-ui.input label="Password" name="password_display" type="password" value="••••••••••••"
                     :error="$errors->first('password')" disabled />
             </div>
-            <x-ui.button type="button" variant="secondary" class="text-2xl mb-7 text-gray-700 whitespace-nowrap">
+            <x-ui.button type="button" variant="secondary" class="text-2xl mb-7 text-gray-700 whitespace-nowrap"
+                onclick="openPasswordModal()">
                 Change password
             </x-ui.button>
         </div>
@@ -34,7 +35,7 @@
                 <h3 class="text-3xl font-medium text-gray-900">Make account private</h3>
                 <p class="text-2xl text-gray-500 mt-1">Only your friends can see your posts.</p>
             </div>
-            <x-ui.toggle />
+            <x-ui.toggle id="privacy-toggle" :checked="$user->isprivate" />
         </div>
 
         <!-- Log out of all devices -->
@@ -43,7 +44,8 @@
                 <h3 class="text-3xl font-medium text-gray-900">Log out</h3>
                 <p class="text-2xl text-gray-500 mt-1">Log out of this device.</p>
             </div>
-            <x-ui.button type="button" variant="secondary" class="text-2xl text-gray-700 whitespace-nowrap">
+            <x-ui.button href="{{ url('/logout') }}" type="button" variant="secondary"
+                class="text-2xl text-gray-700 whitespace-nowrap">
                 Log out
             </x-ui.button>
         </div>

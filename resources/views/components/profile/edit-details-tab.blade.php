@@ -9,7 +9,8 @@
             <div class="w-full h-full rounded-full overflow-hidden relative">
                 <img id="profileImagePreview"
                     src="{{ $user->profilepicture ? asset('profile/' . $user->profilepicture) : asset('profile/default.png') }}"
-                    alt="Profile Picture" class="absolute inset-0 w-full h-full object-cover">
+                    alt="Profile Picture" class="absolute inset-0 w-full h-full object-cover"
+                    onerror="this.onerror=null; this.src='{{ asset('profile/default.png') }}';">
             </div>
             <!-- Profile image upload button and hidden file input -->
             <input type="file" id="profileImageInput" name="profilePicture" accept="image/*" class="hidden" />
@@ -37,6 +38,13 @@
     <!-- bio -->
     <x-ui.input label="Bio" name="bio" type="textarea" value="{{ old('bio', $user->bio ?? '') }}"
         placeholder="Tell others about yourself..." rows="4" :error="$errors->first('bio')" />
+
+    <!-- Save Button -->
+    <div class="flex justify-end">
+        <x-ui.button type="submit" variant="primary" class="text-3xl" id="saveProfileBtn">
+            Save Changes
+        </x-ui.button>
+    </div>
 </form>
 <div id="profileUpdateSuccess" class="hidden mt-6 text-green-600 text-3xl font-semibold"></div>
 <div id="profileUpdateError" class="hidden mt-6 text-red-600 text-3xl font-semibold"></div>
