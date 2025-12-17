@@ -83,11 +83,12 @@
                     </button>
                 </div>
                 
-                <form>
+                <form method="POST" action="/send">
+                    @csrf
                     <x-ui.input label="E-mail" name="email" type="email" required class="text-xl" />
                     
                     <div class="mt-6 flex justify-end">
-                        <x-ui.button type="button" variant="primary">Send Reset Link</x-ui.button>
+                        <x-ui.button type="submit" variant="primary">Send Reset Link</x-ui.button>
                     </div>
                 </form>
             </div>

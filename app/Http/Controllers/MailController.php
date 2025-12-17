@@ -13,10 +13,11 @@ class MailController extends Controller
         $mailData = [
             'name' => $request->name,
             'email' => $request->email,
+            'resetUrl' => url('/reset-password'), // Add your actual reset password route
         ];
 
         Mail::to($request->email)->send(new MailModel($mailData));
-        return redirect()->route('home');
+        return redirect()->route('home')->with('status', 'Password reset link sent!');
     }
 
 }
