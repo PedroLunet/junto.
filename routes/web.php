@@ -43,6 +43,7 @@ Route::middleware(['auth', 'regular.user'])->controller(ProfileController::class
     Route::put('/profile/update', 'update')->name('profile.update');
     Route::post('/profile/remove-favorite', 'removeFavorite')->name('profile.remove-favorite');
     Route::post('/profile/add-favorite', 'addFavorite')->name('profile.add-favorite');
+    Route::post('/profile/toggle-privacy', 'togglePrivacy')->name('profile.toggle-privacy');
 });
 
 // Authentication

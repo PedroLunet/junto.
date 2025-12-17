@@ -3,7 +3,7 @@
 namespace App\Policies;
 
 use App\Models\User\User;
-use App\Models\Friendship;
+use App\Models\User\Friendship;
 use Illuminate\Support\Facades\DB;
 
 class UserPolicy

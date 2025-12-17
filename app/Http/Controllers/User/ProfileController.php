@@ -258,4 +258,30 @@ class ProfileController extends Controller
         $user = Auth::user();
         return view('pages.edit-profile', compact('user'));
     }
+
+    /**
+     * Toggle the privacy setting of the authenticated user's profile.
+     */
+    public function togglePrivacy(Request $request)
+    {
+        $user = Auth::user();
+
+        try {
+            DB::table('users')
+                ->where('id', $user->id)
+                ->update(['isprivate' => !$user->isprivate]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Privacy setting updated successfully',
+                'isprivate' => !$user->isprivate
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Privacy toggle error: ' . $e->getMessage() . "\n" . $e->getTraceAsString());
+            return response()->json([
+                'success' => false,
+                'message' => 'An error occurred while updating your privacy setting'
+            ], 500);
+        }
+    }
 }

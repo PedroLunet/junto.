@@ -28,3 +28,43 @@
         ]" />
     </div>
 @endsection
+
+@push('scripts')
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const privacyToggle = document.querySelector('#privacy-toggle');
+
+            if (privacyToggle) {
+                privacyToggle.addEventListener('change', function() {
+                    fetch('{{ route('profile.toggle-privacy') }}', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')
+                                    .content,
+                                'Accept': 'application/json'
+                            }
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                // Toggle was successful
+                                console.log('Privacy setting updated:', data.isprivate ? 'Private' :
+                                    'Public');
+                            } else {
+                                // Revert toggle on error
+                                privacyToggle.checked = !privacyToggle.checked;
+                                alert(data.message || 'Failed to update privacy setting');
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            // Revert toggle on error
+                            privacyToggle.checked = !privacyToggle.checked;
+                            alert('An error occurred while updating your privacy setting');
+                        });
+                });
+            }
+        });
+    </script>
+@endpush
