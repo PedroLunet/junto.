@@ -253,7 +253,8 @@ class AdminController extends Controller
                         c.createdat as created_at,
                         u.id as author_id,
                         u.name as author_name,
-                        u.username
+                        u.username,
+                        u.profilepicture as author_picture
                     FROM lbaw2544.comment c
                     JOIN lbaw2544.users u ON c.userid = u.id
                     WHERE c.id = ?

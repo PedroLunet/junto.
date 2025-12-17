@@ -39,10 +39,6 @@
                 @endif
             @elseif($report->comment_id && isset($report->comment))
                 <div class="bg-gray-50 rounded-lg p-4">
-                    <div class="mb-2 flex items-center gap-2">
-                        <i class="fas fa-comment text-purple-600"></i>
-                        <span class="font-medium text-gray-900">Reported Comment</span>
-                    </div>
                     <x-posts.comment.comment :comment="$report->comment" :isViewOnly="true" />
                 </div>
             @endif
