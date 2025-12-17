@@ -17,32 +17,22 @@
                 <p class="text-3xl text-gray-700">{{ $report->reason }}</p>
             </div>
 
-            <!-- Reported Content Info -->
-            <div class="bg-gray-50 rounded-lg p-4 mb-4">
-                @if ($report->post_id)
-                    <span class="font-medium text-gray-900">Reported Post</span>
-
-                    <p class="text-xl text-gray-600">
-                        Post ID: #{{ $report->post_id }}
-                        @if ($report->post_author_username)
-                            <br>Author:
-                            {{ $report->post_author_name }}
-                            (@<span>{{ $report->post_author_username }}</span>)
-                        @endif
-                    </p>
-                @elseif($report->comment_id)
-                    <span class="font-medium text-gray-900">Reported Comment</span>
-
-                    <p class="text-xl text-gray-600">
-                        Comment ID: #{{ $report->comment_id }}
-                        @if ($report->comment_author_username)
-                            <br>Author: <a href="/{{ $report->comment_author_username }}"
-                                class="text-purple-600 hover:underline">
-                                {{ $report->comment_author_name }}
-                                (@<span>{{ $report->comment_author_username }}</span>)
-                            </a>
-                        @endif
-                    </p>
+            <!-- Reported Content -->
+            <div class="mb-6">
+                @if ($report->post_id && isset($report->post))
+                    @if ($report->post->is_review ?? false)
+                        <x-posts.post-review :post="$report->post" :showAuthor="true" />
+                    @else
+                        <x-posts.post-standard :post="$report->post" :showAuthor="true" />
+                    @endif
+                @elseif($report->comment_id && isset($report->comment))
+                    <div class="bg-gray-50 rounded-lg p-4">
+                        <div class="mb-2 flex items-center gap-2">
+                            <i class="fas fa-comment text-purple-600"></i>
+                            <span class="font-medium text-gray-900">Reported Comment</span>
+                        </div>
+                        <x-posts.comment.comment :comment="$report->comment" />
+                    </div>
                 @endif
             </div>
 

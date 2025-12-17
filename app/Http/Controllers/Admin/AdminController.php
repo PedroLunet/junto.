@@ -181,18 +181,89 @@ class AdminController extends Controller
                 r.reason,
                 r.status,
                 r.postid as post_id,
-                r.commentid as comment_id,
-                pu.username as post_author_username,
-                pu.name as post_author_name,
-                cu.username as comment_author_username,
-                cu.name as comment_author_name
+                r.commentid as comment_id
             FROM lbaw2544.report r
-            LEFT JOIN lbaw2544.post p ON r.postid = p.id
-            LEFT JOIN lbaw2544.users pu ON p.userid = pu.id
-            LEFT JOIN lbaw2544.comment c ON r.commentid = c.id
-            LEFT JOIN lbaw2544.users cu ON c.userid = cu.id
             ORDER BY r.createdat DESC
         ");
+
+        // enrich each report with full post or comment data
+        foreach ($reports as $report) {
+            if ($report->post_id) {
+                // fetch complete post data
+                $post = DB::selectOne("
+                    SELECT 
+                        p.id,
+                        p.createdat as created_at,
+                        sp.text as content,
+                        sp.imageurl as image_url,
+                        u.id as author_id,
+                        u.name as author_name,
+                        u.username,
+                        (SELECT COUNT(*) FROM lbaw2544.post_like pl WHERE pl.postid = p.id) as likes_count,
+                        (SELECT COUNT(*) FROM lbaw2544.comment c WHERE c.postid = p.id) as comments_count
+                    FROM lbaw2544.post p
+                    JOIN lbaw2544.users u ON p.userid = u.id
+                    LEFT JOIN lbaw2544.standard_post sp ON p.id = sp.postid
+                    WHERE p.id = ?
+                ", [$report->post_id]);
+
+                if ($post) {
+                    // Check if it's a review
+                    $review = DB::selectOne("
+                        SELECT 
+                            r.rating,
+                            r.content as review_content,
+                            m.id as media_id,
+                            m.title,
+                            m.coverimage,
+                            m.creator,
+                            m.releaseyear,
+                            CASE 
+                                WHEN EXISTS (SELECT 1 FROM lbaw2544.music mu WHERE mu.mediaid = m.id) THEN 'music'
+                                WHEN EXISTS (SELECT 1 FROM lbaw2544.film f WHERE f.mediaid = m.id) THEN 'movie'
+                                WHEN EXISTS (SELECT 1 FROM lbaw2544.book b WHERE b.mediaid = m.id) THEN 'book'
+                                ELSE 'unknown'
+                            END as media_type
+                        FROM lbaw2544.review r
+                        JOIN lbaw2544.media m ON r.mediaid = m.id
+                        WHERE r.postid = ?
+                    ", [$report->post_id]);
+
+                    if ($review) {
+                        $post->is_review = true;
+                        $post->rating = $review->rating;
+                        $post->content = $review->review_content;
+                        $post->media_title = $review->title;
+                        $post->media_poster = $review->coverimage;
+                        $post->media_creator = $review->creator;
+                        $post->media_year = $review->releaseyear;
+                        $post->media_type = $review->media_type;
+                    } else {
+                        $post->is_review = false;
+                    }
+
+                    $report->post = $post;
+                }
+            } elseif ($report->comment_id) {
+                // fetch complete comment data
+                $comment = DB::selectOne("
+                    SELECT 
+                        c.id,
+                        c.content,
+                        c.createdat as created_at,
+                        u.id as author_id,
+                        u.name as author_name,
+                        u.username
+                    FROM lbaw2544.comment c
+                    JOIN lbaw2544.users u ON c.userid = u.id
+                    WHERE c.id = ?
+                ", [$report->comment_id]);
+
+                if ($comment) {
+                    $report->comment = $comment;
+                }
+            }
+        }
 
         return view('pages.admin.reports', compact('reports'));
     }
