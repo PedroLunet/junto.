@@ -21,8 +21,8 @@
         {!! $icon !!}
     </div>
     <div class="flex-1">
-        <div class="font-semibold text-lg {{ $iconColor }} mb-1">{{ $title }}</div>
-        <div class="text-gray-700 text-base">{{ $message }}</div>
+        <div class="font-semibold text-xl {{ $iconColor }} mb-1">{{ $title }}</div>
+        <div class="text-gray-700 text-2xl">{{ $message }}</div>
     </div>
     @if($dismissible)
         <button type="button" class="absolute top-3 right-3 text-gray-400 hover:text-gray-600 focus:outline-none" onclick="this.closest('div').style.display='none'">

@@ -46,6 +46,7 @@ Route::middleware(['auth', 'regular.user'])->controller(ProfileController::class
     Route::post('/profile/toggle-privacy', 'togglePrivacy')->name('profile.toggle-privacy');
     Route::post('/profile/change-password', 'changePassword')->name('profile.change-password');
     Route::post('/profile/validate-password', 'validatePassword')->name('profile.validate-password');
+    Route::post('/profile/render-alert', 'renderAlert')->name('profile.render-alert');
 });
 
 // Authentication

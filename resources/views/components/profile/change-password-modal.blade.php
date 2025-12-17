@@ -120,7 +120,7 @@
             length: password.length >= 12,
             uppercase: /[A-Z]/.test(password),
             lowercase: /[a-z]/.test(password),
-            special: /[!@#$%^&*(),.?":{}|<>]/.test(password),
+            special: /[^a-zA-Z0-9]/.test(password),
             number: /[0-9]/.test(password)
         };
 
@@ -189,7 +189,7 @@
                             console.log('Response data:', data);
                             if (data.valid) {
                                 checkMessage.textContent = '✓ Password verified';
-                                checkMessage.className = 'mt-2 text-xl text-green-600';
+                                checkMessage.className = 'text-xl text-green-600';
 
                                 // green border
                                 oldPasswordInput.classList.remove('!border-red-500',
@@ -197,11 +197,17 @@
                                 oldPasswordInput.classList.add('!border-green-500',
                                     'focus:!border-green-500', 'focus:!ring-green-100');
 
+                                // remove any existing icon first
+                                const existingIcon = document.getElementById(
+                                    'old_password_icon');
+                                if (existingIcon) {
+                                    existingIcon.remove();
+                                }
+
                                 // green check icon
                                 const inputContainer = oldPasswordInput.closest(
                                     '.relative');
-                                if (inputContainer && !document.getElementById(
-                                        'old_password_icon')) {
+                                if (inputContainer) {
                                     const iconHtml = `<span id="old_password_icon" class="absolute right-16 top-1/2 -translate-y-1/2 pointer-events-none">
                                     <i class="fas fa-check-circle text-green-500 text-2xl"></i>
                                 </span>`;
@@ -210,7 +216,7 @@
                                 }
                             } else {
                                 checkMessage.textContent = '✗ Incorrect password';
-                                checkMessage.className = 'mt-2 text-xl text-red-600';
+                                checkMessage.className = 'text-xl text-red-600';
 
                                 // red border
                                 oldPasswordInput.classList.remove('!border-green-500',
@@ -218,16 +224,22 @@
                                 oldPasswordInput.classList.add('!border-red-500',
                                     'focus:!border-red-500', 'focus:!ring-red-100');
 
+                                // remove any existing icon first
+                                const existingIcon = document.getElementById(
+                                    'old_password_icon');
+                                if (existingIcon) {
+                                    existingIcon.remove();
+                                }
+
                                 // red x icon
                                 const inputContainer = oldPasswordInput.closest(
-                                '.relative');
-                                if (inputContainer && !document.getElementById(
-                                        'old_password_icon')) {
+                                    '.relative');
+                                if (inputContainer) {
                                     const iconHtml = `<span id="old_password_icon" class="absolute right-16 top-1/2 -translate-y-1/2 pointer-events-none">
                                     <i class="fas fa-times-circle text-red-500 text-2xl"></i>
                                 </span>`;
                                     inputContainer.insertAdjacentHTML('beforeend',
-                                    iconHtml);
+                                        iconHtml);
                                 }
                             }
                         })
@@ -252,10 +264,10 @@
                 if (this.value.length > 0) {
                     if (this.value === newPassword) {
                         confirmMatch.textContent = '✓ Passwords match';
-                        confirmMatch.className = 'mt-2 text-sm text-green-600';
+                        confirmMatch.className = 'text-xl text-green-600';
                     } else {
                         confirmMatch.textContent = '✗ Passwords do not match';
-                        confirmMatch.className = 'mt-2 text-sm text-red-600';
+                        confirmMatch.className = 'text-xl text-red-600';
                     }
                 } else {
                     confirmMatch.textContent = '';
@@ -317,7 +329,9 @@
                     .then(data => {
                         if (data.success) {
                             closePasswordModal();
-                            alert('Password changed successfully!');
+                            if (typeof showAlert === 'function') {
+                                showAlert('success', 'Success', 'Password changed successfully!');
+                            }
                         } else {
                             errorDiv.querySelector('p').textContent = data.message ||
                                 'Failed to change password';

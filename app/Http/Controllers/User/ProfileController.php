@@ -300,7 +300,7 @@ class ProfileController extends Controller
                 'regex:/[a-z]/',      // at least one lowercase
                 'regex:/[A-Z]/',      // at least one uppercase
                 'regex:/[0-9]/',      // at least one number
-                'regex:/[@$!%*#?&]/', // at least one special character
+                'regex:/[^a-zA-Z0-9]/', // at least one special character (any non-alphanumeric)
                 'confirmed'
             ],
         ]);
@@ -356,5 +356,26 @@ class ProfileController extends Controller
         return response()->json([
             'valid' => $isValid
         ]);
+    }
+
+    /**
+     * Render an alert component for AJAX requests.
+     */
+    public function renderAlert(Request $request)
+    {
+        $request->validate([
+            'type' => 'required|in:success,error',
+            'title' => 'required|string',
+            'message' => 'required|string',
+            'id' => 'required|string'
+        ]);
+
+        return view('components.ui.alert-card', [
+            'type' => $request->type,
+            'title' => $request->title,
+            'message' => $request->message,
+            'dismissible' => true,
+            'id' => $request->id
+        ])->render();
     }
 }

@@ -38,6 +38,13 @@
     <!-- bio -->
     <x-ui.input label="Bio" name="bio" type="textarea" value="{{ old('bio', $user->bio ?? '') }}"
         placeholder="Tell others about yourself..." rows="4" :error="$errors->first('bio')" />
+
+    <!-- Save Button -->
+    <div class="flex justify-end">
+        <x-ui.button type="submit" variant="primary" class="text-3xl" id="saveProfileBtn">
+            Save Changes
+        </x-ui.button>
+    </div>
 </form>
 <div id="profileUpdateSuccess" class="hidden mt-6 text-green-600 text-3xl font-semibold"></div>
 <div id="profileUpdateError" class="hidden mt-6 text-red-600 text-3xl font-semibold"></div>
