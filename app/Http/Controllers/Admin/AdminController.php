@@ -199,10 +199,12 @@ class AdminController extends Controller
                         u.id as author_id,
                         u.name as author_name,
                         u.username,
+                        g.name as group_name,
                         (SELECT COUNT(*) FROM lbaw2544.post_like pl WHERE pl.postid = p.id) as likes_count,
                         (SELECT COUNT(*) FROM lbaw2544.comment c WHERE c.postid = p.id) as comments_count
                     FROM lbaw2544.post p
                     JOIN lbaw2544.users u ON p.userid = u.id
+                    LEFT JOIN lbaw2544.groups g ON p.groupid = g.id
                     LEFT JOIN lbaw2544.standard_post sp ON p.id = sp.postid
                     WHERE p.id = ?
                 ", [$report->post_id]);

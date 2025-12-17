@@ -10,9 +10,16 @@
                     class="w-12 h-12 rounded-full object-cover bg-gray-200">
 
                 <div class="flex flex-col">
-                    <span class="font-semibold text-gray-900">
-                        {{ $post->author_name }}
-                    </span>
+                    <div class="flex items-center gap-2">
+                        <span class="font-semibold text-gray-900">
+                            {{ $post->author_name }}
+                        </span>
+                        @if (!empty($post->group_name))
+                            <span class="text-gray-600 text-lg">
+                                in <span class="font-medium">{{ $post->group_name }}</span>
+                            </span>
+                        @endif
+                    </div>
                     <span class="text-gray-700 text-lg">
                         @<span>{{ $post->username }}</span>
                     </span>
@@ -38,7 +45,7 @@
     <!-- text -->
     @if ($post->content)
         <p class="text-black">
-            {{ $post->content }}
+            {{ preg_replace('/^GROUP POST:\s*/i', '', $post->content) }}
         </p>
     @endif
 
