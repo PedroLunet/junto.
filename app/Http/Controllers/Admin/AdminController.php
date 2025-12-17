@@ -171,4 +171,99 @@ class AdminController extends Controller
             ], 500);
         }
     }
+
+    public function listReports()
+    {
+        $reports = DB::select("
+            SELECT 
+                r.id,
+                r.createdat,
+                r.reason,
+                r.status,
+                r.postid as post_id,
+                r.commentid as comment_id,
+                pu.username as post_author_username,
+                pu.name as post_author_name,
+                cu.username as comment_author_username,
+                cu.name as comment_author_name
+            FROM lbaw2544.report r
+            LEFT JOIN lbaw2544.post p ON r.postid = p.id
+            LEFT JOIN lbaw2544.users pu ON p.userid = pu.id
+            LEFT JOIN lbaw2544.comment c ON r.commentid = c.id
+            LEFT JOIN lbaw2544.users cu ON c.userid = cu.id
+            ORDER BY r.createdat DESC
+        ");
+
+        return view('pages.admin.reports', compact('reports'));
+    }
+
+    public function acceptReport($id)
+    {
+        try {
+            DB::beginTransaction();
+
+            // Get the report details
+            $report = DB::selectOne("
+                SELECT postid, commentid 
+                FROM lbaw2544.report 
+                WHERE id = ?
+            ", [$id]);
+
+            if ($report) {
+                // Delete the reported post if it exists
+                if ($report->postid) {
+                    DB::table('lbaw2544.post')
+                        ->where('id', $report->postid)
+                        ->delete();
+                }
+
+                // Delete the reported comment if it exists
+                if ($report->commentid) {
+                    DB::table('lbaw2544.comment')
+                        ->where('id', $report->commentid)
+                        ->delete();
+                }
+            }
+
+            // Update report status
+            DB::table('lbaw2544.report')
+                ->where('id', $id)
+                ->update(['status' => 'accepted']);
+
+            DB::commit();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Report accepted successfully'
+            ]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Accept report error: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to accept report'
+            ], 500);
+        }
+    }
+
+    public function rejectReport($id)
+    {
+        try {
+            // Update report status
+            DB::table('lbaw2544.report')
+                ->where('id', $id)
+                ->update(['status' => 'rejected']);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Report rejected successfully'
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Reject report error: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to reject report'
+            ], 500);
+        }
+    }
 }
