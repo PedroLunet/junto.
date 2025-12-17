@@ -34,13 +34,19 @@
             ])->render(),
         ],
     ]" />
+
+    <x-ui.confirm />
 @endsection
 
 @push('scripts')
     <script>
-        function acceptReport(reportId) {
-            if (!confirm(
-                    'Are you sure you want to accept this report? This will permanently delete the reported content.')) {
+        async function acceptReport(reportId) {
+            const confirmed = await alertConfirm(
+                'Are you sure you want to accept this report? This will permanently delete the reported content.',
+                'Confirm Delete'
+            );
+
+            if (!confirmed) {
                 return;
             }
 
@@ -56,18 +62,22 @@
                     if (data.success) {
                         window.location.reload();
                     } else {
-                        alert(data.message || 'Failed to accept report');
+                        alertInfo(data.message || 'Failed to accept report', 'Error');
                     }
                 })
                 .catch(error => {
                     console.error('Error:', error);
-                    alert('An error occurred while processing the report');
+                    alertInfo('An error occurred while processing the report', 'Error');
                 });
         }
 
-        function rejectReport(reportId) {
-            if (!confirm(
-                    'Are you sure you want to reject this report? The reported content will remain on the platform.')) {
+        async function rejectReport(reportId) {
+            const confirmed = await alertConfirm(
+                'Are you sure you want to reject this report? The reported content will remain on the platform.',
+                'Confirm Rejection'
+            );
+
+            if (!confirmed) {
                 return;
             }
 
@@ -83,12 +93,12 @@
                     if (data.success) {
                         window.location.reload();
                     } else {
-                        alert(data.message || 'Failed to reject report');
+                        alertInfo(data.message || 'Failed to reject report', 'Error');
                     }
                 })
                 .catch(error => {
                     console.error('Error:', error);
-                    alert('An error occurred while processing the report');
+                    alertInfo('An error occurred while processing the report', 'Error');
                 });
         }
     </script>
