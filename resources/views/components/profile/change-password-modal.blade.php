@@ -96,9 +96,10 @@
         document.getElementById('password_error').classList.add('hidden');
 
         // Reset old password styling
-        const oldPasswordInput = document.querySelector('#old_password');
+        const oldPasswordInput = document.querySelector('input[name="old_password"]');
         if (oldPasswordInput) {
-            oldPasswordInput.classList.remove('!border-green-500', 'focus:!border-green-500', 'focus:!ring-green-100');
+            oldPasswordInput.classList.remove('!border-green-500', 'focus:!border-green-500', 'focus:!ring-green-100',
+                '!border-red-500', 'focus:!border-red-500', 'focus:!ring-red-100');
         }
         const oldPasswordIcon = document.getElementById('old_password_icon');
         if (oldPasswordIcon) {
@@ -162,7 +163,8 @@
                 if (password.length === 0) {
                     checkMessage.textContent = '';
                     oldPasswordInput.classList.remove('!border-green-500', 'focus:!border-green-500',
-                        'focus:!ring-green-100');
+                        'focus:!ring-green-100', '!border-red-500', 'focus:!border-red-500',
+                        'focus:!ring-red-100');
                     return;
                 }
 
@@ -191,6 +193,8 @@
                                 checkMessage.className = 'mt-2 text-xl text-green-600';
 
                                 // Add green border
+                                oldPasswordInput.classList.remove('!border-red-500',
+                                    'focus:!border-red-500', 'focus:!ring-red-100');
                                 oldPasswordInput.classList.add('!border-green-500',
                                     'focus:!border-green-500', 'focus:!ring-green-100');
 
@@ -208,8 +212,24 @@
                             } else {
                                 checkMessage.textContent = '✗ Incorrect password';
                                 checkMessage.className = 'mt-2 text-xl text-red-600';
+
+                                // Add red border
                                 oldPasswordInput.classList.remove('!border-green-500',
                                     'focus:!border-green-500', 'focus:!ring-green-100');
+                                oldPasswordInput.classList.add('!border-red-500',
+                                    'focus:!border-red-500', 'focus:!ring-red-100');
+
+                                // Add red X icon
+                                const inputContainer = oldPasswordInput.closest(
+                                '.relative');
+                                if (inputContainer && !document.getElementById(
+                                        'old_password_icon')) {
+                                    const iconHtml = `<span id="old_password_icon" class="absolute right-16 top-1/2 -translate-y-1/2 pointer-events-none">
+                                    <i class="fas fa-times-circle text-red-500 text-2xl"></i>
+                                </span>`;
+                                    inputContainer.insertAdjacentHTML('beforeend',
+                                    iconHtml);
+                                }
                             }
                         })
                         .catch(error => {
