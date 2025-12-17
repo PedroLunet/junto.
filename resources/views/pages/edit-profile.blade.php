@@ -27,6 +27,9 @@
             ],
         ]" />
     </div>
+
+    <!-- Change Password Modal -->
+    <x-profile.change-password-modal />
 @endsection
 
 @push('scripts')

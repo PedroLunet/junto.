@@ -44,6 +44,7 @@ Route::middleware(['auth', 'regular.user'])->controller(ProfileController::class
     Route::post('/profile/remove-favorite', 'removeFavorite')->name('profile.remove-favorite');
     Route::post('/profile/add-favorite', 'addFavorite')->name('profile.add-favorite');
     Route::post('/profile/toggle-privacy', 'togglePrivacy')->name('profile.toggle-privacy');
+    Route::post('/profile/change-password', 'changePassword')->name('profile.change-password');
 });
 
 // Authentication

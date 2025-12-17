@@ -284,4 +284,59 @@ class ProfileController extends Controller
             ], 500);
         }
     }
+
+    /**
+     * Change the password of the authenticated user.
+     */
+    public function changePassword(Request $request)
+    {
+        $request->validate([
+            'old_password' => 'required|string',
+            'new_password' => [
+                'required',
+                'string',
+                'min:12',
+                'regex:/[a-z]/',      // at least one lowercase
+                'regex:/[A-Z]/',      // at least one uppercase
+                'regex:/[0-9]/',      // at least one number
+                'regex:/[@$!%*#?&]/', // at least one special character
+                'confirmed'
+            ],
+        ]);
+
+        $user = Auth::user();
+
+        // Verify old password
+        if (!\Hash::check($request->old_password, $user->password)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Current password is incorrect'
+            ], 400);
+        }
+
+        // Check if new password is different from old
+        if ($request->old_password === $request->new_password) {
+            return response()->json([
+                'success' => false,
+                'message' => 'New password must be different from current password'
+            ], 400);
+        }
+
+        try {
+            DB::table('users')
+                ->where('id', $user->id)
+                ->update(['password' => \Hash::make($request->new_password)]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Password changed successfully'
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Password change error: ' . $e->getMessage() . "\n" . $e->getTraceAsString());
+            return response()->json([
+                'success' => false,
+                'message' => 'An error occurred while changing your password'
+            ], 500);
+        }
+    }
 }

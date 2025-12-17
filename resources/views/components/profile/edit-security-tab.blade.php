@@ -19,7 +19,8 @@
                 <x-ui.input label="Password" name="password_display" type="password" value="••••••••••••"
                     :error="$errors->first('password')" disabled />
             </div>
-            <x-ui.button type="button" variant="secondary" class="text-2xl mb-7 text-gray-700 whitespace-nowrap">
+            <x-ui.button type="button" variant="secondary" class="text-2xl mb-7 text-gray-700 whitespace-nowrap"
+                onclick="openPasswordModal()">
                 Change password
             </x-ui.button>
         </div>
