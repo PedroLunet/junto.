@@ -196,9 +196,23 @@
         `;
         }
         content.innerHTML = html;
-        document.getElementById('likesCount').textContent = post.likes_count || 0;
+
+        // Sync like status from feed if available
+        const feedLikeBtn = document.getElementById(`like-btn-${post.id}`);
+        let isLiked = post.is_liked;
+        let likesCount = post.likes_count || 0;
+
+        if (feedLikeBtn) {
+            isLiked = feedLikeBtn.classList.contains('text-red-500');
+            const feedLikeCount = document.getElementById(`like-count-${post.id}`);
+            if (feedLikeCount) {
+                likesCount = feedLikeCount.textContent;
+            }
+        }
+
+        document.getElementById('likesCount').textContent = likesCount;
         document.getElementById('commentsCount').textContent = post.comments_count || 0;
-        if (post.is_liked) {
+        if (isLiked) {
             likeIcon.classList.remove('far');
             likeIcon.classList.add('fas', 'text-red-500');
         } else {
