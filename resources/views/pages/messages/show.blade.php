@@ -18,11 +18,13 @@
                     <a href="{{ route('messages.index') }}" class="mr-4 md:hidden text-gray-500 hover:text-gray-700">
                         <i class="fa-solid fa-arrow-left"></i>
                     </a>
-                    <img class="h-10 w-10 rounded-full object-cover" src="{{ $friend->getProfileImage() }}" alt="{{ $friend->name }}">
-                    <div class="ml-3">
-                        <h2 class="text-lg font-semibold text-gray-800">{{ $friend->name }}</h2>
-                        <p class="text-xs text-gray-500">@ {{ $friend->username }}</p>
-                    </div>
+                    <a href="{{ route('profile.show', $friend->username) }}" class="flex items-center hover:bg-gray-100 p-2 rounded-lg transition duration-150">
+                        <img class="h-10 w-10 rounded-full object-cover" src="{{ $friend->getProfileImage() }}" alt="{{ $friend->name }}">
+                        <div class="ml-3">
+                            <h2 class="text-lg font-semibold text-gray-800">{{ $friend->name }}</h2>
+                            <p class="text-xs text-gray-500">@ {{ $friend->username }}</p>
+                        </div>
+                    </a>
                 </div>
             </div>
 
@@ -121,7 +123,7 @@
         time.className = `text-xs mt-1 ${isMine ? 'text-purple-200' : 'text-gray-400'}`;
         
         const date = new Date(message.sentat);
-        time.textContent = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        time.textContent = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false });
 
         bubble.appendChild(text);
         bubble.appendChild(time);
