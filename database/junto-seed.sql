@@ -215,6 +215,17 @@ CREATE TABLE report (
     )
 );
 
+-- UNBLOCK APPEALS
+CREATE TABLE unblock_appeal (
+    id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    userId INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    reason TEXT NOT NULL,
+    status VARCHAR(20) DEFAULT 'pending' CHECK (status IN ('pending', 'approved', 'rejected')),
+    adminNotes TEXT,
+    createdAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updatedAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
 --
 -- Indexes
 --
@@ -231,6 +242,12 @@ CREATE INDEX post_group_created_at_idx ON post USING btree (groupId, createdAt D
 
 -- IDX04: Post Comments
 CREATE INDEX comment_post_created_at_idx ON comment USING btree (postId, createdAt ASC);
+
+-- IDX05: Unblock Appeals by User
+CREATE INDEX unblock_appeal_user_idx ON unblock_appeal USING btree (userId);
+
+-- IDX06: Unblock Appeals by Status
+CREATE INDEX unblock_appeal_status_idx ON unblock_appeal USING btree (status);
 
 -- == IDX11: User Search ==
 -- 1. Add tsvector column
@@ -766,7 +783,8 @@ TRUNCATE TABLE
     book,
     music,
     media,
-    report 
+    report,
+    unblock_appeal
 RESTART IDENTITY CASCADE;
 
 -- MEDIA
