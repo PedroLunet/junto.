@@ -1,4 +1,4 @@
-<div class="bg-white rounded-3xl shadow border border-gray-200">
+<div class="bg-white rounded-3xl shadow border border-gray-200" data-report-id="{{ $report->id }}">
     <!-- Report Header -->
     <div class="flex items-center justify-between p-6 cursor-pointer hover:bg-gray-50 transition-colors rounded-3xl"
         onclick="toggleReport({{ $report->id }})">
