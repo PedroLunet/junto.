@@ -22,13 +22,35 @@
                         required autofocus class="text-xl" />
 
                     <x-ui.input label="Username" name="username" type="text" value="{{ old('username') }}"
-                        :error="$errors->first('username')" required class="text-xl" />
+                        :error="$errors->first('username')" required class="text-xl"
+                        help="Username can only contain letters, numbers, dots (.), dashes (-) and underscores (_), and must be at least 4 characters long." />
 
                     <x-ui.input label="E-mail Address" name="email" type="email" value="{{ old('email') }}"
                         :error="$errors->first('email')" required class="text-xl" />
 
                     <x-ui.input label="Password" name="password" type="password" :error="$errors->first('password')" required
                         class="text-xl" />
+
+                    <div id="password_requirements" class="mb-6 space-y-1 text-sm hidden transition-all duration-300 ease-in-out">
+                        <p class="text-gray-600 font-medium mb-2 text-xl">
+                            Password requirements:
+                        </p>
+                        <p id="req_length" class="text-gray-500 text-xl transition-colors duration-200" data-text="Minimum characters: 8">
+                            <span class="mr-2">•</span>Minimum characters: 8
+                        </p>
+                        <p id="req_uppercase" class="text-gray-500 text-xl transition-colors duration-200" data-text="One uppercase character">
+                            <span class="mr-2">•</span>One uppercase character
+                        </p>
+                        <p id="req_lowercase" class="text-gray-500 text-xl transition-colors duration-200" data-text="One lowercase character">
+                            <span class="mr-2">•</span>One lowercase character
+                        </p>
+                        <p id="req_special" class="text-gray-500 text-xl transition-colors duration-200" data-text="One special character">
+                            <span class="mr-2">•</span>One special character
+                        </p>
+                        <p id="req_number" class="text-gray-500 text-xl transition-colors duration-200" data-text="One number">
+                            <span class="mr-2">•</span>One number
+                        </p>
+                    </div>
 
                     <x-ui.input label="Confirm Password" name="password_confirmation" type="password" required
                         class="text-xl" />
@@ -64,3 +86,52 @@
         </div>
     </div>
 @endsection
+
+@push('scripts')
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const passwordInput = document.querySelector('input[name="password"]');
+            const requirementsDiv = document.getElementById('password_requirements');
+
+            if (passwordInput) {
+                // Show requirements on focus
+                passwordInput.addEventListener('focus', function() {
+                    requirementsDiv.classList.remove('hidden');
+                });
+
+                // Validate on input
+                passwordInput.addEventListener('input', function() {
+                    const password = this.value;
+                    
+                    const requirements = {
+                        length: password.length >= 8,
+                        uppercase: /[A-Z]/.test(password),
+                        lowercase: /[a-z]/.test(password),
+                        special: /[^a-zA-Z0-9]/.test(password),
+                        number: /[0-9]/.test(password)
+                    };
+
+                    // update UI for each requirement
+                    Object.keys(requirements).forEach(req => {
+                        const elem = document.getElementById('req_' + req);
+                        const text = elem.getAttribute('data-text');
+                        elem.classList.remove('text-gray-500', 'text-green-600', 'text-red-600');
+                        
+                        if (password.length > 0) {
+                            if (requirements[req]) {
+                                elem.classList.add('text-green-600');
+                                elem.innerHTML = '<i class="fas fa-check mr-2"></i>' + text;
+                            } else {
+                                elem.classList.add('text-red-600');
+                                elem.innerHTML = '<span class="mr-2">•</span>' + text;
+                            }
+                        } else {
+                            elem.classList.add('text-gray-500');
+                            elem.innerHTML = '<span class="mr-2">•</span>' + text;
+                        }
+                    });
+                });
+            }
+        });
+    </script>
+@endpush

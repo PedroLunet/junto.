@@ -37,6 +37,7 @@
                         value="{{ old('email') }}" 
                         :error="$errors->first('email')"
                         class="text-xl mb-4" 
+                        help="We will use this email to reply to your inquiry."
                     />
 
                     <x-ui.input 
