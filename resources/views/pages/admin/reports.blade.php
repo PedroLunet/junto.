@@ -8,34 +8,28 @@
             <h1 class="text-4xl font-bold text-gray-900">Reported Content</h1>
             <p class="text-gray-600 mt-2 text-2xl">Review and manage reported posts and comments</p>
         </div>
-        <div class="inline-flex bg-gray-200 rounded-lg p-1 gap-0">
-            <button onclick="filterReports('all')" id="filter-all"
-                class="px-5 py-1.5 rounded-md text-sm font-medium transition-all filter-btn bg-white shadow-sm">
-                All
-                <span class="ml-2 text-gray-500">{{ count($reports) }}</span>
-            </button>
-            <div class="w-px bg-gray-300 my-1"></div>
-            <button onclick="filterReports('pending')" id="filter-pending"
-                class="px-5 py-1.5 rounded-md text-sm font-medium transition-all filter-btn">
-                Pending
-                <span
-                    class="ml-2 text-gray-500">{{ collect($reports)->filter(fn($r) => $r->status === 'pending')->count() }}</span>
-            </button>
-            <div class="w-px bg-gray-300 my-1"></div>
-            <button onclick="filterReports('accepted')" id="filter-accepted"
-                class="px-5 py-1.5 rounded-md text-sm font-medium transition-all filter-btn">
-                Accepted
-                <span
-                    class="ml-2 text-gray-500">{{ collect($reports)->filter(fn($r) => $r->status === 'accepted')->count() }}</span>
-            </button>
-            <div class="w-px bg-gray-300 my-1"></div>
-            <button onclick="filterReports('rejected')" id="filter-rejected"
-                class="px-5 py-1.5 rounded-md text-sm font-medium transition-all filter-btn">
-                Rejected
-                <span
-                    class="ml-2 text-gray-500">{{ collect($reports)->filter(fn($r) => $r->status === 'rejected')->count() }}</span>
-            </button>
-        </div>
+        <x-ui.filter-tabs :filters="[
+            'all' => [
+                'label' => 'All',
+                'count' => count($reports),
+                'onclick' => 'filterReports(\'all\')'
+            ],
+            'pending' => [
+                'label' => 'Pending',
+                'count' => collect($reports)->filter(fn($r) => $r->status === 'pending')->count(),
+                'onclick' => 'filterReports(\'pending\')'
+            ],
+            'accepted' => [
+                'label' => 'Accepted',
+                'count' => collect($reports)->filter(fn($r) => $r->status === 'accepted')->count(),
+                'onclick' => 'filterReports(\'accepted\')'
+            ],
+            'rejected' => [
+                'label' => 'Rejected',
+                'count' => collect($reports)->filter(fn($r) => $r->status === 'rejected')->count(),
+                'onclick' => 'filterReports(\'rejected\')'
+            ]
+        ]" activeFilter="all" />
     </div>
 
     <div id="reports-container">
@@ -52,13 +46,20 @@
         function filterReports(status) {
             currentFilter = status;
 
+            // Update slider position
+            const activeBtn = document.getElementById(`filter-${status}`);
+            const slider = document.getElementById('filter-slider');
+            const rect = activeBtn.getBoundingClientRect();
+            const container = activeBtn.parentElement.getBoundingClientRect();
+            slider.style.width = rect.width + 'px';
+            slider.style.left = (rect.left - container.left) + 'px';
+
             // Update button styles
             document.querySelectorAll('.filter-btn').forEach(btn => {
                 btn.classList.remove('bg-white', 'shadow-sm');
                 btn.classList.add('text-gray-700');
             });
 
-            const activeBtn = document.getElementById(`filter-${status}`);
             activeBtn.classList.add('bg-white', 'shadow-sm');
             activeBtn.classList.remove('text-gray-700');
 

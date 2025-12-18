@@ -1,0 +1,49 @@
+@props(['filters', 'activeFilter' => null])
+
+<div class="inline-flex bg-gray-200 rounded-lg p-1 gap-0 relative overflow-hidden">
+    <!-- Animated background slider -->
+    <div id="filter-slider"
+        class="absolute bg-white shadow-sm rounded-md transition-all duration-300 ease-in-out pointer-events-none"
+        style="height: calc(100% - 8px); top: 4px;"></div>
+
+    @foreach ($filters as $key => $filter)
+        @if (!$loop->first)
+            <div class="w-px bg-gray-300 my-1 relative z-10"></div>
+        @endif
+        <button onclick="{{ $filter['onclick'] ?? '' }}" id="filter-{{ $key }}"
+            data-filter-key="{{ $key }}"
+            class="px-5 py-1.5 rounded-md text-sm font-medium transition-colors duration-200 filter-btn relative z-10 {{ $activeFilter === $key || ($loop->first && !$activeFilter) ? '' : 'text-gray-700' }}">
+            {{ $filter['label'] }}
+            @if (isset($filter['count']))
+                <span class="ml-2 text-gray-500">{{ $filter['count'] }}</span>
+            @endif
+        </button>
+    @endforeach
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const slider = document.getElementById('filter-slider');
+        const buttons = document.querySelectorAll('.filter-btn');
+
+        function updateSlider(button) {
+            const rect = button.getBoundingClientRect();
+            const container = button.parentElement.getBoundingClientRect();
+            slider.style.width = rect.width + 'px';
+            slider.style.left = (rect.left - container.left) + 'px';
+        }
+
+        // Initialize slider position
+        const activeButton = document.querySelector(
+            '.filter-btn[data-filter-key="{{ $activeFilter ?? array_key_first($filters) }}"]');
+        if (activeButton) {
+            updateSlider(activeButton);
+        }
+
+        // Update on window resize
+        window.addEventListener('resize', () => {
+            const currentActive = document.querySelector('.filter-btn.active') || activeButton;
+            if (currentActive) updateSlider(currentActive);
+        });
+    });
+</script>
