@@ -6,6 +6,7 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\LogoutController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\ResetPasswordController;
+use App\Http\Controllers\ContactController;
 use App\Http\Controllers\FileController;
 use App\Http\Controllers\Friendship\FriendRequestController;
 use App\Http\Controllers\GroupController;
@@ -192,6 +193,11 @@ Route::group([], function () {
     Route::get('/about', function () {
         return view('pages.about');
     })->name('about');
+
+    Route::controller(ContactController::class)->group(function () {
+        Route::get('/contact', 'show')->name('contact.show');
+        Route::post('/contact', 'submit')->name('contact.submit');
+    });
 });
 
 

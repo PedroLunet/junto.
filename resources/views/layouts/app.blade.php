@@ -60,6 +60,8 @@
                 class="block py-2 px-4 rounded hover:bg-[#7a5466] hover:text-white">Groups</a></li>
         <li><a href="{{ route('about') }}" class="block py-2 px-4 rounded hover:bg-[#7a5466] hover:text-white">About Us</a>
         </li>
+        <li><a href="{{ route('contact.show') }}" class="block py-2 px-4 rounded hover:bg-[#7a5466] hover:text-white">Contact Us</a>
+        </li>
     </ul>
 @endsection
 
