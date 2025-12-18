@@ -5,23 +5,29 @@
 
     <div class="flex items-center gap-6">
         <!-- profile picture -->
-        <div class="shrink-0 w-54 h-54 md:w-60 md:h-60 lg:w-72 lg:h-72 relative mr-10">
-            <div class="w-full h-full rounded-full overflow-hidden relative">
-                <img id="profileImagePreview"
-                    src="{{ $user->profilepicture ? asset('profile/' . $user->profilepicture) : asset('profile/default.png') }}"
-                    alt="Profile Picture" class="absolute inset-0 w-full h-full object-cover"
-                    onerror="this.onerror=null; this.src='{{ asset('profile/default.png') }}';">
+        <div class="flex flex-col items-center mr-10">
+            <div class="shrink-0 w-54 h-54 md:w-60 md:h-60 lg:w-72 lg:h-72 relative mb-4">
+                <div class="w-full h-full rounded-full overflow-hidden relative">
+                    <img id="profileImagePreview"
+                        src="{{ $user->profilepicture ? asset('profile/' . $user->profilepicture) : asset('profile/default.png') }}"
+                        alt="Profile Picture" class="absolute inset-0 w-full h-full object-cover"
+                        onerror="this.onerror=null; this.src='{{ asset('profile/default.png') }}';">
+                </div>
+                <!-- Profile image upload button and hidden file input -->
+                <input type="file" id="profileImageInput" name="profilePicture" accept="image/*" class="hidden" />
+                <x-ui.button type="button" id="editProfileImageBtn" variant="outline" title="Upload photo"
+                    class="absolute -top-2 -right-2 rounded-full flex items-center justify-center text-4xl font-bold z-10 px-0 py-0 bg-white border border-gray-300 shadow-lg hover:bg-gray-100">
+                    <i class="fas fa-pencil text-[#820273]"></i>
+                </x-ui.button>
+                <x-ui.button type="button" id="resetProfileImageBtn" variant="outline" title="Reset to Default"
+                    class="absolute -top-2 -left-2 rounded-full flex items-center justify-center text-4xl font-bold z-10 px-0 py-0 bg-white border border-gray-300 shadow-lg hover:bg-gray-100">
+                    <i class="fas fa-trash text-red-500"></i>
+                </x-ui.button>
             </div>
-            <!-- Profile image upload button and hidden file input -->
-            <input type="file" id="profileImageInput" name="profilePicture" accept="image/*" class="hidden" />
-            <x-ui.button type="button" id="editProfileImageBtn" variant="outline" title="Upload photo"
-                class="absolute -top-2 -right-2 rounded-full flex items-center justify-center text-4xl font-bold z-10 px-0 py-0 bg-white border border-gray-300 shadow-lg hover:bg-gray-100">
-                <i class="fas fa-pencil text-[#820273]"></i>
-            </x-ui.button>
-            <x-ui.button type="button" id="resetProfileImageBtn" variant="outline" title="Reset to Default"
-                class="absolute -top-2 -left-2 rounded-full flex items-center justify-center text-4xl font-bold z-10 px-0 py-0 bg-white border border-gray-300 shadow-lg hover:bg-gray-100">
-                <i class="fas fa-trash text-red-500"></i>
-            </x-ui.button>
+            <p class="text-sm text-gray-500 text-center max-w-[200px]">
+                Supported formats: JPG, JPEG, PNG<br>
+                Max size: 2MB
+            </p>
         </div>
 
         <div class="flex-1 space-y-6">
@@ -37,7 +43,8 @@
 
     <!-- bio -->
     <x-ui.input label="Bio" name="bio" type="textarea" value="{{ old('bio', $user->bio ?? '') }}"
-        placeholder="Tell others about yourself..." rows="4" :error="$errors->first('bio')" />
+        placeholder="Tell others about yourself..." rows="4" :error="$errors->first('bio')"
+        help="Write a short description about yourself that will be visible on your profile." />
 
     <!-- Save Button -->
     <div class="flex justify-end">
