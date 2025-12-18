@@ -27,12 +27,16 @@
                     </div>
 
                     <div class="mb-4">
-                        <input type="file" name="image" id="image-input" accept="image/*" class="hidden">
+                        <input type="file" name="image" id="image-input" accept=".jpg,.jpeg,.png,.gif"
+                            class="hidden">
                         <div class="flex items-center">
-                            <x-ui.button type="button" id="add-image-button" variant="secondary">Add Photo</x-ui.button>
+                            <x-ui.button type="button" id="add-image-button" variant="secondary">Add
+                                Photo</x-ui.button>
                             <span class="ml-3 text-sm text-gray-500">Supported: JPG, JPEG, PNG, GIF</span>
                         </div>
                         <span id="file-name" class="block mt-1 text-sm text-gray-600"></span>
+                        <span id="file-size-error" class="block mt-1 text-sm text-red-600 hidden">File is too large.
+                            Maximum size is 2MB.</span>
                     </div>
 
                     <div class="flex justify-end space-x-3">
@@ -91,7 +95,19 @@
 
             imageInput.addEventListener('change', function() {
                 const file = this.files[0];
+                const fileSizeError = document.getElementById('file-size-error');
                 if (file) {
+                    const maxSize = 2 * 1024 * 1024; // 2MB
+                    if (file.size > maxSize) {
+                        fileSizeError.classList.remove('hidden');
+                        imageInput.value = '';
+                        fileName.textContent = '';
+                        previewContainer.classList.add('hidden');
+                        previewImage.src = '#';
+                        return;
+                    } else {
+                        fileSizeError.classList.add('hidden');
+                    }
                     const reader = new FileReader();
                     reader.onload = function(e) {
                         previewImage.src = e.target.result;
@@ -99,8 +115,9 @@
                     }
                     reader.readAsDataURL(file);
                     fileName.textContent = file.name;
+                } else {
+                    fileSizeError.classList.add('hidden');
                 }
-
             });
         }
 
