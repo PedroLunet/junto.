@@ -28,17 +28,13 @@
                         {{ $group->name }}
                     </p>
                     @if ($group->isprivate)
-                        <span
-                            class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
-                            <i class="fas fa-lock mr-1 text-xs"></i>
+                        <x-ui.badge variant="private" size="xs" icon="fas fa-lock">
                             Private
-                        </span>
+                        </x-ui.badge>
                     @else
-                        <span
-                            class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                            <i class="fas fa-globe mr-1 text-xs"></i>
+                        <x-ui.badge variant="public" size="xs" icon="fas fa-globe">
                             Public
-                        </span>
+                        </x-ui.badge>
                     @endif
                 </div>
 
