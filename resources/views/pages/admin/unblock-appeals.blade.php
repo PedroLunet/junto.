@@ -69,6 +69,7 @@
     </div>
 
     <x-ui.confirm />
+    <x-admin.admin-notes-modal />
 
 @endsection
 
@@ -210,7 +211,7 @@
 
         async function rejectAppeal(appealId) {
             const confirmed = await alertConfirm(
-                'Are you sure you want to reject this appeal? You can optionally add a note.',
+                'Are you sure you want to reject this appeal? The user will remain blocked.',
                 'Confirm Rejection'
             );
 
@@ -218,31 +219,8 @@
                 return;
             }
 
-            const adminNotes = prompt('Optional: Add a note explaining why this appeal was rejected:');
-
-            fetch(`/admin/appeals/${appealId}/reject`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-                        'Accept': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        adminNotes: adminNotes || ''
-                    })
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        window.location.reload();
-                    } else {
-                        alertInfo(data.message || 'Failed to reject appeal', 'Error');
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    alertInfo('An error occurred while rejecting the appeal', 'Error');
-                });
+            // Open the admin notes modal
+            openAdminNotesModal(appealId);
         }
     </script>
 @endpush

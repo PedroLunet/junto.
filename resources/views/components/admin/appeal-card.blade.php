@@ -54,8 +54,8 @@
             <div class="bg-gray-50 rounded-lg p-3">
                 <p class="text-xs text-gray-500 mb-1">Member Since</p>
                 <p class="text-lg font-semibold text-gray-900">
-                    @if ($appeal->user->createdat instanceof \Carbon\Carbon)
-                        {{ $appeal->user->createdat->format('M Y') }}
+                    @if ($appeal->user->createdat)
+                        {{ \Carbon\Carbon::parse($appeal->user->createdat)->format('M Y') }}
                     @else
                         N/A
                     @endif
