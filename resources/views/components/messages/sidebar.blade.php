@@ -4,7 +4,7 @@
     <div class="p-4 border-b border-gray-200">
         <div class="relative">
             <input type="text" id="chat-search" placeholder="Search chats..." 
-                   class="w-full pl-10 pr-4 py-2 border rounded-lg text-sm focus:outline-none focus:border-purple-500">
+                   class="w-full pl-10 pr-4 py-2 border rounded-lg text-sm focus:outline-none focus:border-[#624452]">
             <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                 <i class="fa-solid fa-magnifying-glass text-gray-400"></i>
             </div>
@@ -26,7 +26,7 @@
                     @foreach($activeChats as $friend)
                         <li class="chat-item active-chat-item">
                             <a href="{{ route('messages.show', $friend->id) }}" 
-                               class="chat-link block hover:bg-gray-50 transition duration-150 ease-in-out {{ $activeFriendId == $friend->id ? 'bg-purple-50 border-l-4 border-purple-600' : '' }}"
+                               class="chat-link block hover:bg-gray-50 transition duration-150 ease-in-out {{ $activeFriendId == $friend->id ? 'bg-purple-50 border-l-4 border-[#624452]' : '' }}"
                                data-friend-id="{{ $friend->id }}">
                                 <div class="flex items-center px-4 py-4 sm:px-6">
                                     <div class="min-w-0 flex-1 flex items-center">
@@ -34,7 +34,7 @@
                                             <img class="h-10 w-10 rounded-full object-cover" src="{{ $friend->getProfileImage() }}" alt="{{ $friend->name }}" onerror="this.onerror=null; this.src='{{ asset('profile/default.png') }}';">
                                         </div>
                                         <div class="min-w-0 flex-1 px-4">
-                                            <p class="text-sm font-medium {{ $activeFriendId == $friend->id ? 'text-purple-700' : 'text-gray-900' }} truncate friend-name">{{ $friend->name }}</p>
+                                            <p class="text-sm font-medium {{ $activeFriendId == $friend->id ? 'text-[#624452]' : 'text-gray-900' }} truncate friend-name">{{ $friend->name }}</p>
                                             <p class="text-xs text-gray-500 truncate friend-username">@ {{ $friend->username }}</p>
                                         </div>
                                     </div>
@@ -150,13 +150,13 @@
 
                 // update active state in sidebar
                 document.querySelectorAll('.chat-link').forEach(l => {
-                    l.classList.remove('bg-purple-50', 'border-l-4', 'border-purple-600');
-                    l.querySelector('.friend-name').classList.remove('text-purple-700');
+                    l.classList.remove('bg-purple-50', 'border-l-4', 'border-[#624452]');
+                    l.querySelector('.friend-name').classList.remove('text-[#624452]');
                     l.querySelector('.friend-name').classList.add('text-gray-900');
                 });
-                this.classList.add('bg-purple-50', 'border-l-4', 'border-purple-600');
+                this.classList.add('bg-purple-50', 'border-l-4', 'border-[#624452]');
                 this.querySelector('.friend-name').classList.remove('text-gray-900');
-                this.querySelector('.friend-name').classList.add('text-purple-700');
+                this.querySelector('.friend-name').classList.add('text-[#624452]');
 
                 // handle mobile view
                 if (window.innerWidth < 768) {

@@ -31,9 +31,36 @@
 
 <!-- Messages Area -->
 <div id="messages-container" class="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50">
+    @php
+        $lastDate = null;
+    @endphp
     @foreach($messages as $message)
+        @php
+            $messageDate = $message->sentat->format('Y-m-d');
+            $displayDate = null;
+            
+            if ($lastDate !== $messageDate) {
+                if ($message->sentat->isToday()) {
+                    $displayDate = 'Today';
+                } elseif ($message->sentat->isYesterday()) {
+                    $displayDate = 'Yesterday';
+                } else {
+                    $displayDate = $message->sentat->format('F j, Y');
+                }
+                $lastDate = $messageDate;
+            }
+        @endphp
+
+        @if($displayDate)
+            <div class="flex justify-center my-4">
+                <span class="text-xs font-medium text-gray-500 bg-gray-200 px-3 py-1 rounded-full">
+                    {{ $displayDate }}
+                </span>
+            </div>
+        @endif
+
         <div class="flex {{ $message->senderid === auth()->id() ? 'justify-end' : 'justify-start' }}">
-            <div class="max-w-[70%] rounded-lg px-4 py-2 {{ $message->senderid === auth()->id() ? 'bg-purple-600 text-white' : 'bg-white text-gray-800 border border-gray-200' }}">
+            <div class="max-w-[70%] rounded-lg px-4 py-2 {{ $message->senderid === auth()->id() ? 'bg-[#624452] text-white' : 'bg-white text-gray-800 border border-gray-200' }}">
                 <p class="text-sm">{{ $message->content }}</p>
                 <p class="text-xs mt-1 {{ $message->senderid === auth()->id() ? 'text-purple-200' : 'text-gray-400' }}">
                     {{ $message->sentat->format('H:i') }}
@@ -48,9 +75,9 @@
     <form id="message-form" class="flex gap-2">
         @csrf
         <input type="text" id="message-input" name="content" 
-            class="flex-1 rounded-full border-gray-300 focus:border-purple-500 focus:ring focus:ring-purple-200 focus:ring-opacity-50 px-4 py-2"
+            class="flex-1 rounded-full border-gray-300 focus:border-[#624452] focus:ring focus:ring-purple-200 focus:ring-opacity-50 px-4 py-2"
             placeholder="Type a message..." autocomplete="off">
-        <button type="submit" class="bg-purple-600 text-white rounded-full p-3 hover:bg-purple-700 transition duration-150 flex items-center justify-center w-12 h-12">
+        <button type="submit" class="bg-[#624452] text-white rounded-full p-3 hover:bg-[#624452] transition duration-150 flex items-center justify-center w-12 h-12">
             <i class="fa-solid fa-paper-plane"></i>
         </button>
     </form>
@@ -98,6 +125,7 @@
         const friendId = {{ $friend->id }};
         const currentUserId = {{ auth()->id() }};
         let lastMessageCount = {{ count($messages) }};
+        let lastMessageDate = "{{ $messages->last() ? $messages->last()->sentat->format('Y-m-d') : '' }}";
 
         // scroll to bottom on load
         if (messagesContainer) {
@@ -143,11 +171,42 @@
         }
 
         function appendMessage(message, isMine) {
+            const messageDate = new Date(message.sentat);
+            const dateString = messageDate.getFullYear() + '-' + String(messageDate.getMonth() + 1).padStart(2, '0') + '-' + String(messageDate.getDate()).padStart(2, '0');
+
+            if (lastMessageDate !== dateString) {
+                const separatorDiv = document.createElement('div');
+                separatorDiv.className = 'flex justify-center my-4';
+                
+                const span = document.createElement('span');
+                span.className = 'text-xs font-medium text-gray-500 bg-gray-200 px-3 py-1 rounded-full';
+                
+                const today = new Date();
+                const yesterday = new Date(today);
+                yesterday.setDate(yesterday.getDate() - 1);
+                
+                const todayString = today.getFullYear() + '-' + String(today.getMonth() + 1).padStart(2, '0') + '-' + String(today.getDate()).padStart(2, '0');
+                const yesterdayString = yesterday.getFullYear() + '-' + String(yesterday.getMonth() + 1).padStart(2, '0') + '-' + String(yesterday.getDate()).padStart(2, '0');
+
+                if (dateString === todayString) {
+                    span.textContent = 'Today';
+                } else if (dateString === yesterdayString) {
+                    span.textContent = 'Yesterday';
+                } else {
+                    span.textContent = messageDate.toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' });
+                }
+
+                separatorDiv.appendChild(span);
+                messagesContainer.appendChild(separatorDiv);
+                
+                lastMessageDate = dateString;
+            }
+
             const div = document.createElement('div');
             div.className = `flex ${isMine ? 'justify-end' : 'justify-start'}`;
             
             const bubble = document.createElement('div');
-            bubble.className = `max-w-[70%] rounded-lg px-4 py-2 ${isMine ? 'bg-purple-600 text-white' : 'bg-white text-gray-800 border border-gray-200'}`;
+            bubble.className = `max-w-[70%] rounded-lg px-4 py-2 ${isMine ? 'bg-[#624452] text-white' : 'bg-white text-gray-800 border border-gray-200'}`;
             
             const text = document.createElement('p');
             text.className = 'text-sm';

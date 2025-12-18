@@ -3,7 +3,7 @@
 @section('title', 'Messages')
 
 @section('content')
-<div class="container mx-auto px-4 h-[calc(100vh-130px)]">
+<div class="container mx-auto px-4 h-full">
     <div class="bg-white rounded-lg shadow overflow-hidden h-full flex">
         <!-- Sidebar -->
         <div id="sidebar-container" class="w-full md:w-1/3 h-full">
