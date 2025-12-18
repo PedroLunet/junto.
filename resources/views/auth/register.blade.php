@@ -22,13 +22,14 @@
                         required autofocus class="text-xl" />
 
                     <x-ui.input label="Username" name="username" type="text" value="{{ old('username') }}"
-                        :error="$errors->first('username')" required class="text-xl" />
+                        :error="$errors->first('username')" required class="text-xl"
+                        help="Username must be unique and contain no spaces." />
 
                     <x-ui.input label="E-mail Address" name="email" type="email" value="{{ old('email') }}"
                         :error="$errors->first('email')" required class="text-xl" />
 
                     <x-ui.input label="Password" name="password" type="password" :error="$errors->first('password')" required
-                        class="text-xl" />
+                        class="text-xl" help="Password must be at least 8 characters long." />
 
                     <x-ui.input label="Confirm Password" name="password_confirmation" type="password" required
                         class="text-xl" />
