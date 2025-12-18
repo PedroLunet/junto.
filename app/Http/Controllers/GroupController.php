@@ -9,27 +9,20 @@ use App\Models\Request as ModelsRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\DB;
 
 class GroupController extends Controller
 {
     public function edit(Group $group)
     {
-        $user = Auth::user();
-        $isOwner = $user && $group->members()->wherePivot('isowner', true)->where('users.id', $user->id)->exists();
-        if (! $isOwner) {
-            return redirect()->route('groups.show', $group)->with('error', 'Only the group owner can edit the group.');
-        }
+        $this->authorize('update', $group);
 
         return view('pages.groups.edit', ['group' => $group]);
     }
 
     public function update(Request $request, Group $group)
     {
-        $user = Auth::user();
-        $isOwner = $user && $group->members()->wherePivot('isowner', true)->where('users.id', $user->id)->exists();
-        if (! $isOwner) {
-            return redirect()->route('groups.show', $group)->with('error', 'Only the group owner can update the group.');
-        }
+        $this->authorize('update', $group);
 
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:100',
@@ -49,6 +42,21 @@ class GroupController extends Controller
         $group->save();
 
         return redirect()->route('groups.show', $group)->with('success', 'Group updated successfully!');
+    }
+
+    public function destroy(Group $group)
+    {
+        $this->authorize('delete', $group);
+
+        DB::transaction(function () use ($group) {
+            $group->members()->detach();
+
+            GroupJoinRequest::where('groupid', $group->id)->delete();
+
+            $group->delete();
+        });
+
+        return redirect()->route('groups.index')->with('success', 'Group has been permanently deleted.');
     }
 
     public function index()
@@ -93,11 +101,8 @@ class GroupController extends Controller
 
     public function removeMember(Group $group, $userId)
     {
-        $user = Auth::user();
-        $isOwner = $user && $group->members()->wherePivot('isowner', true)->where('users.id', $user->id)->exists();
-        if (! $isOwner) {
-            return redirect()->route('groups.show', $group)->with('error', 'Only the group owner can remove members.');
-        }
+        $this->authorize('update', $group);
+
         $owner = $group->owner()->first();
         if ($owner && $owner->id == $userId) {
             return redirect()->route('groups.show', $group)->with('error', 'You cannot remove yourself as the owner.');
@@ -111,6 +116,7 @@ class GroupController extends Controller
     {
         $user = auth()->user();
         $isMember = $user && $group->members->contains($user);
+
         $isOwner = $user && $group->members()->wherePivot('isowner', true)->where('users.id', $user->id)->exists();
 
         if (! $group->isprivate || $isMember || $isOwner) {
@@ -126,7 +132,6 @@ class GroupController extends Controller
         $friendsInGroup = collect();
         $pendingRequest = null;
         $pendingRequests = collect();
-        $isOwner = false;
 
         if (Auth::check()) {
             $user = Auth::user();
@@ -142,8 +147,6 @@ class GroupController extends Controller
                 ->where('status', 'pending')
                 ->first();
 
-            $isOwner = $group->members()->wherePivot('isowner', true)->where('users.id', Auth::id())->exists();
-
             if ($isOwner) {
                 $pendingRequests = ModelsRequest::where('status', 'pending')
                     ->whereHas('groupJoinRequest', function ($query) use ($group) {
@@ -154,7 +157,6 @@ class GroupController extends Controller
             }
         }
 
-        // Add users_count attribute for the view
         $group->users_count = $group->members()->count();
         $owner = $group->owner()->first();
         $ownerId = $owner ? $owner->id : null;
@@ -225,7 +227,6 @@ class GroupController extends Controller
         $isOwner = $group->members()->wherePivot('isowner', true)->where('users.id', $userId)->exists();
 
         $group->members()->detach($userId);
-
         $remainingMembers = $group->members()->get();
 
         if ($isOwner) {
@@ -235,10 +236,10 @@ class GroupController extends Controller
                     ->orderBy('membership.joinedat', 'asc')
                     ->first();
                 if ($oldestMember) {
-                    \DB::table('membership')
+                    DB::table('membership')
                         ->where('groupid', $group->id)
                         ->update(['isowner' => false]);
-                    \DB::table('membership')
+                    DB::table('membership')
                         ->where('groupid', $group->id)
                         ->where('userid', $oldestMember->id)
                         ->update(['isowner' => true]);
@@ -247,8 +248,7 @@ class GroupController extends Controller
                 if ($group->isprivate) {
                     $group->isprivate = false;
                     $group->save();
-
-                    return back()->with('success', 'You have left the group. The group is now public and will assign a new owner when someone joins.');
+                    return back()->with('success', 'You have left. The group is now public.');
                 }
             }
         }
@@ -267,9 +267,7 @@ class GroupController extends Controller
 
         if ($request) {
             GroupJoinRequest::where('requestid', $request->notificationid)->delete();
-
             Notification::where('id', $request->notificationid)->delete();
-
             $request->delete();
 
             return back()->with('success', 'Your request has been cancelled.');
@@ -280,11 +278,7 @@ class GroupController extends Controller
 
     public function acceptRequest(Group $group, $requestId)
     {
-        $isOwner = $group->members()->wherePivot('isowner', true)->where('users.id', Auth::id())->exists();
-
-        if (! $isOwner) {
-            return back()->with('error', 'You are not authorized to accept requests.');
-        }
+        $this->authorize('update', $group);
 
         $request = ModelsRequest::where('notificationid', $requestId)
             ->whereHas('groupJoinRequest', function ($query) use ($group) {
@@ -294,22 +288,17 @@ class GroupController extends Controller
 
         if ($request && $request->status === 'pending') {
             $group->members()->attach($request->senderid, ['isowner' => false]);
-
             $request->update(['status' => 'accepted']);
 
-            return back()->with('success', 'Request accepted. User has been added to the group.');
+            return back()->with('success', 'Request accepted.');
         }
 
-        return back()->with('error', 'Request not found or already processed.');
+        return back()->with('error', 'Request not found.');
     }
 
     public function rejectRequest(Group $group, $requestId)
     {
-        $isOwner = $group->members()->wherePivot('isowner', true)->where('users.id', Auth::id())->exists();
-
-        if (! $isOwner) {
-            return back()->with('error', 'You are not authorized to reject requests.');
-        }
+        $this->authorize('update', $group);
 
         $request = ModelsRequest::where('notificationid', $requestId)
             ->whereHas('groupJoinRequest', function ($query) use ($group) {
@@ -319,11 +308,10 @@ class GroupController extends Controller
 
         if ($request && $request->status === 'pending') {
             $request->update(['status' => 'rejected']);
-
             return back()->with('success', 'Request rejected.');
         }
 
-        return back()->with('error', 'Request not found or already processed.');
+        return back()->with('error', 'Request not found.');
     }
 
     public function storePost(Request $request, Group $group)

@@ -2,10 +2,8 @@
 
 @section('content')
     <div class="container mx-auto px-4 py-8">
-        {{-- Centered container matching the Feed width --}}
         <div class="max-w-4xl mx-auto">
 
-            {{-- Back Link --}}
             <div class="mb-6">
                 <a href="{{ route('groups.show', $group->id) }}" class="text-gray-500 hover:text-[#820263] flex items-center">
                     <i class="fas fa-arrow-left mr-2"></i> Back to Group
@@ -54,6 +52,26 @@
                             <x-ui.button type="submit" variant="primary">Save Changes</x-ui.button>
                         </div>
                     </form>
+
+                    {{-- Danger Zone --}}
+                    <div class="mt-12 pt-8 border-t border-red-100">
+                        <div class="bg-red-50 rounded-lg p-6 border border-red-100">
+                            <h3 class="text-lg font-bold text-red-800">Danger Zone</h3>
+                            <p class="text-sm text-red-600 mt-1 mb-4">
+                                Once you delete a group, there is no going back. All data and memberships will be removed.
+                            </p>
+
+                            <form action="{{ route('groups.destroy', $group->id) }}" method="POST"
+                                onsubmit="return confirm('Are you sure? This cannot be undone.');">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit"
+                                    class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded transition duration-150">
+                                    Delete Group
+                                </button>
+                            </form>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
