@@ -10,31 +10,29 @@ class Message extends Model
 {
     use HasFactory;
 
-    public $timestamps = false; // We use sentAt manually or let DB handle it, but Laravel expects created_at/updated_at by default. 
-    // Actually, the schema has `sentAt` and no `updated_at`. So I should disable timestamps and maybe map sentAt.
-
+    public $timestamps = false; 
     protected $table = 'messages';
 
     protected $fillable = [
-        'senderId',
-        'receiverId',
+        'senderid',
+        'receiverid',
         'content',
-        'isRead',
-        'sentAt',
+        'isread',
+        'sentat',
     ];
 
     protected $casts = [
-        'sentAt' => 'datetime',
-        'isRead' => 'boolean',
+        'sentat' => 'datetime',
+        'isread' => 'boolean',
     ];
 
     public function sender()
     {
-        return $this->belongsTo(User::class, 'senderId');
+        return $this->belongsTo(User::class, 'senderid');
     }
 
     public function receiver()
     {
-        return $this->belongsTo(User::class, 'receiverId');
+        return $this->belongsTo(User::class, 'receiverid');
     }
 }

@@ -30,20 +30,22 @@ class MessageController extends Controller
 
         // fetch messages between current user and friend
         $messages = Message::where(function ($query) use ($currentUser, $userId) {
-            $query->where('senderId', $currentUser->id)
-                  ->where('receiverId', $userId);
+            $query->where('senderid', $currentUser->id)
+                  ->where('receiverid', $userId);
         })->orWhere(function ($query) use ($currentUser, $userId) {
-            $query->where('senderId', $userId)
-                  ->where('receiverId', $currentUser->id);
-        })->orderBy('sentAt', 'asc')->get();
+            $query->where('senderid', $userId)
+                  ->where('receiverid', $currentUser->id);
+        })->orderBy('sentat', 'asc')->get();
 
         // mark message as read
-        Message::where('senderId', $userId)
-            ->where('receiverId', $currentUser->id)
-            ->where('isRead', false)
-            ->update(['isRead' => true]);
+        Message::where('senderid', $userId)
+            ->where('receiverid', $currentUser->id)
+            ->where('isread', false)
+            ->update(['isread' => true]);
 
-        return view('pages.messages.show', compact('friend', 'messages'));
+        $friends = $currentUser->friends();
+
+        return view('pages.messages.show', compact('friend', 'messages', 'friends'));
     }
 
     public function store(Request $request, $userId)
@@ -62,11 +64,11 @@ class MessageController extends Controller
         ]);
 
         $message = Message::create([
-            'senderId' => $currentUser->id,
-            'receiverId' => $userId,
+            'senderid' => $currentUser->id,
+            'receiverid' => $userId,
             'content' => $request->input('content'),
-            'sentAt' => now(),
-            'isRead' => false,
+            'sentat' => now(),
+            'isread' => false,
         ]);
 
         if ($request->ajax()) {
@@ -78,5 +80,37 @@ class MessageController extends Controller
         }
 
         return redirect()->route('messages.show', $userId);
+    }
+
+    public function fetchMessages($userId)
+    {
+        $currentUser = Auth::user();
+
+        if ($currentUser->id == $userId) {
+             return response()->json(['messages' => [], 'currentUserId' => $currentUser->id]);
+        }
+
+        if (!$currentUser->isFriendsWith($userId)) {
+            return response()->json(['error' => 'You can only message friends.'], 403);
+        }
+
+        $messages = Message::where(function ($query) use ($currentUser, $userId) {
+            $query->where('senderid', $currentUser->id)
+                  ->where('receiverid', $userId);
+        })->orWhere(function ($query) use ($currentUser, $userId) {
+            $query->where('senderid', $userId)
+                  ->where('receiverid', $currentUser->id);
+        })->orderBy('sentat', 'asc')->get();
+
+        // Mark received messages as read
+        Message::where('senderid', $userId)
+            ->where('receiverid', $currentUser->id)
+            ->where('isread', false)
+            ->update(['isread' => true]);
+
+        return response()->json([
+            'messages' => $messages,
+            'currentUserId' => $currentUser->id
+        ]);
     }
 }
