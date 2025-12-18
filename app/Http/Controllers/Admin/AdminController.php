@@ -134,7 +134,6 @@ class AdminController extends Controller
             $request->validate([
                 'name' => 'required|string|max:255',
                 'username' => 'required|string|max:255|unique:users,username,' . $user->id,
-                'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
                 'bio' => 'nullable|string|max:1000',
                 'is_admin' => 'boolean'
             ]);
@@ -142,7 +141,6 @@ class AdminController extends Controller
             $user->update([
                 'name' => $request->name,
                 'username' => $request->username,
-                'email' => $request->email,
                 'bio' => $request->bio,
                 'isadmin' => $request->boolean('is_admin', false),
             ]);
