@@ -1,7 +1,7 @@
 @props(['appeal'])
 
 <div id="appeal-{{ $appeal->id }}"
-    class="bg-white rounded-lg shadow-md border border-gray-200 overflow-hidden hover:shadow-lg transition">
+    class="bg-white rounded-2xl shadow-md border border-gray-200 overflow-hidden hover:shadow-lg transition">
     <div class="p-6">
         <div class="flex items-start justify-between mb-4">
             <div class="flex items-center space-x-4">
@@ -23,8 +23,8 @@
                 </div>
             </div>
             <div class="text-right">
-                <x-ui.badge variant="pending" size="xs" icon="fas fa-clock">
-                    Pending
+                <x-ui.badge :variant="$appeal->status === 'approved' ? 'online' : ($appeal->status === 'rejected' ? 'offline' : 'pending')" size="xs" :icon="$appeal->status === 'approved' ? 'fas fa-check' : ($appeal->status === 'rejected' ? 'fas fa-times' : 'fas fa-clock')">
+                    {{ ucfirst($appeal->status) }}
                 </x-ui.badge>
                 <p class="text-sm text-gray-500 mt-2">
                     @if ($appeal->createdat instanceof \Carbon\Carbon)
@@ -63,15 +63,17 @@
             </div>
         </div>
 
-        <div class="flex gap-3">
-            <x-ui.button variant="success" onclick="approveAppeal({{ $appeal->id }})" class="flex-1">
-                <i class="fas fa-check-circle mr-2"></i>
-                Approve & Unblock
-            </x-ui.button>
-            <x-ui.button variant="danger" onclick="rejectAppeal({{ $appeal->id }})" class="flex-1">
-                <i class="fas fa-times-circle mr-2"></i>
-                Reject Appeal
-            </x-ui.button>
-        </div>
+        @if ($appeal->status === 'pending')
+            <div class="flex gap-3">
+                <x-ui.button variant="success" onclick="approveAppeal({{ $appeal->id }})" class="flex-1">
+                    <i class="fas fa-check-circle mr-2"></i>
+                    Approve & Unblock
+                </x-ui.button>
+                <x-ui.button variant="danger" onclick="rejectAppeal({{ $appeal->id }})" class="flex-1">
+                    <i class="fas fa-times-circle mr-2"></i>
+                    Reject Appeal
+                </x-ui.button>
+            </div>
+        @endif
     </div>
 </div>

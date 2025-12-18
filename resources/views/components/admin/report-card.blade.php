@@ -14,7 +14,7 @@
         </div>
 
         <div class="flex items-center">
-            <x-ui.badge :variant="$report->status === 'accepted' ? 'online' : ($report->status === 'rejected' ? 'offline' : 'pending')" size="md">
+            <x-ui.badge :variant="$report->status === 'accepted' ? 'online' : ($report->status === 'rejected' ? 'offline' : 'pending')" size="xs" :icon="$report->status === 'accepted' ? 'fas fa-check' : ($report->status === 'rejected' ? 'fas fa-times' : 'fas fa-clock')">
                 {{ ucfirst($report->status) }}
             </x-ui.badge>
         </div>
