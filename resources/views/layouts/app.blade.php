@@ -76,23 +76,23 @@
     <div class="hidden lg:flex gap-2 w-full">
         @auth
             <x-ui.button id="movie-button" variant="special" class="flex-1 justify-center">
-                <i class="fa-solid fa-clapperboard text-2xl"></i>
+                <i class="fa-solid fa-clapperboard"></i>
             </x-ui.button>
             <x-ui.button id="book-button" variant="special" class="flex-1 justify-center">
-                <i class="fa-solid fa-book text-2xl"></i>
+                <i class="fa-solid fa-book"></i>
             </x-ui.button>
             <x-ui.button id="music-button" variant="special" class="flex-1 justify-center">
-                <i class="fa-solid fa-music text-2xl"></i>
+                <i class="fa-solid fa-music"></i>
             </x-ui.button>
         @else
             <x-ui.button href="{{ route('login') }}" variant="special" class="flex-1 justify-center">
-                <i class="fa-solid fa-clapperboard text-2xl"></i>
+                <i class="fa-solid fa-clapperboard"></i>
             </x-ui.button>
             <x-ui.button href="{{ route('login') }}" variant="special" class="flex-1 justify-center">
-                <i class="fa-solid fa-book text-2xl"></i>
+                <i class="fa-solid fa-book"></i>
             </x-ui.button>
             <x-ui.button href="{{ route('login') }}" variant="special" class="flex-1 justify-center">
-                <i class="fa-solid fa-music text-2xl"></i>
+                <i class="fa-solid fa-music"></i>
             </x-ui.button>
         @endauth
     </div>

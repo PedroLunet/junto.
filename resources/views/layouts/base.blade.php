@@ -55,7 +55,7 @@
             <div class="flex items-center gap-2 w-full overflow-hidden justify-end">
                 @yield('header-actions')
                 <button onclick="toggleMobileMenu()" class="lg:hidden text-white">
-                    <i class="fa-solid fa-times text-2xl"></i>
+                    <i class="fa-solid fa-times"></i>
                 </button>
             </div>
         </div>
