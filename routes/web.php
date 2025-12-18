@@ -29,6 +29,9 @@ Route::middleware('auth')->get('/blocked', function () {
     return view('pages.blocked');
 })->name('blocked');
 
+// Appeal submission route (for blocked users) - must be before regular.user middleware
+Route::middleware('auth')->post('/appeal/submit', [AdminController::class, 'submitAppeal'])->name('appeal.submit');
+
 Route::middleware('regular.user')->group(function () {
     Route::get('/', [HomeController::class, 'index'])->name('home');
     Route::get('/posts/{id}/comments', [CommentController::class, 'index'])->name('post.comments');
@@ -154,6 +157,9 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::post('/admin/reports/{id}/reject', [AdminController::class, 'rejectReport'])->name('admin.reports.reject');
     Route::get('/admin/groups', [AdminController::class, 'groups'])->name('admin.groups');
     Route::delete('/admin/groups/{id}', [AdminController::class, 'deleteGroup'])->name('admin.groups.delete');
+    Route::get('/admin/appeals', [AdminController::class, 'appeals'])->name('admin.appeals');
+    Route::post('/admin/appeals/{id}/approve', [AdminController::class, 'approveAppeal'])->name('admin.appeals.approve');
+    Route::post('/admin/appeals/{id}/reject', [AdminController::class, 'rejectAppeal'])->name('admin.appeals.reject');
 });
 
 // GROUPS ROUTES
