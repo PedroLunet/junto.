@@ -14,13 +14,17 @@ class MailModel extends Mailable
 {
     use Queueable, SerializesModels;
     public $mailData;
+    public $subject;
+    public $view;
 
     /**
      * Create a new message instance.
      */
-    public function __construct($mailData)
+    public function __construct($mailData, $subject = 'Reset Password', $view = 'emails.reset')
     {
         $this->mailData = $mailData;
+        $this->subject = $subject;
+        $this->view = $view;
     }
 
     /**
@@ -30,7 +34,7 @@ class MailModel extends Mailable
     {
         return new Envelope(
             from: new Address(env('MAIL_FROM_ADDRESS'), env('MAIL_FROM_NAME')),
-            subject: 'Reset Password',
+            subject: $this->subject,
         );
 
     }
@@ -41,7 +45,7 @@ class MailModel extends Mailable
     public function content(): Content
     {
         return new Content(
-            view: 'emails.reset',
+            view: $this->view,
         );
     }
 
