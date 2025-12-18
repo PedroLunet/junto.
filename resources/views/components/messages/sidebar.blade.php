@@ -26,7 +26,8 @@
                     @foreach($activeChats as $friend)
                         <li class="chat-item active-chat-item">
                             <a href="{{ route('messages.show', $friend->id) }}" 
-                               class="block hover:bg-gray-50 transition duration-150 ease-in-out {{ $activeFriendId == $friend->id ? 'bg-purple-50 border-l-4 border-purple-600' : '' }}">
+                               class="chat-link block hover:bg-gray-50 transition duration-150 ease-in-out {{ $activeFriendId == $friend->id ? 'bg-purple-50 border-l-4 border-purple-600' : '' }}"
+                               data-friend-id="{{ $friend->id }}">
                                 <div class="flex items-center px-4 py-4 sm:px-6">
                                     <div class="min-w-0 flex-1 flex items-center">
                                         <div class="flex-shrink-0">
@@ -54,7 +55,8 @@
                 @foreach($otherFriends as $friend)
                     <li class="chat-item other-friend-item">
                         <a href="{{ route('messages.show', $friend->id) }}" 
-                           class="block hover:bg-gray-50 transition duration-150 ease-in-out">
+                           class="chat-link block hover:bg-gray-50 transition duration-150 ease-in-out"
+                           data-friend-id="{{ $friend->id }}">
                             <div class="flex items-center px-4 py-4 sm:px-6">
                                 <div class="min-w-0 flex-1 flex items-center">
                                     <div class="flex-shrink-0">
@@ -75,6 +77,7 @@
 </div>
 
 <script>
+    // search logic
     document.getElementById('chat-search').addEventListener('input', function(e) {
         const searchTerm = e.target.value.toLowerCase();
         const activeChatItems = document.querySelectorAll('.active-chat-item');
@@ -131,5 +134,62 @@
             activeChatItems.forEach(item => item.style.display = '');
             if (noChatsMessage) noChatsMessage.classList.remove('hidden');
         }
+    });
+
+    // ajax navigation logic
+    document.addEventListener('DOMContentLoaded', function() {
+        const chatLinks = document.querySelectorAll('.chat-link');
+        const chatAreaContainer = document.getElementById('chat-area-container');
+        const sidebarContainer = document.getElementById('sidebar-container');
+
+        chatLinks.forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const url = this.href;
+                const friendId = this.dataset.friendId;
+
+                // update active state in sidebar
+                document.querySelectorAll('.chat-link').forEach(l => {
+                    l.classList.remove('bg-purple-50', 'border-l-4', 'border-purple-600');
+                    l.querySelector('.friend-name').classList.remove('text-purple-700');
+                    l.querySelector('.friend-name').classList.add('text-gray-900');
+                });
+                this.classList.add('bg-purple-50', 'border-l-4', 'border-purple-600');
+                this.querySelector('.friend-name').classList.remove('text-gray-900');
+                this.querySelector('.friend-name').classList.add('text-purple-700');
+
+                // handle mobile view
+                if (window.innerWidth < 768) {
+                    if (sidebarContainer) sidebarContainer.classList.add('hidden');
+                    if (chatAreaContainer) {
+                        chatAreaContainer.classList.remove('hidden');
+                
+                        chatAreaContainer.classList.add('w-full'); 
+                    }
+                }
+
+                fetch(url, {
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                })
+                .then(response => response.text())
+                .then(html => {
+                    chatAreaContainer.innerHTML = html;
+                    
+                    const scripts = chatAreaContainer.querySelectorAll('script');
+                    scripts.forEach(script => {
+                        const newScript = document.createElement('script');
+                        Array.from(script.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value));
+                        newScript.appendChild(document.createTextNode(script.innerHTML));
+                        script.parentNode.replaceChild(newScript, script);
+                    });
+
+                    // update url
+                    history.pushState(null, '', url);
+                })
+                .catch(error => console.error('Error loading chat:', error));
+            });
+        });
     });
 </script>

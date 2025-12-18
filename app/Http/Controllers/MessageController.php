@@ -88,6 +88,10 @@ class MessageController extends Controller
              $data['activeChats'] = $data['activeChats']->prepend($friend);
         }
 
+        if (request()->ajax()) {
+            return view('components.messages.chat-box', compact('friend', 'messages'));
+        }
+
         return view('pages.messages.show', array_merge(['friend' => $friend, 'messages' => $messages], $data));
     }
 
