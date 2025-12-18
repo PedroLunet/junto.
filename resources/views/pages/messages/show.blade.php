@@ -72,6 +72,18 @@
         const content = messageInput.value.trim();
         if (!content) return;
 
+
+        const tempMessage = {
+            content: content,
+            sentat: new Date().toISOString(),
+            senderid: currentUserId
+        };
+        
+        appendMessage(tempMessage, true);
+        messageInput.value = ''; // clear input immediately
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        lastMessageCount++; 
+
         fetch(`{{ route('messages.store', $friend->id) }}`, {
             method: 'POST',
             headers: {
@@ -83,14 +95,15 @@
         })
         .then(response => response.json())
         .then(data => {
-            if (data.status === 'success') {
-                appendMessage(data.message, true);
-                messageInput.value = '';
-                messagesContainer.scrollTop = messagesContainer.scrollHeight;
-                lastMessageCount++;
+            if (data.status !== 'success') {
+                console.error('Message send failed');
+                // mudar depois
             }
         })
-        .catch(error => console.error('Error sending message:', error));
+        .catch(error => {
+            console.error('Error sending message:', error);
+
+        });
     });
 
     function appendMessage(message, isMine) {
