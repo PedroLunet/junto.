@@ -458,7 +458,6 @@ class AdminController extends Controller
     public function appeals()
     {
         $appeals = UnblockAppeal::with('user')
-            ->pending()
             ->orderBy('createdat', 'desc')
             ->get();
 
