@@ -60,7 +60,7 @@
         @endif
 
         <div class="flex {{ $message->senderid === auth()->id() ? 'justify-end' : 'justify-start' }}">
-            <div class="max-w-[70%] rounded-lg px-4 py-2 {{ $message->senderid === auth()->id() ? 'bg-[#624452] text-white' : 'bg-white text-gray-800 border border-gray-200' }}">
+            <div class="max-w-[70%] px-4 py-2 {{ $message->senderid === auth()->id() ? 'bg-[#624452] text-white rounded-2xl rounded-br-none' : 'bg-white text-gray-800 border border-gray-200 rounded-2xl rounded-bl-none' }}">
                 <p class="text-sm">{{ $message->content }}</p>
                 <p class="text-xs mt-1 {{ $message->senderid === auth()->id() ? 'text-purple-200' : 'text-gray-400' }}">
                     {{ $message->sentat->format('H:i') }}
@@ -206,7 +206,7 @@
             div.className = `flex ${isMine ? 'justify-end' : 'justify-start'}`;
             
             const bubble = document.createElement('div');
-            bubble.className = `max-w-[70%] rounded-lg px-4 py-2 ${isMine ? 'bg-[#624452] text-white' : 'bg-white text-gray-800 border border-gray-200'}`;
+            bubble.className = `max-w-[70%] px-4 py-2 ${isMine ? 'bg-[#624452] text-white rounded-2xl rounded-br-none' : 'bg-white text-gray-800 border border-gray-200 rounded-2xl rounded-bl-none'}`;
             
             const text = document.createElement('p');
             text.className = 'text-sm';

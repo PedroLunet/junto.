@@ -35,7 +35,8 @@
                                         </div>
                                         <div class="min-w-0 flex-1 px-4">
                                             <p class="text-sm font-medium {{ $activeFriendId == $friend->id ? 'text-[#624452]' : 'text-gray-900' }} truncate friend-name">{{ $friend->name }}</p>
-                                            <p class="text-xs text-gray-500 truncate friend-username">@ {{ $friend->username }}</p>
+                                            <p class="text-xs text-gray-500 truncate friend-last-message">{{ $friend->last_message }}</p>
+                                            <p class="hidden friend-username">{{ $friend->username }}</p>
                                         </div>
                                     </div>
                                 </div>
