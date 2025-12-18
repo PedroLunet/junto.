@@ -83,8 +83,8 @@
                                     </button>
                                 </th>
                                 <th
-                                    class="px-6 py-3 text-left text-base font-medium text-gray-500 uppercase tracking-wider">
-                                    Edit
+                                    class="px-3 py-3 text-center text-base font-medium text-gray-500 uppercase tracking-wider">
+                                    Actions
                                 </th>
                             </tr>
                         </thead>
@@ -114,19 +114,25 @@
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         <span
                                             class="inline-flex items-center px-2.5 py-0.5 rounded-full text-base font-medium
-                        {{ $user->isblocked ? 'bg-red-100 text-red-800' : ($user->isadmin ? 'bg-purple-100 text-purple-800' : 'bg-green-100 text-green-800') }}">
+                                            {{ $user->isblocked ? 'bg-red-100 text-red-800' : ($user->isadmin ? 'bg-purple-100 text-purple-800' : 'bg-green-100 text-green-800') }}">
                                             {{ $user->isblocked ? 'Blocked' : ($user->isadmin ? 'Admin' : 'Active') }}
                                         </span>
                                     </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-base font-medium">
-                                        <div class="flex space-x-6">
-                                            <button class="edit-user-btn text-blue-600 hover:text-blue-900"
+                                    <td class="px-3 py-4 whitespace-nowrap text-base font-medium">
+                                        <div class="flex justify-center space-x-1">
+                                            <x-ui.icon-button variant="blue" class="edit-user-btn"
                                                 data-user-id="{{ $user->id }}" data-user-name="{{ $user->name }}"
                                                 data-user-username="{{ $user->username }}"
                                                 data-user-email="{{ $user->email }}" data-user-bio="{{ $user->bio }}"
                                                 data-user-isadmin="{{ $user->isadmin ? 'true' : 'false' }}">
                                                 <i class="fas fa-edit"></i>
-                                            </button>
+                                            </x-ui.icon-button>
+                                            <x-ui.icon-button variant="yellow" class="ban-user-btn">
+                                                <i class="fas fa-ban"></i>
+                                            </x-ui.icon-button>
+                                            <x-ui.icon-button variant="red" class="delete-user-btn">
+                                                <i class="fas fa-trash"></i>
+                                            </x-ui.icon-button>
                                         </div>
                                     </td>
                                 </tr>
