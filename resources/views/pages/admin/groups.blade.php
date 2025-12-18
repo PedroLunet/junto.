@@ -10,7 +10,7 @@
         </div>
         <div class="flex items-center gap-4">
             <!-- Search Bar -->
-            <x-ui.search-bar id="searchGroups" placeholder="Search Groups" width="w-96" />
+            <x-ui.search-bar id="searchGroups" placeholder="Search Groups" />
 
             <!-- Sort By Dropdown -->
             <x-ui.sort-dropdown :options="[
