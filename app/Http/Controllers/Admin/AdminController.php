@@ -53,6 +53,9 @@ class AdminController extends Controller
         })->count();
         $totalFriendships = DB::table('friendship')->count();
 
+        // Group stats
+        $totalGroups = DB::table('lbaw2544.groups')->count();
+
         $stats = [
             'totalUsers' => $totalUsers,
             'activeUsers' => $activeUsers,
@@ -63,6 +66,7 @@ class AdminController extends Controller
             'bookReviews' => $bookReviews,
             'pendingRequests' => $pendingFriendRequests,
             'totalFriendships' => $totalFriendships,
+            'totalGroups' => $totalGroups,
         ];
 
         return view('pages.admin.dashboard', compact('stats'));

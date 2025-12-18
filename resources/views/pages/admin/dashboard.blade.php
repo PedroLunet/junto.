@@ -9,7 +9,7 @@
             <x-admin.stats-card title="Total Users" :value="$stats['totalUsers']" />
             <x-admin.stats-card title="Active Users" :value="$stats['activeUsers']" />
             <x-admin.stats-card title="Friendships" :value="$stats['totalFriendships']" />
-            <x-admin.stats-card title="Pending Friend Requests" :value="$stats['pendingRequests']" />
+            <x-admin.stats-card title="Groups" :value="$stats['totalGroups']" />
             <x-admin.stats-card title="Total Posts" :value="$stats['totalPosts']" />
             <x-admin.stats-card title="Standard Posts" :value="$stats['standardPosts']" />
         </div>
