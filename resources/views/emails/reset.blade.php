@@ -18,7 +18,7 @@
         <h2>Password Reset Request</h2>
         <p>Hello,</p>
         <p>We received a request to reset your password. Click the button below to set a new password for your account:</p>
-        <a href="{{ $resetUrl }}" class="btn">Reset Password</a>
+        <a href="{{ $mailData['resetUrl'] }}" class="btn">Reset Password</a>
         <p>If you did not request a password reset, you can safely ignore this email. Your password will remain unchanged.</p>
         <div class="footer">
             <p>Thank you,<br>The Junto Team</p>
