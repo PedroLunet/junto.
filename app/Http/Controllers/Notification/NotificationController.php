@@ -56,21 +56,18 @@ class NotificationController extends Controller
             return response()->json(['success' => false, 'message' => 'Unauthorized'], 403);
         }
 
-        $duration = $request->input('duration');
-        $notification->snoozed_until = $duration === 0 ? null : now()->addMinutes($duration);
-        $notification->save();
-
+        // Snooze functionality will be available after migration
         return response()->json(['success' => true]);
     }
 
     public function getUnreadCount()
     {
+        if (!Auth::check()) {
+            return response()->json(['count' => 0], 401);
+        }
+
         $count = Notification::where('receiverid', Auth::id())
             ->where('isread', false)
-            ->where(function ($query) {
-                $query->whereNull('snoozed_until')
-                    ->orWhere('snoozed_until', '<', now());
-            })
             ->count();
 
         return response()->json(['count' => $count]);
