@@ -132,11 +132,23 @@ class MessageController extends Controller
             'isread' => false,
         ]);
 
+        $notification = \App\Models\User\Notification::create([
+            'message' => "New message from {$currentUser->name}",
+            'isread' => false,
+            'receiverid' => $userId,
+            'createdat' => now(),
+        ]);
+
+        \App\Models\Notification\MessageNotification::create([
+            'notificationid' => $notification->id,
+            'messageid' => $message->id,
+        ]);
+
         if ($request->ajax()) {
             return response()->json([
                 'status' => 'success',
                 'message' => $message,
-                'senderName' => $currentUser->name, // or username
+                'senderName' => $currentUser->name,
             ]);
         }
 

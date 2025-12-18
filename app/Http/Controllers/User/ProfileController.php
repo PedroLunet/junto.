@@ -378,4 +378,49 @@ class ProfileController extends Controller
             'id' => $request->id
         ])->render();
     }
+
+    public function deleteAccount(Request $request)
+    {
+        $request->validate([
+            'password' => 'required|string'
+        ]);
+
+        $user = Auth::user();
+
+        if (!Hash::check($request->password, $user->passwordhash)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Password is incorrect'
+            ], 400);
+        }
+
+        try {
+            DB::transaction(function () use ($user) {
+                DB::table('friendship')
+                    ->where('userid1', $user->id)
+                    ->orWhere('userid2', $user->id)
+                    ->delete();
+
+                DB::table('membership')
+                    ->where('userid', $user->id)
+                    ->delete();
+
+                $user->markAsDeleted();
+            });
+
+            Auth::logout();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Account deleted successfully',
+                'redirect_url' => '/login'
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Account deletion error: ' . $e->getMessage() . "\n" . $e->getTraceAsString());
+            return response()->json([
+                'success' => false,
+                'message' => 'An error occurred while deleting your account'
+            ], 500);
+        }
+    }
 }

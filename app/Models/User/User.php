@@ -39,6 +39,7 @@ class User extends Authenticatable
         'isprivate',
         'createdat',
         'google_id',
+        'isdeleted',
     ];
 
     /**
@@ -57,6 +58,7 @@ class User extends Authenticatable
         'isprivate' => 'boolean',
         'isadmin' => 'boolean',
         'isblocked' => 'boolean',
+        'isdeleted' => 'boolean',
     ];
 
     /**
@@ -204,5 +206,28 @@ class User extends Authenticatable
     public function getProfileImage()
     {
         return FileController::get('profile', $this->id);
+    }
+
+    public function scopeNotDeleted($query)
+    {
+        return $query->where('isdeleted', false);
+    }
+
+    public function scopeDeleted($query)
+    {
+        return $query->where('isdeleted', true);
+    }
+
+    public function markAsDeleted()
+    {
+        $this->name = 'Deleted User';
+        $this->username = 'deleted_' . $this->id;
+        $this->email = 'deleted_' . $this->id . '@anon.com';
+        $this->bio = null;
+        $this->profilepicture = null;
+        $this->isprivate = true;
+        $this->passwordhash = 'deleted';
+        $this->isdeleted = true;
+        $this->save();
     }
 }
