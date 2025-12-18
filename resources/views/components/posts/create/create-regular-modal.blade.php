@@ -28,8 +28,11 @@
 
                     <div class="mb-4">
                         <input type="file" name="image" id="image-input" accept="image/*" class="hidden">
-                        <x-ui.button type="button" id="add-image-button" variant="secondary">Add Photo</x-ui.button>
-                        <span id="file-name" class="ml-3 text-sm text-gray-600"></span>
+                        <div class="flex items-center">
+                            <x-ui.button type="button" id="add-image-button" variant="secondary">Add Photo</x-ui.button>
+                            <span class="ml-3 text-sm text-gray-500">Supported: JPG, JPEG, PNG, GIF</span>
+                        </div>
+                        <span id="file-name" class="block mt-1 text-sm text-gray-600"></span>
                     </div>
 
                     <div class="flex justify-end space-x-3">

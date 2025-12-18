@@ -5,10 +5,13 @@ use App\Http\Controllers\Auth\GoogleController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\LogoutController;
 use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\Auth\ResetPasswordController;
+use App\Http\Controllers\ContactController;
 use App\Http\Controllers\FileController;
 use App\Http\Controllers\Friendship\FriendRequestController;
 use App\Http\Controllers\GroupController;
 use App\Http\Controllers\Home\HomeController;
+use App\Http\Controllers\MailController;
 use App\Http\Controllers\Media\BookController;
 use App\Http\Controllers\Media\MovieController;
 use App\Http\Controllers\Media\MusicController;
@@ -76,10 +79,18 @@ Route::controller(RegisterController::class)->group(function () {
     Route::post('/register', 'register');
 });
 
+Route::controller(ResetPasswordController::class)->group(function () {
+    Route::get('/reset-password/verify/{token}', 'verify')->name('password.verify');
+    Route::get('/reset-password', 'showResetForm')->name('password.reset');
+    Route::post('/reset-password', 'reset')->name('password.update');
+});
+
 Route::controller(GoogleController::class)->group(function () {
     Route::get('auth/google', 'redirect')->name('google-auth');
     Route::get('auth/google/call-back', 'callbackGoogle')->name('google-call-back');
 });
+
+Route::post('/send', [MailController::class, 'send']);
 
 Route::middleware('regular.user')->controller(SearchUserController::class)->group(function () {
     Route::get('/search-users', 'index')->name('search.users');
@@ -200,6 +211,11 @@ Route::group([], function () {
     Route::get('/about', function () {
         return view('pages.about');
     })->name('about');
+
+    Route::controller(ContactController::class)->group(function () {
+        Route::get('/contact', 'show')->name('contact.show');
+        Route::post('/contact', 'submit')->name('contact.submit');
+    });
 });
 
 

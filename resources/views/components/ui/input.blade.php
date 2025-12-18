@@ -11,6 +11,7 @@
     'rows' => 4,
     'disabled' => false,
     'id' => null,
+    'help' => '',
 ])
 
 @php
@@ -22,9 +23,23 @@
 
 <div class="mb-6">
     @if ($label)
-        <label for="{{ $inputId }}" class="block text-2xl font-medium text-gray-700 mb-2">
-            {{ $label }}
-        </label>
+        <div class="flex items-center gap-2 mb-2">
+            <label for="{{ $inputId }}" class="block text-2xl font-medium text-gray-700">
+                {{ $label }}
+            </label>
+            @if ($help)
+                <div class="group relative flex items-center ml-1">
+                    <i class="fas fa-question-circle text-gray-400 hover:text-[#820263] cursor-help text-xl transition-colors"></i>
+                    <div
+                        class="absolute bottom-full left-1/2 -translate-x-1/2 mb-3 invisible group-hover:visible opacity-0 group-hover:opacity-100 transition-all duration-200 w-64 p-3 bg-[#291720] text-white text-sm font-medium rounded-xl shadow-xl z-20 text-center pointer-events-none transform translate-y-1 group-hover:translate-y-0">
+                        {{ $help }}
+                        <div
+                            class="absolute top-full left-1/2 -translate-x-1/2 border-8 border-transparent border-t-[#291720]">
+                        </div>
+                    </div>
+                </div>
+            @endif
+        </div>
     @endif
 
     <div class="relative flex items-center">
