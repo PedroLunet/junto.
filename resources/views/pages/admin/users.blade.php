@@ -12,7 +12,7 @@
                     <input type="text" id="searchUser" placeholder="Search User"
                         class="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 w-80">
                 </div>
-                <div class="flex items-center space-x-2 text-2xl text-gray-600" id="selection-info" style="display: none;">
+                <div class="flex items-center space-x-2 text-base text-gray-600" id="selection-info" style="display: none;">
                     <i class="fas fa-check"></i>
                     <span id="selection-count">0 Selected</span>
                 </div>
@@ -30,73 +30,74 @@
             <table class="min-w-full border-collapse">
                 <thead class="bg-gray-50">
                     <tr>
-                        <th class="pl-16 pr-6 py-3 text-left">
-                            <input type="checkbox" id="select-all" class="rounded border-gray-300 ml-8">
+                        <th class="pl-6 pr-3 py-3 text-left w-14">
+                            <input type="checkbox" id="select-all" class="rounded border-gray-300">
                         </th>
-                        <th class="px-6 py-3 text-left text-xl font-medium text-gray-500 uppercase tracking-wider">
+                        <th class="px-6 py-3 text-left text-base font-medium text-gray-500 uppercase tracking-wider">
                             <button class="flex items-center space-x-2 hover:text-gray-700 sort-btn" data-column="name">
                                 <span>Name</span>
                                 <i class="fas fa-caret-down text-sm sort-icon" data-direction="none"></i>
                             </button>
                         </th>
-                        <th class="px-6 py-3 text-left text-xl font-medium text-gray-500 uppercase tracking-wider">
+                        <th class="px-6 py-3 text-left text-base font-medium text-gray-500 uppercase tracking-wider">
                             <button class="flex items-center space-x-2 hover:text-gray-700 sort-btn" data-column="username">
                                 <span>Username</span>
                                 <i class="fas fa-caret-down text-sm sort-icon" data-direction="none"></i>
                             </button>
                         </th>
-                        <th class="px-6 py-3 text-left text-xl font-medium text-gray-500 uppercase tracking-wider">
+                        <th class="px-6 py-3 text-left text-base font-medium text-gray-500 uppercase tracking-wider">
                             <button class="flex items-center space-x-2 hover:text-gray-700 sort-btn" data-column="email">
                                 <span>Email</span>
                                 <i class="fas fa-caret-down text-sm sort-icon" data-direction="none"></i>
                             </button>
                         </th>
-                        <th class="px-6 py-3 text-left text-xl font-medium text-gray-500 uppercase tracking-wider">
+                        <th class="px-6 py-3 text-left text-base font-medium text-gray-500 uppercase tracking-wider">
                             <button class="flex items-center space-x-2 hover:text-gray-700 sort-btn" data-column="date">
                                 <span>Joined</span>
                                 <i class="fas fa-caret-down text-sm sort-icon" data-direction="none"></i>
                             </button>
                         </th>
-                        <th class="px-6 py-3 text-left text-xl font-medium text-gray-500 uppercase tracking-wider">
+                        <th class="px-6 py-3 text-left text-base font-medium text-gray-500 uppercase tracking-wider">
                             <button class="flex items-center space-x-2 hover:text-gray-700 sort-btn" data-column="status">
                                 <span>Status</span>
                                 <i class="fas fa-caret-down text-sm sort-icon" data-direction="none"></i>
                             </button>
                         </th>
-                        <th class="px-6 py-3 text-left text-xl font-medium text-gray-500 uppercase tracking-wider">Edit</th>
+                        <th class="px-6 py-3 text-left text-base font-medium text-gray-500 uppercase tracking-wider">Edit
+                        </th>
                     </tr>
                 </thead>
                 <tbody class="bg-white divide-y divide-gray-200">
                     @forelse($users as $user)
                         <tr class="hover:bg-gray-50">
-                            <td class="pl-16 pr-6 py-4">
-                                <input type="checkbox" class="user-checkbox rounded border-gray-300 ml-8"
+                            <td class="pl-6 pr-3 py-4">
+                                <input type="checkbox" class="user-checkbox rounded border-gray-300"
                                     value="{{ $user->id }}">
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <div class="flex items-center">
-                                    <div class="text-2xl font-medium text-gray-900">{{ $user->name }}</div>
+                                    <div class="text-base font-medium text-gray-900">{{ $user->name }}</div>
                                 </div>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="text-2xl text-gray-900">{{ $user->username }}</div>
+                                <div class="text-base text-gray-900">{{ $user->username }}</div>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="text-2xl text-gray-900">{{ $user->email }}</div>
+                                <div class="text-base text-gray-900">{{ $user->email }}</div>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="text-2xl text-gray-900">
+                                <div class="text-base text-gray-900">
                                     {{ $user->createdat ? \Carbon\Carbon::parse($user->createdat)->format('M d, Y') : 'N/A' }}
                                 </div>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <span
-                                    class="inline-flex items-center px-2.5 py-0.5 rounded-full text-2xl font-medium
+                                    class="inline-flex items-center px-2.5 py-0.5 rounded-full text-base font-medium
                         {{ $user->isblocked ? 'bg-red-100 text-red-800' : ($user->isadmin ? 'bg-purple-100 text-purple-800' : 'bg-green-100 text-green-800') }}">
                                     {{ $user->isblocked ? 'Blocked' : ($user->isadmin ? 'Admin' : 'Active') }}
                                 </span>
                             </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-2xl font-medium">
+                            <td class="px-6 py-4 whitespace-nowrap text-base font-medium">
                                 <div class="flex space-x-6">
                                     <button class="edit-user-btn text-blue-600 hover:text-blue-900"
                                         data-user-id="{{ $user->id }}" data-user-name="{{ $user->name }}"

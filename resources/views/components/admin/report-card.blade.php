@@ -1,26 +1,26 @@
-<div class="bg-white rounded-3xl shadow border border-gray-200" data-report-id="{{ $report->id }}">
+<div class="bg-white rounded-2xl shadow border border-gray-200" data-report-id="{{ $report->id }}">
     <!-- Report Header -->
-    <div class="flex items-center justify-between p-6 cursor-pointer hover:bg-gray-50 transition-colors rounded-3xl"
+    <div class="flex items-center justify-between p-6 cursor-pointer hover:bg-gray-50 transition-colors rounded-2xl"
         onclick="toggleReport({{ $report->id }})">
         <div class="flex-1">
-            <span class="text-xl text-gray-500 mb-2 block">
+            <span class="text-base text-gray-500 mb-2 block">
                 {{ \Carbon\Carbon::parse($report->createdat)->diffForHumans() }}
             </span>
 
-            <div class="flex gap-4 items-center">
-                <h3 class="text-3xl font-semibold text-gray-900 whitespace-nowrap">Reason:</h3>
-                <p class="text-3xl text-gray-700">{{ $report->reason }}</p>
+            <div class="flex gap-2 items-center">
+                <h3 class="text-xl font-semibold text-gray-900 whitespace-nowrap">Reason:</h3>
+                <p class="text-xl text-gray-700">{{ $report->reason }}</p>
             </div>
         </div>
 
         <div class="flex items-center">
-            <x-ui.badge :variant="$report->status === 'accepted' ? 'online' : ($report->status === 'rejected' ? 'offline' : 'pending')" size="lg">
+            <x-ui.badge :variant="$report->status === 'accepted' ? 'online' : ($report->status === 'rejected' ? 'offline' : 'pending')" size="md">
                 {{ ucfirst($report->status) }}
             </x-ui.badge>
         </div>
 
         <!-- Chevron Icon -->
-        <i class="fas fa-chevron-down text-gray-400 text-2xl transition-transform duration-300 ml-4 self-center"
+        <i class="fas fa-chevron-down text-gray-400 text-xl transition-transform duration-300 ml-4 self-center"
             id="chevron-{{ $report->id }}"></i>
 
     </div>

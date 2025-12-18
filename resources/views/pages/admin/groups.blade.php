@@ -3,8 +3,11 @@
 @section('page-title', 'Groups')
 
 @section('content')
-    <div class="space-y-6">
-        <!-- Header with Filters and Sort -->
+    <div class="mx-20 my-10 flex items-center justify-between">
+        <div>
+            <h1 class="text-3xl font-bold text-gray-900">Moderate Groups</h1>
+            <p class="text-gray-600 mt-2 text-base">Manage and moderate groups on the platform</p>
+        </div>
         <div class="flex items-center gap-4">
             <!-- Sort By Dropdown -->
             <x-ui.sort-dropdown :options="[
@@ -22,20 +25,20 @@
                 'private' => ['label' => 'Private', 'onclick' => 'filterGroups(\'private\')'],
             ]" activeFilter="all" />
         </div>
+    </div>
 
-        <!-- Groups List -->
-        <div id="groups-container" class="space-y-6">
-            @foreach ($groups as $group)
-                <x-admin.group-card :group="$group" />
-            @endforeach
+    <!-- Groups List -->
+    <div id="groups-container" class="space-y-6 mx-20">
+        @foreach ($groups as $group)
+            <x-admin.group-card :group="$group" />
+        @endforeach
 
-            @if (count($groups) === 0)
-                <div class="text-center py-12 text-gray-500">
-                    <i class="fas fa-users text-4xl mb-4"></i>
-                    <p class="text-lg">No groups found.</p>
-                </div>
-            @endif
-        </div>
+        @if (count($groups) === 0)
+            <div class="text-center py-12 text-gray-500">
+                <i class="fas fa-users text-4xl mb-4"></i>
+                <p class="text-lg">No groups found.</p>
+            </div>
+        @endif
     </div>
 
     <script>

@@ -5,8 +5,8 @@
 @section('content')
     <div class="mx-20 my-10 flex items-center justify-between">
         <div>
-            <h1 class="text-4xl font-bold text-gray-900">Reported Content</h1>
-            <p class="text-gray-600 mt-2 text-2xl">Review and manage reported posts and comments</p>
+            <h1 class="text-3xl font-bold text-gray-900">Reported Content</h1>
+            <p class="text-gray-600 mt-2 text-base">Review and manage reported posts and comments</p>
         </div>
         <div class="flex items-center gap-6">
             <!-- Sort By Dropdown -->

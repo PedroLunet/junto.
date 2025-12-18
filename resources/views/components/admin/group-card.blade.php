@@ -1,6 +1,6 @@
 @props(['group'])
 
-<div class="bg-white rounded-lg border border-gray-200 p-6 hover:shadow-md transition-shadow"
+<div class="bg-white rounded-2xl border border-gray-200 p-6 hover:shadow-md transition-shadow"
     data-group-id="{{ $group->id }}" data-name="{{ $group->name }}"
     data-is-private="{{ $group->isprivate ? '1' : '0' }}" data-created-at="{{ $group->createdat }}"
     data-members-count="{{ $group->members_count }}" data-posts-count="{{ $group->posts_count }}">
@@ -9,13 +9,13 @@
         <!-- Group Info -->
         <div class="flex items-start gap-4 flex-1">
             <!-- Group Icon -->
-            <div class="flex-shrink-0">
+            <div class="shrink-0">
                 @if ($group->icon)
                     <img src="{{ asset('groups/' . $group->icon) }}" alt="{{ $group->name }}"
-                        class="w-16 h-16 rounded-lg object-cover"
+                        class="w-16 h-16 rounded-full object-cover"
                         onerror="this.onerror=null; this.src='{{ asset('profile/default.png') }}'">
                 @else
-                    <div class="w-16 h-16 rounded-lg bg-purple-100 flex items-center justify-center">
+                    <div class="w-16 h-16 rounded-full bg-purple-100 flex items-center justify-center">
                         <i class="fas fa-users text-purple-600 text-2xl"></i>
                     </div>
                 @endif
@@ -24,11 +24,9 @@
             <!-- Group Details -->
             <div class="flex-1 min-w-0">
                 <div class="flex items-center gap-2 mb-1">
-                    <a href="{{ route('groups.show', $group->id) }}"
-                        class="text-xl font-semibold text-gray-900 hover:text-purple-600 transition-colors"
-                        target="_blank">
+                    <p class="text-xl font-semibold text-gray-900  transition-colors">
                         {{ $group->name }}
-                    </a>
+                    </p>
                     @if ($group->isprivate)
                         <span
                             class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
@@ -69,10 +67,9 @@
                     <div class="flex items-center gap-2 text-sm text-gray-600">
                         <i class="fas fa-crown text-yellow-500 text-xs"></i>
                         <span>Owner:</span>
-                        <a href="{{ route('profile.show', $group->owner_username) }}"
-                            class="text-purple-600 hover:underline font-medium" target="_blank">
+                        <p class="text-gray-600 font-medium">
                             {{ $group->owner_name }}
-                        </a>
+                        </p>
                     </div>
                 @endif
             </div>
