@@ -30,7 +30,7 @@
                                 <div class="flex items-center px-4 py-4 sm:px-6">
                                     <div class="min-w-0 flex-1 flex items-center">
                                         <div class="flex-shrink-0">
-                                            <img class="h-10 w-10 rounded-full object-cover" src="{{ $friend->getProfileImage() }}" alt="{{ $friend->name }}">
+                                            <img class="h-10 w-10 rounded-full object-cover" src="{{ $friend->getProfileImage() }}" alt="{{ $friend->name }}" onerror="this.onerror=null; this.src='{{ asset('profile/default.png') }}';">
                                         </div>
                                         <div class="min-w-0 flex-1 px-4">
                                             <p class="text-sm font-medium {{ $activeFriendId == $friend->id ? 'text-purple-700' : 'text-gray-900' }} truncate friend-name">{{ $friend->name }}</p>
@@ -58,7 +58,7 @@
                             <div class="flex items-center px-4 py-4 sm:px-6">
                                 <div class="min-w-0 flex-1 flex items-center">
                                     <div class="flex-shrink-0">
-                                        <img class="h-10 w-10 rounded-full object-cover" src="{{ $friend->getProfileImage() }}" alt="{{ $friend->name }}">
+                                        <img class="h-10 w-10 rounded-full object-cover" src="{{ $friend->getProfileImage() }}" alt="{{ $friend->name }}" onerror="this.onerror=null; this.src='{{ asset('profile/default.png') }}';">
                                     </div>
                                     <div class="min-w-0 flex-1 px-4">
                                         <p class="text-sm font-medium text-gray-900 truncate friend-name">{{ $friend->name }}</p>

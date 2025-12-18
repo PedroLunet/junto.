@@ -19,7 +19,7 @@
                         <i class="fa-solid fa-arrow-left"></i>
                     </a>
                     <a href="{{ route('profile.show', $friend->username) }}" class="flex items-center hover:bg-gray-100 p-2 rounded-lg transition duration-150">
-                        <img class="h-10 w-10 rounded-full object-cover" src="{{ $friend->getProfileImage() }}" alt="{{ $friend->name }}">
+                        <img class="h-10 w-10 rounded-full object-cover" src="{{ $friend->getProfileImage() }}" alt="{{ $friend->name }}" onerror="this.onerror=null; this.src='{{ asset('profile/default.png') }}';">
                         <div class="ml-3">
                             <h2 class="text-lg font-semibold text-gray-800">{{ $friend->name }}</h2>
                             <p class="text-xs text-gray-500">@ {{ $friend->username }}</p>
