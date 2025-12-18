@@ -147,6 +147,7 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::post('/admin/reports/{id}/accept', [AdminController::class, 'acceptReport'])->name('admin.reports.accept');
     Route::post('/admin/reports/{id}/reject', [AdminController::class, 'rejectReport'])->name('admin.reports.reject');
     Route::get('/admin/groups', [AdminController::class, 'groups'])->name('admin.groups');
+    Route::delete('/admin/groups/{id}', [AdminController::class, 'deleteGroup'])->name('admin.groups.delete');
 });
 
 // GROUPS ROUTES

@@ -343,6 +343,47 @@ class AdminController extends Controller
 
     public function groups()
     {
-        return view('pages.admin.groups');
+        $groups = DB::select("
+            SELECT 
+                g.id,
+                g.name,
+                g.description,
+                g.isprivate,
+                g.icon,
+                g.createdat,
+                COUNT(DISTINCT m.userid) as members_count,
+                COUNT(DISTINCT p.id) as posts_count,
+                (SELECT u.name FROM lbaw2544.users u 
+                 JOIN lbaw2544.membership mem ON u.id = mem.userid 
+                 WHERE mem.groupid = g.id AND mem.isowner = true LIMIT 1) as owner_name,
+                (SELECT u.username FROM lbaw2544.users u 
+                 JOIN lbaw2544.membership mem ON u.id = mem.userid 
+                 WHERE mem.groupid = g.id AND mem.isowner = true LIMIT 1) as owner_username
+            FROM lbaw2544.groups g
+            LEFT JOIN lbaw2544.membership m ON g.id = m.groupid
+            LEFT JOIN lbaw2544.post p ON g.id = p.groupid
+            GROUP BY g.id, g.name, g.description, g.isprivate, g.icon, g.createdat
+            ORDER BY g.createdat DESC
+        ");
+
+        return view('pages.admin.groups', compact('groups'));
+    }
+
+    public function deleteGroup($id)
+    {
+        try {
+            DB::delete("DELETE FROM lbaw2544.groups WHERE id = ?", [$id]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Group deleted successfully'
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Delete group error: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to delete group'
+            ], 500);
+        }
     }
 }
