@@ -44,6 +44,8 @@
         @endif
     </div>
 
+    <x-ui.confirm />
+
     <script>
         let currentFilter = 'all';
         let currentSort = 'created_date';
@@ -200,10 +202,13 @@
             visibleGroups.forEach(group => container.appendChild(group));
         }
 
-        function deleteGroup(groupId, groupName) {
-            if (!confirm(
-                    `Are you sure you want to delete the group "${groupName}"? This action cannot be undone and will delete all posts and members.`
-                )) {
+        async function deleteGroup(groupId, groupName) {
+            const confirmed = await alertConfirm(
+                `Are you sure you want to delete the group "${groupName}"? This action cannot be undone and will delete all posts in this group.`,
+                'Confirm Delete'
+            );
+
+            if (!confirmed) {
                 return;
             }
 
@@ -221,14 +226,14 @@
                         if (groupCard) {
                             groupCard.remove();
                         }
-                        alert('Group deleted successfully');
+                        alertInfo('Group deleted successfully', 'Success');
                     } else {
-                        alert(data.message || 'Failed to delete group');
+                        alertInfo(data.message || 'Failed to delete group', 'Error');
                     }
                 })
                 .catch(error => {
                     console.error('Error:', error);
-                    alert('An error occurred while deleting the group');
+                    alertInfo('An error occurred while deleting the group', 'Error');
                 });
         }
     </script>
