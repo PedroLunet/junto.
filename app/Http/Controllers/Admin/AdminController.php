@@ -174,6 +174,69 @@ class AdminController extends Controller
         }
     }
 
+    public function blockUser($id)
+    {
+        try {
+            $user = User::findOrFail($id);
+
+            if ($user->isadmin) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Cannot block an admin user'
+                ], 403);
+            }
+
+            $user->update(['isblocked' => true]);
+
+            Log::info('User blocked successfully: ' . $user->username . ' (ID: ' . $user->id . ')');
+
+            return response()->json([
+                'success' => true,
+                'message' => 'User blocked successfully'
+            ]);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            Log::error('User not found for blocking: ID ' . $id);
+            return response()->json([
+                'success' => false,
+                'message' => 'User not found'
+            ], 404);
+        } catch (\Exception $e) {
+            Log::error('Exception blocking user: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to block user: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function unblockUser($id)
+    {
+        try {
+            $user = User::findOrFail($id);
+
+            $user->update(['isblocked' => false]);
+
+            Log::info('User unblocked successfully: ' . $user->username . ' (ID: ' . $user->id . ')');
+
+            return response()->json([
+                'success' => true,
+                'message' => 'User unblocked successfully'
+            ]);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            Log::error('User not found for unblocking: ID ' . $id);
+            return response()->json([
+                'success' => false,
+                'message' => 'User not found'
+            ], 404);
+        } catch (\Exception $e) {
+            Log::error('Exception unblocking user: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to unblock user: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
     public function listReports()
     {
         $reports = DB::select("

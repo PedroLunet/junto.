@@ -24,6 +24,11 @@ use Illuminate\Support\Facades\Route;
 // Home
 // Route::redirect('/', '/login');
 
+// Blocked user page
+Route::middleware('auth')->get('/blocked', function () {
+    return view('pages.blocked');
+})->name('blocked');
+
 Route::middleware('regular.user')->group(function () {
     Route::get('/', [HomeController::class, 'index'])->name('home');
     Route::get('/posts/{id}/comments', [CommentController::class, 'index'])->name('post.comments');

@@ -497,9 +497,34 @@
                     );
 
                     if (confirmed) {
-                        // TODO: Implement block/unblock functionality
-                        console.log(`${actionText} user:`, userId);
-                        alertInfo(`User ${userName} has been ${action}ed successfully.`);
+                        try {
+                            const response = await fetch(`/admin/users/${userId}/${action}`, {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'X-CSRF-TOKEN': document.querySelector(
+                                            'meta[name="csrf-token"]')
+                                        .getAttribute('content'),
+                                    'Accept': 'application/json'
+                                }
+                            });
+
+                            const data = await response.json();
+
+                            if (data.success) {
+                                await alertInfo(
+                                    `User ${userName} has been ${action}ed successfully.`);
+                                window.location.reload();
+                            } else {
+                                await alertInfo(
+                                    `Failed to ${action} user: ${data.message || 'Unknown error'}`
+                                    );
+                            }
+                        } catch (error) {
+                            console.error('Error:', error);
+                            await alertInfo(
+                                `An error occurred while trying to ${action} the user.`);
+                        }
                     }
                 });
             });
