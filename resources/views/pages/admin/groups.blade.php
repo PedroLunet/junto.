@@ -3,45 +3,53 @@
 @section('page-title', 'Groups')
 
 @section('content')
-    <div class="mx-20 my-10 flex items-center justify-between">
-        <div>
-            <h1 class="text-3xl font-bold text-gray-900">Moderate Groups</h1>
-            <p class="text-gray-600 mt-2 text-base">Manage and moderate groups on the platform</p>
-        </div>
-        <div class="flex items-center gap-4">
-            <!-- Search Bar -->
-            <x-ui.search-bar id="searchGroups" placeholder="Search Groups" />
+    <div class="flex flex-col h-[calc(100vh-4rem)]">
+        <!-- Fixed Header -->
+        <div class="flex-none bg-[#F1EBF4]">
+            <div class="mx-20 mt-10 mb-4 flex items-center justify-between">
+                <div>
+                    <h1 class="text-3xl font-bold text-gray-900">Moderate Groups</h1>
+                    <p class="text-gray-600 mt-2 text-base">Manage and moderate groups on the platform</p>
+                </div>
+                <div class="flex items-center gap-4">
+                    <!-- Search Bar -->
+                    <x-ui.search-bar id="searchGroups" placeholder="Search Groups" />
 
-            <!-- Sort By Dropdown -->
-            <x-ui.sort-dropdown :options="[
-                'created_date' => 'Created Date',
-                'members' => 'Members',
-                'posts' => 'Posts',
-                'name' => 'Name',
-            ]" defaultValue="created_date" onSort="sortGroups"
-                onToggleOrder="toggleGroupSortOrder" />
+                    <!-- Sort By Dropdown -->
+                    <x-ui.sort-dropdown :options="[
+                        'created_date' => 'Created Date',
+                        'members' => 'Members',
+                        'posts' => 'Posts',
+                        'name' => 'Name',
+                    ]" defaultValue="created_date" onSort="sortGroups"
+                        onToggleOrder="toggleGroupSortOrder" />
 
-            <!-- Filter Tabs -->
-            <x-ui.filter-tabs :filters="[
-                'all' => ['label' => 'All', 'onclick' => 'filterGroups(\'all\')'],
-                'public' => ['label' => 'Public', 'onclick' => 'filterGroups(\'public\')'],
-                'private' => ['label' => 'Private', 'onclick' => 'filterGroups(\'private\')'],
-            ]" activeFilter="all" />
-        </div>
-    </div>
-
-    <!-- Groups List -->
-    <div id="groups-container" class="space-y-6 mx-20">
-        @foreach ($groups as $group)
-            <x-admin.group-card :group="$group" />
-        @endforeach
-
-        @if (count($groups) === 0)
-            <div id="no-groups-message" class="text-center py-12 text-gray-500">
-                <i class="fas fa-users text-4xl mb-4"></i>
-                <p class="text-lg">No groups found.</p>
+                    <!-- Filter Tabs -->
+                    <x-ui.filter-tabs :filters="[
+                        'all' => ['label' => 'All', 'onclick' => 'filterGroups(\'all\')'],
+                        'public' => ['label' => 'Public', 'onclick' => 'filterGroups(\'public\')'],
+                        'private' => ['label' => 'Private', 'onclick' => 'filterGroups(\'private\')'],
+                    ]" activeFilter="all" />
+                </div>
             </div>
-        @endif
+        </div>
+
+        <!-- Scrollable Content -->
+        <div class="flex-1 overflow-y-auto">
+            <!-- Groups List -->
+            <div id="groups-container" class="space-y-6 mx-20 my-6">
+                @foreach ($groups as $group)
+                    <x-admin.group-card :group="$group" />
+                @endforeach
+
+                @if (count($groups) === 0)
+                    <div id="no-groups-message" class="text-center py-12 text-gray-500">
+                        <i class="fas fa-users text-4xl mb-4"></i>
+                        <p class="text-lg">No groups found.</p>
+                    </div>
+                @endif
+            </div>
+        </div>
     </div>
 
     <x-ui.confirm />

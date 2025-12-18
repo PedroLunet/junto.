@@ -3,46 +3,54 @@
 @section('page-title', 'Reports')
 
 @section('content')
-    <div class="mx-20 my-10 flex items-center justify-between">
-        <div>
-            <h1 class="text-3xl font-bold text-gray-900">Reported Content</h1>
-            <p class="text-gray-600 mt-2 text-base">Review and manage reported posts and comments</p>
-        </div>
-        <div class="flex items-center gap-6">
-            <!-- Sort By Dropdown -->
-            <x-ui.sort-dropdown :options="[
-                'created_date' => 'Created Date',
-                'popularity' => 'Popularity'
-            ]" defaultValue="created_date" />
+    <div class="flex flex-col h-[calc(100vh-4rem)]">
+        <!-- Fixed Header -->
+        <div class="flex-none bg-[#F1EBF4]">
+            <div class="mx-20 mt-10 mb-4 flex items-center justify-between">
+                <div>
+                    <h1 class="text-3xl font-bold text-gray-900">Reported Content</h1>
+                    <p class="text-gray-600 mt-2 text-base">Review and manage reported posts and comments</p>
+                </div>
+                <div class="flex items-center gap-6">
+                    <!-- Sort By Dropdown -->
+                    <x-ui.sort-dropdown :options="[
+                        'created_date' => 'Created Date',
+                        'popularity' => 'Popularity'
+                    ]" defaultValue="created_date" />
 
-            <!-- Filter Tabs -->
-            <x-ui.filter-tabs :filters="[
-                'all' => [
-                    'label' => 'All',
-                    'count' => count($reports),
-                    'onclick' => 'filterReports(\'all\')'
-                ],
-                'pending' => [
-                    'label' => 'Pending',
-                    'count' => collect($reports)->filter(fn($r) => $r->status === 'pending')->count(),
-                    'onclick' => 'filterReports(\'pending\')'
-                ],
-                'accepted' => [
-                    'label' => 'Accepted',
-                    'count' => collect($reports)->filter(fn($r) => $r->status === 'accepted')->count(),
-                    'onclick' => 'filterReports(\'accepted\')'
-                ],
-                'rejected' => [
-                    'label' => 'Rejected',
-                    'count' => collect($reports)->filter(fn($r) => $r->status === 'rejected')->count(),
-                    'onclick' => 'filterReports(\'rejected\')'
-                ]
-            ]" activeFilter="all" />
+                    <!-- Filter Tabs -->
+                    <x-ui.filter-tabs :filters="[
+                        'all' => [
+                            'label' => 'All',
+                            'count' => count($reports),
+                            'onclick' => 'filterReports(\'all\')'
+                        ],
+                        'pending' => [
+                            'label' => 'Pending',
+                            'count' => collect($reports)->filter(fn($r) => $r->status === 'pending')->count(),
+                            'onclick' => 'filterReports(\'pending\')'
+                        ],
+                        'accepted' => [
+                            'label' => 'Accepted',
+                            'count' => collect($reports)->filter(fn($r) => $r->status === 'accepted')->count(),
+                            'onclick' => 'filterReports(\'accepted\')'
+                        ],
+                        'rejected' => [
+                            'label' => 'Rejected',
+                            'count' => collect($reports)->filter(fn($r) => $r->status === 'rejected')->count(),
+                            'onclick' => 'filterReports(\'rejected\')'
+                        ]
+                    ]" activeFilter="all" />
+                </div>
+            </div>
         </div>
-    </div>
 
-    <div id="reports-container">
-        <x-admin.reports-list :reports="collect($reports)" />
+        <!-- Scrollable Content -->
+        <div class="flex-1 overflow-y-auto">
+            <div id="reports-container" class="mx-20 my-6">
+            <x-admin.reports-list :reports="collect($reports)" />
+            </div>
+        </div>
     </div>
 
     <x-ui.confirm />

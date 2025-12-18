@@ -3,123 +3,144 @@
 @section('page-title', 'Users')
 
 @section('content')
-    <div class="mx-20 my-10 flex items-center justify-between">
-        <div>
-            <h1 class="text-3xl font-bold text-gray-900">Manage Users</h1>
-            <p class="text-gray-600 mt-2 text-base">View and manage user accounts on the platform</p>
-        </div>
-        <div class="flex items-center gap-4">
-            <!-- Selection Info -->
-            <div class="flex items-center space-x-2 text-base text-gray-600" id="selection-info" style="display: none;">
-                <i class="fas fa-check"></i>
-                <span id="selection-count">0 Selected</span>
+    <div class="flex flex-col h-[calc(100vh-4rem)]">
+        <!-- Fixed Header -->
+        <div class="flex-none bg-[#F1EBF4]">
+            <div class="mx-20 mt-10 mb-4 flex items-center justify-between">
+                <div>
+                    <h1 class="text-3xl font-bold text-gray-900">Manage Users</h1>
+                    <p class="text-gray-600 mt-2 text-base">View and manage user accounts on the platform</p>
+                </div>
+                <div class="flex items-center gap-4">
+                    <!-- Selection Info -->
+                    <div class="flex items-center space-x-2 text-base text-gray-600" id="selection-info"
+                        style="display: none;">
+                        <i class="fas fa-check"></i>
+                        <span id="selection-count">0 Selected</span>
+                    </div>
+
+                    <!-- Search Bar -->
+                    <x-ui.search-bar id="searchUser" placeholder="Search User" />
+
+                    <!-- Add User Button -->
+                    <x-ui.button variant="primary" onclick="openAddUserModal()" class="flex items-center space-x-2">
+                        <i class="fas fa-plus"></i>
+                        <span>Add User</span>
+                    </x-ui.button>
+                </div>
             </div>
-
-            <!-- Search Bar -->
-            <x-ui.search-bar id="searchUser" placeholder="Search User" />
-
-            <!-- Add User Button -->
-            <x-ui.button variant="primary" onclick="openAddUserModal()" class="flex items-center space-x-2">
-                <i class="fas fa-plus"></i>
-                <span>Add User</span>
-            </x-ui.button>
         </div>
-    </div>
 
-    <div class="mx-20 space-y-6">
-        <!-- Users Table -->
-        <div class="bg-white overflow-hidden rounded-xl">
-            <table class="min-w-full border-collapse">
-                <thead class="bg-gray-50">
-                    <tr>
-                        <th class="pl-6 pr-3 py-3 text-left w-14">
-                            <input type="checkbox" id="select-all" class="rounded border-gray-300">
-                        </th>
-                        <th class="px-6 py-3 text-left text-base font-medium text-gray-500 uppercase tracking-wider">
-                            <button class="flex items-center space-x-2 hover:text-gray-700 sort-btn" data-column="name">
-                                <span>Name</span>
-                                <i class="fas fa-caret-down text-sm sort-icon" data-direction="none"></i>
-                            </button>
-                        </th>
-                        <th class="px-6 py-3 text-left text-base font-medium text-gray-500 uppercase tracking-wider">
-                            <button class="flex items-center space-x-2 hover:text-gray-700 sort-btn" data-column="username">
-                                <span>Username</span>
-                                <i class="fas fa-caret-down text-sm sort-icon" data-direction="none"></i>
-                            </button>
-                        </th>
-                        <th class="px-6 py-3 text-left text-base font-medium text-gray-500 uppercase tracking-wider">
-                            <button class="flex items-center space-x-2 hover:text-gray-700 sort-btn" data-column="email">
-                                <span>Email</span>
-                                <i class="fas fa-caret-down text-sm sort-icon" data-direction="none"></i>
-                            </button>
-                        </th>
-                        <th class="px-6 py-3 text-left text-base font-medium text-gray-500 uppercase tracking-wider">
-                            <button class="flex items-center space-x-2 hover:text-gray-700 sort-btn" data-column="date">
-                                <span>Joined</span>
-                                <i class="fas fa-caret-down text-sm sort-icon" data-direction="none"></i>
-                            </button>
-                        </th>
-                        <th class="px-6 py-3 text-left text-base font-medium text-gray-500 uppercase tracking-wider">
-                            <button class="flex items-center space-x-2 hover:text-gray-700 sort-btn" data-column="status">
-                                <span>Status</span>
-                                <i class="fas fa-caret-down text-sm sort-icon" data-direction="none"></i>
-                            </button>
-                        </th>
-                        <th class="px-6 py-3 text-left text-base font-medium text-gray-500 uppercase tracking-wider">Edit
-                        </th>
-                    </tr>
-                </thead>
-                <tbody class="bg-white divide-y divide-gray-200">
-                    @forelse($users as $user)
-                        <tr class="hover:bg-gray-50">
-                            <td class="pl-6 pr-3 py-4">
-                                <input type="checkbox" class="user-checkbox rounded border-gray-300"
-                                    value="{{ $user->id }}">
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="flex items-center">
-                                    <div class="text-base font-medium text-gray-900">{{ $user->name }}</div>
-                                </div>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="text-base text-gray-900">{{ $user->username }}</div>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="text-base text-gray-900">{{ $user->email }}</div>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="text-base text-gray-900">
-                                    {{ $user->createdat ? \Carbon\Carbon::parse($user->createdat)->format('M d, Y') : 'N/A' }}
-                                </div>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <span
-                                    class="inline-flex items-center px-2.5 py-0.5 rounded-full text-base font-medium
-                        {{ $user->isblocked ? 'bg-red-100 text-red-800' : ($user->isadmin ? 'bg-purple-100 text-purple-800' : 'bg-green-100 text-green-800') }}">
-                                    {{ $user->isblocked ? 'Blocked' : ($user->isadmin ? 'Admin' : 'Active') }}
-                                </span>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-base font-medium">
-                                <div class="flex space-x-6">
-                                    <button class="edit-user-btn text-blue-600 hover:text-blue-900"
-                                        data-user-id="{{ $user->id }}" data-user-name="{{ $user->name }}"
-                                        data-user-username="{{ $user->username }}" data-user-email="{{ $user->email }}"
-                                        data-user-bio="{{ $user->bio }}"
-                                        data-user-isadmin="{{ $user->isadmin ? 'true' : 'false' }}">
-                                        <i class="fas fa-edit"></i>
+        <!-- Scrollable Content -->
+        <div class="flex-1 overflow-y-auto">
+            <div class="mx-20 my-6">
+                <!-- Users Table -->
+                <div class="bg-white overflow-hidden rounded-xl">
+                    <table class="min-w-full border-collapse">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="pl-6 pr-3 py-3 text-left w-14">
+                                    <input type="checkbox" id="select-all" class="rounded border-gray-300">
+                                </th>
+                                <th
+                                    class="px-6 py-3 text-left text-base font-medium text-gray-500 uppercase tracking-wider">
+                                    <button class="flex items-center space-x-2 hover:text-gray-700 sort-btn"
+                                        data-column="name">
+                                        <span>Name</span>
+                                        <i class="fas fa-caret-down text-sm sort-icon" data-direction="none"></i>
                                     </button>
-                                </div>
-                            </td>
-                        </tr>
-                    @empty
-                        <tr>
-                            <td colspan="7" class="px-6 py-4 text-center text-gray-500">
-                                No users found.
-                            </td>
-                        </tr>
-                    @endforelse
-                </tbody>
-            </table>
+                                </th>
+                                <th
+                                    class="px-6 py-3 text-left text-base font-medium text-gray-500 uppercase tracking-wider">
+                                    <button class="flex items-center space-x-2 hover:text-gray-700 sort-btn"
+                                        data-column="username">
+                                        <span>Username</span>
+                                        <i class="fas fa-caret-down text-sm sort-icon" data-direction="none"></i>
+                                    </button>
+                                </th>
+                                <th
+                                    class="px-6 py-3 text-left text-base font-medium text-gray-500 uppercase tracking-wider">
+                                    <button class="flex items-center space-x-2 hover:text-gray-700 sort-btn"
+                                        data-column="email">
+                                        <span>Email</span>
+                                        <i class="fas fa-caret-down text-sm sort-icon" data-direction="none"></i>
+                                    </button>
+                                </th>
+                                <th
+                                    class="px-6 py-3 text-left text-base font-medium text-gray-500 uppercase tracking-wider">
+                                    <button class="flex items-center space-x-2 hover:text-gray-700 sort-btn"
+                                        data-column="date">
+                                        <span>Joined</span>
+                                        <i class="fas fa-caret-down text-sm sort-icon" data-direction="none"></i>
+                                    </button>
+                                </th>
+                                <th
+                                    class="px-6 py-3 text-left text-base font-medium text-gray-500 uppercase tracking-wider">
+                                    <button class="flex items-center space-x-2 hover:text-gray-700 sort-btn"
+                                        data-column="status">
+                                        <span>Status</span>
+                                        <i class="fas fa-caret-down text-sm sort-icon" data-direction="none"></i>
+                                    </button>
+                                </th>
+                                <th
+                                    class="px-6 py-3 text-left text-base font-medium text-gray-500 uppercase tracking-wider">
+                                    Edit
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200">
+                            @forelse($users as $user)
+                                <tr class="hover:bg-gray-50">
+                                    <td class="pl-6 pr-3 py-4">
+                                        <input type="checkbox" class="user-checkbox rounded border-gray-300"
+                                            value="{{ $user->id }}">
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="flex items-center">
+                                            <div class="text-base font-medium text-gray-900">{{ $user->name }}</div>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-base text-gray-900">{{ $user->username }}</div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-base text-gray-900">{{ $user->email }}</div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-base text-gray-900">
+                                            {{ $user->createdat ? \Carbon\Carbon::parse($user->createdat)->format('M d, Y') : 'N/A' }}
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span
+                                            class="inline-flex items-center px-2.5 py-0.5 rounded-full text-base font-medium
+                        {{ $user->isblocked ? 'bg-red-100 text-red-800' : ($user->isadmin ? 'bg-purple-100 text-purple-800' : 'bg-green-100 text-green-800') }}">
+                                            {{ $user->isblocked ? 'Blocked' : ($user->isadmin ? 'Admin' : 'Active') }}
+                                        </span>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-base font-medium">
+                                        <div class="flex space-x-6">
+                                            <button class="edit-user-btn text-blue-600 hover:text-blue-900"
+                                                data-user-id="{{ $user->id }}" data-user-name="{{ $user->name }}"
+                                                data-user-username="{{ $user->username }}"
+                                                data-user-email="{{ $user->email }}" data-user-bio="{{ $user->bio }}"
+                                                data-user-isadmin="{{ $user->isadmin ? 'true' : 'false' }}">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="7" class="px-6 py-4 text-center text-gray-500">
+                                        No users found.
+                                    </td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
     </div>
 
