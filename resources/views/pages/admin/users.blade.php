@@ -8,10 +8,7 @@
         <div class="flex justify-between items-center">
             <!-- search bar -->
             <div class="flex items-center space-x-4">
-                <div class="relative">
-                    <input type="text" id="searchUser" placeholder="Search User"
-                        class="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 w-80">
-                </div>
+                <x-ui.search-bar id="searchUser" placeholder="Search User" />
                 <div class="flex items-center space-x-2 text-base text-gray-600" id="selection-info" style="display: none;">
                     <i class="fas fa-check"></i>
                     <span id="selection-count">0 Selected</span>

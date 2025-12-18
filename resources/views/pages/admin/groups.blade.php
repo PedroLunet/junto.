@@ -9,6 +9,9 @@
             <p class="text-gray-600 mt-2 text-base">Manage and moderate groups on the platform</p>
         </div>
         <div class="flex items-center gap-4">
+            <!-- Search Bar -->
+            <x-ui.search-bar id="searchGroups" placeholder="Search Groups" width="w-96" />
+
             <!-- Sort By Dropdown -->
             <x-ui.sort-dropdown :options="[
                 'created_date' => 'Created Date',
@@ -34,7 +37,7 @@
         @endforeach
 
         @if (count($groups) === 0)
-            <div class="text-center py-12 text-gray-500">
+            <div id="no-groups-message" class="text-center py-12 text-gray-500">
                 <i class="fas fa-users text-4xl mb-4"></i>
                 <p class="text-lg">No groups found.</p>
             </div>
@@ -45,6 +48,21 @@
         let currentFilter = 'all';
         let currentSort = 'created_date';
         let sortAscending = false;
+
+        // Search functionality
+        const searchInput = document.getElementById('searchGroups');
+        if (searchInput) {
+            searchInput.addEventListener('input', function() {
+                applyGroupFilterAndSort();
+            });
+
+            searchInput.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    this.value = '';
+                    applyGroupFilterAndSort();
+                }
+            });
+        }
 
         function filterGroups(filter) {
             currentFilter = filter;
@@ -76,12 +94,19 @@
         function applyGroupFilterAndSort() {
             const container = document.getElementById('groups-container');
             const groups = Array.from(container.querySelectorAll('[data-group-id]'));
+            const searchTerm = document.getElementById('searchGroups')?.value.toLowerCase().trim() || '';
+            let visibleCount = 0;
 
             // Filter
             groups.forEach(group => {
                 const isPrivate = group.dataset.isPrivate === '1';
+                const groupName = group.dataset.name.toLowerCase();
+                const nameElement = group.querySelector('.group-name');
+                const originalName = group.dataset.name;
+
                 let show = false;
 
+                // Apply privacy filter
                 if (currentFilter === 'all') {
                     show = true;
                 } else if (currentFilter === 'public' && !isPrivate) {
@@ -90,8 +115,57 @@
                     show = true;
                 }
 
+                // Apply search filter and highlight
+                if (show && searchTerm) {
+                    if (!groupName.includes(searchTerm)) {
+                        show = false;
+                    } else {
+                        // Highlight matching text
+                        const regex = new RegExp(`(${searchTerm})`, 'gi');
+                        const highlightedName = originalName.replace(regex,
+                            '<span class="bg-yellow-200">$1</span>');
+                        nameElement.innerHTML = highlightedName;
+                    }
+                } else {
+                    // Reset to original name
+                    nameElement.textContent = originalName;
+                }
+
+                if (show) visibleCount++;
                 group.style.display = show ? 'block' : 'none';
             });
+
+            // Handle "no results" message
+            let noGroupsMessage = document.getElementById('no-groups-message');
+            const dynamicNoResultsMessage = document.getElementById('no-groups-search-message');
+
+            if (visibleCount === 0 && searchTerm) {
+                // Hide default message
+                if (noGroupsMessage) noGroupsMessage.style.display = 'none';
+
+                // Show or create search-specific message
+                if (dynamicNoResultsMessage) {
+                    dynamicNoResultsMessage.querySelector('p').textContent = `No groups found matching "${searchTerm}"`;
+                    dynamicNoResultsMessage.style.display = 'block';
+                } else {
+                    const noResultsDiv = document.createElement('div');
+                    noResultsDiv.id = 'no-groups-search-message';
+                    noResultsDiv.className = 'text-center py-12 text-gray-500';
+                    noResultsDiv.innerHTML = `
+                        <i class="fas fa-users text-4xl mb-4"></i>
+                        <p class="text-lg">No groups found matching "${searchTerm}"</p>
+                    `;
+                    container.appendChild(noResultsDiv);
+                }
+            } else {
+                // Hide search message
+                if (dynamicNoResultsMessage) dynamicNoResultsMessage.style.display = 'none';
+
+                // Show/hide default message
+                if (noGroupsMessage) {
+                    noGroupsMessage.style.display = visibleCount === 0 ? 'block' : 'none';
+                }
+            }
 
             // Sort
             const visibleGroups = groups.filter(group => group.style.display !== 'none');

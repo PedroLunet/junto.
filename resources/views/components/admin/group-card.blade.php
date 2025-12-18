@@ -24,7 +24,7 @@
             <!-- Group Details -->
             <div class="flex-1 min-w-0">
                 <div class="flex items-center gap-2 mb-1">
-                    <p class="text-xl font-semibold text-gray-900  transition-colors">
+                    <p class="text-xl font-semibold text-gray-900 transition-colors group-name">
                         {{ $group->name }}
                     </p>
                     @if ($group->isprivate)
