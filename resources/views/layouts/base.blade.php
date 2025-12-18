@@ -71,23 +71,23 @@
         @endif
 
         @auth
-            <div class="p-4 border-t border-[#7a5466] flex items-center justify-between">
-                <a href="{{ route('profile.show', Auth::user()->username) }}" class="flex items-center gap-3 flex-1">
+            <div class="p-4 border-t border-[#7a5466] flex items-center justify-between gap-2">
+                <a href="{{ route('profile.show', Auth::user()->username) }}" class="flex items-center gap-2 flex-1 min-w-0">
                     @if (Auth::user()->profilepicture)
                         <img src="{{ asset('profile/' . Auth::user()->profilepicture) }}" alt="{{ Auth::user()->name }}"
-                            class="w-24 h-24 rounded-full object-cover"
+                            class="w-10 h-10 rounded-full object-cover shrink-0"
                             onerror="this.onerror=null; this.src='{{ asset('profile/default.png') }}';">
                     @else
                         <img src="{{ asset('profile/default.png') }}" alt="{{ Auth::user()->name }}"
-                            class="w-24 h-24 rounded-full object-cover">
+                            class="w-10 h-10 rounded-full object-cover shrink-0">
                     @endif
-                    <div class="flex flex-col ml-2">
-                        <span class="text-white font-semibold text-2xl">{{ Auth::user()->name }}</span>
-                        <span class="text-gray-400 text-xl">@<span>{{ Auth::user()->username }}</span></span>
+                    <div class="flex flex-col min-w-0">
+                        <span class="text-white font-semibold text-sm truncate">{{ Auth::user()->name }}</span>
+                        <span class="text-gray-400 text-xs truncate">@<span>{{ Auth::user()->username }}</span></span>
                     </div>
                 </a>
-                <x-ui.button href="{{ url('/logout') }}" variant="ghost" class="p-2" title="Logout">
-                    <i class="fa-solid fa-right-from-bracket text-xl text-red-500"></i>
+                <x-ui.button href="{{ url('/logout') }}" variant="ghost" title="Logout">
+                    <i class="fa-solid fa-right-from-bracket text-lg text-red-500"></i>
                 </x-ui.button>
             </div>
         @else

@@ -6,7 +6,7 @@
         'secondary' => 'px-8 py-2 bg-transparent',
         'danger' => 'px-8 py-2 bg-red-600 text-white hover:bg-red-700',
         'success' => 'px-8 py-2 bg-green-600 text-white hover:bg-green-700',
-        'ghost' => 'px-8 py-2 border-none bg-transparent hover:bg-gray-200 hover:opacity-90',
+        'ghost' => 'px-4 py-2 border-none bg-transparent hover:bg-gray-200 hover:opacity-90',
     ];
     $variant = $attributes->get('variant', 'primary');
     $classes = $base . ' ' . ($variants[$variant] ?? $variants['primary']);
