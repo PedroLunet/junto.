@@ -12,6 +12,7 @@ use App\Http\Controllers\Friendship\FriendRequestController;
 use App\Http\Controllers\GroupController;
 use App\Http\Controllers\Home\HomeController;
 use App\Http\Controllers\MailController;
+use App\Http\Controllers\MessageController;
 use App\Http\Controllers\Media\BookController;
 use App\Http\Controllers\Media\MovieController;
 use App\Http\Controllers\Media\MusicController;
@@ -37,6 +38,11 @@ Route::middleware(['auth', 'regular.user'])->group(function () {
     Route::get('/friends-feed', [HomeController::class, 'friendsFeed'])->name('friends-feed');
     Route::post('/posts/{id}/comments', [CommentController::class, 'store'])->name('post.comments.add');
     Route::post('/posts/{id}/like', [HomeController::class, 'toggleLike'])->name('post.like');
+
+    // Messages
+    Route::get('/messages', [MessageController::class, 'index'])->name('messages.index');
+    Route::get('/messages/{userId}', [MessageController::class, 'show'])->name('messages.show');
+    Route::post('/messages/{userId}', [MessageController::class, 'store'])->name('messages.store');
 });
 
 

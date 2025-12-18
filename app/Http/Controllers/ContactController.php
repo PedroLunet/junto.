@@ -16,8 +16,6 @@ class ContactController extends Controller
 
     public function submit(Request $request)
     {
-        // Validation and logic to handle the contact form submission would go here.
-        // For now, we just redirect back with a success message.
         
         $validated = $request->validate([
             'name' => 'required|string|max:255',
