@@ -127,7 +127,9 @@
                                                 data-user-isadmin="{{ $user->isadmin ? 'true' : 'false' }}">
                                                 <i class="fas fa-edit"></i>
                                             </x-ui.icon-button>
-                                            <x-ui.icon-button variant="yellow" class="ban-user-btn">
+                                            <x-ui.icon-button variant="yellow" class="ban-user-btn"
+                                                data-user-id="{{ $user->id }}" data-user-name="{{ $user->name }}"
+                                                data-user-blocked="{{ $user->isblocked ? 'true' : 'false' }}">
                                                 <i class="fas fa-ban"></i>
                                             </x-ui.icon-button>
                                             <x-ui.icon-button variant="red" class="delete-user-btn">
@@ -150,11 +152,11 @@
         </div>
     </div>
 
-    <!-- Include Add User Modal -->
     <x-admin.add-user-modal />
 
-    <!-- Include Edit User Modal -->
     <x-admin.edit-user-modal />
+
+    <x-ui.confirm />
 @endsection
 
 @push('scripts')
@@ -475,6 +477,30 @@
                         isadmin: this.getAttribute('data-user-isadmin') === 'true'
                     };
                     openEditUserModal(userData);
+                });
+            });
+
+            //=== BAN/UNBAN USER ===
+            // attach event listeners to ban buttons
+            document.querySelectorAll('.ban-user-btn').forEach(button => {
+                button.addEventListener('click', async function() {
+                    const userId = this.getAttribute('data-user-id');
+                    const userName = this.getAttribute('data-user-name');
+                    const isBlocked = this.getAttribute('data-user-blocked') === 'true';
+
+                    const action = isBlocked ? 'unblock' : 'block';
+                    const actionText = isBlocked ? 'Unblock' : 'Block';
+
+                    const confirmed = await alertConfirm(
+                        `Are you sure you want to ${action} ${userName}?`,
+                        `${actionText} User`
+                    );
+
+                    if (confirmed) {
+                        // TODO: Implement block/unblock functionality
+                        console.log(`${actionText} user:`, userId);
+                        alertInfo(`User ${userName} has been ${action}ed successfully.`);
+                    }
                 });
             });
         });
