@@ -192,8 +192,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/groups/{group}/accept-request/{requestId}', [GroupController::class, 'acceptRequest'])->name('groups.acceptRequest');
     Route::post('/groups/{group}/reject-request/{requestId}', [GroupController::class, 'rejectRequest'])->name('groups.rejectRequest');
     Route::post('/groups/{group}/posts', [GroupController::class, 'storePost'])->name('groups.posts.store');
-
-    // --- ADDED THIS LINE ---
+    Route::delete('/groups/{group}', [GroupController::class, 'destroy'])->name('groups.destroy');
     Route::post('/groups/{group}/reviews', [ReviewController::class, 'store'])->name('groups.reviews.store');
 });
 
