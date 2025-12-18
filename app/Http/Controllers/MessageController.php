@@ -10,11 +10,37 @@ use Illuminate\Support\Facades\Auth;
 
 class MessageController extends Controller
 {
+    private function getFriendsSortedByRecentMessage($user)
+    {
+        $friends = $user->friends();
+
+        // get all messages involving the user
+        $messages = Message::where('senderid', $user->id)
+            ->orWhere('receiverid', $user->id)
+            ->select('senderid', 'receiverid', 'sentat')
+            ->orderBy('sentat', 'desc')
+            ->get();
+
+        // map user id to latest message time
+        $lastMessageDates = [];
+        foreach ($messages as $message) {
+            $otherUserId = $message->senderid == $user->id ? $message->receiverid : $message->senderid;
+            if (!isset($lastMessageDates[$otherUserId])) {
+                $lastMessageDates[$otherUserId] = $message->sentat;
+            }
+        }
+
+        // sort friends
+        return $friends->sortByDesc(function ($friend) use ($lastMessageDates) {
+            return $lastMessageDates[$friend->id] ?? null;
+        });
+    }
+
     public function index()
     {
         $user = Auth::user();
-        // get friends to show in the list
-        $friends = $user->friends();
+        // get friends to show in the list, sorted by recent message
+        $friends = $this->getFriendsSortedByRecentMessage($user);
 
         return view('pages.messages.index', compact('friends'));
     }
@@ -43,7 +69,7 @@ class MessageController extends Controller
             ->where('isread', false)
             ->update(['isread' => true]);
 
-        $friends = $currentUser->friends();
+        $friends = $this->getFriendsSortedByRecentMessage($currentUser);
 
         return view('pages.messages.show', compact('friend', 'messages', 'friends'));
     }
