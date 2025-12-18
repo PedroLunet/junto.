@@ -3,27 +3,32 @@
 @section('page-title', 'Users')
 
 @section('content')
-    <div class="space-y-6">
-        <!-- header with search and add user -->
-        <div class="flex justify-between items-center">
-            <!-- search bar -->
-            <div class="flex items-center space-x-4">
-                <x-ui.search-bar id="searchUser" placeholder="Search User" />
-                <div class="flex items-center space-x-2 text-base text-gray-600" id="selection-info" style="display: none;">
-                    <i class="fas fa-check"></i>
-                    <span id="selection-count">0 Selected</span>
-                </div>
+    <div class="mx-20 my-10 flex items-center justify-between">
+        <div>
+            <h1 class="text-3xl font-bold text-gray-900">Manage Users</h1>
+            <p class="text-gray-600 mt-2 text-base">View and manage user accounts on the platform</p>
+        </div>
+        <div class="flex items-center gap-4">
+            <!-- Selection Info -->
+            <div class="flex items-center space-x-2 text-base text-gray-600" id="selection-info" style="display: none;">
+                <i class="fas fa-check"></i>
+                <span id="selection-count">0 Selected</span>
             </div>
 
-            <!-- add user button -->
+            <!-- Search Bar -->
+            <x-ui.search-bar id="searchUser" placeholder="Search User" />
+
+            <!-- Add User Button -->
             <x-ui.button variant="primary" onclick="openAddUserModal()" class="flex items-center space-x-2">
                 <i class="fas fa-plus"></i>
                 <span>Add User</span>
             </x-ui.button>
         </div>
+    </div>
 
+    <div class="mx-20 space-y-6">
         <!-- Users Table -->
-        <div class="bg-white overflow-hidden">
+        <div class="bg-white overflow-hidden rounded-xl">
             <table class="min-w-full border-collapse">
                 <thead class="bg-gray-50">
                     <tr>
