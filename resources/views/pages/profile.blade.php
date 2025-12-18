@@ -42,8 +42,17 @@
                                 </a>
                             @else
                                 <!-- Friend request button -->
-                                <div class="mt-4 md:mt-6">
+                                <div class="mt-4 md:mt-6 flex gap-4">
                                     <x-profile.friend-button :user="$user" :friendButtonData="$friendButtonData" />
+
+                                    @if(Auth::user()->isFriendsWith($user->id))
+                                        <a href="{{ route('messages.show', $user->id) }}">
+                                            <x-ui.button variant="secondary" class="px-4 py-2 inline-flex items-center">
+                                                <i class="fa-solid fa-envelope mr-2"></i>
+                                                Message
+                                            </x-ui.button>
+                                        </a>
+                                    @endif
                                 </div>
                             @endif
                         @else
