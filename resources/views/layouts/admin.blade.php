@@ -26,7 +26,12 @@
                 Reports
             </a>
         </li>
-        
+        <li>
+            <a href="{{ route('admin.appeals') }}"
+                class="block py-2 px-4 rounded  hover:bg-[#7a5466] hover:text-white {{ request()->routeIs('admin.appeals') ? 'bg-[#a17f8f]' : '' }}">
+                Unblock appeals
+            </a>
+        </li>
     </ul>
 @endsection
 

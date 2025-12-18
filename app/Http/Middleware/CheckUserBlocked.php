@@ -17,7 +17,6 @@ class CheckUserBlocked
     public function handle(Request $request, Closure $next): Response
     {
         if (Auth::check() && Auth::user()->isblocked) {
-            // Allow access to blocked, logout, and appeal submission routes
             if ($request->routeIs('blocked') || $request->routeIs('logout') || $request->routeIs('appeal.submit')) {
                 return $next($request);
             }
