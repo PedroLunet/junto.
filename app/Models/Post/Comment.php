@@ -37,6 +37,7 @@ class Comment extends Model
                 c.createdAt as created_at,
                 u.name as author_name,
                 u.username,
+                u.profilePicture as author_picture,
                 (SELECT COUNT(*) FROM lbaw2544.comment_like cl WHERE cl.commentId = c.id) as likes_count
             FROM lbaw2544.comment c
             JOIN lbaw2544.users u ON c.userId = u.id
@@ -60,6 +61,7 @@ class Comment extends Model
                 c.createdAt as created_at,
                 u.name as author_name,
                 u.username,
+                u.profilePicture as author_picture,
                 (SELECT COUNT(*) FROM lbaw2544.comment_like cl WHERE cl.commentId = c.id) as likes_count
             FROM lbaw2544.comment c
             JOIN lbaw2544.users u ON c.userId = u.id

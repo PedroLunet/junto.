@@ -27,6 +27,18 @@ use Illuminate\Support\Facades\Route;
 // Home
 // Route::redirect('/', '/login');
 
+// Blocked user page
+Route::middleware('auth')->get('/blocked', function () {
+    $hasRejectedAppeal = \App\Models\UnblockAppeal::where('userid', auth()->id())
+        ->where('status', 'rejected')
+        ->exists();
+
+    return view('pages.blocked', ['hasRejectedAppeal' => $hasRejectedAppeal]);
+})->name('blocked');
+
+// Appeal submission route (for blocked users) - must be before regular.user middleware
+Route::middleware('auth')->post('/appeal/submit', [AdminController::class, 'submitAppeal'])->name('appeal.submit');
+
 Route::middleware('regular.user')->group(function () {
     Route::get('/', [HomeController::class, 'index'])->name('home');
     Route::get('/posts/{id}/comments', [CommentController::class, 'index'])->name('post.comments');
@@ -152,11 +164,17 @@ Route::middleware(['auth', 'admin'])->controller(ReportController::class)->group
 Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/admin', [AdminController::class, 'dashboard'])->name('admin.dashboard');
     Route::get('/admin/users', [AdminController::class, 'users'])->name('admin.users');
+    Route::put('/admin/users/{id}', [AdminController::class, 'updateUser'])->name('admin.users.update');
     Route::post('/admin/users/{id}/block', [AdminController::class, 'blockUser'])->name('admin.users.block');
     Route::post('/admin/users/{id}/unblock', [AdminController::class, 'unblockUser'])->name('admin.users.unblock');
     Route::get('/admin/reports', [AdminController::class, 'listReports'])->name('admin.reports');
     Route::post('/admin/reports/{id}/accept', [AdminController::class, 'acceptReport'])->name('admin.reports.accept');
     Route::post('/admin/reports/{id}/reject', [AdminController::class, 'rejectReport'])->name('admin.reports.reject');
+    Route::get('/admin/groups', [AdminController::class, 'groups'])->name('admin.groups');
+    Route::delete('/admin/groups/{id}', [AdminController::class, 'deleteGroup'])->name('admin.groups.delete');
+    Route::get('/admin/appeals', [AdminController::class, 'appeals'])->name('admin.appeals');
+    Route::post('/admin/appeals/{id}/approve', [AdminController::class, 'approveAppeal'])->name('admin.appeals.approve');
+    Route::post('/admin/appeals/{id}/reject', [AdminController::class, 'rejectAppeal'])->name('admin.appeals.reject');
 });
 
 // GROUPS ROUTES

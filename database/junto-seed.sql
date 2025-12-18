@@ -221,6 +221,17 @@ CREATE TABLE report (
     )
 );
 
+-- UNBLOCK APPEALS
+CREATE TABLE unblock_appeal (
+    id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    userId INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    reason TEXT NOT NULL,
+    status VARCHAR(20) DEFAULT 'pending' CHECK (status IN ('pending', 'approved', 'rejected')),
+    adminNotes TEXT,
+    createdAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updatedAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
 --
 -- Indexes
 --
@@ -237,6 +248,12 @@ CREATE INDEX post_group_created_at_idx ON post USING btree (groupId, createdAt D
 
 -- IDX04: Post Comments
 CREATE INDEX comment_post_created_at_idx ON comment USING btree (postId, createdAt ASC);
+
+-- IDX05: Unblock Appeals by User
+CREATE INDEX unblock_appeal_user_idx ON unblock_appeal USING btree (userId);
+
+-- IDX06: Unblock Appeals by Status
+CREATE INDEX unblock_appeal_status_idx ON unblock_appeal USING btree (status);
 
 -- == IDX11: User Search ==
 -- 1. Add tsvector column
@@ -772,7 +789,8 @@ TRUNCATE TABLE
     book,
     music,
     media,
-    report 
+    report,
+    unblock_appeal
 RESTART IDENTITY CASCADE;
 
 -- MEDIA
@@ -1006,4 +1024,68 @@ INSERT INTO friendship (userId1, userId2) VALUES
 -- REQUESTS & REPORTS
 INSERT INTO request (notificationId, status, senderId) VALUES (1, 'accepted', 1);
 INSERT INTO group_invite_request (requestId, groupId) VALUES (1, 1);
-INSERT INTO report (reason, status, postId, commentId) VALUES ('Spam', 'pending', 37, NULL);
+
+-- REPORTS (Posts and Comments)
+INSERT INTO report (reason, status, postId, commentId, createdAt) VALUES 
+    -- Pending Reports on Posts
+    ('Spam', 'pending', 37, NULL, NOW() - INTERVAL '1 day'),
+    ('Inappropriate content', 'pending', 42, NULL, NOW() - INTERVAL '2 days'),
+    ('Harassment', 'pending', 45, NULL, NOW() - INTERVAL '3 days'),
+    ('Misinformation', 'pending', 32, NULL, NOW() - INTERVAL '4 days'),
+    ('Spam', 'pending', 51, NULL, NOW() - INTERVAL '5 days'),
+    ('Hate speech', 'pending', 44, NULL, NOW() - INTERVAL '6 days'),
+    ('Violence', 'pending', 38, NULL, NOW() - INTERVAL '7 days'),
+    ('Inappropriate content', 'pending', 55, NULL, NOW() - INTERVAL '8 days'),
+    ('Spam', 'pending', 48, NULL, NOW() - INTERVAL '9 days'),
+    ('Copyright violation', 'pending', 56, NULL, NOW() - INTERVAL '10 days'),
+    
+    -- Accepted Reports on Posts
+    ('Spam', 'accepted', 52, NULL, NOW() - INTERVAL '11 days'),
+    ('Harassment', 'accepted', 46, NULL, NOW() - INTERVAL '12 days'),
+    ('Inappropriate content', 'accepted', 58, NULL, NOW() - INTERVAL '13 days'),
+    ('Hate speech', 'accepted', 39, NULL, NOW() - INTERVAL '14 days'),
+    ('Misinformation', 'accepted', 41, NULL, NOW() - INTERVAL '15 days'),
+    ('Spam', 'accepted', 54, NULL, NOW() - INTERVAL '16 days'),
+    ('Violence', 'accepted', 34, NULL, NOW() - INTERVAL '17 days'),
+    ('Inappropriate content', 'accepted', 50, NULL, NOW() - INTERVAL '18 days'),
+    
+    -- Rejected Reports on Posts
+    ('Spam', 'rejected', 1, NULL, NOW() - INTERVAL '19 days'),
+    ('Inappropriate content', 'rejected', 31, NULL, NOW() - INTERVAL '20 days'),
+    ('Harassment', 'rejected', 33, NULL, NOW() - INTERVAL '21 days'),
+    ('Spam', 'rejected', 35, NULL, NOW() - INTERVAL '22 days'),
+    ('Misinformation', 'rejected', 36, NULL, NOW() - INTERVAL '23 days'),
+    ('Hate speech', 'rejected', 40, NULL, NOW() - INTERVAL '24 days'),
+    ('Inappropriate content', 'rejected', 43, NULL, NOW() - INTERVAL '25 days'),
+    ('Spam', 'rejected', 47, NULL, NOW() - INTERVAL '26 days'),
+    ('Violence', 'rejected', 49, NULL, NOW() - INTERVAL '27 days'),
+    ('Copyright violation', 'rejected', 53, NULL, NOW() - INTERVAL '28 days'),
+    
+    -- Pending Reports on Comments
+    ('Spam', 'pending', NULL, 1, NOW() - INTERVAL '2 days'),
+    ('Harassment', 'pending', NULL, 2, NOW() - INTERVAL '3 days'),
+    ('Inappropriate content', 'pending', NULL, 3, NOW() - INTERVAL '5 days'),
+    ('Hate speech', 'pending', NULL, 4, NOW() - INTERVAL '7 days'),
+    ('Spam', 'pending', NULL, 5, NOW() - INTERVAL '9 days'),
+    
+    -- Accepted Reports on Comments
+    ('Harassment', 'accepted', NULL, 6, NOW() - INTERVAL '11 days'),
+    ('Inappropriate content', 'accepted', NULL, 1, NOW() - INTERVAL '13 days'),
+    ('Spam', 'accepted', NULL, 2, NOW() - INTERVAL '15 days'),
+    
+    -- Rejected Reports on Comments
+    ('Spam', 'rejected', NULL, 3, NOW() - INTERVAL '17 days'),
+    ('Harassment', 'rejected', NULL, 4, NOW() - INTERVAL '19 days'),
+    ('Inappropriate content', 'rejected', NULL, 5, NOW() - INTERVAL '21 days'),
+    
+    -- More varied reports
+    ('Self-harm content', 'pending', 59, NULL, NOW() - INTERVAL '1 hour'),
+    ('Scam or fraud', 'pending', 60, NULL, NOW() - INTERVAL '3 hours'),
+    ('Impersonation', 'pending', 11, NULL, NOW() - INTERVAL '5 hours'),
+    ('False information', 'pending', 15, NULL, NOW() - INTERVAL '7 hours'),
+    ('Bullying', 'pending', 19, NULL, NOW() - INTERVAL '9 hours'),
+    ('Adult content', 'accepted', 21, NULL, NOW() - INTERVAL '30 days'),
+    ('Graphic violence', 'accepted', 24, NULL, NOW() - INTERVAL '29 days'),
+    ('Terrorism', 'accepted', 27, NULL, NOW() - INTERVAL '28 days'),
+    ('Illegal activities', 'rejected', 29, NULL, NOW() - INTERVAL '27 days'),
+    ('Off-topic spam', 'rejected', 12, NULL, NOW() - INTERVAL '26 days');

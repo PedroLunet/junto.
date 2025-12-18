@@ -10,11 +10,14 @@
         'offline' => 'bg-red-50 text-red-700 border border-red-200',
         'disabled' => 'bg-gray-50 text-gray-500 border border-gray-200',
         'pending' => 'bg-yellow-50 text-yellow-700 border border-yellow-200',
+        'private' => 'bg-purple-100 text-purple-800 border border-purple-200',
+        'public' => 'bg-green-100 text-green-800 border border-green-200',
         'default' => 'bg-gray-50 text-gray-700 border border-gray-200',
     ];
 
     $sizes = [
         'sm' => 'px-2 py-1 text-base',
+        'xs' => 'px-2 py-1 text-xs',
         'md' => 'px-3 py-1.5 text-lg',
         'lg' => 'px-4 py-2 text-2xl',
     ];

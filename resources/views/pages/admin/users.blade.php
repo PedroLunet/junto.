@@ -3,128 +3,160 @@
 @section('page-title', 'Users')
 
 @section('content')
-    <div class="space-y-6">
-        <!-- header with search and add user -->
-        <div class="flex justify-between items-center">
-            <!-- search bar -->
-            <div class="flex items-center space-x-4">
-                <div class="relative">
-                    <input type="text" id="searchUser" placeholder="Search User"
-                        class="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 w-80">
+    <div class="flex flex-col h-[calc(100vh-4rem)]">
+        <!-- Fixed Header -->
+        <div class="flex-none bg-[#F1EBF4]">
+            <div class="mx-20 mt-10 mb-4 flex items-center justify-between">
+                <div>
+                    <h1 class="text-3xl font-bold text-gray-900">Manage Users</h1>
+                    <p class="text-gray-600 mt-2 text-base">View and manage user accounts on the platform</p>
                 </div>
-                <div class="flex items-center space-x-2 text-2xl text-gray-600" id="selection-info" style="display: none;">
-                    <i class="fas fa-check"></i>
-                    <span id="selection-count">0 Selected</span>
+                <div class="flex items-center gap-4">
+                    <!-- Selection Info -->
+                    <div class="flex items-center space-x-2 text-base text-gray-600" id="selection-info"
+                        style="display: none;">
+                        <i class="fas fa-check"></i>
+                        <span id="selection-count">0 Selected</span>
+                    </div>
+
+                    <!-- Search Bar -->
+                    <x-ui.search-bar id="searchUser" placeholder="Search User" />
+
+                    <!-- Add User Button -->
+                    <x-ui.button variant="primary" onclick="openAddUserModal()" class="flex items-center space-x-2">
+                        <i class="fas fa-plus"></i>
+                        <span>Add User</span>
+                    </x-ui.button>
                 </div>
             </div>
-
-            <!-- add user button -->
-            <x-ui.button variant="primary" onclick="openAddUserModal()" class="flex items-center space-x-2">
-                <i class="fas fa-plus"></i>
-                <span>Add User</span>
-            </x-ui.button>
         </div>
 
-        <!-- Users Table -->
-        <div class="bg-white overflow-hidden">
-            <table class="min-w-full border-collapse">
-                <thead class="bg-gray-50">
-                    <tr>
-                        <th class="pl-16 pr-6 py-3 text-left">
-                            <input type="checkbox" id="select-all" class="rounded border-gray-300 ml-8">
-                        </th>
-                        <th class="px-6 py-3 text-left text-xl font-medium text-gray-500 uppercase tracking-wider">
-                            <button class="flex items-center space-x-2 hover:text-gray-700 sort-btn" data-column="name">
-                                <span>Name</span>
-                                <i class="fas fa-caret-down text-sm sort-icon" data-direction="none"></i>
-                            </button>
-                        </th>
-                        <th class="px-6 py-3 text-left text-xl font-medium text-gray-500 uppercase tracking-wider">
-                            <button class="flex items-center space-x-2 hover:text-gray-700 sort-btn" data-column="username">
-                                <span>Username</span>
-                                <i class="fas fa-caret-down text-sm sort-icon" data-direction="none"></i>
-                            </button>
-                        </th>
-                        <th class="px-6 py-3 text-left text-xl font-medium text-gray-500 uppercase tracking-wider">
-                            <button class="flex items-center space-x-2 hover:text-gray-700 sort-btn" data-column="email">
-                                <span>Email</span>
-                                <i class="fas fa-caret-down text-sm sort-icon" data-direction="none"></i>
-                            </button>
-                        </th>
-                        <th class="px-6 py-3 text-left text-xl font-medium text-gray-500 uppercase tracking-wider">
-                            <button class="flex items-center space-x-2 hover:text-gray-700 sort-btn" data-column="date">
-                                <span>Joined</span>
-                                <i class="fas fa-caret-down text-sm sort-icon" data-direction="none"></i>
-                            </button>
-                        </th>
-                        <th class="px-6 py-3 text-left text-xl font-medium text-gray-500 uppercase tracking-wider">
-                            <button class="flex items-center space-x-2 hover:text-gray-700 sort-btn" data-column="status">
-                                <span>Status</span>
-                                <i class="fas fa-caret-down text-sm sort-icon" data-direction="none"></i>
-                            </button>
-                        </th>
-                        <th class="px-6 py-3 text-left text-xl font-medium text-gray-500 uppercase tracking-wider">Edit</th>
-                    </tr>
-                </thead>
-                <tbody class="bg-white divide-y divide-gray-200">
-                    @forelse($users as $user)
-                        <tr class="hover:bg-gray-50">
-                            <td class="pl-16 pr-6 py-4">
-                                <input type="checkbox" class="user-checkbox rounded border-gray-300 ml-8"
-                                    value="{{ $user->id }}">
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="flex items-center">
-                                    <div class="text-2xl font-medium text-gray-900">{{ $user->name }}</div>
-                                </div>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="text-2xl text-gray-900">{{ $user->username }}</div>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="text-2xl text-gray-900">{{ $user->email }}</div>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="text-2xl text-gray-900">
-                                    {{ $user->createdat ? \Carbon\Carbon::parse($user->createdat)->format('M d, Y') : 'N/A' }}
-                                </div>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <span
-                                    class="inline-flex items-center px-2.5 py-0.5 rounded-full text-2xl font-medium
-                        {{ $user->isblocked ? 'bg-red-100 text-red-800' : ($user->isadmin ? 'bg-purple-100 text-purple-800' : 'bg-green-100 text-green-800') }}">
-                                    {{ $user->isblocked ? 'Blocked' : ($user->isadmin ? 'Admin' : 'Active') }}
-                                </span>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-2xl font-medium">
-                                <div class="flex space-x-6">
-                                    <button class="edit-user-btn text-blue-600 hover:text-blue-900"
-                                        data-user-id="{{ $user->id }}" data-user-name="{{ $user->name }}"
-                                        data-user-username="{{ $user->username }}" data-user-email="{{ $user->email }}"
-                                        data-user-bio="{{ $user->bio }}"
-                                        data-user-isadmin="{{ $user->isadmin ? 'true' : 'false' }}">
-                                        <i class="fas fa-edit"></i>
+        <!-- Scrollable Content -->
+        <div class="flex-1 overflow-y-auto">
+            <div class="mx-20 my-6">
+                <!-- Users Table -->
+                <div class="bg-white overflow-hidden rounded-xl">
+                    <table class="min-w-full border-collapse">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="pl-6 pr-3 py-3 text-left w-14">
+                                    <input type="checkbox" id="select-all" class="rounded border-gray-300">
+                                </th>
+                                <th
+                                    class="px-6 py-3 text-left text-base font-medium text-gray-500 uppercase tracking-wider">
+                                    <button class="flex items-center space-x-2 hover:text-gray-700 sort-btn"
+                                        data-column="name">
+                                        <span>Name</span>
+                                        <i class="fas fa-caret-down text-sm sort-icon" data-direction="none"></i>
                                     </button>
-                                </div>
-                            </td>
-                        </tr>
-                    @empty
-                        <tr>
-                            <td colspan="7" class="px-6 py-4 text-center text-gray-500">
-                                No users found.
-                            </td>
-                        </tr>
-                    @endforelse
-                </tbody>
-            </table>
+                                </th>
+                                <th
+                                    class="px-6 py-3 text-left text-base font-medium text-gray-500 uppercase tracking-wider">
+                                    <button class="flex items-center space-x-2 hover:text-gray-700 sort-btn"
+                                        data-column="username">
+                                        <span>Username</span>
+                                        <i class="fas fa-caret-down text-sm sort-icon" data-direction="none"></i>
+                                    </button>
+                                </th>
+                                <th
+                                    class="px-6 py-3 text-left text-base font-medium text-gray-500 uppercase tracking-wider">
+                                    <button class="flex items-center space-x-2 hover:text-gray-700 sort-btn"
+                                        data-column="email">
+                                        <span>Email</span>
+                                        <i class="fas fa-caret-down text-sm sort-icon" data-direction="none"></i>
+                                    </button>
+                                </th>
+                                <th
+                                    class="px-6 py-3 text-left text-base font-medium text-gray-500 uppercase tracking-wider">
+                                    <button class="flex items-center space-x-2 hover:text-gray-700 sort-btn"
+                                        data-column="date">
+                                        <span>Joined</span>
+                                        <i class="fas fa-caret-down text-sm sort-icon" data-direction="none"></i>
+                                    </button>
+                                </th>
+                                <th
+                                    class="px-6 py-3 text-left text-base font-medium text-gray-500 uppercase tracking-wider">
+                                    <button class="flex items-center space-x-2 hover:text-gray-700 sort-btn"
+                                        data-column="status">
+                                        <span>Status</span>
+                                        <i class="fas fa-caret-down text-sm sort-icon" data-direction="none"></i>
+                                    </button>
+                                </th>
+                                <th
+                                    class="px-3 py-3 text-center text-base font-medium text-gray-500 uppercase tracking-wider">
+                                    Actions
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200">
+                            @forelse($users as $user)
+                                <tr class="hover:bg-gray-50">
+                                    <td class="pl-6 pr-3 py-4">
+                                        <input type="checkbox" class="user-checkbox rounded border-gray-300"
+                                            value="{{ $user->id }}">
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="flex items-center">
+                                            <div class="text-base font-medium text-gray-900">{{ $user->name }}</div>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-base text-gray-900">{{ $user->username }}</div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-base text-gray-900">{{ $user->email }}</div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-base text-gray-900">
+                                            {{ $user->createdat ? \Carbon\Carbon::parse($user->createdat)->format('M d, Y') : 'N/A' }}
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span
+                                            class="inline-flex items-center px-2.5 py-0.5 rounded-full text-base font-medium
+                                            {{ $user->isblocked ? 'bg-red-100 text-red-800' : ($user->isadmin ? 'bg-purple-100 text-purple-800' : 'bg-green-100 text-green-800') }}">
+                                            {{ $user->isblocked ? 'Blocked' : ($user->isadmin ? 'Admin' : 'Active') }}
+                                        </span>
+                                    </td>
+                                    <td class="px-3 py-4 whitespace-nowrap text-base font-medium">
+                                        <div class="flex justify-center space-x-1">
+                                            <x-ui.icon-button variant="blue" class="edit-user-btn"
+                                                data-user-id="{{ $user->id }}" data-user-name="{{ $user->name }}"
+                                                data-user-username="{{ $user->username }}"
+                                                data-user-email="{{ $user->email }}" data-user-bio="{{ $user->bio }}"
+                                                data-user-isadmin="{{ $user->isadmin ? 'true' : 'false' }}">
+                                                <i class="fas fa-edit"></i>
+                                            </x-ui.icon-button>
+                                            <x-ui.icon-button variant="yellow" class="ban-user-btn"
+                                                data-user-id="{{ $user->id }}" data-user-name="{{ $user->name }}"
+                                                data-user-blocked="{{ $user->isblocked ? 'true' : 'false' }}">
+                                                <i class="fas fa-ban"></i>
+                                            </x-ui.icon-button>
+                                            <x-ui.icon-button variant="red" class="delete-user-btn">
+                                                <i class="fas fa-trash"></i>
+                                            </x-ui.icon-button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="7" class="px-6 py-4 text-center text-gray-500">
+                                        No users found.
+                                    </td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
     </div>
 
-    <!-- Include Add User Modal -->
     <x-admin.add-user-modal />
 
-    <!-- Include Edit User Modal -->
     <x-admin.edit-user-modal />
+
+    <x-ui.confirm />
 @endsection
 
 @push('scripts')
@@ -192,9 +224,24 @@
                         return;
                     }
 
-                    const name = row.querySelector('td:nth-child(2) div').textContent.toLowerCase();
-                    const username = row.querySelector('td:nth-child(3) div').textContent.toLowerCase();
-                    const email = row.querySelector('td:nth-child(4) div').textContent.toLowerCase();
+                    const nameElement = row.querySelector('td:nth-child(2) div');
+                    const usernameElement = row.querySelector('td:nth-child(3) div');
+                    const emailElement = row.querySelector('td:nth-child(4) div');
+
+                    // store original values if not already stored
+                    if (!nameElement.dataset.original) {
+                        nameElement.dataset.original = nameElement.textContent;
+                    }
+                    if (!usernameElement.dataset.original) {
+                        usernameElement.dataset.original = usernameElement.textContent;
+                    }
+                    if (!emailElement.dataset.original) {
+                        emailElement.dataset.original = emailElement.textContent;
+                    }
+
+                    const name = nameElement.dataset.original.toLowerCase();
+                    const username = usernameElement.dataset.original.toLowerCase();
+                    const email = emailElement.dataset.original.toLowerCase();
 
                     const matches = name.includes(searchTerm) ||
                         username.includes(searchTerm) ||
@@ -203,6 +250,38 @@
                     if (matches) {
                         row.style.display = '';
                         visibleCount++;
+
+                        // highlight matching text
+                        if (searchTerm) {
+                            const regex = new RegExp(
+                                `(${searchTerm.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
+
+                            if (name.includes(searchTerm)) {
+                                nameElement.innerHTML = nameElement.dataset.original.replace(regex,
+                                    '<span class="bg-yellow-200">$1</span>');
+                            } else {
+                                nameElement.textContent = nameElement.dataset.original;
+                            }
+
+                            if (username.includes(searchTerm)) {
+                                usernameElement.innerHTML = usernameElement.dataset.original.replace(regex,
+                                    '<span class="bg-yellow-200">$1</span>');
+                            } else {
+                                usernameElement.textContent = usernameElement.dataset.original;
+                            }
+
+                            if (email.includes(searchTerm)) {
+                                emailElement.innerHTML = emailElement.dataset.original.replace(regex,
+                                    '<span class="bg-yellow-200">$1</span>');
+                            } else {
+                                emailElement.textContent = emailElement.dataset.original;
+                            }
+                        } else {
+                            // reset to original text when no search term
+                            nameElement.textContent = nameElement.dataset.original;
+                            usernameElement.textContent = usernameElement.dataset.original;
+                            emailElement.textContent = emailElement.dataset.original;
+                        }
                     } else {
                         row.style.display = 'none';
                         // uncheck hidden rows
@@ -210,6 +289,10 @@
                         if (checkbox && checkbox.checked) {
                             checkbox.checked = false;
                         }
+                        // Reset to original text for hidden rows
+                        nameElement.textContent = nameElement.dataset.original;
+                        usernameElement.textContent = usernameElement.dataset.original;
+                        emailElement.textContent = emailElement.dataset.original;
                     }
                 });
 
@@ -394,6 +477,55 @@
                         isadmin: this.getAttribute('data-user-isadmin') === 'true'
                     };
                     openEditUserModal(userData);
+                });
+            });
+
+            //=== BAN/UNBAN USER ===
+            // attach event listeners to ban buttons
+            document.querySelectorAll('.ban-user-btn').forEach(button => {
+                button.addEventListener('click', async function() {
+                    const userId = this.getAttribute('data-user-id');
+                    const userName = this.getAttribute('data-user-name');
+                    const isBlocked = this.getAttribute('data-user-blocked') === 'true';
+
+                    const action = isBlocked ? 'unblock' : 'block';
+                    const actionText = isBlocked ? 'Unblock' : 'Block';
+
+                    const confirmed = await alertConfirm(
+                        `Are you sure you want to ${action} ${userName}?`,
+                        `${actionText} User`
+                    );
+
+                    if (confirmed) {
+                        try {
+                            const response = await fetch(`/admin/users/${userId}/${action}`, {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'X-CSRF-TOKEN': document.querySelector(
+                                            'meta[name="csrf-token"]')
+                                        .getAttribute('content'),
+                                    'Accept': 'application/json'
+                                }
+                            });
+
+                            const data = await response.json();
+
+                            if (data.success) {
+                                await alertInfo(
+                                    `User ${userName} has been ${action}ed successfully.`);
+                                window.location.reload();
+                            } else {
+                                await alertInfo(
+                                    `Failed to ${action} user: ${data.message || 'Unknown error'}`
+                                    );
+                            }
+                        } catch (error) {
+                            console.error('Error:', error);
+                            await alertInfo(
+                                `An error occurred while trying to ${action} the user.`);
+                        }
+                    }
                 });
             });
         });

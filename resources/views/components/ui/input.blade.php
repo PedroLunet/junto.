@@ -10,11 +10,12 @@
     'iconAction' => null,
     'rows' => 4,
     'disabled' => false,
+    'id' => null,
     'help' => '',
 ])
 
 @php
-    $inputId = $name . '-' . uniqid();
+    $inputId = $id ?? $name . '-' . uniqid();
     $isTextarea = $type === 'textarea';
     $isEmail = $type === 'email';
     $emailPattern = $isEmail ? '[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}' : null;
@@ -129,7 +130,7 @@
 
                             // error message if not already present
                             if (!input.parentElement.parentElement.querySelector(
-                                '.input-error-message')) {
+                                    '.input-error-message')) {
                                 const errorMsg =
                                     `<p class="mt-2 text-xl text-red-500 font-medium input-error-message">Please enter a valid email address</p>`;
                                 input.parentElement.parentElement.insertAdjacentHTML('beforeend',

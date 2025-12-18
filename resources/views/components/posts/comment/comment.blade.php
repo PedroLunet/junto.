@@ -1,6 +1,9 @@
 <div
-    class="group flex gap-3 p-3 rounded-xl hover:bg-white hover:shadow-sm transition-all border border-transparent hover:border-gray-100">
-    <div class="w-10 h-10 bg-gray-200 rounded-full shrink-0 mt-1"></div>
+    class="flex gap-3 p-3 rounded-xl {{ $isViewOnly ?? false ? 'border border-gray-100 bg-gray-50' : 'group hover:bg-white hover:shadow-sm transition-all border border-transparent hover:border-gray-100' }}">
+    <img src="{{ $comment->author_picture ? asset('profile/' . $comment->author_picture) : asset('profile/default-avatar.png') }}" 
+         alt="{{ $comment->author_name ?? 'User' }}" 
+         class="w-10 h-10 rounded-full shrink-0 mt-1 object-cover"
+         onerror="this.onerror=null; this.src='{{ asset('profile/default.png') }}'">
     <div class="flex-1 min-w-0">
         <div class="flex items-baseline justify-between mb-1">
             <span class="font-semibold text-gray-900 truncate">{{ $comment->author_name ?? '' }}</span>

@@ -49,5 +49,5 @@
         @endif
     </div>
 
-    <x-ui.alert />
+    <x-ui.confirm />
 @endsection
