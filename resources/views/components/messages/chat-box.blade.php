@@ -59,12 +59,23 @@
             </div>
         @endif
 
-        <div class="flex {{ $message->senderid === auth()->id() ? 'justify-end' : 'justify-start' }}">
+        <div id="message-{{ $message->id }}" class="flex {{ $message->senderid === auth()->id() ? 'justify-end' : 'justify-start' }}">
             <div class="max-w-[70%] px-4 py-2 {{ $message->senderid === auth()->id() ? 'bg-[#624452] text-white rounded-2xl rounded-br-none' : 'bg-white text-gray-800 border border-gray-200 rounded-2xl rounded-bl-none' }}">
                 <p class="text-sm">{{ $message->content }}</p>
-                <p class="text-xs mt-1 {{ $message->senderid === auth()->id() ? 'text-purple-200' : 'text-gray-400' }}">
-                    {{ $message->sentat->format('H:i') }}
-                </p>
+                <div class="flex items-center justify-end gap-1 mt-1">
+                    <p class="text-xs {{ $message->senderid === auth()->id() ? 'text-purple-200' : 'text-gray-400' }}">
+                        {{ $message->sentat->format('H:i') }}
+                    </p>
+                    @if($message->senderid === auth()->id())
+                        <span class="read-status ml-1">
+                            @if($message->isread)
+                                <i class="fa-solid fa-check-double text-blue-400 text-xs"></i>
+                            @else
+                                <i class="fa-solid fa-check-double text-gray-300 text-xs"></i>
+                            @endif
+                        </span>
+                    @endif
+                </div>
             </div>
         </div>
     @endforeach
@@ -160,7 +171,13 @@
                 })
                 .then(response => response.json())
                 .then(data => {
-                    if (data.status !== 'success') {
+                    if (data.status === 'success') {
+                        // update the temp message with real ID
+                        const lastMessage = messagesContainer.lastElementChild;
+                        if (lastMessage && !lastMessage.id) {
+                            lastMessage.id = `message-${data.message.id}`;
+                        }
+                    } else {
                         console.error('Message send failed');
                     }
                 })
@@ -204,6 +221,7 @@
 
             const div = document.createElement('div');
             div.className = `flex ${isMine ? 'justify-end' : 'justify-start'}`;
+            if (message.id) div.id = `message-${message.id}`;
             
             const bubble = document.createElement('div');
             bubble.className = `max-w-[70%] px-4 py-2 ${isMine ? 'bg-[#624452] text-white rounded-2xl rounded-br-none' : 'bg-white text-gray-800 border border-gray-200 rounded-2xl rounded-bl-none'}`;
@@ -212,14 +230,28 @@
             text.className = 'text-sm';
             text.textContent = message.content;
             
+            const metaDiv = document.createElement('div');
+            metaDiv.className = 'flex items-center justify-end gap-1 mt-1';
+
             const time = document.createElement('p');
-            time.className = `text-xs mt-1 ${isMine ? 'text-purple-200' : 'text-gray-400'}`;
+            time.className = `text-xs ${isMine ? 'text-purple-200' : 'text-gray-400'}`;
             
             const date = new Date(message.sentat);
             time.textContent = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false });
 
+            metaDiv.appendChild(time);
+
+            if (isMine) {
+                const statusSpan = document.createElement('span');
+                statusSpan.className = 'read-status ml-1';
+                const icon = document.createElement('i');
+                icon.className = `fa-solid fa-check-double text-xs ${message.isread ? 'text-blue-400' : 'text-gray-300'}`;
+                statusSpan.appendChild(icon);
+                metaDiv.appendChild(statusSpan);
+            }
+
             bubble.appendChild(text);
-            bubble.appendChild(time);
+            bubble.appendChild(metaDiv);
             div.appendChild(bubble);
             messagesContainer.appendChild(div);
         }
@@ -229,16 +261,36 @@
             fetch(`{{ route('messages.fetch', $friend->id) }}`)
             .then(response => response.json())
             .then(data => {
-                if (data.messages && data.messages.length > lastMessageCount) {
-                    
-                    const newMessages = data.messages.slice(lastMessageCount);
-                    newMessages.forEach(msg => {
-                        appendMessage(msg, msg.senderid === currentUserId);
+                if (data.messages) {
+                    // update read status for existing messages
+                    data.messages.forEach(msg => {
+                        if (msg.senderid === currentUserId) {
+                            const msgElement = document.getElementById(`message-${msg.id}`);
+                            if (msgElement) {
+                                const statusIcon = msgElement.querySelector('.read-status i');
+                                if (statusIcon) {
+                                    if (msg.isread) {
+                                        statusIcon.classList.remove('text-gray-300');
+                                        statusIcon.classList.add('text-blue-400');
+                                    } else {
+                                        statusIcon.classList.remove('text-blue-400');
+                                        statusIcon.classList.add('text-gray-300');
+                                    }
+                                }
+                            }
+                        }
                     });
-                    
-                    if (newMessages.length > 0) {
-                        messagesContainer.scrollTop = messagesContainer.scrollHeight;
-                        lastMessageCount = data.messages.length;
+
+                    if (data.messages.length > lastMessageCount) {
+                        const newMessages = data.messages.slice(lastMessageCount);
+                        newMessages.forEach(msg => {
+                            appendMessage(msg, msg.senderid === currentUserId);
+                        });
+                        
+                        if (newMessages.length > 0) {
+                            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+                            lastMessageCount = data.messages.length;
+                        }
                     }
                 }
             })

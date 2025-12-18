@@ -17,18 +17,23 @@ class MessageController extends Controller
         // get all messages involving the user
         $messages = Message::where('senderid', $user->id)
             ->orWhere('receiverid', $user->id)
-            ->select('senderid', 'receiverid', 'sentat', 'content')
+            ->select('senderid', 'receiverid', 'sentat', 'content', 'isread')
             ->orderBy('sentat', 'desc')
             ->get();
 
         // map user id to latest message time
         $lastMessageDates = [];
         $lastMessageContents = [];
+        $lastMessageSenders = [];
+        $lastMessageReadStatus = [];
+
         foreach ($messages as $message) {
             $otherUserId = $message->senderid == $user->id ? $message->receiverid : $message->senderid;
             if (!isset($lastMessageDates[$otherUserId])) {
                 $lastMessageDates[$otherUserId] = $message->sentat;
                 $lastMessageContents[$otherUserId] = $message->content;
+                $lastMessageSenders[$otherUserId] = $message->senderid;
+                $lastMessageReadStatus[$otherUserId] = $message->isread;
             }
         }
 
@@ -42,6 +47,8 @@ class MessageController extends Controller
         // attach last message to active chats
         foreach ($activeChats as $friend) {
             $friend->last_message = $lastMessageContents[$friend->id] ?? '';
+            $friend->last_message_sender_id = $lastMessageSenders[$friend->id] ?? null;
+            $friend->last_message_is_read = $lastMessageReadStatus[$friend->id] ?? false;
         }
 
         $otherFriends = $friends->filter(function ($friend) use ($lastMessageDates) {

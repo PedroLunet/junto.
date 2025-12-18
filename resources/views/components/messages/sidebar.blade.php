@@ -35,7 +35,16 @@
                                         </div>
                                         <div class="min-w-0 flex-1 px-4">
                                             <p class="text-sm font-medium {{ $activeFriendId == $friend->id ? 'text-[#624452]' : 'text-gray-900' }} truncate friend-name">{{ $friend->name }}</p>
-                                            <p class="text-xs text-gray-500 truncate friend-last-message">{{ $friend->last_message }}</p>
+                                            <p class="text-xs text-gray-500 truncate friend-last-message">
+                                                @if($friend->last_message_sender_id === auth()->id())
+                                                    @if($friend->last_message_is_read)
+                                                        <i class="fa-solid fa-check-double text-blue-400 text-[10px] mr-1"></i>
+                                                    @else
+                                                        <i class="fa-solid fa-check-double text-gray-300 text-[10px] mr-1"></i>
+                                                    @endif
+                                                @endif
+                                                {{ $friend->last_message }}
+                                            </p>
                                             <p class="hidden friend-username">{{ $friend->username }}</p>
                                         </div>
                                     </div>
