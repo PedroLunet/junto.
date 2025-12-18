@@ -7,7 +7,7 @@
     <div class="bg-white rounded-lg shadow overflow-hidden h-full flex">
         <!-- Sidebar -->
         <div class="hidden md:flex md:w-1/3 border-r border-gray-200 flex-col h-full">
-            <x-messages.sidebar :friends="$friends" :activeFriendId="$friend->id" />
+            <x-messages.sidebar :activeChats="$activeChats" :otherFriends="$otherFriends" :activeFriendId="$friend->id" />
         </div>
 
         <!-- Chat Area -->

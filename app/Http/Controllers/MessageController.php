@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Auth;
 
 class MessageController extends Controller
 {
-    private function getFriendsSortedByRecentMessage($user)
+    private function getSidebarData($user)
     {
         $friends = $user->friends();
 
@@ -30,19 +30,26 @@ class MessageController extends Controller
             }
         }
 
-        // sort friends
-        return $friends->sortByDesc(function ($friend) use ($lastMessageDates) {
-            return $lastMessageDates[$friend->id] ?? null;
+        // split friends into active chats and others
+        $activeChats = $friends->filter(function ($friend) use ($lastMessageDates) {
+            return isset($lastMessageDates[$friend->id]);
+        })->sortByDesc(function ($friend) use ($lastMessageDates) {
+            return $lastMessageDates[$friend->id];
         });
+
+        $otherFriends = $friends->filter(function ($friend) use ($lastMessageDates) {
+            return !isset($lastMessageDates[$friend->id]);
+        })->sortBy('name');
+
+        return compact('activeChats', 'otherFriends');
     }
 
     public function index()
     {
         $user = Auth::user();
-        // get friends to show in the list, sorted by recent message
-        $friends = $this->getFriendsSortedByRecentMessage($user);
-
-        return view('pages.messages.index', compact('friends'));
+        $data = $this->getSidebarData($user);
+        
+        return view('pages.messages.index', $data);
     }
 
     public function show($userId)
@@ -69,9 +76,19 @@ class MessageController extends Controller
             ->where('isread', false)
             ->update(['isread' => true]);
 
-        $friends = $this->getFriendsSortedByRecentMessage($currentUser);
+        $data = $this->getSidebarData($currentUser);
+        
+        
+        if (!$data['activeChats']->contains('id', $friend->id)) {
+             // remove from otherFriends if present
+             $data['otherFriends'] = $data['otherFriends']->reject(function ($f) use ($friend) {
+                 return $f->id == $friend->id;
+             });
+             // add to activechats at the top
+             $data['activeChats'] = $data['activeChats']->prepend($friend);
+        }
 
-        return view('pages.messages.show', compact('friend', 'messages', 'friends'));
+        return view('pages.messages.show', array_merge(['friend' => $friend, 'messages' => $messages], $data));
     }
 
     public function store(Request $request, $userId)
