@@ -69,6 +69,12 @@ CREATE TABLE users (
     google_id VARCHAR
 );
 
+CREATE TABLE password_reset_tokens (
+    email VARCHAR(255) PRIMARY KEY,
+    token VARCHAR(255) NOT NULL,
+    created_at TIMESTAMP
+);
+
 -- GROUPS (Moved UP so POST can reference it)
 CREATE TABLE groups (
     id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
