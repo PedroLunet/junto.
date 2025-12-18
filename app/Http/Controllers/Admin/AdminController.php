@@ -340,4 +340,9 @@ class AdminController extends Controller
             ], 500);
         }
     }
+
+    public function groups()
+    {
+        return view('pages.admin.groups');
+    }
 }

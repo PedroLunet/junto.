@@ -20,6 +20,12 @@
                 Reports
             </a>
         </li>
+        <li>
+            <a href="{{ route('admin.groups') }}"
+                class="block py-2 px-4 rounded  hover:bg-[#7a5466] hover:text-white {{ request()->routeIs('admin.reports') ? 'bg-[#a17f8f]' : '' }}">
+                Groups
+            </a>
+        </li>
     </ul>
 @endsection
 
