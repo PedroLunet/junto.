@@ -13,7 +13,7 @@
                 </div>
 
                 <!-- Title -->
-                <h1 class="text-5xl font-bold text-gray-900 mb-6">
+                <h1 class="text-5xl font-bold text-gray-900 mb-4">
                     Account Blocked
                 </h1>
 
