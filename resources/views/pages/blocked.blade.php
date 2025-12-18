@@ -22,17 +22,25 @@
                     Your account has been blocked.
                 </p>
 
-                <p class="text-base sm:text-base md:text-lg text-gray-500 mb-8 sm:mb-12">
-                    If you believe this is a mistake, please appeal for unblock.
-                </p>
+                @if ($hasRejectedAppeal)
+                    <p class="text-base sm:text-base md:text-lg text-red-600 font-medium mb-8 sm:mb-12">
+                        Your appeal has been rejected. If you have further questions, please contact support.
+                    </p>
+                @else
+                    <p class="text-base sm:text-base md:text-lg text-gray-500 mb-8 sm:mb-12">
+                        If you believe this is a mistake, please appeal for unblock.
+                    </p>
+                @endif
 
 
                 <div class="flex flex-col sm:flex-row justify-center gap-3 sm:gap-4">
-                    <x-ui.button variant="secondary" onclick="appealUnblock()"
-                        class="text-lg sm:text-xl md:text-xl px-8 sm:px-10 md:px-12 py-3 sm:py-4 w-full sm:w-auto">
-                        <i class="fas fa-envelope mr-2 sm:mr-3"></i>
-                        Appeal for Unblock
-                    </x-ui.button>
+                    @unless ($hasRejectedAppeal)
+                        <x-ui.button variant="secondary" onclick="appealUnblock()"
+                            class="text-lg sm:text-xl md:text-xl px-8 sm:px-10 md:px-12 py-3 sm:py-4 w-full sm:w-auto">
+                            <i class="fas fa-envelope mr-2 sm:mr-3"></i>
+                            Appeal for Unblock
+                        </x-ui.button>
+                    @endunless
                     <x-ui.button variant="primary" onclick="window.location.href='{{ route('logout') }}'"
                         class="text-lg sm:text-xl md:text-xl px-8 sm:px-10 md:px-12 py-3 sm:py-4 w-full sm:w-auto">
                         <i class="fas fa-sign-out-alt mr-2 sm:mr-3"></i>

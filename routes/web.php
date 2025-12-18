@@ -26,7 +26,11 @@ use Illuminate\Support\Facades\Route;
 
 // Blocked user page
 Route::middleware('auth')->get('/blocked', function () {
-    return view('pages.blocked');
+    $hasRejectedAppeal = \App\Models\UnblockAppeal::where('userid', auth()->id())
+        ->where('status', 'rejected')
+        ->exists();
+
+    return view('pages.blocked', ['hasRejectedAppeal' => $hasRejectedAppeal]);
 })->name('blocked');
 
 // Appeal submission route (for blocked users) - must be before regular.user middleware
