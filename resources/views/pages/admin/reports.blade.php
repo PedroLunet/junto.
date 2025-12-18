@@ -63,6 +63,19 @@
         let sortAscending = false; // false = descending (default)
         let allReports = @json($reports);
 
+        function toggleReport(reportId) {
+            const content = document.getElementById(`content-${reportId}`);
+            const chevron = document.getElementById(`chevron-${reportId}`);
+
+            if (content.classList.contains('hidden')) {
+                content.classList.remove('hidden');
+                chevron.classList.add('rotate-180');
+            } else {
+                content.classList.add('hidden');
+                chevron.classList.remove('rotate-180');
+            }
+        }
+
         function toggleSortOrder() {
             sortAscending = !sortAscending;
             const icon = document.getElementById('sort-order-icon');

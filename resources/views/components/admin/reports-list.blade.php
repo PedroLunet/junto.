@@ -1,4 +1,4 @@
-<div class="space-y-6 mx-20">
+<div class="space-y-6">
     @forelse($reports as $report)
         <div class="report-item" data-status="{{ $report->status }}">
             <x-admin.report-card :report="$report" />
