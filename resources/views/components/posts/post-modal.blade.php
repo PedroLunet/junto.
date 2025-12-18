@@ -196,14 +196,31 @@
         `;
         }
         content.innerHTML = html;
-        document.getElementById('likesCount').textContent = post.likes_count || 0;
+
+        // Sync like status from feed if available
+        const feedLikeBtn = document.getElementById(`like-btn-${post.id}`);
+        let isLiked = post.is_liked;
+        let likesCount = post.likes_count || 0;
+
+        if (feedLikeBtn) {
+            isLiked = feedLikeBtn.classList.contains('text-red-500');
+            const feedLikeCount = document.getElementById(`like-count-${post.id}`);
+            if (feedLikeCount) {
+                likesCount = feedLikeCount.textContent;
+            }
+        }
+
+        const likesCountElem = document.getElementById('likesCount');
+        likesCountElem.textContent = likesCount;
         document.getElementById('commentsCount').textContent = post.comments_count || 0;
-        if (post.is_liked) {
+        if (isLiked) {
             likeIcon.classList.remove('far');
             likeIcon.classList.add('fas', 'text-red-500');
+            likesCountElem.classList.add('text-red-500');
         } else {
             likeIcon.classList.remove('fas', 'text-red-500');
             likeIcon.classList.add('far');
+            likesCountElem.classList.remove('text-red-500');
         }
         window.loadComments(post.id);
         if (!window.isAuthenticated) {
@@ -269,9 +286,11 @@
                     if (data.liked) {
                         likeIcon.classList.remove('far');
                         likeIcon.classList.add('fas', 'text-red-500');
+                        likesCount.classList.add('text-red-500');
                     } else {
                         likeIcon.classList.remove('fas', 'text-red-500');
                         likeIcon.classList.add('far');
+                        likesCount.classList.remove('text-red-500');
                     }
                     const timelineBtn = document.getElementById(`like-btn-${currentPostId}`);
                     if (timelineBtn) {
