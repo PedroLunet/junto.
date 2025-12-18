@@ -108,6 +108,22 @@ class MessageController extends Controller
         return redirect()->route('messages.show', $userId);
     }
 
+    public function destroy($userId)
+    {
+        $currentUser = Auth::user();
+
+        // where (sender = current AND receiver = other) or (sender = other AND receiver = current)
+        Message::where(function ($query) use ($currentUser, $userId) {
+            $query->where('senderid', $currentUser->id)
+                  ->where('receiverid', $userId);
+        })->orWhere(function ($query) use ($currentUser, $userId) {
+            $query->where('senderid', $userId)
+                  ->where('receiverid', $currentUser->id);
+        })->delete();
+
+        return redirect()->route('messages.index')->with('success', 'Conversation deleted.');
+    }
+
     public function fetchMessages($userId)
     {
         $currentUser = Auth::user();

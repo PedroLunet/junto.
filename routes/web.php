@@ -44,6 +44,7 @@ Route::middleware(['auth', 'regular.user'])->group(function () {
     Route::get('/messages/{userId}', [MessageController::class, 'show'])->name('messages.show');
     Route::get('/messages/{userId}/fetch', [MessageController::class, 'fetchMessages'])->name('messages.fetch');
     Route::post('/messages/{userId}', [MessageController::class, 'store'])->name('messages.store');
+    Route::delete('/messages/{userId}', [MessageController::class, 'destroy'])->name('messages.destroy');
 });
 
 

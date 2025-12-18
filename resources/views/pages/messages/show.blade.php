@@ -26,6 +26,19 @@
                         </div>
                     </a>
                 </div>
+                
+                <!-- Options Menu -->
+                <div class="relative">
+                    <button id="chat-options-btn" class="text-gray-500 hover:text-gray-700 p-2 rounded-full hover:bg-gray-200 focus:outline-none transition duration-150">
+                        <i class="fa-solid fa-ellipsis-vertical text-xl"></i>
+                    </button>
+                    <!-- Dropdown -->
+                    <div id="chat-options-menu" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50 border border-gray-200">
+                        <button onclick="openDeleteModal()" class="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition duration-150">
+                            <i class="fa-solid fa-trash mr-2"></i> Delete Chat
+                        </button>
+                    </div>
+                </div>
             </div>
 
             <!-- Messages Area -->
@@ -53,6 +66,35 @@
                         <i class="fa-solid fa-paper-plane"></i>
                     </button>
                 </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div id="delete-modal" class="fixed inset-0 bg-gray-900 bg-opacity-50 hidden overflow-y-auto h-full w-full z-[60] flex items-center justify-center backdrop-blur-sm transition-opacity duration-300">
+    <div class="relative p-5 border w-96 shadow-2xl rounded-xl bg-white transform transition-all scale-100">
+        <div class="mt-3 text-center">
+            <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-100 mb-4">
+                <i class="fa-solid fa-triangle-exclamation text-red-600 text-xl"></i>
+            </div>
+            <h3 class="text-lg leading-6 font-bold text-gray-900">Delete Chat</h3>
+            <div class="mt-2 px-2 py-2">
+                <p class="text-sm text-gray-500">
+                    Are you sure you want to delete this chat? This action cannot be undone.
+                </p>
+            </div>
+            <div class="mt-5 flex flex-col gap-3">
+                <form action="{{ route('messages.destroy', $friend->id) }}" method="POST" class="w-full">
+                    @csrf
+                    @method('DELETE')
+                    <x-ui.button type="submit" variant="danger" class="w-full">
+                        Delete
+                    </x-ui.button>
+                </form>
+                <x-ui.button onclick="closeDeleteModal()" variant="secondary" class="w-full">
+                    Cancel
+                </x-ui.button>
             </div>
         </div>
     </div>
@@ -151,5 +193,45 @@
         })
         .catch(error => console.error('Error polling messages:', error));
     }, 3000);
+
+    // Dropdown and Modal Logic
+    const optionsBtn = document.getElementById('chat-options-btn');
+    const optionsMenu = document.getElementById('chat-options-menu');
+    const deleteModal = document.getElementById('delete-modal');
+
+    if (optionsBtn && optionsMenu) {
+        optionsBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            optionsMenu.classList.toggle('hidden');
+        });
+
+        document.addEventListener('click', (e) => {
+            if (!optionsMenu.contains(e.target) && !optionsBtn.contains(e.target)) {
+                optionsMenu.classList.add('hidden');
+            }
+        });
+    }
+
+    window.openDeleteModal = function() {
+        if (deleteModal) {
+            deleteModal.classList.remove('hidden');
+            if (optionsMenu) optionsMenu.classList.add('hidden');
+        }
+    }
+
+    window.closeDeleteModal = function() {
+        if (deleteModal) {
+            deleteModal.classList.add('hidden');
+        }
+    }
+    
+    // Close modal on outside click
+    if (deleteModal) {
+        deleteModal.addEventListener('click', (e) => {
+            if (e.target === deleteModal) {
+                closeDeleteModal();
+            }
+        });
+    }
 </script>
 @endsection
