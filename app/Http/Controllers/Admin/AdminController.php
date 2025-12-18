@@ -7,9 +7,12 @@ use App\Models\User\User;
 use App\Models\Post\Post;
 use App\Models\User\FriendRequest;
 use App\Models\User\Friendship;
+use App\Models\UnblockAppeal;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
+
 
 class AdminController extends Controller
 {
@@ -448,6 +451,124 @@ class AdminController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Failed to delete group'
+            ], 500);
+        }
+    }
+
+    public function appeals()
+    {
+        $appeals = UnblockAppeal::with('user')
+            ->pending()
+            ->orderBy('createdat', 'desc')
+            ->get();
+
+        return view('pages.admin.unblock-appeals', compact('appeals'));
+    }
+
+    public function submitAppeal(Request $request)
+    {
+        try {
+            $request->validate([
+                'reason' => 'required|string|max:1000'
+            ]);
+
+            $user = Auth::user();
+
+            if (!$user->isblocked) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Your account is not blocked'
+                ], 400);
+            }
+
+            $existingAppeal = UnblockAppeal::where('userid', $user->id)
+                ->where('status', 'pending')
+                ->first();
+
+            if ($existingAppeal) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'You already have a pending appeal'
+                ], 400);
+            }
+
+            UnblockAppeal::create([
+                'userid' => $user->id,
+                'reason' => $request->reason,
+                'status' => 'pending'
+            ]);
+
+            Log::info('Unblock appeal submitted by user: ' . $user->username . ' (ID: ' . $user->id . ')');
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Appeal submitted successfully'
+            ]);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Validation failed: ' . implode(', ', $e->validator->errors()->all())
+            ], 422);
+        } catch (\Exception $e) {
+            Log::error('Submit appeal error: ' . $e->getMessage());
+            Log::error('Stack trace: ' . $e->getTraceAsString());
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to submit appeal: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function approveAppeal($id)
+    {
+        try {
+            DB::beginTransaction();
+
+            $appeal = UnblockAppeal::findOrFail($id);
+            $user = $appeal->user;
+
+            $user->update(['isblocked' => false]);
+            $appeal->update(['status' => 'approved']);
+
+            DB::commit();
+
+            Log::info('Appeal approved and user unblocked: ' . $user->username . ' (ID: ' . $user->id . ')');
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Appeal approved and user unblocked successfully'
+            ]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Approve appeal error: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to approve appeal'
+            ], 500);
+        }
+    }
+
+    public function rejectAppeal(Request $request, $id)
+    {
+        try {
+            $appeal = UnblockAppeal::findOrFail($id);
+
+            $appeal->update([
+                'status' => 'rejected',
+                'adminnotes' => $request->input('adminNotes', '')
+            ]);
+
+            Log::info('Appeal rejected for user: ' . $appeal->user->username . ' (ID: ' . $appeal->user->id . ')');
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Appeal rejected successfully'
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Reject appeal error: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to reject appeal'
             ], 500);
         }
     }
