@@ -1,6 +1,6 @@
 @props(['filters', 'activeFilter' => null])
 
-<div class="inline-flex bg-gray-200 rounded-lg p-1 gap-0 relative overflow-hidden">
+<div class="inline-flex bg-gray-200 rounded-lg p-1 gap-0 relative overflow-hidden overflow-x-auto max-w-full">
     <!-- Animated background slider -->
     <div id="filter-slider"
         class="absolute bg-white shadow-sm rounded-md transition-all duration-300 ease-in-out pointer-events-none"
@@ -12,10 +12,10 @@
         @endif
         <button onclick="{{ $filter['onclick'] ?? '' }}" id="filter-{{ $key }}"
             data-filter-key="{{ $key }}"
-            class="px-5 py-1.5 rounded-md text-sm font-medium transition-colors duration-200 filter-btn relative z-10 {{ $activeFilter === $key || ($loop->first && !$activeFilter) ? '' : 'text-gray-700' }}">
+            class="px-3 sm:px-5 py-1.5 rounded-md text-xs sm:text-sm font-medium transition-colors duration-200 filter-btn relative z-10 whitespace-nowrap {{ $activeFilter === $key || ($loop->first && !$activeFilter) ? '' : 'text-gray-700' }}">
             {{ $filter['label'] }}
             @if (isset($filter['count']))
-                <span class="ml-2 text-gray-500">{{ $filter['count'] }}</span>
+                <span class="ml-1 sm:ml-2 text-gray-500">{{ $filter['count'] }}</span>
             @endif
         </button>
     @endforeach
