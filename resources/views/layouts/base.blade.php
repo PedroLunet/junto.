@@ -50,9 +50,9 @@
     <!-- sidebar -->
     <aside id="sidebar"
         class="fixed lg:relative w-64 lg:w-1/6 h-full bg-[#624452] text-white flex flex-col rounded-r-2xl shadow-2xl z-50 transform -translate-x-full lg:translate-x-0 transition-transform duration-300">
-        <div class="p-8 flex lg:flex-row flex-col justify-between items-center">
-            <h1><a href="/" class="text-4xl font-bold hover:text-[#a17f8f]">junto.</a></h1>
-            <div class="flex items-center gap-2 w-full overflow-hidden justify-end">
+        <div class="p-6 flex flex-col xl:flex-row justify-between items-center gap-4">
+            <h1><a href="/" class="text-3xl font-bold hover:text-[#a17f8f]">junto.</a></h1>
+            <div class="flex items-center gap-2 justify-end">
                 @yield('header-actions')
                 <button onclick="toggleMobileMenu()" class="lg:hidden text-white">
                     <i class="fa-solid fa-times"></i>
