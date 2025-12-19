@@ -396,11 +396,6 @@ class ProfileController extends Controller
 
         try {
             DB::transaction(function () use ($user) {
-                DB::table('friendship')
-                    ->where('userid1', $user->id)
-                    ->orWhere('userid2', $user->id)
-                    ->delete();
-
                 DB::table('membership')
                     ->where('userid', $user->id)
                     ->delete();

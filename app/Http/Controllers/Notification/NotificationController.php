@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Notification;
 
 use App\Models\User\Notification;
+use App\Models\User\FriendRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
@@ -12,13 +13,33 @@ class NotificationController extends Controller
 {
     public function index(): View
     {
+        $user = Auth::user();
+        
         $notifications = Notification::where('receiverid', Auth::id())
             ->orderBy('createdat', 'desc')
             ->paginate(15);
 
+        $friendRequests = FriendRequest::whereHas('request.notification', function ($query) use ($user) {
+            $query->where('receiverid', $user->id);
+        })
+            ->whereHas('request', function ($query) {
+                $query->where('status', 'pending');
+            })
+            ->with(['request.sender', 'request.notification'])
+            ->get();
+
+        $sentRequests = FriendRequest::whereHas('request', function ($query) use ($user) {
+            $query->where('senderid', $user->id)
+                ->where('status', 'pending');
+        })
+            ->with(['request.notification'])
+            ->get();
+
         return view('pages.notifications.index', [
             'notifications' => $notifications,
-            'pageTitle' => 'Notifications'
+            'friendRequests' => $friendRequests,
+            'sentRequests' => $sentRequests,
+            'pageTitle' => 'Inbox'
         ]);
     }
 
@@ -41,22 +62,6 @@ class NotificationController extends Controller
             ->where('isread', false)
             ->update(['isread' => true]);
 
-        return response()->json(['success' => true]);
-    }
-
-    public function snooze($id, Request $request)
-    {
-        $request->validate([
-            'duration' => 'required|integer|in:0,30,60,480,1440'
-        ]);
-
-        $notification = Notification::findOrFail($id);
-        
-        if ($notification->receiverid !== Auth::id()) {
-            return response()->json(['success' => false, 'message' => 'Unauthorized'], 403);
-        }
-
-        // Snooze functionality will be available after migration
         return response()->json(['success' => true]);
     }
 

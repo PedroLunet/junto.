@@ -69,7 +69,11 @@ class MessageController extends Controller
     public function show($userId)
     {
         $currentUser = Auth::user();
-        $friend = User::findOrFail($userId);
+        $friend = User::find($userId);
+
+        if (!$friend) {
+            return redirect()->route('messages.index')->with('error', 'User not found.');
+        }
 
         if (!$currentUser->isFriendsWith($userId)) {
             return redirect()->route('messages.index')->with('error', 'You can only message friends.');
@@ -91,16 +95,6 @@ class MessageController extends Controller
             ->update(['isread' => true]);
 
         $data = $this->getSidebarData($currentUser);
-        
-        
-        if (!$data['activeChats']->contains('id', $friend->id)) {
-             // remove from otherFriends if present
-             $data['otherFriends'] = $data['otherFriends']->reject(function ($f) use ($friend) {
-                 return $f->id == $friend->id;
-             });
-             // add to activechats at the top
-             $data['activeChats'] = $data['activeChats']->prepend($friend);
-        }
 
         if (request()->ajax()) {
             return view('components.messages.chat-box', compact('friend', 'messages'));

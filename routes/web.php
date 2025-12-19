@@ -210,7 +210,6 @@ Route::middleware(['auth', 'regular.user'])->controller(NotificationController::
     Route::get('/notifications', 'index')->name('notifications.index');
     Route::post('/notifications/{id}/read', 'markAsRead')->name('notifications.mark-read');
     Route::post('/notifications/read-all', 'markAllAsRead')->name('notifications.mark-all-read');
-    Route::post('/notifications/{id}/snooze', 'snooze')->name('notifications.snooze');
     Route::get('/notifications/unread-count', 'getUnreadCount')->name('notifications.unread-count');
 });
 
