@@ -168,11 +168,6 @@ CREATE TABLE comment_notification (
     commentId INTEGER REFERENCES comment(id) ON DELETE CASCADE
 );
 
-CREATE TABLE tag_notification (
-    notificationId INTEGER PRIMARY KEY REFERENCES activity_notification(notificationId) ON DELETE CASCADE,
-    postId INTEGER REFERENCES post(id) ON DELETE CASCADE
-);
-
 CREATE TABLE like_notification (
     notificationId INTEGER PRIMARY KEY REFERENCES activity_notification(notificationId) ON DELETE CASCADE,
     postId INTEGER REFERENCES post(id) ON DELETE CASCADE
@@ -781,7 +776,6 @@ TRUNCATE TABLE
     group_join_request,
     request,
     like_notification,
-    tag_notification,
     comment_notification,
     activity_notification,
     notification,

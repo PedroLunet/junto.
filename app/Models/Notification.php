@@ -36,23 +36,17 @@ class Notification extends Model
     public function getTypeAttribute()
     {
         if ($this->commentNotification) return 'comment';
-        if ($this->tagNotification) return 'tag';
         if ($this->likeNotification) return 'like';
         if ($this->activityNotification) return 'activity';
         if ($this->friendRequest) return 'friend_request';
         if ($this->groupInviteRequest) return 'group_invite';
         if ($this->groupJoinRequest) return 'group_join';
-        return 'general';
+        return null;
     }
 
     public function commentNotification()
     {
         return $this->hasOne(CommentNotification::class, 'notificationId', 'id');
-    }
-
-    public function tagNotification()
-    {
-        return $this->hasOne(TagNotification::class, 'notificationId', 'id');
     }
 
     public function likeNotification()
