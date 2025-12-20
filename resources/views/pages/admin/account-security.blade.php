@@ -26,11 +26,11 @@
                 <x-ui.tabs :tabs="[
                     'details' => [
                         'title' => 'Details',
-                        'content' => view('components.admin.edit-details-tab', ['user' => $user])->render(),
+                        'content' => view('components.admin.account.edit-details-tab', ['user' => $user])->render(),
                     ],
                     'security' => [
                         'title' => 'Security',
-                        'content' => view('components.admin.edit-security-tab', ['user' => $user])->render(),
+                        'content' => view('components.admin.account.edit-security-tab', ['user' => $user])->render(),
                     ],
                 ]" />
             </div>
