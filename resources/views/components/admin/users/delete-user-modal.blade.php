@@ -1,5 +1,4 @@
-<!-- Admin Delete User Modal -->
-<div id="adminDeleteUserModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+<div id="adminDeleteUserModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
     <div class="bg-white rounded-lg p-6 max-w-sm w-full mx-4">
         <h3 class="text-2xl font-semibold text-gray-900 mb-4">Delete User</h3>
         <p class="text-gray-600 mb-4">This action cannot be undone. Enter your password to confirm deletion of <span
