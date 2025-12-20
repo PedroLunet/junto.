@@ -31,18 +31,18 @@
 @section('header-actions')
     @auth
         <x-ui.button href="{{ route('notifications.index') }}" variant="ghost" class="p-2 relative" title="Inbox">
-            <i class="fa-solid fa-inbox text-lg"></i>
+            <i class="fa-solid fa-inbox"></i>
             <span id="notification-badge"
                 class="absolute top-0 right-0 bg-red-600 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center hidden">0</span>
         </x-ui.button>
     @endauth
     @guest
         <x-ui.button href="{{ route('friend-requests.index') }}" variant="ghost" class="p-2" title="Inbox">
-            <i class="fa-solid fa-inbox text-lg"></i>
+            <i class="fa-solid fa-inbox"></i>
         </x-ui.button>
     @endguest
     <x-ui.button href="{{ route('search.users') }}" variant="ghost" class="p-2" title="Search">
-        <i class="fa-solid fa-magnifying-glass text-lg"></i>
+        <i class="fa-solid fa-magnifying-glass"></i>
     </x-ui.button>
 @endsection
 

@@ -12,7 +12,7 @@
                 </x-ui.button>
             </div>
         @else
-            <div class="max-w-4xl mx-auto space-y-6">
+            <div class="max-w-2xl mx-auto space-y-6">
                 @foreach ($posts as $post)
                     @if ($post->post_type === 'review')
                         <x-posts.post-review :post="$post" :showAuthor="true" />
