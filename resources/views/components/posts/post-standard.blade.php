@@ -1,5 +1,5 @@
 <div class="bg-white rounded-2xl shadow-md border border-gray-200 p-8 {{ $isViewOnly ?? false ? '' : 'cursor-pointer' }}"
-    {{ $isViewOnly ?? false ? '' : 'onclick="openPostModal(' . json_encode($post) . ')"' }}>
+    @if (!($isViewOnly ?? false)) onclick='openPostModal(@json($post))' @endif>
 
     @if ($showAuthor ?? true)
         <!-- profile + name -->
