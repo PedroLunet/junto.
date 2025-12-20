@@ -2,7 +2,14 @@
 
 @section('content')
     <!-- alert container -->
-    <div id="appealAlert" class="fixed top-4 right-4 z-60 hidden" style="max-width: 400px;"></div>
+    <div id="appealAlert" class="fixed top-4 right-4 z-60 hidden" style="max-width: 400px;">
+        <div id="successAlert" class="hidden">
+            <x-ui.alert-card type="success" title="Success" message="" id="successAlertCard" />
+        </div>
+        <div id="errorAlert" class="hidden">
+            <x-ui.alert-card type="error" title="Error" message="" id="errorAlertCard" />
+        </div>
+    </div>
 
     <!-- blocked modal overlay -->
     <div class="fixed inset-0 bg-black bg-opacity-60 z-50 flex items-center justify-center p-4">
@@ -15,12 +22,10 @@
                     </div>
                 </div>
 
-                <!-- Title -->
                 <h1 class="text-3xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-3 sm:mb-4">
                     Account Blocked
                 </h1>
 
-                <!-- Message -->
                 <p class="text-lg sm:text-xl md:text-2xl text-gray-600 mb-6 sm:mb-8">
                     Your account has been blocked.
                 </p>
@@ -59,30 +64,32 @@
     <script>
         function showAppealAlert(message, type = 'success') {
             const alertContainer = document.getElementById('appealAlert');
-            const title = type === 'success' ? 'Success' : 'Error';
+            const successAlert = document.getElementById('successAlert');
+            const errorAlert = document.getElementById('errorAlert');
 
-            alertContainer.innerHTML = `
-                <div class="relative flex items-start gap-4 px-6 py-10 rounded-2xl border ${type === 'success' ? 'bg-green-50 border-green-200' : 'bg-red-50 border-red-200'} shadow-lg mb-4">
-                    <div class="shrink-0 flex items-center justify-center w-12 h-12 rounded-full ${type === 'success' ? 'bg-green-200' : 'bg-red-200'}">
-                        ${type === 'success' 
-                            ? '<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke-width="2" class="stroke-green-400 fill-green-50"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4" class="stroke-green-600"/></svg>'
-                            : '<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke-width="2" class="stroke-red-400 fill-red-50"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 9l-6 6m0-6l6 6" class="stroke-red-600"/></svg>'
-                        }
-                    </div>
-                    <div class="flex-1">
-                        <div class="font-semibold text-2xl ${type === 'success' ? 'text-green-600' : 'text-red-600'} mb-1">${title}</div>
-                        <div class="text-gray-700 text-3xl">${message}</div>
-                    </div>
-                    <button type="button" class="absolute top-3 right-3 text-gray-400 hover:text-gray-600 focus:outline-none" onclick="this.closest('div').parentElement.classList.add('hidden')">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
-                    </button>
-                </div>
-            `;
+            // Hide both alerts first
+            successAlert.classList.add('hidden');
+            errorAlert.classList.add('hidden');
+
+            // Update message in the appropriate alert
+            if (type === 'success') {
+                const messageDiv = successAlert.querySelector('.text-gray-700');
+                if (messageDiv) messageDiv.textContent = message;
+                successAlert.classList.remove('hidden');
+            } else {
+                const messageDiv = errorAlert.querySelector('.text-gray-700');
+                if (messageDiv) messageDiv.textContent = message;
+                errorAlert.classList.remove('hidden');
+            }
+
+            // Show the container
             alertContainer.classList.remove('hidden');
 
             // Auto-hide after 5 seconds
             setTimeout(() => {
                 alertContainer.classList.add('hidden');
+                successAlert.classList.add('hidden');
+                errorAlert.classList.add('hidden');
             }, 5000);
         }
 
