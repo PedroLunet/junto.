@@ -494,15 +494,23 @@ class AdminController extends Controller
                 ], 400);
             }
 
-            $existingAppeal = UnblockAppeal::where('userid', $user->id)
+            // Check for any pending appeal for this user (for current block)
+            $pendingAppeal = UnblockAppeal::where('userid', $user->id)
                 ->where('status', 'pending')
                 ->first();
-
-            if ($existingAppeal) {
+            if ($pendingAppeal) {
                 return response()->json([
                     'success' => false,
                     'message' => 'You already have a pending appeal'
                 ], 400);
+            }
+
+            // Defensive: If user was unblocked and then blocked again, ensure all previous appeals are not pending
+            if ($user->isblocked) {
+                // If there are any old appeals still marked as pending, mark them as 'expired' (custom status)
+                UnblockAppeal::where('userid', $user->id)
+                    ->where('status', 'pending')
+                    ->update(['status' => 'expired']);
             }
 
             UnblockAppeal::create([
@@ -585,6 +593,7 @@ class AdminController extends Controller
             ], 500);
         }
     }
+
 
     // Display admin account security page
     public function accountSecurity()

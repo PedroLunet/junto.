@@ -21,7 +21,14 @@
 </div>
 
 <script>
+    // global flag to prevent double submission and modal reopening
+    window.hasPendingAppeal = false;
+
     async function appealUnblock() {
+        if (window.hasPendingAppeal) {
+            showAppealAlert('You already have a pending appeal under review.', 'error');
+            return;
+        }
         document.getElementById('appealModal').classList.remove('hidden');
         document.getElementById('appealModal').classList.add('flex');
     }
@@ -32,52 +39,79 @@
         document.getElementById('appealForm').reset();
     }
 
-    document.getElementById('appealForm').addEventListener('submit', async function(e) {
-        e.preventDefault();
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.getElementById('appealForm');
+        if (!form) return;
 
-        const reason = document.getElementById('appealReason').value.trim();
-        const submitBtn = document.getElementById('submitAppealBtn');
-
-        if (!reason) {
-            showAppealAlert('Please provide a reason for your appeal.', 'error');
-            return;
+        // Remove any previous handler
+        if (window._appealFormHandler) {
+            form.removeEventListener('submit', window._appealFormHandler);
         }
 
-        // Disable button during submission
-        submitBtn.disabled = true;
-        submitBtn.textContent = 'Submitting...';
+        window._appealFormHandler = async function(e) {
+            console.log('Appeal form submit handler called');
+            e.preventDefault();
 
-        try {
-            const response = await fetch('{{ route('appeal.submit') }}', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
-                },
-                body: JSON.stringify({
-                    reason
-                })
-            });
-
-            const data = await response.json();
-
-            if (data.success) {
-                closeAppealModal();
-                showAppealAlert(
-                    'Your appeal has been submitted successfully. Administrators will review it shortly.',
-                    'success');
-            } else {
-                closeAppealModal();
-                showAppealAlert(data.message || 'Failed to submit appeal. Please try again.', 'error');
+            const submitBtn = document.getElementById('submitAppealBtn');
+            if (window.hasPendingAppeal || submitBtn.disabled) {
+                showAppealAlert('You already have a pending appeal under review.', 'error');
+                return;
             }
-        } catch (error) {
-            console.error('Error:', error);
-            closeAppealModal();
-            showAppealAlert('An error occurred while submitting your appeal. Please try again.', 'error');
-        } finally {
-            submitBtn.disabled = false;
-            submitBtn.textContent = 'Submit Appeal';
-        }
+
+            const reason = document.getElementById('appealReason').value.trim();
+            if (!reason) {
+                showAppealAlert('Please provide a reason for your appeal.', 'error');
+                return;
+            }
+
+            // Set pending flag and disable button only after validation
+            window.hasPendingAppeal = true;
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Submitting...';
+
+            try {
+                const response = await fetch('{{ route('appeal.submit') }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')
+                            .content
+                    },
+                    body: JSON.stringify({
+                        reason
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    closeAppealModal();
+                    showAppealAlert(
+                        'Your appeal has been submitted successfully. Administrators will review it shortly.',
+                        'success');
+                    submitBtn.textContent = 'Submitted';
+                    // optionally, disable the "Appeal for Unblock" button if accessible globally
+                    const appealBtn = document.querySelector('[onclick*="appealUnblock"]');
+                    if (appealBtn) appealBtn.disabled = true;
+                } else {
+                    window.hasPendingAppeal = false;
+                    closeAppealModal();
+                    showAppealAlert(data.message || 'Failed to submit appeal. Please try again.',
+                        'error');
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'Submit Appeal';
+                }
+            } catch (error) {
+                window.hasPendingAppeal = false;
+                console.error('Error:', error);
+                closeAppealModal();
+                showAppealAlert('An error occurred while submitting your appeal. Please try again.',
+                    'error');
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Submit Appeal';
+            }
+        };
+        form.addEventListener('submit', window._appealFormHandler);
     });
 
     document.getElementById('appealModal').addEventListener('click', function(e) {
