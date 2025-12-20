@@ -6,11 +6,10 @@
                 onclick="event.stopPropagation()">
 
                 <div class="flex justify-between items-center mb-6">
-                    <h2 class="text-4xl font-bold text-gray-900">Reject Appeal</h2>
-                    <button onclick="closeAdminNotesModal()"
-                        class="text-gray-400 hover:text-gray-600 transition-colors">
+                    <h2 class="text-3xl font-bold text-gray-900">Reject Appeal</h2>
+                    <x-ui.icon-button onclick="closeAdminNotesModal()" variant="gray" aria-label="Close">
                         <i class="fas fa-times text-2xl"></i>
-                    </button>
+                    </x-ui.icon-button>
                 </div>
 
                 <p class="text-gray-600 mb-6 text-lg">
