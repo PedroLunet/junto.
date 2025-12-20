@@ -220,6 +220,8 @@ class User extends Authenticatable
 
     public function markAsDeleted()
     {
+        $oldName = $this->name;
+        
         $this->name = 'Deleted User';
         $this->username = 'deleted_' . $this->id;
         $this->email = 'deleted_' . $this->id . '@anon.com';
@@ -229,5 +231,23 @@ class User extends Authenticatable
         $this->passwordhash = 'deleted';
         $this->isdeleted = true;
         $this->save();
+        
+        \DB::table('notification')
+            ->where('message', 'like', '%from ' . $oldName . '%')
+            ->update(['message' => \DB::raw("REPLACE(message, 'from " . $oldName . "', 'from Deleted User')")]);
+        
+        \DB::table('request')
+            ->where('senderid', $this->id)
+            ->delete();
+        
+        $notificationIdsToDelete = \DB::table('notification')
+            ->where('receiverid', $this->id)
+            ->pluck('id');
+        
+        if ($notificationIdsToDelete->count() > 0) {
+            \DB::table('request')
+                ->whereIn('notificationid', $notificationIdsToDelete)
+                ->delete();
+        }
     }
 }
