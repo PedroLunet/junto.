@@ -2,31 +2,31 @@
 
 @section('header-scripts')
     function updateNotificationBadge() {
-        if (!window.isAuthenticated) return;
+    if (!window.isAuthenticated) return;
 
-        fetch('/notifications/unread-count', {
-            headers: {
-                'Accept': 'application/json'
-            }
-        })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            return response.json();
-        })
-        .then(data => {
-            const badge = document.getElementById('notification-badge');
-            if (badge) {
-                if (data.count > 0) {
-                    badge.textContent = data.count;
-                    badge.classList.remove('hidden');
-                } else {
-                    badge.classList.add('hidden');
-                }
-            }
-        })
-        .catch(error => console.error('Error fetching notifications:', error));
+    fetch('/notifications/unread-count', {
+    headers: {
+    'Accept': 'application/json'
+    }
+    })
+    .then(response => {
+    if (!response.ok) {
+    throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    return response.json();
+    })
+    .then(data => {
+    const badge = document.getElementById('notification-badge');
+    if (badge) {
+    if (data.count > 0) {
+    badge.textContent = data.count;
+    badge.classList.remove('hidden');
+    } else {
+    badge.classList.add('hidden');
+    }
+    }
+    })
+    .catch(error => console.error('Error fetching notifications:', error));
     }
 
     document.addEventListener('DOMContentLoaded', updateNotificationBadge);
@@ -65,10 +65,6 @@
                 class="block py-2 px-4 rounded hover:bg-[#7a5466] hover:text-white">Groups</a></li>
         <li><a href="{{ route('messages.index') }}"
                 class="block py-2 px-4 rounded hover:bg-[#7a5466] hover:text-white">Messages</a></li>
-        <li><a href="{{ route('about') }}" class="block py-2 px-4 rounded hover:bg-[#7a5466] hover:text-white">About Us</a>
-        </li>
-        <li><a href="{{ route('contact.show') }}" class="block py-2 px-4 rounded hover:bg-[#7a5466] hover:text-white">Contact Us</a>
-        </li>
     </ul>
 @endsection
 

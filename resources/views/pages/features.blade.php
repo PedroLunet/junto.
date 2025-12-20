@@ -4,7 +4,7 @@
 
 @section('content')
     <div class="container mx-auto min-h-[calc(100vh-8rem)] flex items-center justify-center px-4 py-8">
-        
+
         <!-- mobile carousel -->
         <div class="lg:hidden w-full max-w-md relative">
             <div class="carousel-container overflow-hidden mx-3">
@@ -116,14 +116,14 @@
             </div>
 
             <!-- nav arrows -->
-            <x-ui.button id="prevBtn" variant="ghost"
-                class="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 !rounded-full !p-3 shadow-lg !border-none">
-                <i class="fa-solid fa-chevron-left text-gray-800"></i>
-            </x-ui.button>
-            <x-ui.button id="nextBtn" variant="ghost"
-                class="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 !rounded-full !p-3 shadow-lg !border-none">
-                <i class="fa-solid fa-chevron-right text-gray-800"></i>
-            </x-ui.button>
+            <x-ui.icon-button id="prevBtn" variant="gray"
+                class="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 rounded-full shadow-lg">
+                <i class="fa-solid fa-chevron-left"></i>
+            </x-ui.icon-button>
+            <x-ui.icon-button id="nextBtn" variant="gray"
+                class="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 rounded-full shadow-lg">
+                <i class="fa-solid fa-chevron-right"></i>
+            </x-ui.icon-button>
 
             <!-- dots indicator -->
             <div class="flex justify-center gap-2 mt-6">
