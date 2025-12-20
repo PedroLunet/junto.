@@ -6,9 +6,9 @@
     data-members-count="{{ $group->members_count }}" data-posts-count="{{ $group->posts_count }}">
 
     <div class="flex items-start justify-between">
-        <!-- Group Info -->
+        <!-- group info -->
         <div class="flex items-start gap-4 flex-1">
-            <!-- Group Icon -->
+            <!-- icon -->
             <div class="shrink-0">
                 @if ($group->icon)
                     <img src="{{ asset('groups/' . $group->icon) }}" alt="{{ $group->name }}"
@@ -21,7 +21,7 @@
                 @endif
             </div>
 
-            <!-- Group Details -->
+            <!-- details -->
             <div class="flex-1 min-w-0">
                 <div class="flex items-center gap-2 mb-1">
                     <p class="text-xl font-semibold text-gray-900 transition-colors group-name">
@@ -42,7 +42,7 @@
                     <p class="text-gray-600 text-sm mb-3 line-clamp-2">{{ $group->description }}</p>
                 @endif
 
-                <!-- Stats -->
+                <!-- stats -->
                 <div class="flex items-center gap-6 text-sm text-gray-500 mb-3">
                     <div class="flex items-center gap-1">
                         <i class="fas fa-users text-xs"></i>
@@ -58,7 +58,7 @@
                     </div>
                 </div>
 
-                <!-- Owner Info -->
+                <!-- owner -->
                 @if ($group->owner_name)
                     <div class="flex items-center gap-2 text-sm text-gray-600">
                         <i class="fas fa-crown text-yellow-500 text-xs"></i>
@@ -71,7 +71,7 @@
             </div>
         </div>
 
-        <!-- Actions -->
+        <!-- delete button -->
         <div class="flex items-center gap-2 ml-4">
             <button onclick="deleteGroup({{ $group->id }}, '{{ addslashes($group->name) }}')"
                 class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors text-sm font-medium">
