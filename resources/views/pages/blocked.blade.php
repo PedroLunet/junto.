@@ -157,5 +157,24 @@
                 closeAppealModal();
             }
         });
+
+        // periodically check if user is still blocked
+        setInterval(async function() {
+            try {
+                const response = await fetch('/blocked/status', {
+                    headers: {
+                        'Accept': 'application/json'
+                    }
+                });
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data && data.isblocked === false) {
+                        window.location.href = '/'; // redirect to homepage or dashboard
+                    }
+                }
+            } catch (e) {
+                // ignore errors
+            }
+        }, 10000); // every 10 seconds
     </script>
 @endsection

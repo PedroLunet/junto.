@@ -24,13 +24,14 @@ use App\Http\Controllers\Notification\NotificationController;
 use App\Http\Controllers\Search\SearchUserController;
 use App\Http\Controllers\User\ProfileController;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
 
 // Home
 // Route::redirect('/', '/login');
 
 // Blocked user page
 Route::middleware('auth')->get('/blocked', function () {
-    $hasRejectedAppeal = \App\Models\UnblockAppeal::where('userid', auth()->id())
+    $hasRejectedAppeal = \App\Models\UnblockAppeal::where('userid', Auth::id())
         ->where('status', 'rejected')
         ->exists();
 
@@ -235,4 +236,9 @@ Route::get('/features', function () {
 
 Route::middleware('regular.user')->controller(ProfileController::class)->group(function () {
     Route::get('/{username}', 'show')->name('profile.show');
+});
+
+// blocked status check for AJAX polling
+Route::middleware('auth')->get('/blocked/status', function () {
+    return response()->json(['isblocked' => Auth::user()->isblocked]);
 });
