@@ -183,6 +183,10 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/admin/appeals', [AdminController::class, 'appeals'])->name('admin.appeals');
     Route::post('/admin/appeals/{id}/approve', [AdminController::class, 'approveAppeal'])->name('admin.appeals.approve');
     Route::post('/admin/appeals/{id}/reject', [AdminController::class, 'rejectAppeal'])->name('admin.appeals.reject');
+    Route::get('/admin/account-security', [AdminController::class, 'accountSecurity'])->name('admin.account-security');
+    Route::put('/admin/account-security/update', [AdminController::class, 'updateAccountSecurity'])->name('admin.account-security.update');
+    Route::post('/admin/account-security/change-password', [AdminController::class, 'changeAdminPassword'])->name('admin.account-security.change-password');
+    Route::post('/admin/account-security/validate-password', [AdminController::class, 'validatePassword'])->name('admin.validate-password');
 });
 
 // GROUPS ROUTES
