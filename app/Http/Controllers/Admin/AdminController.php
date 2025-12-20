@@ -571,4 +571,102 @@ class AdminController extends Controller
             ], 500);
         }
     }
+
+    // Display admin account security page
+    public function accountSecurity()
+    {
+        $user = Auth::user();
+        return view('pages.admin.account-security', compact('user'));
+    }
+
+    // Update admin account details
+    public function updateAccountSecurity(Request $request)
+    {
+        try {
+            $user = Auth::user();
+
+            $validated = $request->validate([
+                'name' => 'required|string|max:255',
+                'username' => 'required|string|max:255|unique:users,username,' . $user->id,
+                'email' => 'required|email|max:255|unique:users,email,' . $user->id,
+            ]);
+
+            DB::table('users')
+                ->where('id', $user->id)
+                ->update([
+                    'name' => $validated['name'],
+                    'username' => $validated['username'],
+                    'email' => $validated['email']
+                ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Account details updated successfully'
+            ]);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            Log::error('Validation failed: ', $e->errors());
+            return response()->json([
+                'success' => false,
+                'errors' => $e->errors()
+            ], 422);
+        } catch (\Exception $e) {
+            Log::error('Update admin account error: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to update account details'
+            ], 500);
+        }
+    }
+
+    // Change admin password
+    public function changeAdminPassword(Request $request)
+    {
+        try {
+            $user = Auth::user();
+
+            $validated = $request->validate([
+                'current_password' => 'required',
+                'new_password' => 'required|min:8|confirmed',
+            ]);
+
+            // Verify current password
+            if (!password_verify($validated['current_password'], $user->passwordhash)) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Current password is incorrect'
+                ], 422);
+            }
+
+            // Update password
+            DB::table('users')
+                ->where('id', $user->id)
+                ->update(['passwordhash' => bcrypt($validated['new_password'])]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Password changed successfully'
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Change admin password error: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to change password'
+            ], 500);
+        }
+    }
+
+    // Validate admin password
+    public function validatePassword(Request $request)
+    {
+        $request->validate([
+            'password' => 'required|string'
+        ]);
+
+        $user = Auth::user();
+        $isValid = password_verify($request->password, $user->passwordhash);
+
+        return response()->json([
+            'valid' => $isValid
+        ]);
+    }
 }

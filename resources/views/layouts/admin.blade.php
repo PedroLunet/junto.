@@ -32,6 +32,12 @@
                 Unblock appeals
             </a>
         </li>
+        <li>
+            <a href="{{ route('admin.account-security') }}"
+                class="block py-2 px-4 rounded  hover:bg-[#7a5466] hover:text-white {{ request()->routeIs('admin.account-security') ? 'bg-[#a17f8f]' : '' }}">
+                Account Security
+            </a>
+        </li>
     </ul>
 @endsection
 
