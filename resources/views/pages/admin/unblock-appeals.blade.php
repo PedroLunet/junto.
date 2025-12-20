@@ -15,31 +15,31 @@
                     <!-- Sort By Dropdown -->
                     <x-ui.sort-dropdown :options="[
                         'created_date' => 'Created Date',
-                        'user_name' => 'User Name'
+                        'user_name' => 'User Name',
                     ]" defaultValue="created_date" />
 
                     <!-- Filter Tabs -->
                     <x-ui.filter-tabs :filters="[
                         'all' => [
                             'label' => 'All',
-                            'count' => count($appeals),
-                            'onclick' => 'filterAppeals(\'all\')'
+                            'count' => $counts['all'],
+                            'onclick' => 'filterAppeals(\'all\')',
                         ],
                         'pending' => [
                             'label' => 'Pending',
-                            'count' => collect($appeals)->filter(fn($a) => $a->status === 'pending')->count(),
-                            'onclick' => 'filterAppeals(\'pending\')'
+                            'count' => $counts['pending'],
+                            'onclick' => 'filterAppeals(\'pending\')',
                         ],
                         'approved' => [
                             'label' => 'Approved',
-                            'count' => collect($appeals)->filter(fn($a) => $a->status === 'approved')->count(),
-                            'onclick' => 'filterAppeals(\'approved\')'
+                            'count' => $counts['approved'],
+                            'onclick' => 'filterAppeals(\'approved\')',
                         ],
                         'rejected' => [
                             'label' => 'Rejected',
-                            'count' => collect($appeals)->filter(fn($a) => $a->status === 'rejected')->count(),
-                            'onclick' => 'filterAppeals(\'rejected\')'
-                        ]
+                            'count' => $counts['rejected'],
+                            'onclick' => 'filterAppeals(\'rejected\')',
+                        ],
                     ]" activeFilter="all" />
                 </div>
             </div>
@@ -49,10 +49,13 @@
         <div class="flex-1 overflow-y-auto">
             <div id="appeals-container" class="mx-20 my-6">
                 @if ($appeals->isEmpty())
-                    <div class="bg-blue-50 border border-blue-200 text-blue-700 px-6 py-4 rounded-lg">
-                        <div class="flex items-center">
-                            <i class="fas fa-info-circle mr-3 text-xl"></i>
-                            <p class="font-medium">No pending appeals at this time.</p>
+                    <div class="flex flex-col items-center justify-center text-gray-500 min-h-[calc(100vh-16rem)]">
+                        <div class="text-center">
+                            <div class="bg-gray-200 rounded-full p-6 inline-block mb-4">
+                                <i class="fas fa-gavel text-4xl text-gray-400"></i>
+                            </div>
+                            <h3 class="text-xl font-medium text-gray-700">No Appeals to Review</h3>
+                            <p class="mt-2">All unblock appeals have been processed</p>
                         </div>
                     </div>
                 @else
@@ -83,7 +86,7 @@
         function toggleSortOrder() {
             sortAscending = !sortAscending;
             const icon = document.getElementById('sort-order-icon');
-            
+
             if (sortAscending) {
                 icon.classList.remove('fa-arrow-down');
                 icon.classList.add('fa-arrow-up');
@@ -91,7 +94,7 @@
                 icon.classList.remove('fa-arrow-up');
                 icon.classList.add('fa-arrow-down');
             }
-            
+
             applyFilterAndSort();
         }
 
@@ -101,9 +104,9 @@
         }
 
         function applyFilterAndSort() {
-            let filteredAppeals = currentFilter === 'all' 
-                ? allAppeals 
-                : allAppeals.filter(a => a.status === currentFilter);
+            let filteredAppeals = currentFilter === 'all' ?
+                allAppeals :
+                allAppeals.filter(a => a.status === currentFilter);
 
             // Sort appeals
             if (currentSort === 'created_date') {
@@ -123,7 +126,7 @@
             // Update display
             const appealItems = document.querySelectorAll('.appeal-item');
             const container = document.querySelector('#appeals-container .grid');
-            
+
             // Create a map of appeal IDs to their elements
             const appealMap = new Map();
             appealItems.forEach(item => {
@@ -224,4 +227,3 @@
         }
     </script>
 @endpush
-

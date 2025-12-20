@@ -336,7 +336,14 @@ class AdminController extends Controller
             }
         }
 
-        return view('pages.admin.reports', compact('reports'));
+        $counts = [
+            'all' => count($reports),
+            'pending' => count(array_filter($reports, fn($r) => $r->status === 'pending')),
+            'accepted' => count(array_filter($reports, fn($r) => $r->status === 'accepted')),
+            'rejected' => count(array_filter($reports, fn($r) => $r->status === 'rejected')),
+        ];
+
+        return view('pages.admin.reports', compact('reports', 'counts'));
     }
 
     public function acceptReport($id)
@@ -461,7 +468,14 @@ class AdminController extends Controller
             ->orderBy('createdat', 'desc')
             ->get();
 
-        return view('pages.admin.unblock-appeals', compact('appeals'));
+        $counts = [
+            'all' => $appeals->count(),
+            'pending' => $appeals->where('status', 'pending')->count(),
+            'approved' => $appeals->where('status', 'approved')->count(),
+            'rejected' => $appeals->where('status', 'rejected')->count(),
+        ];
+
+        return view('pages.admin.unblock-appeals', compact('appeals', 'counts'));
     }
 
     public function submitAppeal(Request $request)
