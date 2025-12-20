@@ -70,6 +70,7 @@ Route::middleware(['auth', 'regular.user'])->controller(ProfileController::class
     Route::post('/profile/change-password', 'changePassword')->name('profile.change-password');
     Route::post('/profile/validate-password', 'validatePassword')->name('profile.validate-password');
     Route::post('/profile/render-alert', 'renderAlert')->name('profile.render-alert');
+    Route::post('/profile/delete-account', 'deleteAccount')->name('profile.delete-account');
 });
 
 // Authentication
@@ -213,7 +214,6 @@ Route::middleware(['auth', 'regular.user'])->controller(NotificationController::
     Route::get('/notifications', 'index')->name('notifications.index');
     Route::post('/notifications/{id}/read', 'markAsRead')->name('notifications.mark-read');
     Route::post('/notifications/read-all', 'markAllAsRead')->name('notifications.mark-all-read');
-    Route::post('/notifications/{id}/snooze', 'snooze')->name('notifications.snooze');
     Route::get('/notifications/unread-count', 'getUnreadCount')->name('notifications.unread-count');
 });
 

@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\User\User;
+use App\Models\User\DeletedUser;
 
 class Message extends Model
 {
@@ -34,5 +35,23 @@ class Message extends Model
     public function receiver()
     {
         return $this->belongsTo(User::class, 'receiverid');
+    }
+
+    public function getSenderAttribute()
+    {
+        $user = $this->sender;
+        if (!$user || $user->isdeleted) {
+            return DeletedUser::getDeletedUserPlaceholder();
+        }
+        return $user;
+    }
+
+    public function getReceiverAttribute()
+    {
+        $user = $this->receiver;
+        if (!$user || $user->isdeleted) {
+            return DeletedUser::getDeletedUserPlaceholder();
+        }
+        return $user;
     }
 }

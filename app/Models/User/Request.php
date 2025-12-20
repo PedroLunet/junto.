@@ -52,6 +52,15 @@ class Request extends Model
     );
   }
 
+  public function getSenderAttribute()
+  {
+    $user = $this->getRelationValue('sender');
+    if (!$user || $user->isdeleted) {
+      return DeletedUser::getDeletedUserPlaceholder();
+    }
+    return $user;
+  }
+
   /**
    * Get the friend request associated with this request (if any).
    */
