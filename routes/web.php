@@ -191,6 +191,11 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::post('/admin/account-security/validate-password', [AdminController::class, 'validatePassword'])->name('admin.validate-password');
 });
 
+// Admin: Delete user (with password confirmation)
+Route::post('/admin/users/{id}/delete', [\App\Http\Controllers\Admin\AdminController::class, 'deleteUser'])
+    ->middleware(['auth', 'admin'])
+    ->name('admin.users.delete');
+
 // GROUPS ROUTES
 Route::middleware(['auth'])->group(function () {
     Route::delete('/groups/{group}/remove-member/{user}', [GroupController::class, 'removeMember'])->name('groups.removeMember');

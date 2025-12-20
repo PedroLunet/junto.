@@ -12,7 +12,9 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
-
+use Illuminate\Support\Str;
+use \Illuminate\Database\Eloquent\ModelNotFoundException;
+use \Illuminate\Validation\ValidationException;
 
 class AdminController extends Controller
 {
@@ -112,7 +114,7 @@ class AdminController extends Controller
                 'message' => 'User created successfully',
                 'user' => $user
             ]);
-        } catch (\Illuminate\Validation\ValidationException $e) {
+        } catch (ValidationException $e) {
             Log::error('Validation failed: ', $e->errors());
             return response()->json([
                 'success' => false,
@@ -155,13 +157,13 @@ class AdminController extends Controller
                 'message' => 'User updated successfully',
                 'user' => $user
             ]);
-        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+        } catch (ModelNotFoundException $e) {
             Log::error('User not found for update: ID ' . $id);
             return response()->json([
                 'success' => false,
                 'message' => 'User not found'
             ], 404);
-        } catch (\Illuminate\Validation\ValidationException $e) {
+        } catch (ValidationException $e) {
             Log::error('Validation failed: ', $e->errors());
             return response()->json([
                 'success' => false,
@@ -197,7 +199,7 @@ class AdminController extends Controller
                 'success' => true,
                 'message' => 'User blocked successfully'
             ]);
-        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+        } catch (ModelNotFoundException $e) {
             Log::error('User not found for blocking: ID ' . $id);
             return response()->json([
                 'success' => false,
@@ -230,7 +232,7 @@ class AdminController extends Controller
                 'success' => true,
                 'message' => 'User unblocked successfully'
             ]);
-        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+        } catch (ModelNotFoundException $e) {
             Log::error('User not found for unblocking: ID ' . $id);
             return response()->json([
                 'success' => false,
@@ -530,7 +532,7 @@ class AdminController extends Controller
                 'success' => true,
                 'message' => 'Appeal submitted successfully'
             ]);
-        } catch (\Illuminate\Validation\ValidationException $e) {
+        } catch (ValidationException $e) {
             return response()->json([
                 'success' => false,
                 'message' => 'Validation failed: ' . implode(', ', $e->validator->errors()->all())
@@ -631,7 +633,7 @@ class AdminController extends Controller
                 'success' => true,
                 'message' => 'Account details updated successfully'
             ]);
-        } catch (\Illuminate\Validation\ValidationException $e) {
+        } catch (ValidationException $e) {
             Log::error('Validation failed: ', $e->errors());
             return response()->json([
                 'success' => false,
@@ -696,5 +698,87 @@ class AdminController extends Controller
         return response()->json([
             'valid' => $isValid
         ]);
+    }
+
+    // Admin deletes a user: reassigns posts/comments to Deleted User, then deletes user
+    public function deleteUser(Request $request, $id)
+    {
+        try {
+            $admin = Auth::user();
+            // only allow admins
+            if (!$admin->isadmin) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Unauthorized.'
+                ], 403);
+            }
+
+            $request->validate([
+                'password' => 'required|string',
+            ]);
+
+            // verify admin password
+            if (!password_verify($request->password, $admin->passwordhash)) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Incorrect password.'
+                ], 422);
+            }
+
+            $user = User::findOrFail($id);
+            if ($user->isadmin) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Cannot delete another admin.'
+                ], 403);
+            }
+
+            // find or create the Deleted User account
+            $deletedUser = User::where('username', 'deleted_user')->first();
+            if (!$deletedUser) {
+                $deletedUser = User::create([
+                    'name' => 'Deleted User',
+                    'username' => 'deleted_user',
+                    'email' => 'deleted@example.com',
+                    'passwordhash' => bcrypt(Str::random(32)),
+                    'bio' => 'This account is used to own content from deleted users.',
+                    'isadmin' => false,
+                    'isblocked' => false,
+                    'isprivate' => true,
+                    'createdat' => now(),
+                ]);
+            }
+
+            // reassign posts
+            Post::where('userid', $user->id)->update(['userid' => $deletedUser->id]);
+            // reassign comments
+            DB::table('comment')->where('userid', $user->id)->update(['userid' => $deletedUser->id]);
+            
+            // delete the user
+            $user->delete();
+
+            Log::info('Admin deleted user: ' . $user->username . ' (ID: ' . $user->id . ')');
+
+            return response()->json([
+                'success' => true,
+                'message' => 'User deleted successfully.'
+            ]);
+        } catch (ModelNotFoundException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'User not found.'
+            ], 404);
+        } catch (ValidationException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Validation failed: ' . implode(', ', $e->validator->errors()->all())
+            ], 422);
+        } catch (\Exception $e) {
+            Log::error('Admin delete user error: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to delete user: ' . $e->getMessage()
+            ], 500);
+        }
     }
 }
