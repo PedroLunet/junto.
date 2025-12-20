@@ -587,17 +587,28 @@ class AdminController extends Controller
 
             $validated = $request->validate([
                 'name' => 'required|string|max:255',
+                'username' => 'required|string|max:255|unique:users,username,' . $user->id,
                 'email' => 'required|email|max:255|unique:users,email,' . $user->id,
             ]);
 
-            $user->name = $validated['name'];
-            $user->email = $validated['email'];
-            $user->save();
+            DB::table('users')
+                ->where('id', $user->id)
+                ->update([
+                    'name' => $validated['name'],
+                    'username' => $validated['username'],
+                    'email' => $validated['email']
+                ]);
 
             return response()->json([
                 'success' => true,
                 'message' => 'Account details updated successfully'
             ]);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            Log::error('Validation failed: ', $e->errors());
+            return response()->json([
+                'success' => false,
+                'errors' => $e->errors()
+            ], 422);
         } catch (\Exception $e) {
             Log::error('Update admin account error: ' . $e->getMessage());
             return response()->json([
@@ -627,8 +638,9 @@ class AdminController extends Controller
             }
 
             // Update password
-            $user->passwordhash = bcrypt($validated['new_password']);
-            $user->save();
+            DB::table('users')
+                ->where('id', $user->id)
+                ->update(['passwordhash' => bcrypt($validated['new_password'])]);
 
             return response()->json([
                 'success' => true,

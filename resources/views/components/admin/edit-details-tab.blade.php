@@ -7,6 +7,10 @@
         <x-ui.input label="Name" name="name" type="text" value="{{ old('name', $user->name ?? '') }}"
             :error="$errors->first('name')" />
 
+        <!-- username -->
+        <x-ui.input label="Username" name="username" type="text"
+            value="{{ old('username', $user->username ?? '') }}" :error="$errors->first('username')" />
+
         <!-- email -->
         <x-ui.input label="Email" name="email" type="email" value="{{ old('email', $user->email ?? '') }}"
             :error="$errors->first('email')" />
