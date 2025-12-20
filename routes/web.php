@@ -225,6 +225,9 @@ Route::group([], function () {
     });
 });
 
+Route::get('/features', function () {
+    return view('pages.features');
+})->name('features');
 
 Route::middleware('regular.user')->controller(ProfileController::class)->group(function () {
     Route::get('/{username}', 'show')->name('profile.show');
