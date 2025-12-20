@@ -47,7 +47,8 @@
                                     <button class="flex items-center space-x-2 hover:text-gray-700 sort-btn"
                                         data-column="name">
                                         <span>Name</span>
-                                        <i class="fas fa-caret-down text-sm sort-icon" data-direction="none"></i>
+                                        <i class="fas fa-caret-down text-lg sort-icon text-gray-400"
+                                            data-direction="none"></i>
                                     </button>
                                 </th>
                                 <th
@@ -55,7 +56,8 @@
                                     <button class="flex items-center space-x-2 hover:text-gray-700 sort-btn"
                                         data-column="username">
                                         <span>Username</span>
-                                        <i class="fas fa-caret-down text-sm sort-icon" data-direction="none"></i>
+                                        <i class="fas fa-caret-down text-lg sort-icon text-gray-400"
+                                            data-direction="none"></i>
                                     </button>
                                 </th>
                                 <th
@@ -63,7 +65,8 @@
                                     <button class="flex items-center space-x-2 hover:text-gray-700 sort-btn"
                                         data-column="email">
                                         <span>Email</span>
-                                        <i class="fas fa-caret-down text-sm sort-icon" data-direction="none"></i>
+                                        <i class="fas fa-caret-down text-lg sort-icon text-gray-400"
+                                            data-direction="none"></i>
                                     </button>
                                 </th>
                                 <th
@@ -71,7 +74,8 @@
                                     <button class="flex items-center space-x-2 hover:text-gray-700 sort-btn"
                                         data-column="date">
                                         <span>Joined</span>
-                                        <i class="fas fa-caret-down text-sm sort-icon" data-direction="none"></i>
+                                        <i class="fas fa-caret-down text-lg sort-icon text-gray-400"
+                                            data-direction="none"></i>
                                     </button>
                                 </th>
                                 <th
@@ -79,7 +83,8 @@
                                     <button class="flex items-center space-x-2 hover:text-gray-700 sort-btn"
                                         data-column="status">
                                         <span>Status</span>
-                                        <i class="fas fa-caret-down text-sm sort-icon" data-direction="none"></i>
+                                        <i class="fas fa-caret-down text-lg sort-icon text-gray-400"
+                                            data-direction="none"></i>
                                     </button>
                                 </th>
                                 <th
@@ -420,19 +425,26 @@
             }
 
             function updateSortIcons(activeColumn, direction) {
-                // reset all icons
+                // reset all icons and button text color
+                document.querySelectorAll('.sort-btn').forEach(btn => {
+                    btn.classList.remove('text-gray-600', 'font-bold');
+                });
                 document.querySelectorAll('.sort-icon').forEach(icon => {
-                    icon.className = 'fas fa-caret-down text-sm sort-icon';
+                    icon.className = 'fas fa-caret-down text-lg sort-icon text-gray-400';
                     icon.setAttribute('data-direction', 'none');
                 });
 
-                // update active column icon
+                // update active column icon and button
+                const activeBtn = document.querySelector(`[data-column="${activeColumn}"]`);
+                if (activeBtn) {
+                    activeBtn.classList.add('text-gray-600', 'font-bold');
+                }
                 const activeIcon = document.querySelector(`[data-column="${activeColumn}"] .sort-icon`);
                 if (activeIcon) {
                     if (direction === 'asc') {
-                        activeIcon.className = 'fas fa-caret-up text-sm sort-icon';
+                        activeIcon.className = 'fas fa-caret-up text-xl sort-icon text-gray-600';
                     } else if (direction === 'desc') {
-                        activeIcon.className = 'fas fa-caret-down text-sm sort-icon';
+                        activeIcon.className = 'fas fa-caret-down text-xl sort-icon text-gray-600';
                     }
                     activeIcon.setAttribute('data-direction', direction);
                 }
