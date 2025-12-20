@@ -61,6 +61,7 @@ CREATE TABLE users (
     isPrivate BOOLEAN DEFAULT FALSE,
     isAdmin BOOLEAN DEFAULT FALSE,
     isBlocked BOOLEAN DEFAULT FALSE,
+    isDeleted BOOLEAN DEFAULT FALSE,
     favoriteFilm INTEGER REFERENCES media(id),
     favoriteBook INTEGER REFERENCES media(id),
     favoriteSong INTEGER REFERENCES media(id),
@@ -152,7 +153,7 @@ CREATE TABLE notification (
     id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     message TEXT NOT NULL,
     isRead BOOLEAN DEFAULT FALSE,
-    receiverId INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    receiverId INTEGER REFERENCES users(id) ON DELETE SET NULL,
     createdAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -165,11 +166,6 @@ CREATE TABLE activity_notification (
 CREATE TABLE comment_notification (
     notificationId INTEGER PRIMARY KEY REFERENCES activity_notification(notificationId) ON DELETE CASCADE,
     commentId INTEGER REFERENCES comment(id) ON DELETE CASCADE
-);
-
-CREATE TABLE tag_notification (
-    notificationId INTEGER PRIMARY KEY REFERENCES activity_notification(notificationId) ON DELETE CASCADE,
-    postId INTEGER REFERENCES post(id) ON DELETE CASCADE
 );
 
 CREATE TABLE like_notification (
@@ -210,8 +206,8 @@ CREATE TABLE friendship (
 -- MESSAGES
 CREATE TABLE messages (
     id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    senderId INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-    receiverId INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    senderId INTEGER REFERENCES users(id) ON DELETE SET NULL,
+    receiverId INTEGER REFERENCES users(id) ON DELETE SET NULL,
     content TEXT NOT NULL,
     isRead BOOLEAN DEFAULT FALSE,
     sentAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
@@ -780,7 +776,6 @@ TRUNCATE TABLE
     group_join_request,
     request,
     like_notification,
-    tag_notification,
     comment_notification,
     activity_notification,
     notification,

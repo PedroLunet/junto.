@@ -3,6 +3,7 @@
 namespace App\Models\User;
 
 use App\Models\User\User;
+use App\Models\User\DeletedUser;
 use App\Models\Notification\ActivityNotification;
 use Illuminate\Database\Eloquent\Model;
 
@@ -17,13 +18,11 @@ class Notification extends Model
         'isread',
         'receiverid',
         'createdat',
-        'snoozed_until',
     ];
 
     protected $casts = [
         'isread' => 'boolean',
         'createdat' => 'datetime',
-        'snoozed_until' => 'datetime',
     ];
 
     /**
@@ -32,6 +31,15 @@ class Notification extends Model
     public function receiver()
     {
         return $this->belongsTo(User::class, 'receiverid', 'id');
+    }
+
+    public function getReceiverAttribute()
+    {
+        $user = $this->receiver;
+        if (!$user || $user->isdeleted) {
+            return DeletedUser::getDeletedUserPlaceholder();
+        }
+        return $user;
     }
 
     /**
