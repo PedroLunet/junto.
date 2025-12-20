@@ -49,17 +49,17 @@
 @section('navigation')
     <ul class="space-y-2">
         <li><a href="{{ route('friends-feed') }}"
-                class="block py-2 px-4 rounded hover:bg-[#7a5466] hover:text-white">Friends Feed</a></li>
-        <li><a href="{{ route('movies') }}" class="block py-2 px-4 rounded hover:bg-[#7a5466] hover:text-white">Movies</a>
+                class="block py-2 px-4 rounded hover:bg-[#7a5466] hover:text-white"><i class="fa-solid fa-user-group fa-fw mr-2"></i>Friends Feed</a></li>
+        <li><a href="{{ route('movies') }}" class="block py-2 px-4 rounded hover:bg-[#7a5466] hover:text-white"><i class="fa-solid fa-clapperboard fa-fw mr-2"></i>Movies</a>
         </li>
-        <li><a href="{{ route('books') }}" class="block py-2 px-4 rounded hover:bg-[#7a5466] hover:text-white">Books</a>
+        <li><a href="{{ route('books') }}" class="block py-2 px-4 rounded hover:bg-[#7a5466] hover:text-white"><i class="fa-solid fa-book fa-fw mr-2"></i>Books</a>
         </li>
-        <li><a href="{{ route('music') }}" class="block py-2 px-4 rounded hover:bg-[#7a5466] hover:text-white">Music</a>
+        <li><a href="{{ route('music') }}" class="block py-2 px-4 rounded hover:bg-[#7a5466] hover:text-white"><i class="fa-solid fa-music fa-fw mr-2"></i>Music</a>
         </li>
         <li><a href="{{ route('groups.index') }}"
-                class="block py-2 px-4 rounded hover:bg-[#7a5466] hover:text-white">Groups</a></li>
+                class="block py-2 px-4 rounded hover:bg-[#7a5466] hover:text-white"><i class="fa-solid fa-people-group fa-fw mr-2"></i>Groups</a></li>
         <li><a href="{{ route('messages.index') }}"
-                class="block py-2 px-4 rounded hover:bg-[#7a5466] hover:text-white">Messages</a></li>
+                class="block py-2 px-4 rounded hover:bg-[#7a5466] hover:text-white"><i class="fa-solid fa-envelope fa-fw mr-2"></i>Messages</a></li>
         <li><a href="{{ route('about') }}" class="block py-2 px-4 rounded hover:bg-[#7a5466] hover:text-white">About Us</a>
         </li>
         <li><a href="{{ route('contact.show') }}" class="block py-2 px-4 rounded hover:bg-[#7a5466] hover:text-white">Contact Us</a>
