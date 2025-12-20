@@ -36,16 +36,8 @@
 
         <!-- Scrollable Content -->
         <div class="flex-1 overflow-y-auto">
-            <!-- Groups List -->
-            <div id="groups-container" class="space-y-6 mx-20 my-6">
-                @foreach ($groups as $group)
-                    <x-admin.group-card :group="$group" />
-                @endforeach
-
-                @if (count($groups) === 0)
-                    <x-ui.empty-state icon="fa-users" title="No Groups Found" description="There are no groups to display."
-                        height="min-h-[calc(100vh-20rem)]" />
-                @endif
+            <div id="groups-container" class="mx-20 my-6">
+                <x-admin.groups.groups-list :groups="$groups" />
             </div>
         </div>
     </div>

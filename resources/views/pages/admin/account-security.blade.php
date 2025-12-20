@@ -38,7 +38,7 @@
     </div>
 
     <!-- Change Password Modal -->
-    <x-admin.change-password-modal />
+    <x-admin.account.change-password-modal />
 @endsection
 
 @push('scripts')

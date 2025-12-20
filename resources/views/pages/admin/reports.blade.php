@@ -52,7 +52,7 @@
         <!-- Scrollable Content -->
         <div class="flex-1 overflow-y-auto">
             <div id="reports-container" class="mx-4 sm:mx-8 lg:mx-20 my-4 sm:my-6">
-                <x-admin.reports-list :reports="collect($reports)" />
+                <x-admin.reports.reports-list :reports="collect($reports)" />
             </div>
         </div>
     </div>

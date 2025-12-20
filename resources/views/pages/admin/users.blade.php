@@ -152,9 +152,9 @@
         </div>
     </div>
 
-    <x-admin.add-user-modal />
+    <x-admin.users.add-user-modal />
 
-    <x-admin.edit-user-modal />
+    <x-admin.users.edit-user-modal />
 
     <x-ui.confirm />
 @endsection
@@ -518,7 +518,7 @@
                             } else {
                                 await alertInfo(
                                     `Failed to ${action} user: ${data.message || 'Unknown error'}`
-                                    );
+                                );
                             }
                         } catch (error) {
                             console.error('Error:', error);

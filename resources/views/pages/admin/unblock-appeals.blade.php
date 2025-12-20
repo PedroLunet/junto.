@@ -48,18 +48,7 @@
         <!-- Scrollable Content -->
         <div class="flex-1 overflow-y-auto">
             <div id="appeals-container" class="mx-20 my-6">
-                @if ($appeals->isEmpty())
-                    <x-ui.empty-state icon="fa-gavel" title="No Appeals to Review"
-                        description="All unblock appeals have been processed" height="min-h-[calc(100vh-16rem)]" />
-                @else
-                    <div class="grid gap-6">
-                        @foreach ($appeals as $appeal)
-                            <div class="appeal-item">
-                                <x-admin.appeal-card :appeal="$appeal" />
-                            </div>
-                        @endforeach
-                    </div>
-                @endif
+                <x-admin.appeals.appeals-list :appeals="$appeals" />
             </div>
         </div>
     </div>
