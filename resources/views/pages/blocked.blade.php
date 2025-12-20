@@ -1,7 +1,10 @@
 @extends('layouts.app')
 
 @section('content')
-    <!-- Blocked Modal Overlay -->
+    <!-- alert container -->
+    <div id="appealAlert" class="fixed top-4 right-4 z-60 hidden" style="max-width: 400px;"></div>
+
+    <!-- blocked modal overlay -->
     <div class="fixed inset-0 bg-black bg-opacity-60 z-50 flex items-center justify-center p-4">
         <div class="max-w-2xl w-full">
             <div class="bg-white rounded-3xl shadow-2xl p-6 sm:p-8 md:p-12 text-center">
@@ -51,36 +54,24 @@
         </div>
     </div>
 
-    <!-- Appeal Modal -->
-    <div id="appealModal" class="fixed inset-0 bg-black bg-opacity-60 z-60 hidden items-center justify-center p-4">
+    <!-- appeal modal -->
+    <div id="appealModal" class="fixed inset-0 bg-black bg-opacity-60 z-50 hidden items-center justify-center p-4">
         <div class="bg-white rounded-2xl shadow-2xl p-6 sm:p-8 max-w-lg w-full">
             <h2 class="text-2xl font-bold text-gray-900 mb-4">Appeal for Unblock</h2>
             <p class="text-gray-600 mb-6">Please explain why you believe your account should be unblocked.</p>
 
-            <!-- Alert Container -->
-            <div id="appealAlert" class="hidden mb-4"></div>
-
             <form id="appealForm">
                 @csrf
-                <div class="mb-6">
-                    <label for="appealReason" class="block text-sm font-medium text-gray-700 mb-2">
-                        Reason for Appeal <span class="text-red-500">*</span>
-                    </label>
-                    <textarea id="appealReason" name="reason" rows="5" required maxlength="1000"
-                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#a17f8f] focus:border-transparent resize-none"
-                        placeholder="Explain your situation..."></textarea>
-                    <p class="text-xs text-gray-500 mt-1">Maximum 1000 characters</p>
-                </div>
+                <x-ui.input type="textarea" id="appealReason" name="reason" label="Reason for Appeal"
+                    placeholder="Explain your situation..." :required="true" rows="5" maxlength="1000" />
 
                 <div class="flex gap-3">
-                    <button type="button" onclick="closeAppealModal()"
-                        class="flex-1 px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition">
+                    <x-ui.button type="button" onclick="closeAppealModal()" variant="secondary" class="flex-1">
                         Cancel
-                    </button>
-                    <button type="submit" id="submitAppealBtn"
-                        class="flex-1 px-4 py-2 bg-[#a17f8f] text-white rounded-lg hover:bg-[#7a5466] transition">
+                    </x-ui.button>
+                    <x-ui.button type="submit" id="submitAppealBtn" variant="primary" class="flex-1">
                         Submit Appeal
-                    </button>
+                    </x-ui.button>
                 </div>
             </form>
         </div>
@@ -89,23 +80,31 @@
     <script>
         function showAppealAlert(message, type = 'success') {
             const alertContainer = document.getElementById('appealAlert');
-            const isSuccess = type === 'success';
-            const bgColor = isSuccess ? 'bg-green-50 border-green-200' : 'bg-red-50 border-red-200';
-            const iconColor = isSuccess ? 'text-green-600' : 'text-red-600';
-            const icon = isSuccess ?
-                '<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>' :
-                '<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/></svg>';
+            const title = type === 'success' ? 'Success' : 'Error';
 
             alertContainer.innerHTML = `
-                <div class="flex items-start gap-3 px-4 py-3 rounded-lg border ${bgColor}">
-                    <div class="shrink-0 ${iconColor}">${icon}</div>
-                    <div class="flex-1 text-sm text-gray-700">${message}</div>
-                    <button type="button" onclick="this.closest('div').parentElement.classList.add('hidden')" class="shrink-0 text-gray-400 hover:text-gray-600">
-                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
+                <div class="relative flex items-start gap-4 px-6 py-10 rounded-2xl border ${type === 'success' ? 'bg-green-50 border-green-200' : 'bg-red-50 border-red-200'} shadow-lg mb-4">
+                    <div class="shrink-0 flex items-center justify-center w-12 h-12 rounded-full ${type === 'success' ? 'bg-green-200' : 'bg-red-200'}">
+                        ${type === 'success' 
+                            ? '<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke-width="2" class="stroke-green-400 fill-green-50"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4" class="stroke-green-600"/></svg>'
+                            : '<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke-width="2" class="stroke-red-400 fill-red-50"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 9l-6 6m0-6l6 6" class="stroke-red-600"/></svg>'
+                        }
+                    </div>
+                    <div class="flex-1">
+                        <div class="font-semibold text-2xl ${type === 'success' ? 'text-green-600' : 'text-red-600'} mb-1">${title}</div>
+                        <div class="text-gray-700 text-3xl">${message}</div>
+                    </div>
+                    <button type="button" class="absolute top-3 right-3 text-gray-400 hover:text-gray-600 focus:outline-none" onclick="this.closest('div').parentElement.classList.add('hidden')">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
                     </button>
                 </div>
             `;
             alertContainer.classList.remove('hidden');
+
+            // Auto-hide after 5 seconds
+            setTimeout(() => {
+                alertContainer.classList.add('hidden');
+            }, 5000);
         }
 
         async function appealUnblock() {
@@ -117,7 +116,6 @@
             document.getElementById('appealModal').classList.add('hidden');
             document.getElementById('appealModal').classList.remove('flex');
             document.getElementById('appealForm').reset();
-            document.getElementById('appealAlert').classList.add('hidden');
         }
 
         document.getElementById('appealForm').addEventListener('submit', async function(e) {
@@ -150,17 +148,17 @@
                 const data = await response.json();
 
                 if (data.success) {
+                    closeAppealModal();
                     showAppealAlert(
                         'Your appeal has been submitted successfully. Administrators will review it shortly.',
                         'success');
-                    setTimeout(() => {
-                        closeAppealModal();
-                    }, 2000);
                 } else {
+                    closeAppealModal();
                     showAppealAlert(data.message || 'Failed to submit appeal. Please try again.', 'error');
                 }
             } catch (error) {
                 console.error('Error:', error);
+                closeAppealModal();
                 showAppealAlert('An error occurred while submitting your appeal. Please try again.', 'error');
             } finally {
                 submitBtn.disabled = false;
