@@ -219,6 +219,11 @@ class AdminController extends Controller
 
             $user->update(['isblocked' => false]);
 
+            // auto approve any pending appeals if user is unblocked directly
+            UnblockAppeal::where('userid', $user->id)
+                ->where('status', 'pending')
+                ->update(['status' => 'approved']);
+
             Log::info('User unblocked successfully: ' . $user->username . ' (ID: ' . $user->id . ')');
 
             return response()->json([
