@@ -54,7 +54,7 @@
     </div>
 
     <x-ui.confirm />
-    <x-admin.admin-notes-modal />
+    <x-admin.appeals.admin-notes-modal />
 
 @endsection
 

@@ -1,5 +1,5 @@
 <div class="flex flex-col h-full">
-    <!-- Fixed tabs header -->
+    <!-- fixed tabs header -->
     <div class="shrink-0 flex gap-4 mb-6 px-20">
         @foreach ($tabs as $key => $tab)
             <button id="{{ $key }}-tab"
@@ -9,7 +9,7 @@
         @endforeach
     </div>
 
-    <!-- Scrollable tab contents -->
+    <!-- scrollable tab contents -->
     <div class="flex-1 overflow-y-auto">
         @foreach ($tabs as $key => $tab)
             <div id="{{ $key }}-content" class="tab-content px-20 {{ $loop->first ? '' : 'hidden' }}">

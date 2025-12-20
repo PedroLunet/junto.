@@ -13,8 +13,10 @@
                     </button>
                 </div>
 
-                <p class="text-gray-600 mb-6 text-lg">Add a note explaining why this appeal was rejected. This note will
-                    be stored for administrative records.</p>
+                <p class="text-gray-600 mb-6 text-lg">
+                    Add a note explaining why this appeal was rejected. This note will
+                    be stored for administrative records.
+                </p>
 
                 <div class="mb-6">
                     <label for="adminNotesTextarea" class="block text-sm font-semibold text-gray-700 mb-2">
