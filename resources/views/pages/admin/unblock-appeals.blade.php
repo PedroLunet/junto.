@@ -49,15 +49,8 @@
         <div class="flex-1 overflow-y-auto">
             <div id="appeals-container" class="mx-20 my-6">
                 @if ($appeals->isEmpty())
-                    <div class="flex flex-col items-center justify-center text-gray-500 min-h-[calc(100vh-16rem)]">
-                        <div class="text-center">
-                            <div class="bg-gray-200 rounded-full p-6 inline-block mb-4">
-                                <i class="fas fa-gavel text-4xl text-gray-400"></i>
-                            </div>
-                            <h3 class="text-xl font-medium text-gray-700">No Appeals to Review</h3>
-                            <p class="mt-2">All unblock appeals have been processed</p>
-                        </div>
-                    </div>
+                    <x-ui.empty-state icon="fa-gavel" title="No Appeals to Review"
+                        description="All unblock appeals have been processed" height="min-h-[calc(100vh-16rem)]" />
                 @else
                     <div class="grid gap-6">
                         @foreach ($appeals as $appeal)

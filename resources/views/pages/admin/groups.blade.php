@@ -43,10 +43,8 @@
                 @endforeach
 
                 @if (count($groups) === 0)
-                    <div id="no-groups-message" class="text-center py-12 text-gray-500">
-                        <i class="fas fa-users text-4xl mb-4"></i>
-                        <p class="text-lg">No groups found.</p>
-                    </div>
+                    <x-ui.empty-state icon="fa-users" title="No Groups Found" description="There are no groups to display."
+                        height="min-h-[calc(100vh-20rem)]" />
                 @endif
             </div>
         </div>
