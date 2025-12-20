@@ -27,27 +27,27 @@
                         <div class="relative inline-block">
                             <img id="current-image" src="" alt="current image" class="max-w-xs h-auto rounded">
                             <x-ui.button type="button" id="remove-current-image"
-                                class="absolute top-2 right-2 bg-red-500 text-white p-1 hover:bg-red-600">X</x-button>
+                                class="absolute top-2 right-2 bg-red-500 text-white p-1 hover:bg-red-600">X</x-ui.button>
                         </div>
                     </div>
 
                     <div class="mb-4">
                         <input type="file" name="image" id="edit-image-input" accept="image/*" class="hidden">
                         <x-ui.button type="button" id="edit-add-image-button"
-                            class="px-4 py-2 text-gray-800 border border-gray-300 rounded">Add Photo</x-button>
-                            <span id="edit-file-name" class="ml-3 text-sm text-gray-600"></span>
+                            class="px-4 py-2 text-gray-800 border border-gray-300 rounded">Add Photo</x-ui.button>
+                        <span id="edit-file-name" class="ml-3 text-sm text-gray-600"></span>
                     </div>
 
                     <div class="flex justify-between items-center">
                         <x-ui.button type="button" id="delete-button"
-                            class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700">Delete</x-button>
-                            <div class="flex space-x-3">
-                                <x-ui.button type="button" id="edit-cancel-button"
-                                    class="px-4 py-2 text-gray-800 border border-gray-300 rounded">Cancel</x-button>
-                                    <x-ui.button type="submit"
-                                        class="px-4 py-2 bg-[#38157a] text-white rounded hover:bg-[#7455ad]">Update
-                                        Post</x-button>
-                            </div>
+                            class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700">Delete</x-ui.button>
+                        <div class="flex space-x-3">
+                            <x-ui.button type="button" id="edit-cancel-button"
+                                class="px-4 py-2 text-gray-800 border border-gray-300 rounded">Cancel</x-ui.button>
+                            <x-ui.button type="submit"
+                                class="px-4 py-2 bg-[#38157a] text-white rounded hover:bg-[#7455ad]">Update
+                                Post</x-ui.button>
+                        </div>
                     </div>
                 </form>
             </div>

@@ -5,10 +5,14 @@ use App\Http\Controllers\Auth\GoogleController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\LogoutController;
 use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\Auth\ResetPasswordController;
+use App\Http\Controllers\ContactController;
 use App\Http\Controllers\FileController;
 use App\Http\Controllers\Friendship\FriendRequestController;
 use App\Http\Controllers\GroupController;
 use App\Http\Controllers\Home\HomeController;
+use App\Http\Controllers\MailController;
+use App\Http\Controllers\MessageController;
 use App\Http\Controllers\Media\BookController;
 use App\Http\Controllers\Media\MovieController;
 use App\Http\Controllers\Media\MusicController;
@@ -24,6 +28,18 @@ use Illuminate\Support\Facades\Route;
 // Home
 // Route::redirect('/', '/login');
 
+// Blocked user page
+Route::middleware('auth')->get('/blocked', function () {
+    $hasRejectedAppeal = \App\Models\UnblockAppeal::where('userid', auth()->id())
+        ->where('status', 'rejected')
+        ->exists();
+
+    return view('pages.blocked', ['hasRejectedAppeal' => $hasRejectedAppeal]);
+})->name('blocked');
+
+// Appeal submission route (for blocked users) - must be before regular.user middleware
+Route::middleware('auth')->post('/appeal/submit', [AdminController::class, 'submitAppeal'])->name('appeal.submit');
+
 Route::middleware('regular.user')->group(function () {
     Route::get('/', [HomeController::class, 'index'])->name('home');
     Route::get('/posts/{id}/comments', [CommentController::class, 'index'])->name('post.comments');
@@ -34,13 +50,26 @@ Route::middleware(['auth', 'regular.user'])->group(function () {
     Route::get('/friends-feed', [HomeController::class, 'friendsFeed'])->name('friends-feed');
     Route::post('/posts/{id}/comments', [CommentController::class, 'store'])->name('post.comments.add');
     Route::post('/posts/{id}/like', [HomeController::class, 'toggleLike'])->name('post.like');
+
+    // Messages
+    Route::get('/messages', [MessageController::class, 'index'])->name('messages.index');
+    Route::get('/messages/{userId}', [MessageController::class, 'show'])->name('messages.show');
+    Route::get('/messages/{userId}/fetch', [MessageController::class, 'fetchMessages'])->name('messages.fetch');
+    Route::post('/messages/{userId}', [MessageController::class, 'store'])->name('messages.store');
+    Route::delete('/messages/{userId}', [MessageController::class, 'destroy'])->name('messages.destroy');
 });
+
 
 Route::middleware(['auth', 'regular.user'])->controller(ProfileController::class)->group(function () {
     Route::get('/profile', 'index')->name('profile');
+    Route::get('/profile/edit', 'edit')->name('profile.edit');
     Route::put('/profile/update', 'update')->name('profile.update');
     Route::post('/profile/remove-favorite', 'removeFavorite')->name('profile.remove-favorite');
     Route::post('/profile/add-favorite', 'addFavorite')->name('profile.add-favorite');
+    Route::post('/profile/toggle-privacy', 'togglePrivacy')->name('profile.toggle-privacy');
+    Route::post('/profile/change-password', 'changePassword')->name('profile.change-password');
+    Route::post('/profile/validate-password', 'validatePassword')->name('profile.validate-password');
+    Route::post('/profile/render-alert', 'renderAlert')->name('profile.render-alert');
 });
 
 // Authentication
@@ -58,10 +87,18 @@ Route::controller(RegisterController::class)->group(function () {
     Route::post('/register', 'register');
 });
 
+Route::controller(ResetPasswordController::class)->group(function () {
+    Route::get('/reset-password/verify/{token}', 'verify')->name('password.verify');
+    Route::get('/reset-password', 'showResetForm')->name('password.reset');
+    Route::post('/reset-password', 'reset')->name('password.update');
+});
+
 Route::controller(GoogleController::class)->group(function () {
     Route::get('auth/google', 'redirect')->name('google-auth');
     Route::get('auth/google/call-back', 'callbackGoogle')->name('google-call-back');
 });
+
+Route::post('/send', [MailController::class, 'send']);
 
 Route::middleware('regular.user')->controller(SearchUserController::class)->group(function () {
     Route::get('/search-users', 'index')->name('search.users');
@@ -133,13 +170,19 @@ Route::middleware(['auth', 'admin'])->controller(ReportController::class)->group
 
 // admin routes
 Route::middleware(['auth', 'admin'])->group(function () {
-    Route::get('/admin', [AdminController::class, 'showDashboard'])->name('admin.dashboard');
-    Route::get('/admin/users', [AdminController::class, 'listUsers'])->name('admin.users');
+    Route::get('/admin', [AdminController::class, 'dashboard'])->name('admin.dashboard');
+    Route::get('/admin/users', [AdminController::class, 'users'])->name('admin.users');
+    Route::put('/admin/users/{id}', [AdminController::class, 'updateUser'])->name('admin.users.update');
     Route::post('/admin/users/{id}/block', [AdminController::class, 'blockUser'])->name('admin.users.block');
     Route::post('/admin/users/{id}/unblock', [AdminController::class, 'unblockUser'])->name('admin.users.unblock');
     Route::get('/admin/reports', [AdminController::class, 'listReports'])->name('admin.reports');
     Route::post('/admin/reports/{id}/accept', [AdminController::class, 'acceptReport'])->name('admin.reports.accept');
     Route::post('/admin/reports/{id}/reject', [AdminController::class, 'rejectReport'])->name('admin.reports.reject');
+    Route::get('/admin/groups', [AdminController::class, 'groups'])->name('admin.groups');
+    Route::delete('/admin/groups/{id}', [AdminController::class, 'deleteGroup'])->name('admin.groups.delete');
+    Route::get('/admin/appeals', [AdminController::class, 'appeals'])->name('admin.appeals');
+    Route::post('/admin/appeals/{id}/approve', [AdminController::class, 'approveAppeal'])->name('admin.appeals.approve');
+    Route::post('/admin/appeals/{id}/reject', [AdminController::class, 'rejectAppeal'])->name('admin.appeals.reject');
 });
 
 // GROUPS ROUTES
@@ -157,7 +200,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/groups/{group}/accept-request/{requestId}', [GroupController::class, 'acceptRequest'])->name('groups.acceptRequest');
     Route::post('/groups/{group}/reject-request/{requestId}', [GroupController::class, 'rejectRequest'])->name('groups.rejectRequest');
     Route::post('/groups/{group}/posts', [GroupController::class, 'storePost'])->name('groups.posts.store');
-
+    Route::delete('/groups/{group}', [GroupController::class, 'destroy'])->name('groups.destroy');
     Route::post('/groups/{group}/reviews', [ReviewController::class, 'store'])->name('groups.reviews.store');
 });
 
@@ -170,10 +213,17 @@ Route::middleware(['auth', 'regular.user'])->controller(NotificationController::
     Route::get('/notifications/unread-count', 'getUnreadCount')->name('notifications.unread-count');
 });
 
-// Static Pages
-Route::get('/about', function () {
-    return view('pages.about');
-})->name('about');
+// Static pages
+Route::group([], function () {
+    Route::get('/about', function () {
+        return view('pages.about');
+    })->name('about');
+
+    Route::controller(ContactController::class)->group(function () {
+        Route::get('/contact', 'show')->name('contact.show');
+        Route::post('/contact', 'submit')->name('contact.submit');
+    });
+});
 
 Route::get('/features', function () {
     return view('pages.features');
@@ -182,5 +232,3 @@ Route::get('/features', function () {
 Route::middleware('regular.user')->controller(ProfileController::class)->group(function () {
     Route::get('/{username}', 'show')->name('profile.show');
 });
-
-

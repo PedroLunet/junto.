@@ -8,8 +8,10 @@
                 <!-- profile header -->
                 <div class="flex items-center gap-8 md:gap-10">
                     <div
-                        class="w-54 h-54 md:w-60 md:h-60 lg:w-72 lg:h-72 bg-gray-300 rounded-full shrink-0 flex items-center justify-center text-6xl md:text-7xl lg:text-8xl font-bold text-gray-600">
-                        <span class="leading-[0.8] mt-[0.1em]">{{ strtoupper(substr($user->name, 0, 1)) }}</span>
+                        class="w-54 h-54 md:w-60 md:h-60 lg:w-72 lg:h-72 rounded-full shrink-0 overflow-hidden relative bg-gray-300 border-2 border-gray-200 flex items-center justify-center">
+                        <img src="{{ $user->profilepicture ? asset('profile/' . $user->profilepicture) : asset('profile/default.png') }}"
+                            alt="Profile Picture" class="absolute inset-0 w-full h-full object-cover"
+                            onerror="this.onerror=null; this.src='{{ asset('profile/default.png') }}';">
                     </div>
 
                     <div class="flex-1">
@@ -33,15 +35,25 @@
 
                         @auth
                             @if (Auth::id() === $user->id)
-                                <x-ui.button onclick="openEditProfileModal()" variant="primary"
-                                    class="text-xl md:text-2xl font-medium">
-                                    Edit Profile
-                                    </x-button>
-                                @else
-                                    <!-- Friend request button -->
-                                    <div class="mt-4 md:mt-6">
-                                        <x-profile.friend-button :user="$user" :friendButtonData="$friendButtonData" />
-                                    </div>
+                                <a href="{{ route('profile.edit') }}">
+                                    <x-ui.button variant="primary" class="text-xl md:text-2xl font-medium">
+                                        Edit Profile
+                                    </x-ui.button>
+                                </a>
+                            @else
+                                <!-- Friend request button -->
+                                <div class="mt-4 md:mt-6 flex gap-4">
+                                    <x-profile.friend-button :user="$user" :friendButtonData="$friendButtonData" />
+
+                                    @if(Auth::user()->isFriendsWith($user->id))
+                                        <a href="{{ route('messages.show', $user->id) }}">
+                                            <x-ui.button variant="secondary" class="px-4 py-2 inline-flex items-center">
+                                                <i class="fa-solid fa-envelope mr-2"></i>
+                                                Message
+                                            </x-ui.button>
+                                        </a>
+                                    @endif
+                                </div>
                             @endif
                         @else
                             <!-- Befriend button for guests -->
@@ -49,7 +61,7 @@
                                 <x-ui.button variant="primary" onclick="window.location.href='/login'"
                                     class="text-xl md:text-2xl font-medium">
                                     Befriend
-                                    </x-button>
+                                </x-ui.button>
                             </div>
                         @endauth
                     </div>
@@ -113,11 +125,9 @@
             @endif
         </div>
 
-        <!-- Modals (outside scrollable area) -->
         <x-posts.post-modal />
         <x-profile.add-fav-modal />
-        <x-profile.edit-profile-modal :user="$user" />
-        <x-ui.alert />
+        <x-ui.confirm />
     </div>
 
     <script>

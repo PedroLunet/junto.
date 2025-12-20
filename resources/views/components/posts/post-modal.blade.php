@@ -61,10 +61,9 @@
                     <div
                         class="p-4 border-b border-gray-200 flex justify-between items-center shrink-0 bg-white shadow-sm z-10">
                         <h3 class="font-semibold text-gray-900 text-4xl">Comments</h3>
-                        <button onclick="closePostModal()"
-                            class="text-gray-400 hover:text-gray-600 transition-colors p-2 rounded-full hover:bg-gray-100">
+                        <x-ui.button onclick="closePostModal()" variant="ghost">
                             <i class="fas fa-times text-xl"></i>
-                        </button>
+                        </x-ui.button>
                     </div>
 
                     <!-- Comments List -->
@@ -77,7 +76,14 @@
                     <!-- Add Comment Input -->
                     <div id="addCommentSection" class="p-4 border-t border-gray-200 bg-white shrink-0">
                         <div class="flex gap-3 items-center">
-                            <div class="w-8 h-8 bg-gray-200 rounded-full shrink-0"></div>
+                            @php
+                                $currentUserProfilePicture =
+                                    Auth::check() && Auth::user()->profilePicture
+                                        ? asset('profile/' . Auth::user()->profilePicture)
+                                        : asset('profile/default.png');
+                            @endphp
+                            <img src="{{ $currentUserProfilePicture }}" alt="User Avatar"
+                                class="w-12 h-12 rounded-full object-cover">
                             <div class="flex-1 relative">
                                 <input type="text" id="commentInput"
                                     class="w-full rounded-full border-gray-300 bg-gray-50 pl-4 pr-12 py-2.5 focus:border-[#38157a] focus:ring-[#38157a] focus:bg-white transition-all"
@@ -110,7 +116,9 @@
         const likeIcon = document.getElementById('modalLikeIcon');
         currentPostId = post.id;
         authorDiv.innerHTML = `
-            <a href="/${post.username}" class="w-12 h-12 bg-gray-200 rounded-full shrink-0"></a>
+            <a href="/${post.username}" class="shrink-0">
+                <img src="/profile/default.png" alt="User Avatar" class="w-12 h-12 rounded-full object-cover">
+            </a>
             <div class="flex flex-col">
                 <a href="/${post.username}" class="font-semibold text-black text-3xl hover:text-[#38157a] transition">${post.author_name}</a>
                 <a href="/${post.username}" class="text-gray-600 text-xl">@${post.username}</a>
@@ -188,14 +196,31 @@
         `;
         }
         content.innerHTML = html;
-        document.getElementById('likesCount').textContent = post.likes_count || 0;
+
+        // Sync like status from feed if available
+        const feedLikeBtn = document.getElementById(`like-btn-${post.id}`);
+        let isLiked = post.is_liked;
+        let likesCount = post.likes_count || 0;
+
+        if (feedLikeBtn) {
+            isLiked = feedLikeBtn.classList.contains('text-red-500');
+            const feedLikeCount = document.getElementById(`like-count-${post.id}`);
+            if (feedLikeCount) {
+                likesCount = feedLikeCount.textContent;
+            }
+        }
+
+        const likesCountElem = document.getElementById('likesCount');
+        likesCountElem.textContent = likesCount;
         document.getElementById('commentsCount').textContent = post.comments_count || 0;
-        if (post.is_liked) {
+        if (isLiked) {
             likeIcon.classList.remove('far');
             likeIcon.classList.add('fas', 'text-red-500');
+            likesCountElem.classList.add('text-red-500');
         } else {
             likeIcon.classList.remove('fas', 'text-red-500');
             likeIcon.classList.add('far');
+            likesCountElem.classList.remove('text-red-500');
         }
         window.loadComments(post.id);
         if (!window.isAuthenticated) {
@@ -261,9 +286,11 @@
                     if (data.liked) {
                         likeIcon.classList.remove('far');
                         likeIcon.classList.add('fas', 'text-red-500');
+                        likesCount.classList.add('text-red-500');
                     } else {
                         likeIcon.classList.remove('fas', 'text-red-500');
                         likeIcon.classList.add('far');
+                        likesCount.classList.remove('text-red-500');
                     }
                     const timelineBtn = document.getElementById(`like-btn-${currentPostId}`);
                     if (timelineBtn) {

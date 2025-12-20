@@ -69,6 +69,12 @@ CREATE TABLE users (
     google_id VARCHAR
 );
 
+CREATE TABLE password_reset_tokens (
+    email VARCHAR(255) PRIMARY KEY,
+    token VARCHAR(255) NOT NULL,
+    created_at TIMESTAMP
+);
+
 -- GROUPS (Moved UP so POST can reference it)
 CREATE TABLE groups (
     id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
@@ -201,6 +207,16 @@ CREATE TABLE friendship (
     CHECK (userId1 < userId2)
 );
 
+-- MESSAGES
+CREATE TABLE messages (
+    id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    senderId INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    receiverId INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    content TEXT NOT NULL,
+    isRead BOOLEAN DEFAULT FALSE,
+    sentAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
 -- REPORTS
 CREATE TABLE report (
     id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
@@ -213,6 +229,17 @@ CREATE TABLE report (
         (postId IS NOT NULL AND commentId IS NULL) OR 
         (postId IS NULL AND commentId IS NOT NULL)
     )
+);
+
+-- UNBLOCK APPEALS
+CREATE TABLE unblock_appeal (
+    id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    userId INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    reason TEXT NOT NULL,
+    status VARCHAR(20) DEFAULT 'pending' CHECK (status IN ('pending', 'approved', 'rejected')),
+    adminNotes TEXT,
+    createdAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updatedAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 --
@@ -231,6 +258,12 @@ CREATE INDEX post_group_created_at_idx ON post USING btree (groupId, createdAt D
 
 -- IDX04: Post Comments
 CREATE INDEX comment_post_created_at_idx ON comment USING btree (postId, createdAt ASC);
+
+-- IDX05: Unblock Appeals by User
+CREATE INDEX unblock_appeal_user_idx ON unblock_appeal USING btree (userId);
+
+-- IDX06: Unblock Appeals by Status
+CREATE INDEX unblock_appeal_status_idx ON unblock_appeal USING btree (status);
 
 -- == IDX11: User Search ==
 -- 1. Add tsvector column
@@ -766,7 +799,8 @@ TRUNCATE TABLE
     book,
     music,
     media,
-    report 
+    report,
+    unblock_appeal
 RESTART IDENTITY CASCADE;
 
 -- MEDIA
@@ -906,50 +940,50 @@ INSERT INTO standard_post (postId, text, imageUrl) VALUES
     (6, 'GROUP POST: Planning a group trip to Bali next summer! ✈️', 'beach.jpg'),
     (7, 'GROUP POST: Look at the lighting in this shot I took yesterday! 📸', 'camera.jpg'),
     (8, 'GROUP POST: Working on a new oil painting. Thoughts? 🎨', 'painting.jpg'),
-    (9, 'GROUP POST: Found the best taco place downtown! 🌮', 'tacos.jpg'),
+    (9, 'GROUP POST: Found the best taco place downtown! 🌮', NULL),
     (10, 'GROUP POST: Anyone up for a late night study session on Discord?', NULL),
     (11, 'GROUP POST: Top 5 underrated directors. Go!', NULL),
     (14, 'GROUP POST: Remember: Consistency > Intensity. 💪', NULL),
     (15, 'GROUP POST: Anyone here used Rust for web dev yet?', NULL),
     (16, 'GROUP POST: Missing the mountains today. 🏔️', NULL),
-    (17, 'GROUP POST: Need feedback on this portrait edit.', 'portrait.jpg'),
+    (17, 'GROUP POST: Need feedback on this portrait edit.', NULL),
     (18, 'GROUP POST: Abstract art is harder than it looks.', NULL),
     (19, 'GROUP POST: Homemade pasta attempt #1. 🍝', 'pasta.jpg'),
     (20, 'GROUP POST: Tip: Pomodoro technique saved my grades.', NULL),
     (21, 'GROUP POST: Movie night this Friday? 🍿', NULL),
     (24, 'GROUP POST: New PR on bench press! 100kg! 😤', NULL),
-    (25, 'GROUP POST: My code works but I have no idea why.', 'code-meme.jpg'),
+    (25, 'GROUP POST: My code works but I have no idea why.', NULL),
     (26, 'GROUP POST: Travel checklist for Japan. Help needed!', NULL),
     (27, 'GROUP POST: Golden hour was perfect today. ☀️', 'sunset.jpg'),
-    (28, 'GROUP POST: Digital art sketch dump.', 'sketch.jpg'),
+    (28, 'GROUP POST: Digital art sketch dump.', NULL),
     (29, 'GROUP POST: Best coffee shops for working?', 'coffee.jpg'),
     (30, 'GROUP POST: Exam season is approaching. We got this! 📚', NULL),
 
     -- NORMAL POSTS (No Prefix)
-    (31, 'Just adopted a cat! Meet Luna 🐱', 'cat.jpg'),
+    (31, 'Just adopted a cat! Meet Luna 🐱', 'cat-mess.jpg'),
     (32, 'Why is Monday so far from Friday but Friday so close to Monday?', NULL),
-    (34, 'Finally finished my degree! 🎓', 'graduation.jpg'),
-    (35, 'Coffee is the only thing keeping me alive right now.', 'coffee-cup.jpg'),
-    (36, 'Beautiful sunset today.', 'sunset-view.jpg'),
+    (34, 'Finally finished my degree! 🎓', '1984-review.jpg'),
+    (35, 'Coffee is the only thing keeping me alive right now.', 'coffee.jpg'),
+    (36, 'Beautiful sunset today.', 'sunset.jpg'),
     (38, 'Sometimes you just need to disconnect.', NULL),
     (39, 'Anyone know a good mechanic?', NULL),
-    (40, 'Just moved into my new apartment!', 'apartment.jpg'),
+    (40, 'Just moved into my new apartment!', NULL),
     (41, 'Cooking dinner for friends. Wish me luck.', NULL),
     (42, 'The traffic today was absolute insanity.', NULL),
     (44, 'Can''t believe it''s already December.', NULL),
-    (45, 'My dog ate my homework. Literally.', 'dog-shame.jpg'),
+    (45, 'My dog ate my homework. Literally.', 'dog.jpg'),
     (46, 'Going to a concert tonight! So excited!', NULL),
     (48, 'Started learning Spanish today. Hola!', NULL),
-    (49, 'Rainy days are for reading.', 'rainy-window.jpg'),
+    (49, 'Rainy days are for reading.', 'rainy-day.jpg'),
     (50, 'Just got a promotion at work!', NULL),
     (51, 'Is it too early for Christmas music?', NULL),
-    (52, 'Pizza is always the answer.', 'pizza-slice.jpg'),
+    (52, 'Pizza is always the answer.', 'pizza.jpg'),
     (54, 'Gym was empty today. Pure bliss.', NULL),
     (55, 'Thinking about dyeing my hair blue.', NULL),
     (56, 'Watching old cartoons and feeling nostalgic.', NULL),
     (58, 'Cleaned my room. Found things from 2010.', NULL),
-    (59, 'Hiking trip this weekend was amazing.', 'hiking.jpg'),
-    (60, 'Trying to bake bread. It looks like a rock.', 'bread-fail.jpg');
+    (59, 'Hiking trip this weekend was amazing.', NULL),
+    (60, 'Trying to bake bread. It looks like a rock.', 'bread.jpg');
 
 INSERT INTO review (postId, rating, mediaId, content) VALUES 
     -- GROUP REVIEWS (Must have "GROUP POST:")
@@ -1000,4 +1034,68 @@ INSERT INTO friendship (userId1, userId2) VALUES
 -- REQUESTS & REPORTS
 INSERT INTO request (notificationId, status, senderId) VALUES (1, 'accepted', 1);
 INSERT INTO group_invite_request (requestId, groupId) VALUES (1, 1);
-INSERT INTO report (reason, status, postId, commentId) VALUES ('Spam', 'pending', 37, NULL);
+
+-- REPORTS (Posts and Comments)
+INSERT INTO report (reason, status, postId, commentId, createdAt) VALUES 
+    -- Pending Reports on Posts
+    ('Spam', 'pending', 37, NULL, NOW() - INTERVAL '1 day'),
+    ('Inappropriate content', 'pending', 42, NULL, NOW() - INTERVAL '2 days'),
+    ('Harassment', 'pending', 45, NULL, NOW() - INTERVAL '3 days'),
+    ('Misinformation', 'pending', 32, NULL, NOW() - INTERVAL '4 days'),
+    ('Spam', 'pending', 51, NULL, NOW() - INTERVAL '5 days'),
+    ('Hate speech', 'pending', 44, NULL, NOW() - INTERVAL '6 days'),
+    ('Violence', 'pending', 38, NULL, NOW() - INTERVAL '7 days'),
+    ('Inappropriate content', 'pending', 55, NULL, NOW() - INTERVAL '8 days'),
+    ('Spam', 'pending', 48, NULL, NOW() - INTERVAL '9 days'),
+    ('Copyright violation', 'pending', 56, NULL, NOW() - INTERVAL '10 days'),
+    
+    -- Accepted Reports on Posts
+    ('Spam', 'accepted', 52, NULL, NOW() - INTERVAL '11 days'),
+    ('Harassment', 'accepted', 46, NULL, NOW() - INTERVAL '12 days'),
+    ('Inappropriate content', 'accepted', 58, NULL, NOW() - INTERVAL '13 days'),
+    ('Hate speech', 'accepted', 39, NULL, NOW() - INTERVAL '14 days'),
+    ('Misinformation', 'accepted', 41, NULL, NOW() - INTERVAL '15 days'),
+    ('Spam', 'accepted', 54, NULL, NOW() - INTERVAL '16 days'),
+    ('Violence', 'accepted', 34, NULL, NOW() - INTERVAL '17 days'),
+    ('Inappropriate content', 'accepted', 50, NULL, NOW() - INTERVAL '18 days'),
+    
+    -- Rejected Reports on Posts
+    ('Spam', 'rejected', 1, NULL, NOW() - INTERVAL '19 days'),
+    ('Inappropriate content', 'rejected', 31, NULL, NOW() - INTERVAL '20 days'),
+    ('Harassment', 'rejected', 33, NULL, NOW() - INTERVAL '21 days'),
+    ('Spam', 'rejected', 35, NULL, NOW() - INTERVAL '22 days'),
+    ('Misinformation', 'rejected', 36, NULL, NOW() - INTERVAL '23 days'),
+    ('Hate speech', 'rejected', 40, NULL, NOW() - INTERVAL '24 days'),
+    ('Inappropriate content', 'rejected', 43, NULL, NOW() - INTERVAL '25 days'),
+    ('Spam', 'rejected', 47, NULL, NOW() - INTERVAL '26 days'),
+    ('Violence', 'rejected', 49, NULL, NOW() - INTERVAL '27 days'),
+    ('Copyright violation', 'rejected', 53, NULL, NOW() - INTERVAL '28 days'),
+    
+    -- Pending Reports on Comments
+    ('Spam', 'pending', NULL, 1, NOW() - INTERVAL '2 days'),
+    ('Harassment', 'pending', NULL, 2, NOW() - INTERVAL '3 days'),
+    ('Inappropriate content', 'pending', NULL, 3, NOW() - INTERVAL '5 days'),
+    ('Hate speech', 'pending', NULL, 4, NOW() - INTERVAL '7 days'),
+    ('Spam', 'pending', NULL, 5, NOW() - INTERVAL '9 days'),
+    
+    -- Accepted Reports on Comments
+    ('Harassment', 'accepted', NULL, 6, NOW() - INTERVAL '11 days'),
+    ('Inappropriate content', 'accepted', NULL, 1, NOW() - INTERVAL '13 days'),
+    ('Spam', 'accepted', NULL, 2, NOW() - INTERVAL '15 days'),
+    
+    -- Rejected Reports on Comments
+    ('Spam', 'rejected', NULL, 3, NOW() - INTERVAL '17 days'),
+    ('Harassment', 'rejected', NULL, 4, NOW() - INTERVAL '19 days'),
+    ('Inappropriate content', 'rejected', NULL, 5, NOW() - INTERVAL '21 days'),
+    
+    -- More varied reports
+    ('Self-harm content', 'pending', 59, NULL, NOW() - INTERVAL '1 hour'),
+    ('Scam or fraud', 'pending', 60, NULL, NOW() - INTERVAL '3 hours'),
+    ('Impersonation', 'pending', 11, NULL, NOW() - INTERVAL '5 hours'),
+    ('False information', 'pending', 15, NULL, NOW() - INTERVAL '7 hours'),
+    ('Bullying', 'pending', 19, NULL, NOW() - INTERVAL '9 hours'),
+    ('Adult content', 'accepted', 21, NULL, NOW() - INTERVAL '30 days'),
+    ('Graphic violence', 'accepted', 24, NULL, NOW() - INTERVAL '29 days'),
+    ('Terrorism', 'accepted', 27, NULL, NOW() - INTERVAL '28 days'),
+    ('Illegal activities', 'rejected', 29, NULL, NOW() - INTERVAL '27 days'),
+    ('Off-topic spam', 'rejected', 12, NULL, NOW() - INTERVAL '26 days');

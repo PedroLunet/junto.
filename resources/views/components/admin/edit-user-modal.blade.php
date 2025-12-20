@@ -13,46 +13,21 @@
 
         <!-- body -->
         <div class="flex-1 px-10">
-            <form id="editUserForm" class="space-y-8">
+            <form id="editUserForm" class="space-y-2">
                 @csrf
+                <input type="hidden" id="editUserId" name="id">
 
-                <!-- name -->
-                <div>
-                    <label for="editName" class="block text-2xl font-medium text-gray-700 mb-2">Name</label>
-                    <input type="text" id="editName" name="name" required
-                        class="w-full px-4 py-4 text-2xl border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#38157a] focus:border-transparent">
-                </div>
+                <x-ui.input label="Name" type="text" name="name" id="editName" placeholder="Enter user's name"
+                    required />
 
-                <!-- username -->
-                <div>
-                    <label for="editUsername" class="block text-2xl font-medium text-gray-700 mb-2">Username</label>
-                    <input type="text" id="editUsername" name="username" required
-                        class="w-full px-4 py-3 text-2xl border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#38157a] focus:border-transparent">
-                </div>
+                <x-ui.input label="Username" type="text" name="username" id="editUsername"
+                    placeholder="Enter username" required />
 
-                <!-- email -->
-                <div>
-                    <label for="editEmail" class="block text-2xl font-medium text-gray-700 mb-2">Email</label>
-                    <input type="email" id="editEmail" name="email" required
-                        class="w-full px-4 py-3 text-2xl border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#38157a] focus:border-transparent">
-                </div>
-
-                <!-- password -->
-                <div>
-                    <label for="addPassword" class="block text-2xl font-medium text-gray-700 mb-2">Password</label>
-                    <input type="password" id="addPassword" name="password" required
-                        class="w-full px-4 py-3 text-2xl border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#38157a] focus:border-transparent">
-                </div>
-
-                <!-- bio -->
-                <div>
-                    <label for="editBio" class="block text-2xl font-medium text-gray-700 mb-2">Bio (Optional)</label>
-                    <textarea id="editBio" name="bio" rows="3" placeholder="Tell others about this user..."
-                        class="w-full px-4 py-3 text-2xl border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#38157a] focus:border-transparent resize-none"></textarea>
-                </div>
+                <x-ui.input label="Bio (Optional)" type="textarea" name="bio" id="editBio"
+                    placeholder="Tell others about this user..." :rows="3" />
 
                 <!-- admin status -->
-                <div>
+                <div class="mb-6">
                     <label class="flex items-center space-x-4">
                         <input type="checkbox" id="editIsAdmin" name="is_admin"
                             class="w-6 h-6 rounded border-gray-300 text-[#38157a] focus:ring-[#38157a] shrink-0">
@@ -66,10 +41,10 @@
         <div class="flex justify-end gap-4 p-8">
             <x-ui.button variant="secondary" type="button" onclick="closeEditUserModal()" class="text-2xl">
                 Cancel
-                </x-button>
-                <x-ui.button variant="primary" type="submit" form="editUserForm" class="text-2xl px-10 py-4">
-                    Update User
-                    </x-button>
+            </x-ui.button>
+            <x-ui.button variant="primary" type="submit" form="editUserForm" class="text-2xl px-10 py-4">
+                Update User
+            </x-ui.button>
         </div>
     </div>
 </div>
@@ -119,7 +94,6 @@
             document.getElementById('editUserId').value = userData.id;
             document.getElementById('editName').value = userData.name;
             document.getElementById('editUsername').value = userData.username;
-            document.getElementById('editEmail').value = userData.email;
             document.getElementById('editBio').value = userData.bio || '';
             document.getElementById('editIsAdmin').checked = userData.isadmin;
 
@@ -154,7 +128,6 @@
             const data = {
                 name: formData.get('name'),
                 username: formData.get('username'),
-                email: formData.get('email'),
                 bio: formData.get('bio'),
                 is_admin: formData.get('is_admin') ? true : false
             };

@@ -16,7 +16,7 @@
                         @method('DELETE')
                         <x-ui.button type="submit" variant="secondary" class="px-4 py-2 text-2xl">
                             Cancel Request
-                            </x-button>
+                        </x-ui.button>
                     </form>
                 </div>
                 </x-user-card>

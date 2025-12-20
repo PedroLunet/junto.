@@ -1,12 +1,13 @@
-<div class="bg-white rounded-2xl shadow-md border border-gray-200 p-8 cursor-pointer"
-    onclick="openPostModal({{ json_encode($post) }})">
+<div class="bg-white rounded-2xl shadow-md border border-gray-200 p-8 {{ $isViewOnly ?? false ? '' : 'cursor-pointer' }}"
+    {{ $isViewOnly ?? false ? '' : 'onclick="openPostModal(' . json_encode($post) . ')"' }}>
 
     @if ($showAuthor ?? true)
         <!-- profile + name -->
         <div class="flex items-center justify-between mb-8">
             <div class="flex items-center gap-3">
                 <!-- user avatar -->
-                <div class="w-12 h-12 bg-gray-200 rounded-full"></div>
+                <img src="{{ asset('profile/default.png') }}" alt="User Avatar"
+                    class="w-12 h-12 rounded-full object-cover bg-gray-200">
 
                 <div class="flex flex-col">
                     <span class="font-semibold text-gray-900">
@@ -67,13 +68,20 @@
     <!-- interactions -->
     <div class="flex justify-end items-center gap-4 mt-4 text-gray-600">
         <!-- likes -->
-        <button onclick="event.stopPropagation(); toggleLike({{ $post->id }})"
-            class="bg-transparent border-0 shadow-none p-0 h-auto leading-none flex items-center gap-1 hover:text-red-500 hover:bg-transparent focus:bg-transparent focus:outline-none transition-colors {{ $post->is_liked ?? false ? 'text-red-500 focus:text-red-500' : 'text-gray-600 focus:text-gray-600' }}"
-            id="like-btn-{{ $post->id }}">
-            <i class="{{ $post->is_liked ?? false ? 'fas' : 'far' }} fa-heart text-2xl"
-                id="like-icon-{{ $post->id }}"></i>
-            <span class="text-2xl" id="like-count-{{ $post->id }}">{{ $post->likes_count ?? 0 }}</span>
-        </button>
+        @if ($isViewOnly ?? false)
+            <div class="flex items-center gap-1">
+                <i class="far fa-heart text-2xl"></i>
+                <span class="text-2xl">{{ $post->likes_count ?? 0 }}</span>
+            </div>
+        @else
+            <button onclick="event.stopPropagation(); toggleLike({{ $post->id }})"
+                class="bg-transparent border-0 shadow-none p-0 h-auto leading-none flex items-center gap-1 hover:text-red-500 hover:bg-transparent focus:bg-transparent focus:outline-none transition-colors {{ $post->is_liked ?? false ? 'text-red-500 focus:text-red-500' : 'text-gray-600 focus:text-gray-600' }}"
+                id="like-btn-{{ $post->id }}">
+                <i class="{{ $post->is_liked ?? false ? 'fas' : 'far' }} fa-heart text-2xl"
+                    id="like-icon-{{ $post->id }}"></i>
+                <span class="text-2xl" id="like-count-{{ $post->id }}">{{ $post->likes_count ?? 0 }}</span>
+            </button>
+        @endif
 
         <!-- comments -->
         <div class="flex items-center gap-1">
