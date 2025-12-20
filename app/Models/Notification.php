@@ -38,7 +38,6 @@ class Notification extends Model
         if ($this->commentNotification) return 'comment';
         if ($this->likeNotification) return 'like';
         if ($this->activityNotification) return 'activity';
-        if ($this->friendRequest) return 'friend_request';
         if ($this->groupInviteRequest) return 'group_invite';
         if ($this->groupJoinRequest) return 'group_join';
         return null;
@@ -57,11 +56,6 @@ class Notification extends Model
     public function activityNotification()
     {
         return $this->hasOne(ActivityNotification::class, 'notificationId', 'id');
-    }
-
-    public function friendRequest()
-    {
-        return $this->hasOne(FriendRequest::class, 'notificationId', 'id');
     }
 
     public function groupInviteRequest()

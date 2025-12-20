@@ -367,15 +367,17 @@ BEGIN
     SELECT userId INTO post_owner FROM post WHERE id = NEW.postId;
     SELECT name INTO liker_name FROM users WHERE id = NEW.userId;
     
-    INSERT INTO notification (message, receiverId)
-    VALUES (CONCAT('Your post received a like from ', liker_name), post_owner)
-    RETURNING id INTO notif_id;
-    
-    INSERT INTO activity_notification (notificationId, postId)
-    VALUES (notif_id, NEW.postId);
-    
-    INSERT INTO like_notification (notificationId, postId)
-    VALUES (notif_id, NEW.postId);
+    IF NEW.userId != post_owner THEN
+        INSERT INTO notification (message, receiverId)
+        VALUES (CONCAT('Your post received a like from ', liker_name), post_owner)
+        RETURNING id INTO notif_id;
+        
+        INSERT INTO activity_notification (notificationId, postId)
+        VALUES (notif_id, NEW.postId);
+        
+        INSERT INTO like_notification (notificationId, postId)
+        VALUES (notif_id, NEW.postId);
+    END IF;
     
     RETURN NEW;
 END;
@@ -399,12 +401,14 @@ BEGIN
     WHERE id = NEW.commentId;
     SELECT name INTO liker_name FROM users WHERE id = NEW.userId;
     
-    INSERT INTO notification (message, receiverId)
-    VALUES (CONCAT('Your comment received a like from ', liker_name), comment_owner)
-    RETURNING id INTO notif_id;
-    
-    INSERT INTO activity_notification (notificationId, postId)
-    VALUES (notif_id, post_ref);
+    IF NEW.userId != comment_owner THEN
+        INSERT INTO notification (message, receiverId)
+        VALUES (CONCAT('Your comment received a like from ', liker_name), comment_owner)
+        RETURNING id INTO notif_id;
+        
+        INSERT INTO activity_notification (notificationId, postId)
+        VALUES (notif_id, post_ref);
+    END IF;
     
     RETURN NEW;
 END;
@@ -425,15 +429,17 @@ BEGIN
     SELECT userId INTO post_owner FROM post WHERE id = NEW.postId;
     SELECT name INTO commenter_name FROM users WHERE id = NEW.userId;
     
-    INSERT INTO notification (message, receiverId)
-    VALUES (CONCAT('Your post received a comment from ', commenter_name), post_owner)
-    RETURNING id INTO notif_id;
-    
-    INSERT INTO activity_notification (notificationId, postId)
-    VALUES (notif_id, NEW.postId);
-    
-    INSERT INTO comment_notification (notificationId, commentId)
-    VALUES (notif_id, NEW.id);
+    IF NEW.userId != post_owner THEN
+        INSERT INTO notification (message, receiverId)
+        VALUES (CONCAT('Your post received a comment from ', commenter_name), post_owner)
+        RETURNING id INTO notif_id;
+        
+        INSERT INTO activity_notification (notificationId, postId)
+        VALUES (notif_id, NEW.postId);
+        
+        INSERT INTO comment_notification (notificationId, commentId)
+        VALUES (notif_id, NEW.id);
+    END IF;
     
     RETURN NEW;
 END;
