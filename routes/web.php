@@ -207,6 +207,10 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/groups/{group}/posts', [GroupController::class, 'storePost'])->name('groups.posts.store');
     Route::delete('/groups/{group}', [GroupController::class, 'destroy'])->name('groups.destroy');
     Route::post('/groups/{group}/reviews', [ReviewController::class, 'store'])->name('groups.reviews.store');
+    Route::post('/groups/{group}/invite', [GroupController::class, 'inviteMember'])->name('groups.invite');
+    Route::post('/groups/{group}/accept-invite/{requestId}', [GroupController::class, 'acceptInvite'])->name('groups.acceptInvite');
+    Route::post('/groups/{group}/approve-invite/{requestId}', [GroupController::class, 'approveInvite'])->name('groups.approveInvite');
+    Route::post('/groups/{group}/reject-invite/{requestId}', [GroupController::class, 'rejectInvite'])->name('groups.rejectInvite');
 });
 
 // Notifications
