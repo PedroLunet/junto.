@@ -6,22 +6,20 @@
     <div class="flex flex-col h-[calc(100vh-4rem)]">
         <!-- Fixed Header -->
         <div class="flex-none bg-[#F1EBF4]">
-            <div
-                class="mx-4 sm:mx-8 lg:mx-20 mt-6 sm:mt-8 lg:mt-10 mb-4 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 lg:gap-0">
-                <div class="w-full lg:w-auto">
-                    <h1 class="text-2xl sm:text-3xl font-bold text-gray-900">Reported Content</h1>
-                    <p class="text-gray-600 mt-1 sm:mt-2 text-sm sm:text-base">Review and manage reported posts and comments
-                    </p>
-                </div>
-                <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-6 w-full lg:w-auto">
-                    <!-- Sort By Dropdown -->
-                    <x-ui.sort-dropdown :options="[
-                        'created_date' => 'Created Date',
-                        'popularity' => 'Popularity',
-                    ]" defaultValue="created_date" />
-
-                    <!-- Filter Tabs -->
-                    <div class="overflow-x-auto">
+            <div class="mx-4 sm:mx-8 lg:mx-20 mt-6 sm:mt-8 lg:mt-10 mb-4 flex flex-col gap-4">
+                <!-- Title -->
+                <h1 class="text-2xl sm:text-3xl font-bold text-gray-900">Reported Content</h1>
+                <!-- Description -->
+                <p class="text-gray-600 mt-1 sm:mt-2 text-sm sm:text-base lg:mt-0">Review and manage reported posts and comments</p>
+                <!-- Controls: Sort and Filter Tabs -->
+                <div class="flex flex-col lg:flex-row w-full lg:w-auto gap-4 items-center justify-center">
+                    <div class="flex justify-start w-full">
+                        <x-ui.sort-dropdown :options="[
+                            'created_date' => 'Created Date',
+                            'popularity' => 'Popularity',
+                        ]" defaultValue="created_date" />
+                    </div>
+                    <div class="w-full flex justify-center lg:justify-end mt-2 lg:mt-0">
                         <x-ui.filter-tabs :filters="[
                             'all' => [
                                 'label' => 'All',
@@ -43,7 +41,7 @@
                                 'count' => $counts['rejected'],
                                 'onclick' => 'filterReports(\'rejected\')',
                             ],
-                        ]" activeFilter="all" />
+                        ]" activeFilter="all" :hideCountsOnMobile="true" />
                     </div>
                 </div>
             </div>
