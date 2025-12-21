@@ -13,16 +13,16 @@
     }
 @endphp
 
-@if($hasRelevantPosts)
+@if ($hasRelevantPosts)
     <div class="max-w-4xl mx-auto space-y-6">
-        @foreach($posts as $post)
+        @foreach ($posts as $post)
             @php
                 $isReview = isset($post->rating) && $post->rating;
             @endphp
-            
-            @if(!isset($postType) || $postType === 'all')
+
+            @if (!isset($postType) || $postType === 'all')
                 <!-- both types -->
-                @if($isReview)
+                @if ($isReview)
                     <x-posts.post-review :post="$post" :showAuthor="$showAuthor ?? true" />
                 @else
                     <x-posts.post-standard :post="$post" :showAuthor="$showAuthor ?? true" />
@@ -38,11 +38,11 @@
     </div>
 @else
     @php
-        $emptyMessage = match($postType ?? 'all') {
+        $emptyMessage = match ($postType ?? 'all') {
             'standard' => 'No standard posts yet',
             'review' => 'No reviews yet',
-            default => 'No posts yet'
+            default => 'No posts yet',
         };
     @endphp
-    <p class="text-gray-500 text-center py-8">{{ $emptyMessage }}</p>
+    <x-ui.empty-state :title="$emptyMessage" icon="fa-camera" description="Try changing your filters or create a new post!" />
 @endif

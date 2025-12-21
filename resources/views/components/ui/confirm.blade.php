@@ -10,12 +10,13 @@
 @endphp
 
 <div id="alertModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden items-center justify-center">
-    <div class="bg-white rounded-2xl shadow-xl max-w-xl w-full mx-4">
+    <div class="bg-white rounded-2xl shadow-xl w-full max-w-md sm:max-w-lg mx-2 sm:mx-4">
         <!-- header -->
-        <div class="flex items-center justify-between p-8">
-            <h2 id="alertTitle" class="text-4xl font-bold text-gray-900 mt-2">{{ $title }}</h2>
+        <div class="flex items-center justify-between p-4 sm:p-6 md:p-8">
+            <h2 id="alertTitle" class="text-lg sm:text-xl md:text-2xl font-bold text-gray-900 mt-1 sm:mt-2">
+                {{ $title }}</h2>
             <x-ui.button id="closeAlert" variant="ghost" class="text-gray-400 hover:text-gray-600 p-1">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12">
                     </path>
                 </svg>
@@ -23,11 +24,11 @@
         </div>
 
         <!-- body -->
-        <div class="px-8 pb-8">
-            <p id="alertMessage" class="text-2xl text-gray-700 mb-12">{{ $message }}</p>
+        <div class="px-4 sm:px-6 md:px-8 pb-6 sm:pb-8">
+            <p id="alertMessage" class="text-base sm:text-lg text-gray-700 mb-6 sm:mb-8">{{ $message }}</p>
 
             <!-- buttons -->
-            <div id="alertButtons" class="flex justify-end gap-6">
+            <div id="alertButtons" class="flex flex-row justify-end gap-3 sm:gap-6">
                 <x-ui.button id="alertCancel" variant="secondary" class="hidden">
                     Cancel
                 </x-ui.button>

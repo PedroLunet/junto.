@@ -15,33 +15,25 @@
                     <input type="hidden" name="type" value="music">
 
                     <!-- music search section -->
-                    <div class="mb-6">
-                        <label class="block font-medium text-gray-700 mb-2">What song did you listen to?</label>
-                        <div class="relative" id="musicSearchContainer">
-                            <input type="text" id="modalMusicSearch" placeholder="Search for a song..."
-                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#38157a] focus:border-transparent"
-                                autocomplete="off">
-                            <div id="modalMusicSearchResults"
-                                class="absolute top-full left-0 w-full bg-white border rounded-lg shadow-lg hidden max-h-60 overflow-y-auto z-20 mt-1">
-                            </div>
-                        </div>
+                    <x-ui.media-search type="music" searchId="modalMusicSearch"
+                        searchResultsId="modalMusicSearchResults" inputName="spotify_id"
+                        searchPlaceholder="Search for a song..." label="What song did you listen to?" />
 
-                        <!-- selected music preview -->
-                        <div id="modalSelectedMusic"
-                            class="hidden mt-4 p-4 border rounded-lg bg-gray-50 flex items-start gap-4 relative">
-                            <input type="hidden" name="spotify_id" id="selectedMusicId">
-
-                            <img id="selectedMusicCover" src="" alt="Cover"
-                                class="h-80 object-cover rounded shadow-sm">
-                            <div>
-                                <h4 id="selectedMusicTitle" class="text-4xl font-bold text-gray-800"></h4>
-                                <p id="selectedMusicArtist" class="text-gray-600 text-lg"></p>
-                                <p id="selectedMusicYear" class="text-gray-500"></p>
-                            </div>
-                            <button type="button" id="removeMusicBtn"
-                                class="absolute top-2 right-2 text-gray-400 hover:text-red-500">
-                                <i class="fa-solid fa-times"></i>
-                            </button>
+                    <!-- selected music preview -->
+                    <div id="modalSelectedMusic"
+                        class="hidden mt-4 p-4 border rounded-lg bg-gray-50 flex items-start gap-4 relative">
+                        <input type="hidden" name="spotify_id" id="selectedMusicId">
+                        <button type="button" id="removeMusicBtn"
+                            class="absolute top-2 right-2 text-gray-400 hover:text-red-500"
+                            title="Remove selected music">
+                            <i class="fa-solid fa-times"></i>
+                        </button>
+                        <img id="selectedMusicCover" src="" alt="Cover"
+                            class="h-80 object-cover rounded shadow-sm hidden">
+                        <div>
+                            <h4 id="selectedMusicTitle" class="text-4xl font-bold text-gray-800 hidden"></h4>
+                            <p id="selectedMusicArtist" class="text-gray-600 text-lg hidden"></p>
+                            <p id="selectedMusicYear" class="text-gray-500 hidden"></p>
                         </div>
                     </div>
 
@@ -197,10 +189,13 @@
             // Set hidden inputs
             selectedMusicId.value = id;
 
-            // Update preview
+            // Update preview and show info fields
             selectedMusicTitle.textContent = title;
+            selectedMusicTitle.classList.remove('hidden');
             selectedMusicArtist.textContent = artist;
+            selectedMusicArtist.classList.remove('hidden');
             selectedMusicYear.textContent = year || 'N/A';
+            selectedMusicYear.classList.remove('hidden');
 
             if (cover) {
                 selectedMusicCover.src = cover;

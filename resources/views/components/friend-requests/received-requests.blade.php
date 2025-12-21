@@ -9,23 +9,27 @@
                 $sender = $friendRequest->request->sender;
             @endphp
             <x-ui.user-card :user="$sender">
-                <div class="flex space-x-2 ml-4">
-                    <form action="{{ route('friend-requests.accept', $friendRequest->requestid) }}" method="POST"
-                        class="inline">
-                        @csrf
-                        <x-ui.button type="submit" variant="success" class="px-4 py-2 text-2xl">
-                            Accept
-                        </x-ui.button>
-                    </form>
-                    <form action="{{ route('friend-requests.reject', $friendRequest->requestid) }}" method="POST"
-                        class="inline">
-                        @csrf
-                        <x-ui.button type="submit" variant="danger" class="px-4 py-2 text-2xl">
-                            Reject
-                        </x-ui.button>
-                    </form>
-                </div>
-                </x-user-card>
+                <x-slot name="actions">
+                    <div class="flex flex-col sm:flex-row gap-2 ml-0 sm:ml-4 w-full sm:w-auto mt-2 sm:mt-0">
+                        <form action="{{ route('friend-requests.accept', $friendRequest->requestid) }}" method="POST"
+                            class="inline w-full sm:w-auto">
+                            @csrf
+                            <x-ui.button type="submit" variant="success"
+                                class="w-full sm:w-auto px-3 py-1.5 text-base sm:text-lg">
+                                Accept
+                            </x-ui.button>
+                        </form>
+                        <form action="{{ route('friend-requests.reject', $friendRequest->requestid) }}" method="POST"
+                            class="inline w-full sm:w-auto">
+                            @csrf
+                            <x-ui.button type="submit" variant="danger"
+                                class="w-full sm:w-auto px-3 py-1.5 text-base sm:text-lg">
+                                Reject
+                            </x-ui.button>
+                        </form>
+                    </div>
+                </x-slot>
+            </x-ui.user-card>
         @endforeach
     </div>
 @endif

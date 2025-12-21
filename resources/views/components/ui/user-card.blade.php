@@ -8,8 +8,9 @@
 
 <div
     class="bg-white shadow-sm rounded-3xl overflow-hidden hover:shadow-md transition-shadow border border-gray-100 w-full">
-    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4 p-3 sm:p-4">
-        <a href="{{ route('profile.show', $user->username) }}" class="flex items-start sm:items-center space-x-2 sm:space-x-3 flex-1 min-w-0">
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-0 p-3 sm:p-4">
+        <a href="{{ route('profile.show', $user->username) }}"
+            class="flex items-start sm:items-center space-x-2 sm:space-x-3 flex-1 min-w-0">
             @if ($user->profilepicture)
                 <img src="{{ asset('profile/' . $user->profilepicture) }}" alt="{{ $user->name }}"
                     class="w-12 sm:w-16 h-12 sm:h-16 rounded-full object-cover shrink-0"
@@ -27,21 +28,26 @@
             </div>
         </a>
 
-        @if ($showUnfriendButton && $unfriendRoute)
-            <form action="{{ $unfriendRoute }}" method="POST" onsubmit="return confirm('{{ $confirmMessage }}')"
-                class="w-full sm:w-auto sm:ml-3">
-                @csrf
-                @method('DELETE')
-                <x-ui.button type="submit" variant="danger" class="w-full sm:w-auto px-2 sm:px-3 py-1 text-xs sm:text-base">
-                    Unfriend
-                </x-ui.button>
-            </form>
-        @elseif ($showBefriendButton && $user->id !== auth()->id() && $friendButtonData)
-            <div class="w-full sm:w-auto sm:ml-3">
-                <x-profile.friend-button :user="$user" :friendButtonData="$friendButtonData" />
+        @if (isset($actions))
+            {{ $actions }}
+        @else
+            <div class="flex w-full sm:w-auto justify-end">
+                @if ($showUnfriendButton && $unfriendRoute)
+                    <form action="{{ $unfriendRoute }}" method="POST"
+                        onsubmit="return confirm('{{ $confirmMessage }}')" class="mt-2 sm:mt-0 sm:ml-3">
+                        @csrf
+                        @method('DELETE')
+                        <x-ui.button type="submit" variant="danger" class="px-3 py-1 text-sm sm:text-base">
+                            Unfriend
+                        </x-ui.button>
+                    </form>
+                @elseif ($showBefriendButton && $user->id !== auth()->id() && $friendButtonData)
+                    <div class="mt-2 sm:mt-0 sm:ml-3">
+                        <x-profile.friend-button :user="$user" :friendButtonData="$friendButtonData" />
+                    </div>
+                @endif
             </div>
         @endif
-
-        {{ $slot }}
     </div>
+    {{ $slot }}
 </div>

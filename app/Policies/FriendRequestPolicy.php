@@ -3,7 +3,7 @@
 namespace App\Policies;
 
 use App\Models\User\User;
-use App\Models\Post\FriendRequest;
+use App\Models\User\FriendRequest;
 use App\Models\User\Friendship;
 
 class FriendRequestPolicy
