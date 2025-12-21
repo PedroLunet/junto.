@@ -172,7 +172,7 @@
                     </div>
                     <p class="text-base text-gray-600 font-medium mb-1">${post.media_creator}</p>
                     <p class="text-sm text-gray-500 mb-4">${post.media_year}</p>
-                    <p class="text-black">${post.content}</p>
+                    ${post.content ? `<p class="text-black">${post.content}</p>` : ''}
                 </div>
             </div>
         `;
@@ -187,7 +187,9 @@
                 </div>
             `;
             }
-            html += `<p class="text-black whitespace-pre-wrap">${post.content}</p>`;
+            if (post.content) {
+                html += `<p class="text-black whitespace-pre-wrap">${post.content}</p>`;
+            }
         }
         if (post.created_at) {
             const date = new Date(post.created_at);
