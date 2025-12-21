@@ -92,4 +92,12 @@ class Comment extends Model
             WHERE id = ?
         ", [$content, $commentId]);
     }
+
+    public static function deleteComment($commentId)
+    {
+        \Illuminate\Support\Facades\DB::delete("
+            DELETE FROM lbaw2544.comment
+            WHERE id = ?
+        ", [$commentId]);
+    }
 }
