@@ -3,46 +3,46 @@
 @section('content')
     <div class="flex flex-col min-h-0 h-full -m-6">
         <!-- Fixed Header Section -->
-        <div class="shrink-0 px-32 pt-20 pb-10">
-            <div class="flex items-start justify-between gap-10 md:gap-12 lg:gap-16 mb-10 md:mb-12">
+        <div class="shrink-0 px-16 pt-10 pb-6">
+            <div class="flex items-start justify-between gap-6 md:gap-8 lg:gap-10 mb-6 md:mb-8">
                 <!-- profile header -->
-                <div class="flex items-center gap-8 md:gap-10">
+                <div class="flex items-center gap-4 md:gap-6">
                     <div
-                        class="w-54 h-54 md:w-60 md:h-60 lg:w-72 lg:h-72 rounded-full shrink-0 overflow-hidden relative bg-gray-300 border-2 border-gray-200 flex items-center justify-center">
+                        class="w-32 h-32 md:w-36 md:h-36 lg:w-40 lg:h-40 rounded-full shrink-0 overflow-hidden relative bg-gray-300 border-2 border-gray-200 flex items-center justify-center">
                         <img src="{{ $user->profilepicture ? asset('profile/' . $user->profilepicture) : asset('profile/default.png') }}"
                             alt="Profile Picture" class="absolute inset-0 w-full h-full object-cover"
                             onerror="this.onerror=null; this.src='{{ asset('profile/default.png') }}';">
                     </div>
 
                     <div class="flex-1">
-                        <h3 class="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-2">{{ $user->name }}</h3>
-                        <p class="text-2xl md:text-3xl lg:text-4xl text-gray-600 mb-4">@<span>{{ $user->username }}</span>
+                        <h3 class="text-2xl md:text-3xl font-bold text-gray-900 mb-1">{{ $user->name }}</h3>
+                        <p class="text-lg md:text-xl text-gray-600 mb-3">@<span>{{ $user->username }}</span>
                         </p>
 
                         <!-- friends and posts count -->
-                        <div class="flex gap-8 md:gap-10 mb-4 md:mb-6">
+                        <div class="flex gap-5 md:gap-6 mb-3 md:mb-4">
                             <div>
                                 <a href="{{ url('/friends-' . $user->username) }}" class="hover:underline">
-                                    <span class="font-bold text-gray-900 text-xl md:text-2xl">{{ $friendsCount }}</span>
-                                    <span class="text-gray-600 text-xl md:text-2xl">Friends</span>
+                                    <span class="font-bold text-gray-900 text-lg">{{ $friendsCount }}</span>
+                                    <span class="text-gray-600 text-lg">Friends</span>
                                 </a>
                             </div>
                             <div>
-                                <span class="font-bold text-gray-900 text-xl md:text-2xl">{{ $postsCount }}</span>
-                                <span class="text-gray-600 text-xl md:text-2xl">Posts</span>
+                                <span class="font-bold text-gray-900 text-lg">{{ $postsCount }}</span>
+                                <span class="text-gray-600 text-lg">Posts</span>
                             </div>
                         </div>
 
                         @auth
                             @if (Auth::id() === $user->id)
                                 <a href="{{ route('profile.edit') }}">
-                                    <x-ui.button variant="primary" class="text-xl md:text-2xl font-medium">
+                                    <x-ui.button variant="primary" class="text-base font-medium">
                                         Edit Profile
                                     </x-ui.button>
                                 </a>
                             @else
                                 <!-- Friend request button -->
-                                <div class="mt-4 md:mt-6 flex gap-4">
+                                <div class="mt-3 md:mt-4 flex gap-3">
                                     <x-profile.friend-button :user="$user" :friendButtonData="$friendButtonData" />
 
                                     @if(Auth::user()->isFriendsWith($user->id))
@@ -57,9 +57,9 @@
                             @endif
                         @else
                             <!-- Befriend button for guests -->
-                            <div class="mt-4 md:mt-6">
+                            <div class="mt-3 md:mt-4">
                                 <x-ui.button variant="primary" onclick="window.location.href='/login'"
-                                    class="text-xl md:text-2xl font-medium">
+                                    class="text-base font-medium">
                                     Befriend
                                 </x-ui.button>
                             </div>
@@ -68,7 +68,7 @@
                 </div>
 
                 <!-- 3 favorites -->
-                <div class="flex gap-8 md:gap-12 lg:gap-16 justify-end">
+                <div class="flex gap-4 md:gap-6 lg:gap-8 justify-end">
                     <x-profile.fav :user="$user" :media="$user->favoriteBookMedia" type="book" />
                     <x-profile.fav :user="$user" :media="$user->favoriteFilmMedia" type="movie" />
                     <x-profile.fav :user="$user" :media="$user->favoriteSongMedia" type="music" />
@@ -76,27 +76,27 @@
             </div>
 
             <!-- bio -->
-            <div class="mb-10 md:mb-12 px-20 py-2">
-                <h2 class="text-2xl md:text-3xl font-bold text-gray-900 mb-4">About Me</h2>
+            <div class="mb-6 md:mb-8 px-10 py-2">
+                <h2 class="text-xl md:text-2xl font-bold text-gray-900 mb-2">About Me</h2>
                 @if ($user->bio)
-                    <p class="text-xl md:text-2xl text-gray-700 leading-relaxed">{{ $user->bio }}</p>
+                    <p class="text-base md:text-lg text-gray-700 leading-relaxed">{{ $user->bio }}</p>
                 @else
                     @if (Auth::id() === $user->id)
-                        <p class="text-xl md:text-2xl text-gray-500 italic">Add a bio to tell others about yourself</p>
+                        <p class="text-base md:text-lg text-gray-500 italic">Add a bio to tell others about yourself</p>
                     @else
-                        <p class="text-xl md:text-2xl text-gray-500 italic">{{ $user->name }} hasn't added a bio yet</p>
+                        <p class="text-base md:text-lg text-gray-500 italic">{{ $user->name }} hasn't added a bio yet</p>
                     @endif
                 @endif
             </div>
         </div>
 
         <!-- Scrollable Content Section -->
-        <div class="flex-1 overflow-hidden px-32">
+        <div class="flex-1 overflow-hidden px-16">
             <!-- Only show private message if profile is actually private -->
             @if (!$canViewPosts)
-                <div class="flex flex-col items-center justify-center py-20">
+                <div class="flex flex-col items-center justify-center py-12">
                     <div class="text-center">
-                        <h2 class="text-4xl font-bold text-gray-900 mb-4">This account is private</h2>
+                        <h2 class="text-2xl font-bold text-gray-900 mb-3">This account is private</h2>
                         <p class="text-gray-600">
                             Befriend @<span>{{ $user->username }}</span> to see their posts and reviews
                         </p>

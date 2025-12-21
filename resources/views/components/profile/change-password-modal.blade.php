@@ -30,22 +30,22 @@
                             <x-ui.input label="New Password" type="password" name="new_password" id="new_password"
                                 placeholder="Enter your new password" required />
                             <div id="password_requirements" class="mt-3 space-y-1 text-sm">
-                                <p class="text-gray-600 font-medium mb-2 text-xl">
+                                <p class="text-gray-600 font-medium mb-2 text-sm">
                                     Please add all necessary characters to create safe password.
                                 </p>
-                                <p id="req_length" class="text-gray-500 text-xl">
+                                <p id="req_length" class="text-gray-500 text-sm">
                                     <span class="mr-2">•</span>Minimum characters: 12
                                 </p>
-                                <p id="req_uppercase" class="text-gray-500 text-xl">
+                                <p id="req_uppercase" class="text-gray-500 text-sm">
                                     <span class="mr-2">•</span>One uppercase character
                                 </p>
-                                <p id="req_lowercase" class="text-gray-500 text-xl">
+                                <p id="req_lowercase" class="text-gray-500 text-sm">
                                     <span class="mr-2">•</span>One lowercase character
                                 </p>
-                                <p id="req_special" class="text-gray-500 text-xl">
+                                <p id="req_special" class="text-gray-500 text-sm">
                                     <span class="mr-2">•</span>One special character
                                 </p>
-                                <p id="req_number" class="text-gray-500 text-xl">
+                                <p id="req_number" class="text-gray-500 text-sm">
                                     <span class="mr-2">•</span>One number
                                 </p>
                             </div>
@@ -64,7 +64,7 @@
                         </div>
 
                         <!-- Change Password Button -->
-                        <x-ui.button type="submit" variant="primary" class="w-full text-2xl">
+                        <x-ui.button type="submit" variant="primary" class="w-full text-base">
                             Change Password
                         </x-ui.button>
                     </form>
