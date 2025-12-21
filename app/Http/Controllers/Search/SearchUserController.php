@@ -53,6 +53,19 @@ class SearchUserController extends Controller
         }
 
         $friendService = app(FriendService::class);
+        
+        if ($request->expectsJson() || $request->header('Accept') === 'application/json') {
+            return response()->json([
+                'users' => $users->map(function ($user) {
+                    return [
+                        'id' => $user->id,
+                        'name' => $user->name,
+                        'username' => $user->username,
+                    ];
+                })
+            ]);
+        }
+        
         return view("pages.search.index", [
             'users' => $users,
             'friends' => $friends,
