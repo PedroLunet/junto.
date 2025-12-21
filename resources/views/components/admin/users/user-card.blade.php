@@ -1,6 +1,7 @@
 @props(['user'])
 
-<div class="user-card bg-white rounded-xl shadow-sm border border-gray-100 p-5">
+<div
+    {{ $attributes->merge(['class' => 'user-card bg-white rounded-xl shadow-sm border border-gray-100 p-4 md:p-6 w-full']) }}>
     <div class="flex justify-between items-start mb-6">
         <div>
             <h3 class="text-xl font-bold text-gray-900 leading-tight">{{ $user->name }}</h3>

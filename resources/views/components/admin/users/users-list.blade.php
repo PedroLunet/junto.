@@ -1,8 +1,6 @@
-<div id="user-cards-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+<div id="user-cards-list" class="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
     @forelse($users as $user)
-        <div class="user-card">
-            <x-admin.users.user-card :user="$user" />
-        </div>
+        <x-admin.users.user-card :user="$user" class="user-card w-full" />
     @empty
         <x-ui.empty-state icon="fa-users" title="No users found" description="There are no users to display."
             height="min-h-[200px]" class="col-span-full" />
@@ -18,9 +16,11 @@
         let sortOrder = 'asc';
         let sortBy = 'name';
 
+        // Store all user cards initially
+        const allCards = Array.from(cardContainer.querySelectorAll('.user-card'));
+
         function getCardData(card) {
             const name = card.querySelector('h3')?.textContent.trim() || '';
-            // try to get username/email from data attributes if present, else fallback to text
             const username = card.querySelector('[data-user-username]')?.getAttribute('data-user-username') ||
                 card.querySelectorAll('span.text-gray-900')[0]?.textContent.trim() || '';
             const email = card.querySelector('[data-user-email]')?.getAttribute('data-user-email') || card
@@ -35,11 +35,9 @@
             };
         }
 
-        function sortCards() {
-            // only sort visible cards
-            const cards = Array.from(cardContainer.querySelectorAll('.user-card'));
-            const visibleCards = cards.filter(card => card.style.display !== 'none');
-            const cardData = visibleCards.map(getCardData);
+        function sortAndRenderCards(filteredCards) {
+            // Sort filtered cards and re-append them
+            const cardData = filteredCards.map(getCardData);
             cardData.sort((a, b) => {
                 let valA, valB;
                 switch (sortBy) {
@@ -67,14 +65,31 @@
                 if (valA > valB) return sortOrder === 'asc' ? 1 : -1;
                 return 0;
             });
+            // Remove all cards from container
+            allCards.forEach(card => {
+                if (card.parentNode === cardContainer) {
+                    cardContainer.removeChild(card);
+                }
+            });
+            // Re-append sorted, filtered cards
             cardData.forEach(data => cardContainer.appendChild(data.card));
         }
 
         function filterCards() {
             const searchTerm = searchInput.value.toLowerCase().trim();
-            const cards = cardContainer.querySelectorAll('.user-card');
-            let visibleCount = 0;
-            cards.forEach(card => {
+            // Remove any no-results div
+            let noResultsDiv = document.getElementById('no-results-card-list');
+            if (noResultsDiv && noResultsDiv.parentNode === cardContainer) {
+                cardContainer.removeChild(noResultsDiv);
+            }
+            // Remove any empty state (if present)
+            const emptyState = cardContainer.querySelector(
+                'x-ui-empty-state, .empty-state, [data-empty-state]');
+            if (emptyState && emptyState.parentNode === cardContainer) {
+                cardContainer.removeChild(emptyState);
+            }
+            // Filter cards to match search
+            const filteredCards = allCards.filter(card => {
                 const name = card.querySelector('h3')?.textContent.toLowerCase() || '';
                 const username = card.querySelector('[data-user-username]')?.getAttribute(
                     'data-user-username')?.toLowerCase() || card.querySelectorAll(
@@ -82,41 +97,34 @@
                 const email = card.querySelector('[data-user-email]')?.getAttribute('data-user-email')
                     ?.toLowerCase() || card.querySelectorAll('span.text-gray-900')[1]?.textContent
                     .toLowerCase() || '';
-                if (
+                return (
                     name.includes(searchTerm) ||
                     username.includes(searchTerm) ||
                     email.includes(searchTerm)
-                ) {
-                    card.style.display = '';
-                    visibleCount++;
-                } else {
-                    card.style.display = 'none';
-                }
+                );
             });
-            sortCards();
-            const emptyState = cardContainer.querySelector(
-                'x-ui-empty-state, .empty-state, [data-empty-state]');
-            let noResultsDiv = document.getElementById('no-results-card-list');
-            if (visibleCount === 0 && searchTerm !== '') {
-                if (emptyState) emptyState.style.display = 'none';
-                if (!noResultsDiv) {
-                    noResultsDiv = document.createElement('div');
-                    noResultsDiv.id = 'no-results-card-list';
-                    noResultsDiv.className =
-                        'col-span-full py-10 text-center text-gray-500 bg-white rounded-xl border border-dashed border-gray-300 mt-4';
+            sortAndRenderCards(filteredCards);
+            if (filteredCards.length === 0) {
+                if (searchTerm !== '') {
+                    // Show no results div
+                    if (!noResultsDiv) {
+                        noResultsDiv = document.createElement('div');
+                        noResultsDiv.id = 'no-results-card-list';
+                        noResultsDiv.className =
+                            'col-span-full py-10 text-center text-gray-500 bg-white rounded-xl border border-dashed border-gray-300 mt-4';
+                    }
+                    noResultsDiv.textContent = `No users found matching "${searchTerm}"`;
                     cardContainer.appendChild(noResultsDiv);
+                } else {
+                    // Show empty state if it exists in the DOM (Blade renders it if there are no users)
+                    if (emptyState) cardContainer.appendChild(emptyState);
                 }
-                noResultsDiv.textContent = `No users found matching "${searchTerm}"`;
-                noResultsDiv.style.display = '';
-            } else {
-                if (noResultsDiv) noResultsDiv.style.display = 'none';
-                if (emptyState) emptyState.style.display = visibleCount === 0 ? '' : 'none';
             }
         }
 
         window.sortUserCards = function(sortKey) {
             sortBy = sortKey;
-            filterCards(); // filterCards will call sortCards internally
+            filterCards(); // filterCards will call sortAndRenderCards internally
         };
         window.toggleUserCardsOrder = function() {
             sortOrder = sortOrder === 'asc' ? 'desc' : 'asc';
@@ -128,7 +136,10 @@
             filterCards();
         };
 
-        filterCards(); // initial filter and sort
+        // Defer initial filter and sort until after rendering to avoid grid flicker
+        requestAnimationFrame(() => {
+            filterCards();
+        });
 
         searchInput.addEventListener('input', filterCards);
         searchInput.addEventListener('keydown', function(e) {
