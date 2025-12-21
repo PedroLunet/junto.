@@ -14,4 +14,14 @@ class GroupInviteRequest extends Model
         'requestid',
         'groupid',
     ];
+
+    public function group()
+    {
+        return $this->belongsTo(Group::class, 'groupid');
+    }
+
+    public function request()
+    {
+        return $this->belongsTo(Request::class, 'requestid', 'notificationid');
+    }
 }
