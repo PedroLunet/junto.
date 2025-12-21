@@ -1,15 +1,15 @@
 <!-- edit modal overlay -->
 <div id="edit-post-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50">
     <div class="flex items-center justify-center min-h-screen p-4">
-        <div class="bg-white rounded-2xl shadow-xl max-w-6xl w-full h-auto">
+        <div class="bg-white rounded-2xl shadow-xl max-w-2xl w-full h-auto">
 
             <!-- modal header -->
-            <div class="flex justify-between items-center p-8 border-b">
-                <h3 class="text-4xl font-semibold">Edit Post</h3>
+            <div class="flex justify-between items-center p-6 border-b">
+                <h3 class="text-2xl font-semibold">Edit Post</h3>
             </div>
 
             <!-- modal body -->
-            <div class="p-8">
+            <div class="p-6">
                 <form id="edit-post-form" method="POST">
                     @csrf
                     @method('PUT')
@@ -27,26 +27,21 @@
                         <div class="relative inline-block">
                             <img id="current-image" src="" alt="current image" class="max-w-xs h-auto rounded">
                             <x-ui.button type="button" id="remove-current-image"
-                                class="absolute top-2 right-2 bg-red-500 text-white p-1 hover:bg-red-600">X</x-ui.button>
+                                variant="danger" class="absolute top-2 right-2 !px-2 !py-1 text-xs">X</x-ui.button>
                         </div>
                     </div>
 
                     <div class="mb-4">
                         <input type="file" name="image" id="edit-image-input" accept="image/*" class="hidden">
-                        <x-ui.button type="button" id="edit-add-image-button"
-                            class="px-4 py-2 text-gray-800 border border-gray-300 rounded">Add Photo</x-ui.button>
+                        <x-ui.button type="button" id="edit-add-image-button" variant="secondary">Add Photo</x-ui.button>
                         <span id="edit-file-name" class="ml-3 text-sm text-gray-600"></span>
                     </div>
 
                     <div class="flex justify-between items-center">
-                        <x-ui.button type="button" id="delete-button"
-                            class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700">Delete</x-ui.button>
+                        <x-ui.button type="button" id="delete-button" variant="danger">Delete</x-ui.button>
                         <div class="flex space-x-3">
-                            <x-ui.button type="button" id="edit-cancel-button"
-                                class="px-4 py-2 text-gray-800 border border-gray-300 rounded">Cancel</x-ui.button>
-                            <x-ui.button type="submit"
-                                class="px-4 py-2 bg-[#38157a] text-white rounded hover:bg-[#7455ad]">Update
-                                Post</x-ui.button>
+                            <x-ui.button type="button" id="edit-cancel-button" variant="secondary">Cancel</x-ui.button>
+                            <x-ui.button type="submit">Update Post</x-ui.button>
                         </div>
                     </div>
                 </form>
