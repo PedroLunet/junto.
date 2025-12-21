@@ -3,12 +3,9 @@
         <!-- header -->
         <div class="flex items-center justify-between p-8">
             <h2 id="modalTitle" class="text-3xl font-bold text-gray-900">Add favorite</h2>
-            <x-ui.button id="closeModal" variant="ghost" class="text-gray-400 hover:text-gray-600 p-1">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12">
-                    </path>
-                </svg>
-            </x-ui.button>
+            <x-ui.icon-button id="closeModal" variant="gray" class="text-gray-400 hover:text-gray-600 p-1">
+                <i class="fa-solid fa-times text-xl"></i>
+            </x-ui.icon-button>
         </div>
 
         <!-- body -->
