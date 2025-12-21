@@ -119,7 +119,6 @@
                         'title' => 'Posts',
                         'content' => view('components.posts.post-list', [
                             'posts' => $standardPosts,
-                            'showAuthor' => false,
                             'postType' => 'standard',
                         ])->render(),
                     ],
@@ -127,7 +126,6 @@
                         'title' => 'Reviews',
                         'content' => view('components.posts.post-list', [
                             'posts' => $reviewPosts,
-                            'showAuthor' => false,
                             'postType' => 'review',
                         ])->render(),
                     ],
