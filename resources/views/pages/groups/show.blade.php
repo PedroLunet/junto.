@@ -120,7 +120,7 @@
 
             <div class="lg:col-span-4 order-1 lg:order-2 space-y-8">
 
-                @if (auth()->check() && $group->members->contains(auth()->user()))
+                @if ($isOwner)
                     <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 mb-6">
                         <div class="flex items-center gap-2 mb-4">
                             <div class="w-1 h-6 bg-[#820263] rounded-full"></div>
@@ -201,21 +201,9 @@
                             })
                             ->get();
 
-                        $waitingApprovalInvite = \App\Models\Request::where('status', 'waiting_approval')
-                            ->whereHas('groupInviteRequest', function ($q) use ($group) {
-                                $q->where('groupid', $group->id);
-                            })
-                            ->whereHas('notification', function ($q) {
-                                $q->where('receiverid', auth()->id());
-                            })
-                            ->first();
-
-                        $waitingApprovalInvites = [];
+                        $sentInvites = [];
                         if ($isOwner) {
-                            $waitingApprovalInvites = \App\Models\Request::whereIn('status', [
-                                'pending',
-                                'waiting_approval',
-                            ])
+                            $sentInvites = \App\Models\Request::where('status', 'pending')
                                 ->whereHas('groupInviteRequest', function ($q) use ($group) {
                                     $q->where('groupid', $group->id);
                                 })
@@ -253,27 +241,18 @@
                         </div>
                     @endif
 
-                    @if ($waitingApprovalInvite)
-                        <div
-                            class="bg-blue-50 border border-blue-100 text-blue-800 p-4 mb-6 rounded-xl flex items-start gap-3">
-                            <i class="fas fa-info-circle mt-1 text-blue-500"></i>
-                            <span class="text-sm font-medium">Your request to join <strong>{{ $group->name }}</strong> is
-                                pending the owner's final approval.</span>
-                        </div>
-                    @endif
-
-                    @if ($isOwner && count($waitingApprovalInvites))
+                    @if ($isOwner && count($sentInvites))
                         <div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden mb-6">
                             <div class="bg-gray-50 px-6 py-4 border-b border-gray-100 flex items-center justify-between">
                                 <h3 class="font-bold text-gray-800 text-xs uppercase tracking-widest">
-                                    Invite Approvals
+                                    Pending Invites
                                 </h3>
                                 <span class="bg-[#820263] text-white text-[10px] px-2 py-0.5 rounded-full font-bold">
-                                    {{ count($waitingApprovalInvites) }}
+                                    {{ count($sentInvites) }}
                                 </span>
                             </div>
                             <div class="p-4 space-y-3">
-                                @foreach ($waitingApprovalInvites as $invite)
+                                @foreach ($sentInvites as $invite)
                                     @php $user = \App\Models\User\User::find($invite->notification->receiverid); @endphp
                                     <div
                                         class="flex items-center justify-between bg-gray-50 rounded-xl p-3 border border-gray-100">
@@ -286,34 +265,18 @@
                                                 <span
                                                     class="block font-bold text-xs text-gray-900 truncate">{{ $user->name ?? 'User' }}</span>
                                                 <span class="block text-[9px] text-gray-500 font-medium italic">
-                                                    @if ($invite->status === 'waiting_approval')
-                                                        Accepted, needs approval
-                                                    @else
-                                                        Sent, waiting for user
-                                                    @endif
+                                                    Sent, waiting for user
                                                 </span>
                                             </div>
                                         </div>
                                         <div class="flex gap-1 shrink-0">
-                                            @if ($invite->status === 'waiting_approval')
-                                                <form
-                                                    action="{{ route('groups.approveInvite', [$group, $invite->notificationid]) }}"
-                                                    method="POST">
-                                                    @csrf
-                                                    <button type="submit"
-                                                        class="w-8 h-8 flex items-center justify-center text-emerald-600 hover:bg-emerald-50 rounded-lg transition-colors"
-                                                        title="Approve">
-                                                        <i class="fas fa-check-circle"></i>
-                                                    </button>
-                                                </form>
-                                            @endif
                                             <form
                                                 action="{{ route('groups.rejectInvite', [$group, $invite->notificationid]) }}"
                                                 method="POST">
                                                 @csrf
                                                 <button type="submit"
                                                     class="w-8 h-8 flex items-center justify-center text-rose-600 hover:bg-rose-50 rounded-lg transition-colors"
-                                                    title="Reject">
+                                                    title="Cancel Invite">
                                                     <i class="fas fa-times-circle"></i>
                                                 </button>
                                             </form>
