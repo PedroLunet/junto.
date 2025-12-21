@@ -97,7 +97,7 @@ class GroupController extends Controller
     {
         $this->authorize('update', $group);
         $invite = \App\Models\Request::where('notificationid', $requestId)
-            ->where('status', 'pending')
+            ->whereIn('status', ['pending', 'waiting_approval'])
             ->whereHas('groupInviteRequest', function ($q) use ($group) {
                 $q->where('groupid', $group->id);
             })
