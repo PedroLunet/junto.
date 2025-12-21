@@ -486,4 +486,47 @@
                 alert('Failed to update comment. Please try again.');
             });
     }
+
+    window.deleteComment = function(commentId) {
+        if (!confirm('Are you sure you want to delete this comment? This action cannot be undone.')) {
+            return;
+        }
+
+        const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+        fetch(`/comments/${commentId}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': csrfToken
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    const commentDiv = document.querySelector(`[data-comment-id="${commentId}"]`);
+                    if (commentDiv) {
+                        commentDiv.remove();
+                    }
+
+                    const modalCountElem = document.getElementById('commentsCount');
+                    if (modalCountElem) {
+                        modalCountElem.textContent = Math.max(0, parseInt(modalCountElem.textContent) - 1);
+                    }
+
+                    const timelineCommentCount = document.querySelector(
+                        `#post-${currentPostId} .comments-count`);
+                    if (timelineCommentCount) {
+                        timelineCommentCount.textContent = Math.max(0, parseInt(timelineCommentCount
+                            .textContent) - 1);
+                    }
+                } else {
+                    alert(data.message || 'Failed to delete comment. Please try again.');
+                }
+            })
+            .catch(error => {
+                console.error('Error deleting comment:', error);
+                alert('Failed to delete comment. Please try again.');
+            });
+    }
 </script>

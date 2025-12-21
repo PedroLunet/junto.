@@ -15,6 +15,10 @@
                             class="edit-btn text-gray-500 hover:text-blue-600 transition-colors" title="Edit comment">
                             <i class="fas fa-edit text-sm"></i>
                         </button>
+                        <button onclick="deleteComment({{ $comment->id }})"
+                            class="delete-btn text-gray-500 hover:text-red-600 transition-colors" title="Delete comment">
+                            <i class="fas fa-trash text-sm"></i>
+                        </button>
                     @endif
                 @endauth
             </div>
