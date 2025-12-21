@@ -13,6 +13,7 @@
             <!-- Remove button  -->
             @if (Auth::id() === $user->id)
                 <x-ui.icon-button onclick="removeFavorite('{{ $type }}')" variant="red"
+                    title="Remove your favorite {{ ucfirst($type) }}"
                     class="bg-white absolute -top-3 -right-3 w-7 h-7 flex items-center justify-center z-10 px-0 py-0">
                     <i class="fa fa-trash w-4 h-4"></i>
                 </x-ui.icon-button>
@@ -30,6 +31,7 @@
         @else
             <!-- Add button (only for own profile) -->
             <x-ui.button onclick="openAddFavModal('{{ $type }}')" variant="ghost"
+                title="Add your favorite {{ ucfirst($type) }}"
                 class="w-full h-full text-gray-600 text-3xl md:text-4xl font-light hover:text-gray-800 hover:bg-gray-400 cursor-pointer px-0 py-0">
                 +
             </x-ui.button>
