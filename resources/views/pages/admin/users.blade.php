@@ -34,7 +34,14 @@
         <!-- Scrollable Content -->
         <div class="flex-1 overflow-y-auto">
             <div class="mx-20 my-6">
-                <x-admin.users.users-table :users="$users" />
+                <!-- desktop: table -->
+                <div class="hidden md:block">
+                    <x-admin.users.users-table :users="$users" />
+                </div>
+                <!-- mobile: list of cards -->
+                <div class="block md:hidden">
+                    <x-admin.users.users-list :users="$users" />
+                </div>
             </div>
         </div>
     </div>
