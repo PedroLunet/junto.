@@ -74,7 +74,8 @@
                     </div>
 
                     <!-- Add Comment Input -->
-                    <div id="addCommentSection" class="h-20 px-6 py-4 border-t border-gray-200 bg-white shrink-0 flex items-center">
+                    <div id="addCommentSection"
+                        class="h-20 px-6 py-4 border-t border-gray-200 bg-white shrink-0 flex items-center">
                         <div class="flex gap-3 items-center w-full">
                             @php
                                 $currentUserProfilePicture =
@@ -404,6 +405,85 @@
             .catch(error => {
                 console.error('Error submitting report:', error);
                 alert('Failed to submit report. Please try again.');
+            });
+    }
+
+    window.toggleEditComment = function(commentId) {
+        const commentDiv = document.querySelector(`[data-comment-id="${commentId}"]`);
+        if (!commentDiv) return;
+
+        const textElement = commentDiv.querySelector('.comment-text');
+        const editForm = commentDiv.querySelector('.comment-edit-form');
+        const editBtn = commentDiv.querySelector('.edit-btn');
+
+        textElement.classList.add('hidden');
+        editForm.classList.remove('hidden');
+        editBtn.classList.add('hidden');
+    }
+
+    window.cancelCommentEdit = function(commentId) {
+        const commentDiv = document.querySelector(`[data-comment-id="${commentId}"]`);
+        if (!commentDiv) return;
+
+        const textElement = commentDiv.querySelector('.comment-text');
+        const editForm = commentDiv.querySelector('.comment-edit-form');
+        const editBtn = commentDiv.querySelector('.edit-btn');
+        const textarea = commentDiv.querySelector('.edit-textarea');
+
+        textarea.value = textElement.textContent;
+
+        textElement.classList.remove('hidden');
+        editForm.classList.add('hidden');
+        editBtn.classList.remove('hidden');
+    }
+
+    window.saveCommentEdit = function(commentId) {
+        const commentDiv = document.querySelector(`[data-comment-id="${commentId}"]`);
+        if (!commentDiv) return;
+
+        const textarea = commentDiv.querySelector('.edit-textarea');
+        const newContent = textarea.value.trim();
+
+        if (!newContent) {
+            alert('Comment cannot be empty.');
+            return;
+        }
+
+        if (newContent.length > 1000) {
+            alert('Comment must be 1000 characters or less.');
+            return;
+        }
+
+        const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+        fetch(`/comments/${commentId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': csrfToken
+                },
+                body: JSON.stringify({
+                    content: newContent
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    const textElement = commentDiv.querySelector('.comment-text');
+                    const editForm = commentDiv.querySelector('.comment-edit-form');
+                    const editBtn = commentDiv.querySelector('.edit-btn');
+
+                    textElement.textContent = newContent;
+                    textElement.classList.remove('hidden');
+                    editForm.classList.add('hidden');
+                    editBtn.classList.remove('hidden');
+                } else {
+                    alert(data.message || 'Failed to update comment. Please try again.');
+                }
+            })
+            .catch(error => {
+                console.error('Error updating comment:', error);
+                alert('Failed to update comment. Please try again.');
             });
     }
 </script>
