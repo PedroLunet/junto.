@@ -15,7 +15,7 @@ class GroupController extends Controller
 {
     public function inviteMember(Request $request, Group $group)
     {
-        $this->authorize('view', $group);
+        $this->authorize('update', $group);
         $userId = $request->input('user_id');
         if ($group->members()->where('users.id', $userId)->exists()) {
             return back()->with('error', 'User is already a member.');
@@ -56,22 +56,10 @@ class GroupController extends Controller
             return back()->with('error', 'Invite not found or already handled.');
         }
         $userId = auth()->id();
-        if ($group->isprivate) {
-            $owner = $group->owner()->first();
-            if ($owner) {
-                $invite->update(['status' => 'waiting_approval']);
-                \App\Models\Notification::create([
-                    'receiverid' => $owner->id,
-                    'message' => auth()->user()->name.' accepted an invite to join '.$group->name.'. Please approve.',
-                ]);
-                return back()->with('success', 'Invite accepted. Waiting for owner approval.');
-            }
-        } else {
-            $group->members()->attach($userId, ['isowner' => false]);
-            $invite->update(['status' => 'accepted']);
-            return back()->with('success', 'You have joined the group!');
-        }
-        return back()->with('error', 'Could not process invite.');
+                $group->members()->attach($userId, ['isowner' => false]);
+        $invite->update(['status' => 'accepted']);
+        
+        return back()->with('success', 'You have joined the group!');
     }
 
     public function approveInvite(Group $group, $requestId)

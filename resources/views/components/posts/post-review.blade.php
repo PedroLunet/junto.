@@ -10,9 +10,16 @@
                     class="w-10 h-10 rounded-full object-cover bg-gray-200">
 
                 <div class="flex flex-col">
-                    <span class="font-semibold text-gray-900 text-sm">
-                        {{ $post->author_name ?? ($post->user->name ?? 'Unknown User') }}
-                    </span>
+                    <div class="flex items-center gap-2">
+                        <span class="font-semibold text-gray-900 text-sm">
+                            {{ $post->author_name ?? ($post->user->name ?? 'Unknown User') }}
+                        </span>
+                        @if (!empty($post->group_name))
+                            <span class="text-gray-600 text-xs">
+                                in <span class="font-medium text-[#38157a]">{{ $post->group_name }}</span>
+                            </span>
+                        @endif
+                    </div>
                     <span class="text-gray-500 text-xs">
                         @<span>{{ $post->username ?? ($post->user->username ?? 'unknown') }}</span>
                     </span>
