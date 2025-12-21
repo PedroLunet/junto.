@@ -5,7 +5,7 @@
 @section('content')
     <div class="flex flex-col w-full">
         <!-- Hero Section -->
-        <div class="w-full bg-gray-50 py-8 md:py-10 lg:py-12">
+        <div class="w-full py-8 md:py-10 lg:py-12">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 md:px-8 lg:px-12">
                 <h1 class="text-3xl sm:text-4xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-3 md:mb-4">About junto.
                 </h1>
@@ -16,7 +16,7 @@
         </div>
 
         <!-- Main Content -->
-        <div class="w-full bg-white">
+        <div class="w-full">
             <div
                 class="max-w-7xl mx-auto px-4 sm:px-6 md:px-8 lg:px-12 py-8 md:py-10 lg:py-12 space-y-8 md:space-y-10 lg:space-y-12">
                 <!-- Mission Section -->
