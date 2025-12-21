@@ -1,7 +1,7 @@
 @php
     $sizeClasses = match ($type) {
-        'music' => 'w-48 h-56 md:w-56 md:h-56 lg:w-72 lg:h-72',
-        default => 'w-36 h-54 md:w-40 md:h-60 lg:w-48 lg:h-72',
+        'music' => 'w-36 h-36 md:w-36 md:h-36 lg:w-40 lg:h-40',
+        default => 'w-24 h-36 md:w-28 md:h-42 lg:w-32 lg:h-48',
     };
 @endphp
 
@@ -10,10 +10,10 @@
         @if ($media) title="{{ $media->title }}{{ $media->creator ? ' - ' . $media->creator : '' }}" @endif>
 
         @if ($media)
-            <!-- Remove button (only for own profile) -->
+            <!-- Remove button  -->
             @if (Auth::id() === $user->id)
                 <x-ui.button onclick="removeFavorite('{{ $type }}')" variant="danger"
-                    class="absolute -top-5 -right-5 w-10 h-10 rounded-full flex items-center justify-center text-3xl font-bold z-10 px-0 py-0">
+                    class="absolute -top-3 -right-3 w-7 h-7 rounded-full flex items-center justify-center text-xl font-bold z-10 px-0 py-0">
                     -
                 </x-ui.button>
             @endif
@@ -30,7 +30,7 @@
         @else
             <!-- Add button (only for own profile) -->
             <x-ui.button onclick="openAddFavModal('{{ $type }}')" variant="ghost"
-                class="w-full h-full text-gray-600 text-5xl md:text-6xl lg:text-7xl font-light hover:text-gray-800 hover:bg-gray-400 cursor-pointer px-0 py-0">
+                class="w-full h-full text-gray-600 text-3xl md:text-4xl font-light hover:text-gray-800 hover:bg-gray-400 cursor-pointer px-0 py-0">
                 +
             </x-ui.button>
         @endif

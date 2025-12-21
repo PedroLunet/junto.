@@ -1,10 +1,10 @@
 @extends('layouts.app')
 
 @section('content')
-    <main class="w-full max-w-4xl mx-auto flex flex-col items-center gap-8 px-4 py-8">
+    <main class="w-full max-w-4xl mx-auto flex flex-col items-center gap-6 px-4 py-6">
         <div>
-            <h1 class="text-4xl font-black text-center">Search for a user</h1>
-            <p class="text-center">Start by typing your friend's name!</p>
+            <h1 class="text-2xl font-black text-center">Search for a user</h1>
+            <p class="text-center text-base">Start by typing your friend's name!</p>
         </div>
 
         <form method="get" class="flex flex-col gap-6 w-full">
@@ -24,7 +24,7 @@
             </div>
         </form>
 
-        <div class="w-full flex flex-col gap-4">
+        <div class="w-full flex flex-col gap-3">
             @forelse ($users as $user)
                 @php
                     $isLoggedIn = Auth::check();

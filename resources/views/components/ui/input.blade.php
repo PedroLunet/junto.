@@ -21,17 +21,17 @@
     $emailPattern = $isEmail ? '[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}' : null;
 @endphp
 
-<div class="mb-6">
+<div class="mb-4">
     @if ($label)
-        <div class="flex items-center gap-2 mb-2">
-            <label for="{{ $inputId }}" class="block text-2xl font-medium text-gray-700">
+        <div class="flex items-center gap-2 mb-1">
+            <label for="{{ $inputId }}" class="block font-medium text-gray-700">
                 {{ $label }}
             </label>
             @if ($help)
                 <div class="group relative flex items-center ml-1">
-                    <i class="fas fa-question-circle text-gray-400 hover:text-[#820263] cursor-help text-xl transition-colors"></i>
+                    <i class="fas fa-question-circle text-gray-400 hover:text-[#820263] cursor-help text-sm transition-colors"></i>
                     <div
-                        class="absolute bottom-full left-1/2 -translate-x-1/2 mb-3 invisible group-hover:visible opacity-0 group-hover:opacity-100 transition-all duration-200 w-64 p-3 bg-[#291720] text-white text-sm font-medium rounded-xl shadow-xl z-20 text-center pointer-events-none transform translate-y-1 group-hover:translate-y-0">
+                        class="absolute bottom-full left-1/2 -translate-x-1/2 mb-3 invisible group-hover:visible opacity-0 group-hover:opacity-100 transition-all duration-200 w-64 p-3 bg-[#291720] text-white text-xs font-medium rounded-xl shadow-xl z-20 text-center pointer-events-none transform translate-y-1 group-hover:translate-y-0">
                         {{ $help }}
                         <div
                             class="absolute top-full left-1/2 -translate-x-1/2 border-8 border-transparent border-t-[#291720]">
@@ -46,13 +46,13 @@
         @if ($isTextarea)
             <textarea id="{{ $inputId }}" name="{{ $name }}" rows="{{ $rows }}" placeholder="{{ $placeholder }}"
                 {{ $required ? 'required' : '' }} {{ $disabled ? 'disabled' : '' }}
-                {{ $attributes->merge(['class' => 'w-full px-4 py-3 text-2xl text-gray-800 border rounded-lg outline-none transition-all duration-200 placeholder:text-gray-400 focus:border-[#820273] focus:ring-4 focus:ring-purple-100 resize-none ' . ($disabled ? 'bg-gray-400 cursor-not-allowed' : '') . ' ' . ($error ? 'border-red-500 pr-12 focus:border-red-500 focus:ring-red-100' : 'border-gray-300')]) }}>{{ old($name, $value) }}</textarea>
+                {{ $attributes->merge(['class' => 'w-full px-3 py-2 text-sm text-gray-800 border rounded-lg outline-none transition-all duration-200 placeholder:text-gray-400 focus:border-[#820273] focus:ring-4 focus:ring-purple-100 resize-none ' . ($disabled ? 'bg-gray-400 cursor-not-allowed' : '') . ' ' . ($error ? 'border-red-500 pr-12 focus:border-red-500 focus:ring-red-100' : 'border-gray-300')]) }}>{{ old($name, $value) }}</textarea>
         @else
             <input type="{{ $type }}" id="{{ $inputId }}" name="{{ $name }}"
                 value="{{ old($name, $value) }}" placeholder="{{ $placeholder }}" {{ $required ? 'required' : '' }}
                 {{ $disabled ? 'disabled' : '' }}
                 @if ($isEmail) pattern="{{ $emailPattern }}" title="Please enter a valid email address" @endif
-                {{ $attributes->merge(['class' => 'w-full px-4 py-3 text-2xl text-gray-800 border rounded-lg outline-none transition-all duration-200 placeholder:text-gray-400 focus:border-[#820273] focus:ring-4 focus:ring-purple-100 ' . ($disabled ? 'bg-gray-400 cursor-not-allowed' : '') . ' ' . ($error ? 'border-red-500 pr-12 focus:border-red-500 focus:ring-red-100' : 'border-gray-300')]) }} />
+                {{ $attributes->merge(['class' => 'w-full px-3 py-2 text-sm text-gray-800 border rounded-lg outline-none transition-all duration-200 placeholder:text-gray-400 focus:border-[#820273] focus:ring-4 focus:ring-purple-100 ' . ($disabled ? 'bg-gray-400 cursor-not-allowed' : '') . ' ' . ($error ? 'border-red-500 pr-12 focus:border-red-500 focus:ring-red-100' : 'border-gray-300')]) }} />
         @endif
 
         @if ($type === 'password' && !$disabled)
@@ -78,13 +78,13 @@
         @if ($error)
             <span
                 class="absolute right-4 {{ $isTextarea ? 'top-4' : '' }} flex items-center justify-center pointer-events-none">
-                <i class="fas fa-exclamation-circle text-red-500 text-3xl"></i>
+                <i class="fas fa-exclamation-circle text-red-500 text-lg"></i>
             </span>
         @endif
     </div>
 
     @if ($error)
-        <p class="mt-2 text-xl text-red-500 font-medium">{{ $error }}</p>
+        <p class="mt-1 text-xs text-red-500 font-medium">{{ $error }}</p>
     @endif
 </div>
 

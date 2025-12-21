@@ -1,20 +1,22 @@
 <x-ui.collapsible-card :id="$report->id" toggleFunction="toggleReport" dataAttribute="report-id">
     <x-slot name="header">
-        <div class="flex-1">
-            <span class="text-base text-gray-500 mb-2 block">
-                {{ \Carbon\Carbon::parse($report->createdat)->diffForHumans() }}
-            </span>
+        <div class="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 flex-1">
+            <div class="flex-1">
+                <span class="text-base text-gray-500 mb-2 block">
+                    {{ \Carbon\Carbon::parse($report->createdat)->diffForHumans() }}
+                </span>
 
-            <div class="flex gap-2 items-center">
-                <h3 class="text-xl font-semibold text-gray-900 whitespace-nowrap">Reason:</h3>
-                <p class="text-xl text-gray-700">{{ $report->reason }}</p>
+                <div class="flex gap-2 items-center">
+                    <h3 class="text-xl font-semibold text-gray-900 whitespace-nowrap">Reason:</h3>
+                    <p class="text-xl text-gray-700">{{ $report->reason }}</p>
+                </div>
             </div>
-        </div>
 
-        <div class="flex items-center">
-            <x-ui.badge :variant="$report->status === 'accepted' ? 'online' : ($report->status === 'rejected' ? 'offline' : 'pending')" size="xs" :icon="$report->status === 'accepted' ? 'fas fa-check' : ($report->status === 'rejected' ? 'fas fa-times' : 'fas fa-clock')">
-                {{ ucfirst($report->status) }}
-            </x-ui.badge>
+            <div class="flex items-center">
+                <x-ui.badge :variant="$report->status === 'accepted' ? 'online' : ($report->status === 'rejected' ? 'offline' : 'pending')" size="xs" :icon="$report->status === 'accepted' ? 'fas fa-check' : ($report->status === 'rejected' ? 'fas fa-times' : 'fas fa-clock')">
+                    {{ ucfirst($report->status) }}
+                </x-ui.badge>
+            </div>
         </div>
     </x-slot>
 
