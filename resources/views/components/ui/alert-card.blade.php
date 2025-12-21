@@ -18,7 +18,8 @@
 @endphp
 
 <div id="{{ $alertId }}"
-    class="fixed top-6 right-6 z-50 flex items-start gap-3 px-4 py-4 rounded-2xl border {{ $bg }} shadow-sm mb-4 min-w-[280px] max-w-xs">
+    class="fixed top-6 right-6 z-50 flex items-start gap-3 px-4 py-4 rounded-2xl border {{ $bg }} shadow-sm mb-4 min-w-[280px] max-w-xs
+        transition-all duration-300 ease-in-out opacity-0 translate-x-full">
     <div class="shrink-0 flex items-center justify-center w-8 h-8 rounded-full {{ $iconBg }}">
         {!! str_replace(['w-6 h-6'], ['w-5 h-5'], $icon) !!}
     </div>
@@ -38,8 +39,18 @@
     (function() {
         var alert = document.getElementById(@json($alertId));
         if (alert) {
+            // Show with Tailwind classes
             setTimeout(function() {
-                alert.style.display = 'none';
+                alert.classList.remove('opacity-0', 'translate-x-full');
+                alert.classList.add('opacity-100', 'translate-x-0');
+            }, 10);
+            // Hide with Tailwind classes after 5s
+            setTimeout(function() {
+                alert.classList.remove('opacity-100', 'translate-x-0');
+                alert.classList.add('opacity-0', 'translate-x-full');
+                setTimeout(function() {
+                    alert.style.display = 'none';
+                }, 300);
             }, 5000);
         }
     })();
