@@ -61,6 +61,7 @@ CREATE TABLE users (
     isPrivate BOOLEAN DEFAULT FALSE,
     isAdmin BOOLEAN DEFAULT FALSE,
     isBlocked BOOLEAN DEFAULT FALSE,
+    isDeleted BOOLEAN DEFAULT FALSE,
     favoriteFilm INTEGER REFERENCES media(id),
     favoriteBook INTEGER REFERENCES media(id),
     favoriteSong INTEGER REFERENCES media(id),
@@ -152,7 +153,7 @@ CREATE TABLE notification (
     id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     message TEXT NOT NULL,
     isRead BOOLEAN DEFAULT FALSE,
-    receiverId INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    receiverId INTEGER REFERENCES users(id) ON DELETE SET NULL,
     createdAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -165,11 +166,6 @@ CREATE TABLE activity_notification (
 CREATE TABLE comment_notification (
     notificationId INTEGER PRIMARY KEY REFERENCES activity_notification(notificationId) ON DELETE CASCADE,
     commentId INTEGER REFERENCES comment(id) ON DELETE CASCADE
-);
-
-CREATE TABLE tag_notification (
-    notificationId INTEGER PRIMARY KEY REFERENCES activity_notification(notificationId) ON DELETE CASCADE,
-    postId INTEGER REFERENCES post(id) ON DELETE CASCADE
 );
 
 CREATE TABLE like_notification (
@@ -210,8 +206,8 @@ CREATE TABLE friendship (
 -- MESSAGES
 CREATE TABLE messages (
     id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    senderId INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-    receiverId INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    senderId INTEGER REFERENCES users(id) ON DELETE SET NULL,
+    receiverId INTEGER REFERENCES users(id) ON DELETE SET NULL,
     content TEXT NOT NULL,
     isRead BOOLEAN DEFAULT FALSE,
     sentAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
@@ -371,15 +367,17 @@ BEGIN
     SELECT userId INTO post_owner FROM post WHERE id = NEW.postId;
     SELECT name INTO liker_name FROM users WHERE id = NEW.userId;
     
-    INSERT INTO notification (message, receiverId)
-    VALUES (CONCAT('Your post received a like from ', liker_name), post_owner)
-    RETURNING id INTO notif_id;
-    
-    INSERT INTO activity_notification (notificationId, postId)
-    VALUES (notif_id, NEW.postId);
-    
-    INSERT INTO like_notification (notificationId, postId)
-    VALUES (notif_id, NEW.postId);
+    IF NEW.userId != post_owner THEN
+        INSERT INTO notification (message, receiverId)
+        VALUES (CONCAT('Your post received a like from ', liker_name), post_owner)
+        RETURNING id INTO notif_id;
+        
+        INSERT INTO activity_notification (notificationId, postId)
+        VALUES (notif_id, NEW.postId);
+        
+        INSERT INTO like_notification (notificationId, postId)
+        VALUES (notif_id, NEW.postId);
+    END IF;
     
     RETURN NEW;
 END;
@@ -403,12 +401,14 @@ BEGIN
     WHERE id = NEW.commentId;
     SELECT name INTO liker_name FROM users WHERE id = NEW.userId;
     
-    INSERT INTO notification (message, receiverId)
-    VALUES (CONCAT('Your comment received a like from ', liker_name), comment_owner)
-    RETURNING id INTO notif_id;
-    
-    INSERT INTO activity_notification (notificationId, postId)
-    VALUES (notif_id, post_ref);
+    IF NEW.userId != comment_owner THEN
+        INSERT INTO notification (message, receiverId)
+        VALUES (CONCAT('Your comment received a like from ', liker_name), comment_owner)
+        RETURNING id INTO notif_id;
+        
+        INSERT INTO activity_notification (notificationId, postId)
+        VALUES (notif_id, post_ref);
+    END IF;
     
     RETURN NEW;
 END;
@@ -429,15 +429,17 @@ BEGIN
     SELECT userId INTO post_owner FROM post WHERE id = NEW.postId;
     SELECT name INTO commenter_name FROM users WHERE id = NEW.userId;
     
-    INSERT INTO notification (message, receiverId)
-    VALUES (CONCAT('Your post received a comment from ', commenter_name), post_owner)
-    RETURNING id INTO notif_id;
-    
-    INSERT INTO activity_notification (notificationId, postId)
-    VALUES (notif_id, NEW.postId);
-    
-    INSERT INTO comment_notification (notificationId, commentId)
-    VALUES (notif_id, NEW.id);
+    IF NEW.userId != post_owner THEN
+        INSERT INTO notification (message, receiverId)
+        VALUES (CONCAT('Your post received a comment from ', commenter_name), post_owner)
+        RETURNING id INTO notif_id;
+        
+        INSERT INTO activity_notification (notificationId, postId)
+        VALUES (notif_id, NEW.postId);
+        
+        INSERT INTO comment_notification (notificationId, commentId)
+        VALUES (notif_id, NEW.id);
+    END IF;
     
     RETURN NEW;
 END;
@@ -780,7 +782,6 @@ TRUNCATE TABLE
     group_join_request,
     request,
     like_notification,
-    tag_notification,
     comment_notification,
     activity_notification,
     notification,
@@ -940,50 +941,50 @@ INSERT INTO standard_post (postId, text, imageUrl) VALUES
     (6, 'GROUP POST: Planning a group trip to Bali next summer! ✈️', 'beach.jpg'),
     (7, 'GROUP POST: Look at the lighting in this shot I took yesterday! 📸', 'camera.jpg'),
     (8, 'GROUP POST: Working on a new oil painting. Thoughts? 🎨', 'painting.jpg'),
-    (9, 'GROUP POST: Found the best taco place downtown! 🌮', 'tacos.jpg'),
+    (9, 'GROUP POST: Found the best taco place downtown! 🌮', NULL),
     (10, 'GROUP POST: Anyone up for a late night study session on Discord?', NULL),
     (11, 'GROUP POST: Top 5 underrated directors. Go!', NULL),
     (14, 'GROUP POST: Remember: Consistency > Intensity. 💪', NULL),
     (15, 'GROUP POST: Anyone here used Rust for web dev yet?', NULL),
     (16, 'GROUP POST: Missing the mountains today. 🏔️', NULL),
-    (17, 'GROUP POST: Need feedback on this portrait edit.', 'portrait.jpg'),
+    (17, 'GROUP POST: Need feedback on this portrait edit.', NULL),
     (18, 'GROUP POST: Abstract art is harder than it looks.', NULL),
     (19, 'GROUP POST: Homemade pasta attempt #1. 🍝', 'pasta.jpg'),
     (20, 'GROUP POST: Tip: Pomodoro technique saved my grades.', NULL),
     (21, 'GROUP POST: Movie night this Friday? 🍿', NULL),
     (24, 'GROUP POST: New PR on bench press! 100kg! 😤', NULL),
-    (25, 'GROUP POST: My code works but I have no idea why.', 'code-meme.jpg'),
+    (25, 'GROUP POST: My code works but I have no idea why.', NULL),
     (26, 'GROUP POST: Travel checklist for Japan. Help needed!', NULL),
     (27, 'GROUP POST: Golden hour was perfect today. ☀️', 'sunset.jpg'),
-    (28, 'GROUP POST: Digital art sketch dump.', 'sketch.jpg'),
+    (28, 'GROUP POST: Digital art sketch dump.', NULL),
     (29, 'GROUP POST: Best coffee shops for working?', 'coffee.jpg'),
     (30, 'GROUP POST: Exam season is approaching. We got this! 📚', NULL),
 
     -- NORMAL POSTS (No Prefix)
-    (31, 'Just adopted a cat! Meet Luna 🐱', 'cat.jpg'),
+    (31, 'Just adopted a cat! Meet Luna 🐱', 'cat-mess.jpg'),
     (32, 'Why is Monday so far from Friday but Friday so close to Monday?', NULL),
-    (34, 'Finally finished my degree! 🎓', 'graduation.jpg'),
-    (35, 'Coffee is the only thing keeping me alive right now.', 'coffee-cup.jpg'),
-    (36, 'Beautiful sunset today.', 'sunset-view.jpg'),
+    (34, 'Finally finished my degree! 🎓', '1984-review.jpg'),
+    (35, 'Coffee is the only thing keeping me alive right now.', 'coffee.jpg'),
+    (36, 'Beautiful sunset today.', 'sunset.jpg'),
     (38, 'Sometimes you just need to disconnect.', NULL),
     (39, 'Anyone know a good mechanic?', NULL),
-    (40, 'Just moved into my new apartment!', 'apartment.jpg'),
+    (40, 'Just moved into my new apartment!', NULL),
     (41, 'Cooking dinner for friends. Wish me luck.', NULL),
     (42, 'The traffic today was absolute insanity.', NULL),
     (44, 'Can''t believe it''s already December.', NULL),
-    (45, 'My dog ate my homework. Literally.', 'dog-shame.jpg'),
+    (45, 'My dog ate my homework. Literally.', 'dog.jpg'),
     (46, 'Going to a concert tonight! So excited!', NULL),
     (48, 'Started learning Spanish today. Hola!', NULL),
-    (49, 'Rainy days are for reading.', 'rainy-window.jpg'),
+    (49, 'Rainy days are for reading.', 'rainy-day.jpg'),
     (50, 'Just got a promotion at work!', NULL),
     (51, 'Is it too early for Christmas music?', NULL),
-    (52, 'Pizza is always the answer.', 'pizza-slice.jpg'),
+    (52, 'Pizza is always the answer.', 'pizza.jpg'),
     (54, 'Gym was empty today. Pure bliss.', NULL),
     (55, 'Thinking about dyeing my hair blue.', NULL),
     (56, 'Watching old cartoons and feeling nostalgic.', NULL),
     (58, 'Cleaned my room. Found things from 2010.', NULL),
-    (59, 'Hiking trip this weekend was amazing.', 'hiking.jpg'),
-    (60, 'Trying to bake bread. It looks like a rock.', 'bread-fail.jpg');
+    (59, 'Hiking trip this weekend was amazing.', NULL),
+    (60, 'Trying to bake bread. It looks like a rock.', 'bread.jpg');
 
 INSERT INTO review (postId, rating, mediaId, content) VALUES 
     -- GROUP REVIEWS (Must have "GROUP POST:")

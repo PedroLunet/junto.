@@ -9,7 +9,12 @@
     'Accept': 'application/json'
     }
     })
-    .then(response => response.json())
+    .then(response => {
+    if (!response.ok) {
+    throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    return response.json();
+    })
     .then(data => {
     const badge = document.getElementById('notification-badge');
     if (badge) {
@@ -60,10 +65,7 @@
                 class="block py-2 px-4 rounded hover:bg-[#7a5466] hover:text-white"><i class="fa-solid fa-people-group fa-fw mr-2"></i>Groups</a></li>
         <li><a href="{{ route('messages.index') }}"
                 class="block py-2 px-4 rounded hover:bg-[#7a5466] hover:text-white"><i class="fa-solid fa-envelope fa-fw mr-2"></i>Messages</a></li>
-        <li><a href="{{ route('about') }}" class="block py-2 px-4 rounded hover:bg-[#7a5466] hover:text-white">About Us</a>
-        </li>
-        <li><a href="{{ route('contact.show') }}" class="block py-2 px-4 rounded hover:bg-[#7a5466] hover:text-white">Contact Us</a>
-        </li>
+        
     </ul>
 @endsection
 

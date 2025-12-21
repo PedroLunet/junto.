@@ -90,11 +90,31 @@
                     <i class="fa-solid fa-right-from-bracket text-lg text-red-500"></i>
                 </x-ui.button>
             </div>
+
+            <div class="p-4 flex justify-center gap-1 text-xs">
+                <a href="{{ route('about') }}" class="text-gray-300 hover:text-white transition-colors">About Us</a>
+                <span class="text-gray-500">·</span>
+                <a href="{{ route('features') }}" class="text-gray-300 hover:text-white transition-colors">Main
+                    Features</a>
+                <span class="text-gray-500">·</span>
+                <a href="{{ route('contact.show') }}" class="text-gray-300 hover:text-white transition-colors">Contact
+                    Us</a>
+            </div>
         @else
             <div class="p-4 border-t border-gray-700 flex flex-col gap-2">
                 <x-ui.button href="{{ route('login') }}" variant="primary" class="w-full text-center">Login</x-ui.button>
                 <x-ui.button href="{{ route('register') }}" variant="secondary"
                     class="w-full text-center">Register</x-ui.button>
+            </div>
+
+            <div class="p-4 flex justify-center gap-1 text-xs">
+                <a href="{{ route('about') }}" class="text-gray-300 hover:text-white transition-colors">About Us</a>
+                <span class="text-gray-500">·</span>
+                <a href="{{ route('features') }}" class="text-gray-300 hover:text-white transition-colors">Main
+                    Features</a>
+                <span class="text-gray-500">·</span>
+                <a href="{{ route('contact.show') }}" class="text-gray-300 hover:text-white transition-colors">Contact
+                    Us</a>
             </div>
         @endauth
     </aside>

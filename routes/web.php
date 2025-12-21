@@ -70,6 +70,7 @@ Route::middleware(['auth', 'regular.user'])->controller(ProfileController::class
     Route::post('/profile/change-password', 'changePassword')->name('profile.change-password');
     Route::post('/profile/validate-password', 'validatePassword')->name('profile.validate-password');
     Route::post('/profile/render-alert', 'renderAlert')->name('profile.render-alert');
+    Route::post('/profile/delete-account', 'deleteAccount')->name('profile.delete-account');
 });
 
 // Authentication
@@ -183,6 +184,10 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/admin/appeals', [AdminController::class, 'appeals'])->name('admin.appeals');
     Route::post('/admin/appeals/{id}/approve', [AdminController::class, 'approveAppeal'])->name('admin.appeals.approve');
     Route::post('/admin/appeals/{id}/reject', [AdminController::class, 'rejectAppeal'])->name('admin.appeals.reject');
+    Route::get('/admin/account-security', [AdminController::class, 'accountSecurity'])->name('admin.account-security');
+    Route::put('/admin/account-security/update', [AdminController::class, 'updateAccountSecurity'])->name('admin.account-security.update');
+    Route::post('/admin/account-security/change-password', [AdminController::class, 'changeAdminPassword'])->name('admin.account-security.change-password');
+    Route::post('/admin/account-security/validate-password', [AdminController::class, 'validatePassword'])->name('admin.validate-password');
 });
 
 // GROUPS ROUTES
@@ -209,7 +214,6 @@ Route::middleware(['auth', 'regular.user'])->controller(NotificationController::
     Route::get('/notifications', 'index')->name('notifications.index');
     Route::post('/notifications/{id}/read', 'markAsRead')->name('notifications.mark-read');
     Route::post('/notifications/read-all', 'markAllAsRead')->name('notifications.mark-all-read');
-    Route::post('/notifications/{id}/snooze', 'snooze')->name('notifications.snooze');
     Route::get('/notifications/unread-count', 'getUnreadCount')->name('notifications.unread-count');
 });
 
@@ -225,6 +229,9 @@ Route::group([], function () {
     });
 });
 
+Route::get('/features', function () {
+    return view('pages.features');
+})->name('features');
 
 Route::middleware('regular.user')->controller(ProfileController::class)->group(function () {
     Route::get('/{username}', 'show')->name('profile.show');

@@ -3,6 +3,7 @@
 namespace App\Models\Post;
 
 use App\Models\User\User;
+use App\Models\User\DeletedUser;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 
@@ -25,6 +26,15 @@ class Post extends Model
     public function user()
     {
         return $this->belongsTo(User::class, 'userid', 'id');
+    }
+
+    public function getAuthorAttribute()
+    {
+        $user = $this->user;
+        if ($user && $user->isdeleted) {
+            return DeletedUser::getDeletedUserPlaceholder();
+        }
+        return $user;
     }
 
     public static function getPostsWithDetails($currentUserId = null)
