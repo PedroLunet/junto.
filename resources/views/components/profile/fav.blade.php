@@ -12,10 +12,10 @@
         @if ($media)
             <!-- Remove button  -->
             @if (Auth::id() === $user->id)
-                <x-ui.button onclick="removeFavorite('{{ $type }}')" variant="danger"
-                    class="absolute -top-3 -right-3 w-7 h-7 rounded-full flex items-center justify-center text-xl font-bold z-10 px-0 py-0">
-                    -
-                </x-ui.button>
+                <x-ui.icon-button onclick="removeFavorite('{{ $type }}')" variant="red"
+                    class="bg-white absolute -top-3 -right-3 w-7 h-7 flex items-center justify-center z-10 px-0 py-0">
+                    <i class="fa fa-trash w-4 h-4"></i>
+                </x-ui.icon-button>
             @endif
 
             <!-- Media image or title -->
