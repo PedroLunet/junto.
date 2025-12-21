@@ -11,27 +11,26 @@
             <div class="lg:col-span-8 order-2 lg:order-1">
                 @if ($isOwner && isset($pendingRequests) && $pendingRequests->count())
                     <div class="mb-8 animate-fade-in-up">
-                        <div
-                            class="bg-linear-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-xl shadow-sm p-6">
-                            <div class="flex items-center justify-between mb-4">
+                        <div class="bg-white border-l-4 border-[#820263] rounded-xl shadow-sm p-6">
+                            <div class="flex items-center justify-between mb-6">
                                 <h2 class="text-lg font-bold text-gray-900 flex items-center">
                                     <span
-                                        class="bg-amber-500 text-white w-6 h-6 rounded-full flex items-center justify-center text-xs mr-2">
+                                        class="bg-[#820263] text-white w-6 h-6 rounded-full flex items-center justify-center text-[10px] mr-3 shadow-sm">
                                         {{ $pendingRequests->count() }}
                                     </span>
-                                    Pending Requests
+                                    Pending Access Requests
                                 </h2>
                             </div>
 
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 @foreach ($pendingRequests as $request)
                                     @php $sender = $request->senderid ? \App\Models\User\User::find($request->senderid) : null; @endphp
                                     <div
-                                        class="bg-white rounded-lg p-3 shadow-sm border border-amber-100 flex items-center justify-between gap-3">
+                                        class="bg-gray-50 rounded-xl p-4 border border-gray-100 flex items-center justify-between gap-3">
                                         <div class="flex items-center gap-3">
                                             @if ($sender)
                                                 <div
-                                                    class="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center text-gray-600 font-bold text-sm">
+                                                    class="w-10 h-10 rounded-full bg-white flex items-center justify-center text-[#820263] font-bold text-sm border border-gray-100 shadow-sm">
                                                     {{ substr($sender->name, 0, 1) }}
                                                 </div>
                                                 <div class="min-w-0">
@@ -42,13 +41,13 @@
                                                 </div>
                                             @endif
                                         </div>
-                                        <div class="flex gap-2">
+                                        <div class="flex gap-1">
                                             <form
                                                 action="{{ route('groups.acceptRequest', [$group, $request->notificationid]) }}"
                                                 method="POST">
                                                 @csrf
                                                 <button type="submit"
-                                                    class="text-green-600 hover:bg-green-50 p-2 rounded-full transition-colors"
+                                                    class="text-emerald-600 hover:bg-emerald-50 w-9 h-9 flex items-center justify-center rounded-full transition-colors"
                                                     title="Accept">
                                                     <i class="fas fa-check"></i>
                                                 </button>
@@ -58,7 +57,7 @@
                                                 method="POST">
                                                 @csrf
                                                 <button type="submit"
-                                                    class="text-red-600 hover:bg-red-50 p-2 rounded-full transition-colors"
+                                                    class="text-rose-600 hover:bg-rose-50 w-9 h-9 flex items-center justify-center rounded-full transition-colors"
                                                     title="Reject">
                                                     <i class="fas fa-times"></i>
                                                 </button>
@@ -84,19 +83,20 @@
                             @if (auth()->check())
                                 @if (isset($pendingRequest) && $pendingRequest)
                                     <div
-                                        class="bg-amber-50 text-amber-800 px-6 py-3 rounded-lg inline-flex items-center font-medium border border-amber-200">
+                                        class="bg-amber-50 text-amber-800 px-6 py-3 rounded-lg inline-flex items-center font-semibold border border-amber-200">
                                         <i class="fas fa-clock mr-2"></i> Request Pending
                                     </div>
                                 @else
                                     <form action="{{ route('groups.join', $group) }}" method="POST">
                                         @csrf
-                                        <x-ui.button type="submit" variant="primary" class="px-8 py-3">
+                                        <x-ui.button type="submit" variant="primary"
+                                            class="px-10 py-3 shadow-lg bg-[#820263]">
                                             Request Access
                                         </x-ui.button>
                                     </form>
                                 @endif
                             @else
-                                <x-ui.button href="{{ route('login') }}" variant="primary" class="px-8 py-3">
+                                <x-ui.button href="{{ route('login') }}" variant="primary" class="px-10 py-3 bg-[#820263]">
                                     Log in to request access
                                 </x-ui.button>
                             @endif
@@ -119,13 +119,22 @@
             </div>
 
             <div class="lg:col-span-4 order-1 lg:order-2 space-y-8">
+
                 @if (auth()->check() && $group->members->contains(auth()->user()))
                     <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 mb-6">
-                        <h3 class="font-bold text-gray-900 text-xl mb-4">Invite a User</h3>
-                        <input type="text" id="invite-user-search" placeholder="Search by name or username..."
-                            class="border rounded-lg px-3 py-2 w-full mb-2">
-                        <div id="invite-user-results" class="flex flex-col gap-2"></div>
+                        <div class="flex items-center gap-2 mb-4">
+                            <div class="w-1 h-6 bg-[#820263] rounded-full"></div>
+                            <h3 class="font-bold text-gray-900 text-lg">Invite Members</h3>
+                        </div>
+                        <div class="relative mb-4">
+                            <input type="text" id="invite-user-search" placeholder="Search name or username..."
+                                class="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#820263]/20 focus:border-[#820263] transition-all outline-none text-sm">
+                            <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                        </div>
+                        <div id="invite-user-results" class="flex flex-col gap-2 max-h-60 overflow-y-auto custom-scrollbar">
+                        </div>
                     </div>
+
                     <script>
                         document.addEventListener('DOMContentLoaded', function() {
                             const searchInput = document.getElementById('invite-user-search');
@@ -151,20 +160,28 @@
                                                 data.users.forEach(user => {
                                                     const userDiv = document.createElement('div');
                                                     userDiv.className =
-                                                        'flex items-center justify-between gap-2 p-2 border rounded';
+                                                        'flex items-center justify-between gap-3 p-3 bg-white rounded-xl border border-gray-100 hover:shadow-sm transition-all';
                                                     userDiv.innerHTML = `
-                                                            <span><b>${user.name}</b> <span class='text-gray-500'>@${user.username}</span></span>
-                                                            <form method="POST" action="{{ route('groups.invite', $group) }}" class="invite-user-form">
-                                                                <input type="hidden" name="user_id" value="${user.id}">
-                                                                <input type="hidden" name="_token" value="{{ csrf_token() }}">
-                                                                <button type="submit" class="bg-[#820263] hover:bg-[#600149] text-white font-bold px-3 py-1 rounded">Invite</button>
-                                                            </form>
-                                                        `;
+                                                        <div class="flex items-center gap-3 min-w-0">
+                                                            <div class="w-8 h-8 rounded-full bg-[#820263]/10 flex items-center justify-center text-[#820263] font-bold text-xs shrink-0">
+                                                                ${user.name.charAt(0)}
+                                                            </div>
+                                                            <div class="min-w-0">
+                                                                <span class="font-bold text-xs text-gray-900 block truncate">${user.name}</span>
+                                                                <span class="text-gray-500 text-[10px]">@${user.username}</span>
+                                                            </div>
+                                                        </div>
+                                                        <form method="POST" action="{{ route('groups.invite', $group) }}" class="shrink-0">
+                                                            <input type="hidden" name="user_id" value="${user.id}">
+                                                            <input type="hidden" name="_token" value="{{ csrf_token() }}">
+                                                            <button type="submit" class="bg-[#820263] hover:bg-[#600149] text-white text-[10px] font-bold px-3 py-1.5 rounded-lg shadow-sm transition-colors">Invite</button>
+                                                        </form>
+                                                    `;
                                                     resultsDiv.appendChild(userDiv);
                                                 });
                                             } else {
                                                 resultsDiv.innerHTML =
-                                                    '<span class="text-gray-500">No users found.</span>';
+                                                    '<span class="text-gray-400 text-xs px-2 italic text-center py-4">No users found.</span>';
                                             }
                                         });
                                 }, 300);
@@ -183,50 +200,127 @@
                                 $q->where('receiverid', auth()->id());
                             })
                             ->get();
+
+                        $waitingApprovalInvite = \App\Models\Request::where('status', 'waiting_approval')
+                            ->whereHas('groupInviteRequest', function ($q) use ($group) {
+                                $q->where('groupid', $group->id);
+                            })
+                            ->whereHas('notification', function ($q) {
+                                $q->where('receiverid', auth()->id());
+                            })
+                            ->first();
+
                         $waitingApprovalInvites = [];
                         if ($isOwner) {
-                            $waitingApprovalInvites = \App\Models\Request::where('status', 'pending')
+                            $waitingApprovalInvites = \App\Models\Request::whereIn('status', [
+                                'pending',
+                                'waiting_approval',
+                            ])
                                 ->whereHas('groupInviteRequest', function ($q) use ($group) {
                                     $q->where('groupid', $group->id);
                                 })
                                 ->get();
                         }
                     @endphp
+
                     @if ($pendingInvites->count())
-                        <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 mb-6">
-                            <h3 class="font-bold text-gray-900 text-xl mb-4">Invitations</h3>
-                            @foreach ($pendingInvites as $invite)
-                                <form action="{{ route('groups.acceptInvite', [$group, $invite->notificationid]) }}"
-                                    method="POST" class="flex gap-2 mb-2">
-                                    @csrf
-                                    <span class="flex-1">You have been invited to join this group.</span>
-                                    <button type="submit"
-                                        class="bg-green-600 hover:bg-green-700 text-white font-bold px-4 py-2 rounded-lg">Accept</button>
-                                </form>
-                            @endforeach
+                        <div
+                            class="bg-gradient-to-br from-[#820263] to-[#4d013b] rounded-2xl shadow-lg p-6 mb-6 text-white relative overflow-hidden">
+                            <div class="relative z-10">
+                                <div class="flex items-center gap-3 mb-4">
+                                    <div class="bg-white/20 p-2 rounded-lg">
+                                        <i class="fas fa-envelope-open-text text-xl"></i>
+                                    </div>
+                                    <h3 class="font-bold text-lg">Group Invite</h3>
+                                </div>
+                                @foreach ($pendingInvites as $invite)
+                                    <div class="bg-white/10 backdrop-blur-md rounded-xl p-4 border border-white/20">
+                                        <p class="text-white/90 text-sm mb-4">You've been invited to join
+                                            <strong>{{ $group->name }}</strong>.
+                                        </p>
+                                        <form
+                                            action="{{ route('groups.acceptInvite', [$group, $invite->notificationid]) }}"
+                                            method="POST">
+                                            @csrf
+                                            <button type="submit"
+                                                class="w-full bg-white text-[#820263] hover:bg-gray-50 font-bold py-2.5 rounded-xl transition-all shadow-md text-sm">
+                                                Accept Invitation
+                                            </button>
+                                        </form>
+                                    </div>
+                                @endforeach
+                            </div>
                         </div>
                     @endif
+
+                    @if ($waitingApprovalInvite)
+                        <div
+                            class="bg-blue-50 border border-blue-100 text-blue-800 p-4 mb-6 rounded-xl flex items-start gap-3">
+                            <i class="fas fa-info-circle mt-1 text-blue-500"></i>
+                            <span class="text-sm font-medium">Your request to join <strong>{{ $group->name }}</strong> is
+                                pending the owner's final approval.</span>
+                        </div>
+                    @endif
+
                     @if ($isOwner && count($waitingApprovalInvites))
-                        <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 mb-6">
-                            <h3 class="font-bold text-gray-900 text-xl mb-4">Invites Waiting Approval</h3>
-                            @foreach ($waitingApprovalInvites as $invite)
-                                @php $user = \App\Models\User\User::find($invite->notification->receiverid); @endphp
-                                <div class="flex items-center gap-2 mb-2">
-                                    <span class="flex-1">{{ $user ? $user->name : 'User' }} wants to join (invited).</span>
-                                    <form action="{{ route('groups.approveInvite', [$group, $invite->notificationid]) }}"
-                                        method="POST" class="inline">
-                                        @csrf
-                                        <button type="submit"
-                                            class="bg-green-600 hover:bg-green-700 text-white font-bold px-3 py-1 rounded-lg">Approve</button>
-                                    </form>
-                                    <form action="{{ route('groups.rejectInvite', [$group, $invite->notificationid]) }}"
-                                        method="POST" class="inline">
-                                        @csrf
-                                        <button type="submit"
-                                            class="bg-red-600 hover:bg-red-700 text-white font-bold px-3 py-1 rounded-lg">Reject</button>
-                                    </form>
-                                </div>
-                            @endforeach
+                        <div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden mb-6">
+                            <div class="bg-gray-50 px-6 py-4 border-b border-gray-100 flex items-center justify-between">
+                                <h3 class="font-bold text-gray-800 text-xs uppercase tracking-widest">
+                                    Invite Approvals
+                                </h3>
+                                <span class="bg-[#820263] text-white text-[10px] px-2 py-0.5 rounded-full font-bold">
+                                    {{ count($waitingApprovalInvites) }}
+                                </span>
+                            </div>
+                            <div class="p-4 space-y-3">
+                                @foreach ($waitingApprovalInvites as $invite)
+                                    @php $user = \App\Models\User\User::find($invite->notification->receiverid); @endphp
+                                    <div
+                                        class="flex items-center justify-between bg-gray-50 rounded-xl p-3 border border-gray-100">
+                                        <div class="flex items-center gap-3 min-w-0">
+                                            <div
+                                                class="w-9 h-9 rounded-full bg-white flex items-center justify-center text-[#820263] font-bold text-xs shrink-0 border border-gray-100 shadow-sm">
+                                                {{ $user ? substr($user->name, 0, 1) : '?' }}
+                                            </div>
+                                            <div class="truncate">
+                                                <span
+                                                    class="block font-bold text-xs text-gray-900 truncate">{{ $user->name ?? 'User' }}</span>
+                                                <span class="block text-[9px] text-gray-500 font-medium italic">
+                                                    @if ($invite->status === 'waiting_approval')
+                                                        Accepted, needs approval
+                                                    @else
+                                                        Sent, waiting for user
+                                                    @endif
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div class="flex gap-1 shrink-0">
+                                            @if ($invite->status === 'waiting_approval')
+                                                <form
+                                                    action="{{ route('groups.approveInvite', [$group, $invite->notificationid]) }}"
+                                                    method="POST">
+                                                    @csrf
+                                                    <button type="submit"
+                                                        class="w-8 h-8 flex items-center justify-center text-emerald-600 hover:bg-emerald-50 rounded-lg transition-colors"
+                                                        title="Approve">
+                                                        <i class="fas fa-check-circle"></i>
+                                                    </button>
+                                                </form>
+                                            @endif
+                                            <form
+                                                action="{{ route('groups.rejectInvite', [$group, $invite->notificationid]) }}"
+                                                method="POST">
+                                                @csrf
+                                                <button type="submit"
+                                                    class="w-8 h-8 flex items-center justify-center text-rose-600 hover:bg-rose-50 rounded-lg transition-colors"
+                                                    title="Reject">
+                                                    <i class="fas fa-times-circle"></i>
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                @endforeach
+                            </div>
                         </div>
                     @endif
                 @endif
@@ -262,7 +356,7 @@
                 @endif
 
                 <div class="bg-white rounded-2xl shadow-md border border-gray-200 overflow-hidden">
-                    <div class="h-48 bg-linear-to-br from-gray-100 via-gray-200 to-gray-300 relative">
+                    <div class="h-48 bg-gradient-to-br from-gray-100 via-gray-200 to-gray-300 relative">
                         <div
                             class="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]">
                         </div>
@@ -295,9 +389,7 @@
                             @endif
                         </div>
 
-                        <p class="text-gray-800 mb-10 text-2xl leading-relaxed">
-                            {{ $group->description }}
-                        </p>
+                        <p class="text-gray-800 mb-10 text-2xl leading-relaxed">{{ $group->description }}</p>
 
                         <div
                             class="flex items-center justify-center gap-12 text-gray-500 border-t border-gray-100 pt-10 mb-10">
@@ -368,10 +460,7 @@
                                 : (auth()->check()
                                     ? $group->members->intersect(auth()->user()->friends())
                                     : collect()));
-                        $sortedMembers = $members->sortByDesc(function ($member) use ($ownerId) {
-                            return isset($ownerId) && $member->id === $ownerId;
-                        });
-
+                        $sortedMembers = $members->sortByDesc(fn($m) => isset($ownerId) && $m->id === $ownerId);
                         $visibleMembers = $sortedMembers->take(4);
                         $remainingCount = $sortedMembers->count() - 4;
                     @endphp
@@ -389,7 +478,6 @@
                                 ])
                             @endforeach
                         </div>
-
                         @if ($remainingCount > 0)
                             <div class="mt-6 pt-6 border-t border-gray-100">
                                 <button data-modal="all-members-modal"
@@ -404,7 +492,6 @@
                 </div>
 
             </div>
-
         </div>
     </div>
 
@@ -417,7 +504,6 @@
         <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
             <div class="fixed inset-0 bg-gray-500/75 transition-opacity modal-close-trigger" aria-hidden="true"></div>
             <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
-
             <div
                 class="inline-block align-bottom bg-white rounded-2xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg w-full">
                 <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
@@ -431,7 +517,6 @@
                             <i class="fas fa-times text-xl"></i>
                         </button>
                     </div>
-
                     <div class="max-h-[60vh] overflow-y-auto pr-2 custom-scrollbar space-y-4">
                         @foreach ($sortedMembers as $member)
                             @include('components.groups.member-item', [
@@ -451,7 +536,6 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-
             const modalTriggers = document.querySelectorAll('[data-modal]');
             modalTriggers.forEach(trigger => {
                 trigger.addEventListener('click', function(e) {
@@ -482,7 +566,6 @@
                 window.location.href = '/login';
                 return;
             }
-
             fetch(`/posts/${postId}/like`, {
                     method: 'POST',
                     headers: {
@@ -496,9 +579,7 @@
                         const likeBtn = document.getElementById(`like-btn-${postId}`);
                         const likeCount = document.getElementById(`like-count-${postId}`);
                         const likeIcon = document.getElementById(`like-icon-${postId}`);
-
                         likeCount.textContent = data.likes_count;
-
                         if (data.liked) {
                             likeBtn.classList.remove('text-gray-600', 'focus:text-gray-600');
                             likeBtn.classList.add('text-red-500', 'focus:text-red-500');
