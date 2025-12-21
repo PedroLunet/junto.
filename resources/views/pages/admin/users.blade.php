@@ -76,9 +76,61 @@
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const searchInput = document.getElementById('searchUserList');
-            if (!searchInput) return;
             const cardContainer = document.getElementById('user-cards-list');
-            if (!cardContainer) return;
+            let sortOrder = 'asc';
+            let sortBy = 'name';
+            if (!searchInput || !cardContainer) return;
+
+            function getCardData(card) {
+                const name = card.querySelector('h3')?.textContent.trim() || '';
+                const username = card.querySelectorAll('span.text-gray-900')[0]?.textContent.trim() || '';
+                const email = card.querySelectorAll('span.text-gray-900')[1]?.textContent.trim() || '';
+                const joined = card.querySelectorAll('span.text-gray-900')[2]?.textContent.trim() || '';
+                return {
+                    name,
+                    username,
+                    email,
+                    joined,
+                    card
+                };
+            }
+
+            function sortCards() {
+                const cards = Array.from(cardContainer.querySelectorAll('.user-card'));
+                const cardData = cards.map(getCardData);
+                cardData.sort((a, b) => {
+                    let valA, valB;
+                    switch (sortBy) {
+                        case 'name':
+                            valA = a.name.toLowerCase();
+                            valB = b.name.toLowerCase();
+                            break;
+                        case 'username':
+                            valA = a.username.toLowerCase();
+                            valB = b.username.toLowerCase();
+                            break;
+                        case 'email':
+                            valA = a.email.toLowerCase();
+                            valB = b.email.toLowerCase();
+                            break;
+                        case 'date':
+                            // Try to parse as date, fallback to string
+                            valA = Date.parse(a.joined) || a.joined;
+                            valB = Date.parse(b.joined) || b.joined;
+                            break;
+                        default:
+                            valA = a.name.toLowerCase();
+                            valB = b.name.toLowerCase();
+                    }
+                    if (valA < valB) return sortOrder === 'asc' ? -1 : 1;
+                    if (valA > valB) return sortOrder === 'asc' ? 1 : -1;
+                    return 0;
+                });
+                // remove all cards
+                cards.forEach(card => cardContainer.removeChild(card));
+                // re-add in sorted order
+                cardData.forEach(data => cardContainer.appendChild(data.card));
+            }
 
             function filterCards() {
                 const searchTerm = searchInput.value.toLowerCase().trim();
@@ -101,7 +153,7 @@
                         card.style.display = 'none';
                     }
                 });
-                // Show/hide empty state if present
+                // show/hide empty state if present
                 const emptyState = cardContainer.querySelector(
                 'x-ui-empty-state, .empty-state, [data-empty-state]');
                 let noResultsDiv = document.getElementById('no-results-card-list');
@@ -121,6 +173,28 @@
                     if (emptyState) emptyState.style.display = visibleCount === 0 ? '' : 'none';
                 }
             }
+
+            // expose sort functions globally for sort-dropdown
+            window.sortUserCards = function(sortKey) {
+                sortBy = sortKey;
+                sortCards();
+                filterCards();
+            };
+            window.toggleUserCardsOrder = function() {
+                sortOrder = sortOrder === 'asc' ? 'desc' : 'asc';
+                // Update icon
+                const icon = document.getElementById('sort-order-icon');
+                if (icon) {
+                    icon.classList.toggle('fa-arrow-down', sortOrder === 'asc');
+                    icon.classList.toggle('fa-arrow-up', sortOrder === 'desc');
+                }
+                sortCards();
+                filterCards();
+            };
+
+            // initial sort
+            sortCards();
+
             searchInput.addEventListener('input', filterCards);
             searchInput.addEventListener('keydown', function(e) {
                 if (e.key === 'Escape') {
