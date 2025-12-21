@@ -196,7 +196,7 @@
             // Update preview
             selectedMovieTitle.textContent = title;
             selectedMovieYear.textContent = releaseDate ? new Date(releaseDate).getFullYear() : 'N/A';
-            selectedMovieDirector.textContent = 'Loading...';
+            selectedMovieDirector.innerHTML = '<i class="fas fa-spinner fa-spin mr-1"></i>Loading...';
 
             if (posterPath) {
                 selectedMoviePoster.src = `https://image.tmdb.org/t/p/w500${posterPath}`;
@@ -209,7 +209,7 @@
             fetch(`/movies/${id}`)
                 .then(response => response.json())
                 .then(data => {
-                    let director = '';
+                    let director = 'Unknown Director';
                     if (data.credits && data.credits.crew) {
                         const directorObj = data.credits.crew.find(person => person.job === 'Director');
                         if (directorObj) {
