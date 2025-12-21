@@ -7,6 +7,10 @@ use App\Models\Group;
 
 class GroupPolicy
 {
+    public function view(User $user, Group $group): bool
+    {
+        return $group->members()->where('users.id', $user->id)->exists();
+    }
 
     private function isOwner(User $user, Group $group): bool
     {

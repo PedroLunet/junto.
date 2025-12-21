@@ -176,7 +176,7 @@ CREATE TABLE like_notification (
 -- REQUESTS
 CREATE TABLE request (
     notificationId INTEGER REFERENCES notification(id) ON DELETE CASCADE PRIMARY KEY,
-    status VARCHAR(20) NOT NULL DEFAULT 'pending' CHECK (status IN ('pending', 'accepted', 'rejected')),
+    status VARCHAR(20) NOT NULL DEFAULT 'pending' CHECK (status IN ('pending', 'accepted', 'rejected', 'waiting_approval')),
     senderId INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE
 );
 

@@ -13,6 +13,89 @@ use Illuminate\Support\Facades\DB;
 
 class GroupController extends Controller
 {
+    public function inviteMember(Request $request, Group $group)
+    {
+        $this->authorize('update', $group);
+        $userId = $request->input('user_id');
+        if ($group->members()->where('users.id', $userId)->exists()) {
+            return back()->with('error', 'User is already a member.');
+        }
+        $existingInvite = \App\Models\Request::where('senderid', auth()->id())
+            ->where('status', 'pending')
+            ->whereHas('groupInviteRequest', function ($q) use ($group, $userId) {
+                $q->where('groupid', $group->id);
+            })
+            ->first();
+        if ($existingInvite) {
+            return back()->with('info', 'Invite already sent.');
+        }
+        $notification = \App\Models\Notification::create([
+            'receiverid' => $userId,
+            'message' => auth()->user()->name.' invited you to join group '.$group->name,
+        ]);
+        $inviteRequest = \App\Models\Request::create([
+            'notificationid' => $notification->id,
+            'senderid' => $userId, 
+            'status' => 'pending',
+        ]);
+        \App\Models\GroupInviteRequest::create([
+            'requestid' => $inviteRequest->notificationid,
+            'groupid' => $group->id,
+        ]);
+        return back()->with('success', 'Invite sent!');
+    }
+
+    public function acceptInvite(Group $group, $requestId)
+    {
+        $invite = \App\Models\Request::where('notificationid', $requestId)
+            ->whereHas('groupInviteRequest', function ($q) use ($group) {
+                $q->where('groupid', $group->id);
+            })
+            ->first();
+        if (!$invite || $invite->status !== 'pending') {
+            return back()->with('error', 'Invite not found or already handled.');
+        }
+        $userId = auth()->id();
+                $group->members()->attach($userId, ['isowner' => false]);
+        $invite->update(['status' => 'accepted']);
+        
+        return back()->with('success', 'You have joined the group!');
+    }
+
+    public function approveInvite(Group $group, $requestId)
+    {
+        $this->authorize('update', $group);
+        $invite = \App\Models\Request::where('notificationid', $requestId)
+            ->where('status', 'waiting_approval')
+            ->whereHas('groupInviteRequest', function ($q) use ($group) {
+                $q->where('groupid', $group->id);
+            })
+            ->first();
+        if ($invite) {
+            if (!$group->members()->where('users.id', $invite->senderid)->exists()) {
+                $group->members()->attach($invite->senderid, ['isowner' => false]);
+            }
+            $invite->update(['status' => 'accepted']);
+            return back()->with('success', 'Invite approved. User added to group.');
+        }
+        return back()->with('error', 'Invite not found or already handled.');
+    }
+
+    public function rejectInvite(Group $group, $requestId)
+    {
+        $this->authorize('update', $group);
+        $invite = \App\Models\Request::where('notificationid', $requestId)
+            ->whereIn('status', ['pending', 'waiting_approval'])
+            ->whereHas('groupInviteRequest', function ($q) use ($group) {
+                $q->where('groupid', $group->id);
+            })
+            ->first();
+        if ($invite) {
+            $invite->update(['status' => 'rejected']);
+            return back()->with('success', 'Invite rejected.');
+        }
+        return back()->with('error', 'Invite not found or already handled.');
+    }
     public function edit(Group $group)
     {
         $this->authorize('update', $group);

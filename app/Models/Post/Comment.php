@@ -44,6 +44,7 @@ class Comment extends Model
                 c.id,
                 c.content,
                 c.createdAt as created_at,
+                c.userId as user_id,
                 u.name as author_name,
                 u.username,
                 u.profilePicture as author_picture,
@@ -68,6 +69,7 @@ class Comment extends Model
                 c.id,
                 c.content,
                 c.createdAt as created_at,
+                c.userId as user_id,
                 u.name as author_name,
                 u.username,
                 u.profilePicture as author_picture,
@@ -80,5 +82,22 @@ class Comment extends Model
         ", [$postId, $userId]);
 
         return $comments[0] ?? null;
+    }
+
+    public static function updateComment($commentId, $content)
+    {
+        \Illuminate\Support\Facades\DB::update("
+            UPDATE lbaw2544.comment
+            SET content = ?
+            WHERE id = ?
+        ", [$content, $commentId]);
+    }
+
+    public static function deleteComment($commentId)
+    {
+        \Illuminate\Support\Facades\DB::delete("
+            DELETE FROM lbaw2544.comment
+            WHERE id = ?
+        ", [$commentId]);
     }
 }

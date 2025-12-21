@@ -24,13 +24,14 @@ use App\Http\Controllers\Notification\NotificationController;
 use App\Http\Controllers\Search\SearchUserController;
 use App\Http\Controllers\User\ProfileController;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
 
 // Home
 // Route::redirect('/', '/login');
 
 // Blocked user page
 Route::middleware('auth')->get('/blocked', function () {
-    $hasRejectedAppeal = \App\Models\UnblockAppeal::where('userid', auth()->id())
+    $hasRejectedAppeal = \App\Models\UnblockAppeal::where('userid', Auth::id())
         ->where('status', 'rejected')
         ->exists();
 
@@ -49,6 +50,8 @@ Route::middleware('regular.user')->group(function () {
 Route::middleware(['auth', 'regular.user'])->group(function () {
     Route::get('/friends-feed', [HomeController::class, 'friendsFeed'])->name('friends-feed');
     Route::post('/posts/{id}/comments', [CommentController::class, 'store'])->name('post.comments.add');
+    Route::put('/comments/{id}', [CommentController::class, 'update'])->name('comments.update');
+    Route::delete('/comments/{id}', [CommentController::class, 'destroy'])->name('comments.delete');
     Route::post('/posts/{id}/like', [HomeController::class, 'toggleLike'])->name('post.like');
 
     // Messages
@@ -190,6 +193,11 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::post('/admin/account-security/validate-password', [AdminController::class, 'validatePassword'])->name('admin.validate-password');
 });
 
+// Admin: Delete user (with password confirmation)
+Route::post('/admin/users/{id}/delete', [\App\Http\Controllers\Admin\AdminController::class, 'deleteUser'])
+    ->middleware(['auth', 'admin'])
+    ->name('admin.users.delete');
+
 // GROUPS ROUTES
 Route::middleware(['auth'])->group(function () {
     Route::delete('/groups/{group}/remove-member/{user}', [GroupController::class, 'removeMember'])->name('groups.removeMember');
@@ -207,6 +215,10 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/groups/{group}/posts', [GroupController::class, 'storePost'])->name('groups.posts.store');
     Route::delete('/groups/{group}', [GroupController::class, 'destroy'])->name('groups.destroy');
     Route::post('/groups/{group}/reviews', [ReviewController::class, 'store'])->name('groups.reviews.store');
+    Route::post('/groups/{group}/invite', [GroupController::class, 'inviteMember'])->name('groups.invite');
+    Route::post('/groups/{group}/accept-invite/{requestId}', [GroupController::class, 'acceptInvite'])->name('groups.acceptInvite');
+    Route::post('/groups/{group}/approve-invite/{requestId}', [GroupController::class, 'approveInvite'])->name('groups.approveInvite');
+    Route::post('/groups/{group}/reject-invite/{requestId}', [GroupController::class, 'rejectInvite'])->name('groups.rejectInvite');
 });
 
 // Notifications
@@ -239,4 +251,9 @@ Route::get('/features', function () {
 
 Route::middleware('regular.user')->controller(ProfileController::class)->group(function () {
     Route::get('/{username}', 'show')->name('profile.show');
+});
+
+// blocked status check for AJAX polling
+Route::middleware('auth')->get('/blocked/status', function () {
+    return response()->json(['isblocked' => Auth::user()->isblocked]);
 });

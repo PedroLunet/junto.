@@ -6,15 +6,15 @@
     <div class="fixed inset-0 z-10 w-screen overflow-y-auto">
         <div class="flex min-h-full items-center justify-center p-4">
             <!-- Modal panel -->
-            <div class="relative transform overflow-hidden rounded-2xl bg-white text-left shadow-2xl transition-all w-full max-w-2xl"
+            <div class="relative transform overflow-hidden rounded-2xl bg-white text-left shadow-2xl transition-all w-full max-w-sm sm:max-w-md md:max-w-lg lg:max-w-xl xl:max-w-2xl mx-2 sm:mx-4"
                 onclick="event.stopPropagation()">
 
-                <div class="p-12">
+                <div class="p-4 sm:p-8 md:p-10 lg:p-12">
                     <div class="flex items-center justify-between mb-8">
-                        <h2 class="text-3xl font-semibold text-gray-900">Change Password</h2>
-                        <x-ui.button type="button" variant="ghost" onclick="closePasswordModal()" class="p-2">
-                            <i class="fas fa-times text-3xl"></i>
-                        </x-ui.button>
+                        <h2 class="text-xl sm:text-2xl md:text-3xl font-semibold text-gray-900">Change Password</h2>
+                        <x-ui.icon-button onclick="closePasswordModal()" variant="gray" aria-label="Close">
+                            <i class="fas fa-times text-xl sm:text-2xl md:text-3xl"></i>
+                        </x-ui.icon-button>
                     </div>
 
                     <form id="changePasswordForm" class="space-y-6">
@@ -22,30 +22,30 @@
                         <div>
                             <x-ui.input label="Old Password" type="password" name="old_password" id="old_password"
                                 placeholder="Enter your old password" required />
-                            <p id="old_password_check" class="mt-2 text-xl"></p>
+                            <p id="old_password_check" class="mt-2 text-sm sm:text-base md:text-xl"></p>
                         </div>
 
                         <!-- New Password -->
                         <div>
                             <x-ui.input label="New Password" type="password" name="new_password" id="new_password"
                                 placeholder="Enter your new password" required />
-                            <div id="password_requirements" class="mt-3 space-y-1 text-sm">
-                                <p class="text-gray-600 font-medium mb-2 text-xl">
+                            <div id="password_requirements" class="mt-3 space-y-1 text-xs sm:text-sm md:text-base">
+                                <p class="text-gray-600 font-medium mb-2 text-base sm:text-lg md:text-xl">
                                     Please add all necessary characters to create safe password.
                                 </p>
-                                <p id="req_length" class="text-gray-500 text-xl">
+                                <p id="req_length" class="text-gray-500 text-xs sm:text-base md:text-xl">
                                     <span class="mr-2">•</span>Minimum characters: 12
                                 </p>
-                                <p id="req_uppercase" class="text-gray-500 text-xl">
+                                <p id="req_uppercase" class="text-gray-500 text-xs sm:text-base md:text-xl">
                                     <span class="mr-2">•</span>One uppercase character
                                 </p>
-                                <p id="req_lowercase" class="text-gray-500 text-xl">
+                                <p id="req_lowercase" class="text-gray-500 text-xs sm:text-base md:text-xl">
                                     <span class="mr-2">•</span>One lowercase character
                                 </p>
-                                <p id="req_special" class="text-gray-500 text-xl">
+                                <p id="req_special" class="text-gray-500 text-xs sm:text-base md:text-xl">
                                     <span class="mr-2">•</span>One special character
                                 </p>
-                                <p id="req_number" class="text-gray-500 text-xl">
+                                <p id="req_number" class="text-gray-500 text-xs sm:text-base md:text-xl">
                                     <span class="mr-2">•</span>One number
                                 </p>
                             </div>
@@ -55,16 +55,16 @@
                         <div>
                             <x-ui.input label="Confirm New Password" type="password" name="confirm_password"
                                 id="confirm_password" placeholder="Re-enter your new password" required />
-                            <p id="confirm_password_match" class="mt-2 text-xl"></p>
+                            <p id="confirm_password_match" class="mt-2 text-sm sm:text-base md:text-xl"></p>
                         </div>
 
                         <!-- Error message -->
                         <div id="password_error" class="hidden">
-                            <p class="text-red-600 text-xl"></p>
+                            <p class="text-red-600 text-sm sm:text-base md:text-xl"></p>
                         </div>
 
                         <!-- Change Password Button -->
-                        <x-ui.button type="submit" variant="primary" class="w-full text-2xl">
+                        <x-ui.button type="submit" variant="primary" class="w-full text-base sm:text-xl md:text-2xl">
                             Change Password
                         </x-ui.button>
                     </form>
@@ -189,7 +189,8 @@
                             console.log('Response data:', data);
                             if (data.valid) {
                                 checkMessage.textContent = '✓ Password verified';
-                                checkMessage.className = 'text-xl text-green-600';
+                                checkMessage.className =
+                                    'text-sm sm:text-base md:text-xl text-green-600';
 
                                 // green border
                                 oldPasswordInput.classList.remove('!border-red-500',
@@ -216,7 +217,8 @@
                                 }
                             } else {
                                 checkMessage.textContent = '✗ Incorrect password';
-                                checkMessage.className = 'text-xl text-red-600';
+                                checkMessage.className =
+                                    'text-sm sm:text-base md:text-xl text-red-600';
 
                                 // red border
                                 oldPasswordInput.classList.remove('!border-green-500',
@@ -264,10 +266,10 @@
                 if (this.value.length > 0) {
                     if (this.value === newPassword) {
                         confirmMatch.textContent = '✓ Passwords match';
-                        confirmMatch.className = 'text-xl text-green-600';
+                        confirmMatch.className = 'text-sm sm:text-base md:text-xl text-green-600';
                     } else {
                         confirmMatch.textContent = '✗ Passwords do not match';
-                        confirmMatch.className = 'text-xl text-red-600';
+                        confirmMatch.className = 'text-sm sm:text-base md:text-xl text-red-600';
                     }
                 } else {
                     confirmMatch.textContent = '';

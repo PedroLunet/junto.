@@ -1,6 +1,6 @@
 @props(['id' => 'search-input', 'placeholder' => 'Search...', 'width' => 'w-80'])
 
-<div class="relative {{ $width }}">
+<div class="relative w-full sm:{{ $width }} max-w-full sm:max-w-none">
     <div class="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none">
         <i class="fas fa-search text-gray-400 text-base"></i>
     </div>

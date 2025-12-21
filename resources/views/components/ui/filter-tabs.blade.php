@@ -1,6 +1,7 @@
-@props(['filters', 'activeFilter' => null])
+@props(['filters', 'activeFilter' => null, 'hideCountsOnMobile' => false])
 
-<div class="inline-flex bg-gray-200 rounded-lg p-1 gap-0 relative overflow-hidden overflow-x-auto max-w-full">
+<div class="inline-flex bg-gray-200 rounded-lg p-1 sm:p-2 gap-0 sm:gap-1 md:gap-2 relative overflow-x-auto"
+    style="width: fit-content; min-width: 0;">
     <!-- Animated background slider -->
     <div id="filter-slider"
         class="absolute bg-white shadow-sm rounded-md transition-all duration-300 ease-in-out pointer-events-none"
@@ -8,14 +9,15 @@
 
     @foreach ($filters as $key => $filter)
         @if (!$loop->first)
-            <div class="w-px bg-gray-300 my-1 relative z-10"></div>
+            <div class="w-px bg-gray-300 my-1 sm:my-2 md:my-3 relative z-10"></div>
         @endif
         <button onclick="{{ $filter['onclick'] ?? '' }}" id="filter-{{ $key }}"
             data-filter-key="{{ $key }}"
-            class="px-3 sm:px-5 py-1.5 rounded-md text-xs sm:text-sm font-medium transition-colors duration-200 filter-btn relative z-10 whitespace-nowrap {{ $activeFilter === $key || ($loop->first && !$activeFilter) ? '' : 'text-gray-700' }}">
+            class="px-3 sm:px-5 md:px-6 py-1.5 md:py-2 rounded-md text-xs sm:text-sm md:text-base font-medium transition-colors duration-200 filter-btn relative z-10 whitespace-nowrap text-gray-700">
             {{ $filter['label'] }}
             @if (isset($filter['count']))
-                <span class="ml-1 sm:ml-2 text-gray-500">{{ $filter['count'] }}</span>
+                <span
+                    class="ml-1 sm:ml-2 md:ml-3 text-gray-500 {{ $hideCountsOnMobile ? 'hidden lg:inline' : '' }}">{{ $filter['count'] }}</span>
             @endif
         </button>
     @endforeach

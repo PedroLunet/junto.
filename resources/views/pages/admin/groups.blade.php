@@ -6,48 +6,39 @@
     <div class="flex flex-col h-[calc(100vh-4rem)]">
         <!-- Fixed Header -->
         <div class="flex-none bg-[#F1EBF4]">
-            <div class="mx-20 mt-10 mb-4 flex items-center justify-between">
+            <div class="mx-2 md:mx-6 lg:mx-20 mt-6 md:mt-10 mb-4 flex flex-col gap-6">
                 <div>
-                    <h1 class="text-3xl font-bold text-gray-900">Moderate Groups</h1>
-                    <p class="text-gray-600 mt-2 text-base">Manage and moderate groups on the platform</p>
+                    <h1 class="text-2xl md:text-3xl font-bold text-gray-900">Moderate Groups</h1>
+                    <p class="text-gray-600 mt-1 md:mt-2 text-sm md:text-base">Manage and moderate groups on the platform</p>
                 </div>
-                <div class="flex items-center gap-4">
-                    <!-- Search Bar -->
-                    <x-ui.search-bar id="searchGroups" placeholder="Search Groups" />
-
-                    <!-- Sort By Dropdown -->
-                    <x-ui.sort-dropdown :options="[
-                        'created_date' => 'Created Date',
-                        'members' => 'Members',
-                        'posts' => 'Posts',
-                        'name' => 'Name',
-                    ]" defaultValue="created_date" onSort="sortGroups"
-                        onToggleOrder="toggleGroupSortOrder" />
-
-                    <!-- Filter Tabs -->
-                    <x-ui.filter-tabs :filters="[
-                        'all' => ['label' => 'All', 'onclick' => 'filterGroups(\'all\')'],
-                        'public' => ['label' => 'Public', 'onclick' => 'filterGroups(\'public\')'],
-                        'private' => ['label' => 'Private', 'onclick' => 'filterGroups(\'private\')'],
-                    ]" activeFilter="all" />
+                <div class="flex flex-col md:flex-row md:items-center w-full gap-4 md:gap-4 items-center justify-center">
+                    <div class="flex flex-col lg:flex-row w-full gap-4 items-center justify-center">
+                        <div class="flex flex-col sm:flex-row w-full gap-4 items-center justify-center">
+                            <x-ui.search-bar id="searchGroups" placeholder="Search Groups" class="w-full sm:w-52 md:w-64" />
+                            <x-ui.sort-dropdown :options="[
+                                'created_date' => 'Created Date',
+                                'members' => 'Members',
+                                'posts' => 'Posts',
+                                'name' => 'Name',
+                            ]" defaultValue="created_date" onSort="sortGroups"
+                                onToggleOrder="toggleGroupSortOrder" class="md:w-40" />
+                        </div>
+                        <div class="w-full flex justify-center lg:justify-end mt-2 lg:mt-0">
+                            <x-ui.filter-tabs :filters="[
+                                'all' => ['label' => 'All', 'onclick' => 'filterGroups(\'all\')'],
+                                'public' => ['label' => 'Public', 'onclick' => 'filterGroups(\'public\')'],
+                                'private' => ['label' => 'Private', 'onclick' => 'filterGroups(\'private\')'],
+                            ]" activeFilter="all" />
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
 
         <!-- Scrollable Content -->
         <div class="flex-1 overflow-y-auto">
-            <!-- Groups List -->
-            <div id="groups-container" class="space-y-6 mx-20 my-6">
-                @foreach ($groups as $group)
-                    <x-admin.group-card :group="$group" />
-                @endforeach
-
-                @if (count($groups) === 0)
-                    <div id="no-groups-message" class="text-center py-12 text-gray-500">
-                        <i class="fas fa-users text-4xl mb-4"></i>
-                        <p class="text-lg">No groups found.</p>
-                    </div>
-                @endif
+            <div id="groups-container" class="mx-2 md:mx-6 lg:mx-20 my-6">
+                <x-admin.groups.groups-list :groups="$groups" />
             </div>
         </div>
     </div>
