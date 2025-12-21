@@ -5,12 +5,12 @@
     <div id="alertContainer" class="fixed top-20 right-8 z-50 min-w-[500px]"></div>
 
     <div class="container mx-auto px-4 py-8">
-        <div class="flex items-center mb-20 gap-10">
-            <a href="{{ route('profile.show', $user->username) }}" class="mr-4 text-gray-600 hover:text-gray-800 p-3">
-                <i class="fas fa-arrow-left text-3xl"></i>
+        <div class="flex items-center mb-10 gap-6">
+            <a href="{{ route('profile.show', $user->username) }}" class="mr-4 text-gray-600 hover:text-gray-800 p-2">
+                <i class="fas fa-arrow-left text-xl"></i>
             </a>
             <div>
-                <h1 class="text-4xl font-bold text-gray-900">Edit Profile</h1>
+                <h1 class="text-2xl font-bold text-gray-900">Edit Profile</h1>
             </div>
         </div>
 
