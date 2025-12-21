@@ -54,38 +54,38 @@
     @endif
 
     <!-- REVIEWS -->
-    <div class="flex gap-4 mb-4">
+    <div class="flex flex-col sm:flex-row gap-4 mb-4">
         <!-- cover -->
-        <div class="shrink-0">
+        <div class="shrink-0 flex sm:block justify-center">
             @if ($post->media_poster ?? ($post->review->media->coverimage ?? false))
                 <img src="{{ $post->media_poster ?? $post->review->media->coverimage }}"
-                    class="rounded-lg shadow-sm object-cover {{ ($post->media_type ?? ($post->review->media->type ?? 'movie')) === 'music' ? 'w-24 h-24' : 'w-24 h-36' }}"
+                    class="rounded-lg shadow-sm object-cover {{ ($post->media_type ?? ($post->review->media->type ?? 'movie')) === 'music' ? 'w-32 h-32 sm:w-24 sm:h-24' : 'w-32 h-48 sm:w-24 sm:h-36' }}"
                     alt="{{ $post->media_title ?? ($post->review->media->title ?? 'Media') }}">
             @else
                 <div
-                    class="bg-gray-300 rounded-lg shadow-sm flex items-center justify-center {{ ($post->media_type ?? ($post->review->media->type ?? 'movie')) === 'music' ? 'w-24 h-24' : 'w-24 h-36' }}">
+                    class="bg-gray-300 rounded-lg shadow-sm flex items-center justify-center {{ ($post->media_type ?? ($post->review->media->type ?? 'movie')) === 'music' ? 'w-32 h-32 sm:w-24 sm:h-24' : 'w-32 h-48 sm:w-24 sm:h-36' }}">
                     <span
                         class="text-gray-600 text-center px-2 text-xs">{{ $post->media_title ?? ($post->review->media->title ?? 'No Image') }}</span>
                 </div>
             @endif
         </div>
 
-        <div class="flex-1">
-            <div class="flex justify-between items-start gap-4 mb-1">
-                <h3 class="text-xl font-bold text-gray-900">
+        <div class="flex-1 min-w-0">
+            <div class="flex justify-between items-start gap-2 mb-1">
+                <h3 class="text-lg sm:text-xl font-bold text-gray-900 break-words">
                     {{ $post->media_title ?? ($post->review->media->title ?? 'Untitled') }}</h3>
-                <div class="flex gap-0.5 text-yellow-400 text-base shrink-0 pt-1">
+                <div class="flex gap-0.5 text-yellow-400 text-sm sm:text-base shrink-0 pt-1">
                     @for ($i = 0; $i < ($post->rating ?? ($post->review->rating ?? 0)); $i++)
                         <i class="fas fa-star"></i>
                     @endfor
                 </div>
             </div>
-            <p class="text-base text-gray-700 font-medium mb-0.5">
+            <p class="text-sm sm:text-base text-gray-700 font-medium mb-0.5">
                 {{ $post->media_creator ?? ($post->review->media->creator ?? '') }}</p>
-            <p class="text-sm text-gray-700 mb-3">{{ $post->media_year ?? ($post->review->media->releaseyear ?? '') }}
+            <p class="text-xs sm:text-sm text-gray-700 mb-3">{{ $post->media_year ?? ($post->review->media->releaseyear ?? '') }}
             </p>
 
-            <p class="text-black font-light">
+            <p class="text-sm sm:text-base text-black font-light break-words">
                 {{ $post->content ?? ($post->review->content ?? '') }}
             </p>
         </div>
