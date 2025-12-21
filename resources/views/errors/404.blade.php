@@ -15,8 +15,10 @@
 
             <!-- Illustration -->
             <div class="py-8">
-                <div class="text-9xl">🎬</div>
-                <p class="text-gray-400 text-sm mt-4">Error 404</p>
+                <div class="text-9xl flex items-center justify-center gap-4">
+                    🎬 📚 🎵
+                </div>
+                <p class="text-gray-600 text-lg mt-4">Error 404</p>
             </div>
 
             <!-- Navigation Cards -->
