@@ -19,31 +19,9 @@
                         </span>
                     @endif
                 </div>
-            </div>
-
-            <div class="flex items-center gap-2">
-                <div class="text-xs text-gray-500 text-right">
-                    {{ \Carbon\Carbon::parse($post->created_at)->format('H:i') }} <br>
-                    {{ \Carbon\Carbon::parse($post->created_at)->format('d/m/Y') }}
-                </div>
-
-                @php
-                    $canDelete = false;
-                    $isOwnPost = false;
-                    if (auth()->check()) {
-                        $postModel = \App\Models\Post\Post::find($post->id);
-                        $canDelete = auth()->user()->can('delete', $postModel);
-                        $isOwnPost = auth()->id() === $postModel->userid;
-                    }
-                @endphp
-
-                @if ($canDelete && !empty($post->groupid) && !$isOwnPost)
-                    <button onclick="event.stopPropagation(); deletePost({{ $post->id }})"
-                        class="text-red-600 hover:text-red-700 hover:bg-red-50 p-2 rounded-lg transition-colors"
-                        title="Delete post">
-                        <i class="fas fa-trash text-sm"></i>
-                    </button>
-                @endif
+                <span class="text-gray-500 text-xs">
+                    @<span>{{ $post->username }}</span>
+                </span>
             </div>
         </div>
 
