@@ -1,18 +1,18 @@
 @extends('layouts.app')
 
 @section('content')
-    <main class="w-full max-w-4xl mx-auto flex flex-col items-center gap-8 px-4 py-8">
+    <main class="w-full max-w-4xl mx-auto flex flex-col items-center gap-6 px-4 py-6">
         <div>
-            <h1 class="text-4xl font-black text-center">Search for a user</h1>
-            <p class="text-center">Start by typing your friend's name!</p>
+            <h1 class="text-2xl font-black text-center">Search for a user</h1>
+            <p class="text-center text-base">Start by typing your friend's name!</p>
         </div>
 
-        <form method="get" class="flex flex-row gap-4 items-start w-full">
-            <input value="{{ old('query', request('query')) }}" type="text" name="query" class="max-w-3/4 w-full" />
+        <form method="get" class="flex flex-row gap-3 items-start w-full">
+            <input value="{{ old('query', request('query')) }}" type="text" name="query" class="max-w-3/4 w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#820263] focus:border-transparent" />
             <x-ui.button>Search</x-ui.button>
         </form>
 
-        <div class="w-full flex flex-col gap-4">
+        <div class="w-full flex flex-col gap-3">
             @forelse ($users as $user)
                 @php
                     $isLoggedIn = Auth::check();

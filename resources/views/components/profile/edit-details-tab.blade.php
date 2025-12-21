@@ -5,8 +5,8 @@
 
     <div class="flex items-center gap-6">
         <!-- profile picture -->
-        <div class="flex flex-col items-center mr-10">
-            <div class="shrink-0 w-54 h-54 md:w-60 md:h-60 lg:w-72 lg:h-72 relative mb-4">
+        <div class="flex flex-col items-center mr-6">
+            <div class="shrink-0 w-40 h-40 md:w-44 md:h-44 lg:w-48 lg:h-48 relative mb-3">
                 <div class="w-full h-full rounded-full overflow-hidden relative">
                     <img id="profileImagePreview"
                         src="{{ $user->profilepicture ? asset('profile/' . $user->profilepicture) : asset('profile/default.png') }}"
@@ -16,11 +16,11 @@
                 <!-- Profile image upload button and hidden file input -->
                 <input type="file" id="profileImageInput" name="profilePicture" accept="image/*" class="hidden" />
                 <x-ui.button type="button" id="editProfileImageBtn" variant="outline" title="Upload photo"
-                    class="absolute -top-2 -right-2 rounded-full flex items-center justify-center text-4xl font-bold z-10 px-0 py-0 bg-white border border-gray-300 shadow-lg hover:bg-gray-100">
+                    class="absolute -top-1 -right-1 rounded-full flex items-center justify-center text-lg font-bold z-10 px-0 py-0 bg-white border border-gray-300 shadow-lg hover:bg-gray-100">
                     <i class="fas fa-pencil text-[#820273]"></i>
                 </x-ui.button>
                 <x-ui.button type="button" id="resetProfileImageBtn" variant="outline" title="Reset to Default"
-                    class="absolute -top-2 -left-2 rounded-full flex items-center justify-center text-4xl font-bold z-10 px-0 py-0 bg-white border border-gray-300 shadow-lg hover:bg-gray-100">
+                    class="absolute -top-1 -left-1 rounded-full flex items-center justify-center text-lg font-bold z-10 px-0 py-0 bg-white border border-gray-300 shadow-lg hover:bg-gray-100">
                     <i class="fas fa-trash text-red-500"></i>
                 </x-ui.button>
             </div>
@@ -48,13 +48,13 @@
 
     <!-- Save Button -->
     <div class="flex justify-end">
-        <x-ui.button type="submit" variant="primary" class="text-3xl" id="saveProfileBtn">
+        <x-ui.button type="submit" variant="primary" class="text-base" id="saveProfileBtn">
             Save Changes
         </x-ui.button>
     </div>
 </form>
-<div id="profileUpdateSuccess" class="hidden mt-6 text-green-600 text-3xl font-semibold"></div>
-<div id="profileUpdateError" class="hidden mt-6 text-red-600 text-3xl font-semibold"></div>
+<div id="profileUpdateSuccess" class="hidden mt-6 text-green-600 text-base font-semibold"></div>
+<div id="profileUpdateError" class="hidden mt-6 text-red-600 text-base font-semibold"></div>
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
