@@ -18,7 +18,7 @@
                     @endif
                 </div>
                 <div>
-                    <h3 class="text-lg sm:text-xl font-semibold text-gray-900 break-words">{{ $appeal->user->name }}
+                    <h3 class="text-lg sm:text-xl font-semibold text-gray-900 wrap-break-word">{{ $appeal->user->name }}
                     </h3>
                     <p class="text-gray-600 text-sm sm:text-base">@<span>{{ $appeal->user->username }}</span></p>
                 </div>

@@ -25,7 +25,7 @@
             <!-- details -->
             <div class="flex-1 min-w-0">
                 <div class="flex flex-wrap items-center gap-2 mb-1">
-                    <p class="text-lg sm:text-xl font-semibold text-gray-900 transition-colors group-name break-words">
+                    <p class="text-lg sm:text-xl font-semibold text-gray-900 transition-colors group-name wrap-break-word">
                         {{ $group->name }}
                     </p>
                     @if ($group->isprivate)
