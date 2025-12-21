@@ -104,6 +104,140 @@
         const table = document.querySelector('.users-table-component') || document.querySelector('table');
         if (!table) return;
 
+        //=== SEARCH ===
+        const searchInput = document.getElementById('searchUserTable');
+        const userRows = document.querySelectorAll('tbody tr');
+
+        function filterUsers() {
+            const searchTerm = searchInput.value.toLowerCase().trim();
+            let visibleCount = 0;
+
+            userRows.forEach(row => {
+                // skip the "No users found" row
+                if (row.querySelector('td[colspan]')) {
+                    return;
+                }
+
+                const nameElement = row.querySelector('td:nth-child(2) div');
+                const usernameElement = row.querySelector('td:nth-child(3) div');
+                const emailElement = row.querySelector('td:nth-child(4) div');
+
+                // store original values if not already stored
+                if (!nameElement.dataset.original) {
+                    nameElement.dataset.original = nameElement.textContent;
+                }
+                if (!usernameElement.dataset.original) {
+                    usernameElement.dataset.original = usernameElement.textContent;
+                }
+                if (!emailElement.dataset.original) {
+                    emailElement.dataset.original = emailElement.textContent;
+                }
+
+                const name = nameElement.dataset.original.toLowerCase();
+                const username = usernameElement.dataset.original.toLowerCase();
+                const email = emailElement.dataset.original.toLowerCase();
+
+                const matches = name.includes(searchTerm) ||
+                    username.includes(searchTerm) ||
+                    email.includes(searchTerm);
+
+                if (matches) {
+                    row.style.display = '';
+                    visibleCount++;
+
+                    // highlight matching text
+                    if (searchTerm) {
+                        const regex = new RegExp(
+                            `(${searchTerm.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
+
+                        if (name.includes(searchTerm)) {
+                            nameElement.innerHTML = nameElement.dataset.original.replace(regex,
+                                '<span class="bg-yellow-200">$1</span>');
+                        } else {
+                            nameElement.textContent = nameElement.dataset.original;
+                        }
+
+                        if (username.includes(searchTerm)) {
+                            usernameElement.innerHTML = usernameElement.dataset.original.replace(regex,
+                                '<span class="bg-yellow-200">$1</span>');
+                        } else {
+                            usernameElement.textContent = usernameElement.dataset.original;
+                        }
+
+                        if (email.includes(searchTerm)) {
+                            emailElement.innerHTML = emailElement.dataset.original.replace(regex,
+                                '<span class="bg-yellow-200">$1</span>');
+                        } else {
+                            emailElement.textContent = emailElement.dataset.original;
+                        }
+                    } else {
+                        // reset to original text when no search term
+                        nameElement.textContent = nameElement.dataset.original;
+                        usernameElement.textContent = usernameElement.dataset.original;
+                        emailElement.textContent = emailElement.dataset.original;
+                    }
+                } else {
+                    row.style.display = 'none';
+                    // uncheck hidden rows
+                    const checkbox = row.querySelector('.user-checkbox');
+                    if (checkbox && checkbox.checked) {
+                        checkbox.checked = false;
+                    }
+                    // Reset to original text for hidden rows
+                    nameElement.textContent = nameElement.dataset.original;
+                    usernameElement.textContent = usernameElement.dataset.original;
+                    emailElement.textContent = emailElement.dataset.original;
+                }
+            });
+
+            // update selection count after filtering
+            updateSelectionCount();
+
+            // show/hide "No users found" message
+            const noUsersRow = document.querySelector('tbody tr td[colspan]');
+            if (noUsersRow) {
+                const noUsersRowElement = noUsersRow.parentElement;
+                if (visibleCount === 0 && searchTerm !== '') {
+                    // show custom "No results found" message
+                    noUsersRow.textContent = `No users found matching "${searchTerm}"`;
+                    noUsersRowElement.style.display = '';
+                } else if (visibleCount === 0 && searchTerm === '') {
+                    // show original "No users found" message
+                    noUsersRow.textContent = 'No users found.';
+                    noUsersRowElement.style.display = '';
+                } else {
+                    // hide the message when there are results
+                    noUsersRowElement.style.display = 'none';
+                }
+            } else if (visibleCount === 0 && searchTerm !== '') {
+                // create and insert "No results found" message if it doesn't exist
+                const tbody = document.querySelector('tbody');
+                const noResultsRow = document.createElement('tr');
+                noResultsRow.innerHTML =
+                    `<td colspan="7" class="px-6 py-4 text-center text-gray-500">No users found matching "${searchTerm}"</td>`;
+                noResultsRow.id = 'no-results-row';
+                tbody.appendChild(noResultsRow);
+            } else {
+                // remove any dynamically created no results row
+                const dynamicNoResultsRow = document.getElementById('no-results-row');
+                if (dynamicNoResultsRow) {
+                    dynamicNoResultsRow.remove();
+                }
+            }
+        }
+
+        // add event listener for search input
+        searchInput.addEventListener('input', filterUsers);
+
+        // clear search
+        searchInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                this.value = '';
+                filterUsers();
+            }
+        });
+
+
         //=== CHECKBOXES ===
         const selectAllCheckbox = document.getElementById('select-all');
         const userCheckboxes = document.querySelectorAll('.user-checkbox');

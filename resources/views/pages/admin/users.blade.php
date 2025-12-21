@@ -21,9 +21,13 @@
                         <span id="selection-count">0 Selected</span>
                     </div>
 
-                    <!-- Search Bar -->
-                    <div class="order-1 sm:order-2 w-full sm:w-auto">
-                        <x-ui.search-bar id="searchUser" placeholder="Search User" class="w-full sm:w-52" />
+                    <!-- Search Bar: Desktop (table) -->
+                    <div class="order-1 sm:order-2 w-full sm:w-auto hidden md:block">
+                        <x-ui.search-bar id="searchUserTable" placeholder="Search User" class="w-full sm:w-52" />
+                    </div>
+                    <!-- Search Bar: Mobile (card list) -->
+                    <div class="order-1 sm:order-2 w-full sm:w-auto block md:hidden">
+                        <x-ui.search-bar id="searchUserList" placeholder="Search User" class="w-full sm:w-52" />
                     </div>
 
                     <!-- Add User Button -->
