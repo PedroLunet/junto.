@@ -62,4 +62,49 @@
     <x-admin.users.delete-user-modal />
 
     <x-ui.confirm />
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchInput = document.getElementById('searchUserList');
+            if (!searchInput) return;
+            const cardContainer = document.getElementById('user-cards-list');
+            if (!cardContainer) return;
+
+            function filterCards() {
+                const searchTerm = searchInput.value.toLowerCase().trim();
+                const cards = cardContainer.querySelectorAll('.user-card');
+                let visibleCount = 0;
+                cards.forEach(card => {
+                    const name = card.querySelector('h3')?.textContent.toLowerCase() || '';
+                    const username = card.querySelectorAll('span.text-gray-900')[0]?.textContent
+                        .toLowerCase() || '';
+                    const email = card.querySelectorAll('span.text-gray-900')[1]?.textContent
+                    .toLowerCase() || '';
+                    if (
+                        name.includes(searchTerm) ||
+                        username.includes(searchTerm) ||
+                        email.includes(searchTerm)
+                    ) {
+                        card.style.display = '';
+                        visibleCount++;
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+                // Show/hide empty state if present
+                const emptyState = cardContainer.querySelector(
+                'x-ui-empty-state, .empty-state, [data-empty-state]');
+                if (emptyState) {
+                    emptyState.style.display = visibleCount === 0 ? '' : 'none';
+                }
+            }
+            searchInput.addEventListener('input', filterCards);
+            searchInput.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    this.value = '';
+                    filterCards();
+                }
+            });
+        });
+    </script>
 @endsection
