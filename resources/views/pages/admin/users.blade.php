@@ -23,7 +23,7 @@
                     </div>
 
                     <!-- Search Bar: Desktop (table) -->
-                    <div class="order-1 sm:order-2 w-full sm:w-auto hidden">
+                    <div class="order-1 sm:order-2 w-full sm:w-auto hidden lg:block">
                         <x-ui.search-bar id="searchUserTable" placeholder="Search User" class="w-full sm:w-52" />
                     </div>
 
