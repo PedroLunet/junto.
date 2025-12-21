@@ -158,7 +158,7 @@ class ProfileController extends Controller
                 ->count();
         }
 
-        return view('pages.profile', compact('user', 'posts', 'standardPosts', 'reviewPosts', 'friendsCount', 'postsCount', 'canViewPosts', 'friendButtonData', 'pendingRequestsCount'));
+        return view('pages.profile.profile', compact('user', 'posts', 'standardPosts', 'reviewPosts', 'friendsCount', 'postsCount', 'canViewPosts', 'friendButtonData', 'pendingRequestsCount'));
     }
 
     public function removeFavorite(Request $request)
@@ -257,7 +257,7 @@ class ProfileController extends Controller
     public function edit(): View
     {
         $user = Auth::user();
-        return view('pages.edit-profile', compact('user'));
+        return view('pages.profile.edit-profile', compact('user'));
     }
 
     /**
