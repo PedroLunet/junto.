@@ -6,44 +6,44 @@
     <div class="fixed inset-0 z-10 w-screen overflow-y-auto">
         <div class="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
             <!-- Modal panel -->
-            <div class="relative transform overflow-hidden rounded-2xl bg-white text-left shadow-2xl transition-all sm:w-full sm:max-w-[90vw] h-[85vh] flex flex-col sm:flex-row"
+            <div class="relative transform overflow-hidden rounded-2xl bg-white text-left shadow-2xl transition-all sm:w-full sm:max-w-5xl h-[80vh] flex flex-col sm:flex-row"
                 onclick="event.stopPropagation()">
 
                 <!-- Left Side: Post Content -->
                 <div class="flex-1 flex flex-col sm:border-r border-gray-200 overflow-hidden bg-white">
                     <!-- Header -->
-                    <div class="p-8 flex justify-between items-center shrink-0">
+                    <div class="p-6 flex justify-between items-center shrink-0">
                         <div id="modalAuthor" class="flex items-center gap-3">
                             <!-- js will inject author info here -->
                         </div>
                         @auth
                             <button id="modalEditButton"
                                 class="text-gray-400 hover:text-gray-600 transition-colors p-2 rounded-full hover:bg-gray-100 hidden">
-                                <i class="fas fa-edit text-3xl"></i>
+                                <i class="fas fa-edit text-xl"></i>
                             </button>
                         @endauth
                     </div>
 
                     <!-- Content -->
-                    <div id="modalContent" class="p-8 overflow-y-auto flex-1 custom-scrollbar">
+                    <div id="modalContent" class="p-6 overflow-y-auto flex-1 custom-scrollbar">
                         <!-- JS will inject content here -->
                     </div>
 
                     <!-- Actions Footer -->
                     <div id="postActions"
-                        class="p-8 pt-4 pb-6 border-t border-gray-200 flex items-center gap-6 shrink-0">
+                        class="h-20 px-6 border-t border-gray-200 flex items-center gap-6 shrink-0 relative z-10">
                         <!-- Like Button -->
                         <button onclick="likePost(event)"
                             class="group flex items-center gap-2 text-gray-600 hover:text-red-500 transition-colors">
-                            <i class="far fa-heart text-4xl group-hover:scale-110 transition-transform"
+                            <i class="far fa-heart text-xl group-hover:scale-110 transition-transform"
                                 id="modalLikeIcon"></i>
-                            <span id="likesCount" class="text-2xl font-medium">0</span>
+                            <span id="likesCount" class="text-base font-medium">0</span>
                         </button>
 
                         <!-- Comment Indicator -->
                         <div class="flex items-center gap-2 text-gray-600">
-                            <i class="far fa-comment text-4xl"></i>
-                            <span id="commentsCount" class="text-2xl font-medium">0</span>
+                            <i class="far fa-comment text-xl"></i>
+                            <span id="commentsCount" class="text-base font-medium">0</span>
                         </div>
 
                         <!-- Report Button -->
@@ -56,13 +56,13 @@
                 </div>
 
                 <!-- Right Side: Comments  -->
-                <div class="w-full sm:w-[500px] flex flex-col bg-gray-50 h-full border-l border-gray-200">
+                <div class="w-full sm:w-[400px] flex flex-col bg-gray-50 h-full border-l border-gray-200">
                     <!-- Header with Close -->
                     <div
                         class="p-4 border-b border-gray-200 flex justify-between items-center shrink-0 bg-white shadow-sm z-10">
-                        <h3 class="font-semibold text-gray-900 text-4xl">Comments</h3>
+                        <h3 class="font-semibold text-gray-900 text-xl">Comments</h3>
                         <x-ui.button onclick="closePostModal()" variant="ghost">
-                            <i class="fas fa-times text-xl"></i>
+                            <i class="fas fa-times text-lg"></i>
                         </x-ui.button>
                     </div>
 
@@ -74,8 +74,8 @@
                     </div>
 
                     <!-- Add Comment Input -->
-                    <div id="addCommentSection" class="p-4 border-t border-gray-200 bg-white shrink-0">
-                        <div class="flex gap-3 items-center">
+                    <div id="addCommentSection" class="h-20 px-6 py-4 border-t border-gray-200 bg-white shrink-0 flex items-center">
+                        <div class="flex gap-3 items-center w-full">
                             @php
                                 $currentUserProfilePicture =
                                     Auth::check() && Auth::user()->profilePicture
@@ -83,14 +83,14 @@
                                         : asset('profile/default.png');
                             @endphp
                             <img src="{{ $currentUserProfilePicture }}" alt="User Avatar"
-                                class="w-12 h-12 rounded-full object-cover">
+                                class="w-8 h-8 rounded-full object-cover shrink-0">
                             <div class="flex-1 relative">
                                 <input type="text" id="commentInput"
-                                    class="w-full rounded-full border-gray-300 bg-gray-50 pl-4 pr-12 py-2.5 focus:border-[#38157a] focus:ring-[#38157a] focus:bg-white transition-all"
+                                    class="w-full h-10 rounded-full border-gray-300 bg-gray-100 pl-4 pr-12 focus:border-[#38157a] focus:ring-[#38157a] focus:bg-white transition-all text-sm"
                                     placeholder="Write a comment..." onkeypress="handleCommentKeyPress(event)">
                                 <button onclick="submitComment()"
                                     class="absolute right-2 top-1/2 -translate-y-1/2 text-[#38157a] hover:text-[#5a3d8a] p-1.5 rounded-full hover:bg-purple-50 transition-colors">
-                                    <i class="fas fa-paper-plane"></i>
+                                    <i class="fas fa-paper-plane text-sm"></i>
                                 </button>
                             </div>
                         </div>
@@ -117,11 +117,11 @@
         currentPostId = post.id;
         authorDiv.innerHTML = `
             <a href="/${post.username}" class="shrink-0">
-                <img src="/profile/default.png" alt="User Avatar" class="w-12 h-12 rounded-full object-cover">
+                <img src="/profile/default.png" alt="User Avatar" class="w-10 h-10 rounded-full object-cover">
             </a>
             <div class="flex flex-col">
-                <a href="/${post.username}" class="font-semibold text-black text-3xl hover:text-[#38157a] transition">${post.author_name}</a>
-                <a href="/${post.username}" class="text-gray-600 text-xl">@${post.username}</a>
+                <a href="/${post.username}" class="font-semibold text-black text-lg hover:text-[#38157a] transition">${post.author_name}</a>
+                <a href="/${post.username}" class="text-gray-600 text-sm">@${post.username}</a>
             </div>
         `;
         if (editBtn) {
@@ -151,24 +151,24 @@
         if (post.post_type === 'review') {
             let starsHtml = '';
             for (let i = 0; i < post.rating; i++) {
-                starsHtml += '<i class="fas fa-star text-4xl"></i>';
+                starsHtml += '<i class="fas fa-star text-lg"></i>';
             }
             html = `
             <div class="flex flex-col sm:flex-row gap-6">
                 <div class="shrink-0 mx-auto sm:mx-0">
                     <img src="${post.media_poster}" 
-                         class="rounded-xl shadow-lg object-cover ${post.media_type === 'music' ? 'w-96 h-96' : 'w-96 h-[36rem]'}" 
+                         class="rounded-xl shadow-lg object-cover ${post.media_type === 'music' ? 'w-48 h-48' : 'w-48 h-72'}" 
                          alt="${post.media_title}">
                 </div>
                 <div class="flex-1 text-center sm:text-left">
                     <div class="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-4 mb-2">
-                        <h3 class="text-6xl font-bold text-gray-900 leading-tight">${post.media_title}</h3>
-                        <div class="text-yellow-400 shrink-0 mt-4">
+                        <h3 class="text-2xl font-bold text-gray-900 leading-tight">${post.media_title}</h3>
+                        <div class="text-yellow-400 shrink-0 mt-1">
                             ${starsHtml}
                         </div>
                     </div>
-                    <p class="text-2xl text-gray-600 font-medium mb-1">${post.media_creator}</p>
-                    <p class="text-xl text-gray-500 mb-6">${post.media_year}</p>
+                    <p class="text-base text-gray-600 font-medium mb-1">${post.media_creator}</p>
+                    <p class="text-sm text-gray-500 mb-4">${post.media_year}</p>
                     <p class="text-black">${post.content}</p>
                 </div>
             </div>
@@ -180,7 +180,7 @@
                     <img src="/post/${post.image_url}" 
                          onerror="this.src='/post/default.jpg'" 
                          alt="Post image" 
-                         class="w-full h-auto object-contain max-h-[500px] mx-auto">
+                         class="w-full h-auto object-contain max-h-[400px] mx-auto">
                 </div>
             `;
             }
@@ -189,7 +189,7 @@
         if (post.created_at) {
             const date = new Date(post.created_at);
             html += `
-            <div class="mt-8 pt-4 text-gray-600 text-xl flex items-center gap-2">
+            <div class="mt-6 pt-4 text-gray-500 text-xs flex items-center gap-2">
                 <i class="far fa-clock"></i>
                 ${date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})} · ${date.toLocaleDateString()}
             </div>

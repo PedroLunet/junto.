@@ -1,8 +1,9 @@
 <div class="flex flex-col h-full">
-    <div class="shrink-0 flex gap-0 mb-0 border-b border-gray-200">
+    <!-- Fixed tabs header -->
+    <div class="shrink-0 flex gap-3 mb-4 px-10">
         @foreach ($tabs as $key => $tab)
             <button id="{{ $key }}-tab"
-                class="pb-4 px-8 text-lg font-semibold transition-all {{ $loop->first ? 'text-[#820263] border-b-4 border-[#820263]' : 'border-b-4 border-transparent text-gray-600 hover:text-gray-900' }}">
+                class="flex-1 pb-3 px-4 text-lg font-medium transition-colors text-center {{ $loop->first ? 'text-[#820273] border-b-4 border-[#820273]' : 'border-b-4 border-transparent text-gray-500 hover:text-gray-700' }}">
                 {{ $tab['title'] }}
             </button>
         @endforeach
@@ -10,7 +11,7 @@
 
     <div class="flex-1 overflow-y-auto">
         @foreach ($tabs as $key => $tab)
-            <div id="{{ $key }}-content" class="tab-content {{ $loop->first ? '' : 'hidden' }}">
+            <div id="{{ $key }}-content" class="tab-content px-10 {{ $loop->first ? '' : 'hidden' }}">
                 {!! $tab['content'] !!}
             </div>
         @endforeach
@@ -22,12 +23,12 @@
         document.getElementById('{{ $key }}-tab').addEventListener('click', function() {
             @foreach ($tabs as $otherKey => $otherTab)
                 document.getElementById('{{ $otherKey }}-tab').className =
-                    'pb-4 px-8 text-lg font-semibold transition-all border-b-4 border-transparent text-gray-600 hover:text-gray-900';
+                    'flex-1 pb-3 px-4 text-lg font-medium transition-colors text-center border-b-4 border-transparent text-gray-500 hover:text-gray-700';
                 document.getElementById('{{ $otherKey }}-content').classList.add('hidden');
             @endforeach
 
             document.getElementById('{{ $key }}-tab').className =
-                'pb-4 px-8 text-lg font-semibold transition-all text-[#820263] border-b-4 border-[#820263]';
+                'flex-1 pb-3 px-4 text-lg font-medium transition-colors text-center text-[#820273] border-b-4 border-[#820273]';
             document.getElementById('{{ $key }}-content').classList.remove('hidden');
         });
     @endforeach

@@ -1,11 +1,11 @@
 <!-- modal overlay -->
 <div id="create-music-review-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50">
     <div class="flex items-center justify-center min-h-screen p-4">
-        <div class="bg-white rounded-2xl shadow-xl max-w-6xl w-full min-h-[400px]">
+        <div class="bg-white rounded-2xl shadow-xl max-w-3xl w-full min-h-[400px]">
 
             <!-- modal header -->
             <div class="flex justify-between items-center p-8 border-b">
-                <h3 class="text-4xl font-semibold">Create Music Review</h3>
+                <h3 class="text-3xl font-semibold">Create Music Review</h3>
             </div>
 
             <!-- modal body -->

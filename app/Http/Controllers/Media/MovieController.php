@@ -24,7 +24,7 @@ class MovieController extends Controller
         $posts = Post::getMovieReviewPosts(auth()->id());
         return view('pages.home', [
             'posts' => $posts,
-            'pageTitle' => 'Movies'
+            'pageTitle' => 'Movie Reviews'
         ]);
     }
 
