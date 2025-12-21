@@ -29,7 +29,7 @@
         </script>
     @elseif($friendButtonData['status'] === 'request_sent')
         <!-- Request pending -->
-        <x-ui.badge variant="pending" size="lg" icon="fas fa-clock">
+        <x-ui.badge variant="pending" size="sm" icon="fas fa-clock">
             Friend Request Sent
             </x-badge>
         @elseif($friendButtonData['status'] === 'request_received')
