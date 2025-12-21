@@ -1,7 +1,5 @@
 @extends('layouts.app')
 
-@section('title', 'About Us')
-
 @section('content')
     <div class="flex flex-col w-full">
         <!-- Hero Section -->
