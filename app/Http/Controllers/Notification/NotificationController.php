@@ -69,10 +69,50 @@ class NotificationController extends Controller
         return response()->json(['success' => true]);
     }
 
+    public function snoozeNotifications(Request $request)
+    {
+        $validated = $request->validate([
+            'duration' => 'required|integer|min:1|max:10080',
+        ]);
+
+        $snoozedUntil = now()->addMinutes($validated['duration']);
+        
+        session(['notifications_snoozed_until' => $snoozedUntil]);
+
+        return response()->json(['success' => true, 'snoozed_until' => $snoozedUntil]);
+    }
+
+    public function clearSnooze()
+    {
+        session()->forget('notifications_snoozed_until');
+        
+        return response()->json(['success' => true]);
+    }
+
+    public function getSnoozeStatus()
+    {
+        if (!Auth::check()) {
+            return response()->json(['snoozed' => false], 401);
+        }
+
+        $snoozedUntil = session('notifications_snoozed_until');
+        $isSnoozed = $snoozedUntil && $snoozedUntil > now();
+
+        return response()->json([
+            'snoozed' => $isSnoozed,
+            'snoozed_until' => $isSnoozed ? $snoozedUntil : null,
+        ]);
+    }
+
     public function getUnreadCount()
     {
         if (!Auth::check()) {
             return response()->json(['count' => 0], 401);
+        }
+
+        $snoozedUntil = session('notifications_snoozed_until');
+        if ($snoozedUntil && $snoozedUntil > now()) {
+            return response()->json(['count' => 0]);
         }
 
         $count = Notification::where('receiverid', Auth::id())
@@ -81,5 +121,32 @@ class NotificationController extends Controller
             ->count();
 
         return response()->json(['count' => $count]);
+    }
+
+    public function getLatestUnread()
+    {
+        if (!Auth::check()) {
+            return response()->json(['notification' => null], 401);
+        }
+
+        $snoozedUntil = session('notifications_snoozed_until');
+        if ($snoozedUntil && $snoozedUntil > now()) {
+            return response()->json(['notification' => null]);
+        }
+
+        $notification = Notification::where('receiverid', Auth::id())
+            ->where('isread', false)
+            ->excludeSelfInteractions()
+            ->orderBy('createdat', 'desc')
+            ->first();
+
+        if (!$notification) {
+            return response()->json(['notification' => null]);
+        }
+
+        return response()->json(['notification' => [
+            'id' => $notification->id,
+            'message' => $notification->message,
+        ]]);
     }
 }

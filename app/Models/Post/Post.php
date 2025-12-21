@@ -270,22 +270,6 @@ class Post extends Model
                 'userid' => $userId,
                 'createdat' => now(),
             ]);
-            
-            if ($post && $post->userid != $userId) {
-                $notification = new \App\Models\User\Notification([
-                    'message' => 'Your post received a like from ' . $user->name,
-                    'receiverid' => $post->userid,
-                    'isread' => false,
-                    'createdat' => now(),
-                ]);
-                $notification->save();
-                
-                $activityNotif = new \App\Models\Notification\ActivityNotification([
-                    'notificationid' => $notification->id,
-                    'postid' => $postId,
-                ]);
-                $activityNotif->save();
-            }
             $liked = true;
         }
 

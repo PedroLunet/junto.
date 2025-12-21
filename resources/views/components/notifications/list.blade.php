@@ -2,7 +2,6 @@
     <div class="space-y-3 sm:space-y-4">
         @foreach($notifications as $notification)
             @php
-                $isSnoozed = $notification->snoozed_until && $notification->snoozed_until > now();
                 $typeColors = [
                     'comment' => ['bg' => 'bg-blue-50', 'text' => 'text-blue-700', 'border' => 'border-blue-200', 'icon' => 'fas fa-comment'],
                     'like' => ['bg' => 'bg-red-50', 'text' => 'text-red-700', 'border' => 'border-red-200', 'icon' => 'fas fa-heart'],
