@@ -1,9 +1,3 @@
-@if (session('success'))
-    <x-ui.alert-card type="success" :title="'Success'" :message="session('success')" />
-@elseif (session('error'))
-    <x-ui.alert-card type="error" :title="'Error'" :message="session('error')" />
-@endif
-
 @if ($friendRequests->isEmpty())
     <div class="p-6 rounded text-center">
         <p class="text-gray-600">You have no pending friend requests.</p>
