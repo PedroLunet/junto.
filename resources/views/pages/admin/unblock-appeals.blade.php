@@ -6,48 +6,53 @@
     <div class="flex flex-col h-[calc(100vh-4rem)]">
         <!-- Fixed Header -->
         <div class="flex-none bg-[#F1EBF4]">
-            <div class="mx-20 mt-10 mb-4 flex items-center justify-between">
-                <div>
-                    <h1 class="text-3xl font-bold text-gray-900">Unblock Appeals</h1>
-                    <p class="text-gray-600 mt-2 text-base">Review and manage user appeal requests</p>
+            <div class="mx-4 sm:mx-8 lg:mx-20 mt-6 sm:mt-8 lg:mt-10 mb-4 flex flex-col gap-4">
+                <div><!-- Title -->
+                    <h1 class="text-2xl sm:text-3xl font-bold text-gray-900">Unblock Appeals</h1>
+                    <!-- Description -->
+                    <p class="text-gray-600 mt-1 sm:mt-2 text-sm sm:text-base lg:mt-0">Review and manage user appeal requests
+                    </p>
                 </div>
-                <div class="flex items-center gap-6">
-                    <!-- Sort By Dropdown -->
-                    <x-ui.sort-dropdown :options="[
-                        'created_date' => 'Created Date',
-                        'user_name' => 'User Name',
-                    ]" defaultValue="created_date" />
 
-                    <!-- Filter Tabs -->
-                    <x-ui.filter-tabs :filters="[
-                        'all' => [
-                            'label' => 'All',
-                            'count' => $counts['all'],
-                            'onclick' => 'filterAppeals(\'all\')',
-                        ],
-                        'pending' => [
-                            'label' => 'Pending',
-                            'count' => $counts['pending'],
-                            'onclick' => 'filterAppeals(\'pending\')',
-                        ],
-                        'approved' => [
-                            'label' => 'Approved',
-                            'count' => $counts['approved'],
-                            'onclick' => 'filterAppeals(\'approved\')',
-                        ],
-                        'rejected' => [
-                            'label' => 'Rejected',
-                            'count' => $counts['rejected'],
-                            'onclick' => 'filterAppeals(\'rejected\')',
-                        ],
-                    ]" activeFilter="all" />
+                <!-- Controls: Sort and Filter Tabs -->
+                <div class="flex flex-col lg:flex-row w-full lg:w-auto gap-4 items-center justify-center">
+                    <div class="flex justify-start w-full">
+                        <x-ui.sort-dropdown :options="[
+                            'created_date' => 'Created Date',
+                            'user_name' => 'User Name',
+                        ]" defaultValue="created_date" />
+                    </div>
+                    <div class="w-full flex justify-center lg:justify-end mt-2 lg:mt-0">
+                        <x-ui.filter-tabs :filters="[
+                            'all' => [
+                                'label' => 'All',
+                                'count' => $counts['all'],
+                                'onclick' => 'filterAppeals(\'all\')',
+                            ],
+                            'pending' => [
+                                'label' => 'Pending',
+                                'count' => $counts['pending'],
+                                'onclick' => 'filterAppeals(\'pending\')',
+                            ],
+                            'approved' => [
+                                'label' => 'Approved',
+                                'count' => $counts['approved'],
+                                'onclick' => 'filterAppeals(\'approved\')',
+                            ],
+                            'rejected' => [
+                                'label' => 'Rejected',
+                                'count' => $counts['rejected'],
+                                'onclick' => 'filterAppeals(\'rejected\')',
+                            ],
+                        ]" activeFilter="all" :hideCountsOnMobile="true" />
+                    </div>
                 </div>
             </div>
         </div>
 
         <!-- Scrollable Content -->
         <div class="flex-1 overflow-y-auto">
-            <div id="appeals-container" class="mx-20 my-6">
+            <div id="appeals-container" class="mx-2 sm:mx-8 lg:mx-20 my-6">
                 <x-admin.appeals.appeals-list :appeals="$appeals" />
             </div>
         </div>

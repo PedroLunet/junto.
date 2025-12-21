@@ -7,10 +7,14 @@
         <!-- Fixed Header -->
         <div class="flex-none bg-[#F1EBF4]">
             <div class="mx-4 sm:mx-8 lg:mx-20 mt-6 sm:mt-8 lg:mt-10 mb-4 flex flex-col gap-4">
-                <!-- Title -->
-                <h1 class="text-2xl sm:text-3xl font-bold text-gray-900">Reported Content</h1>
-                <!-- Description -->
-                <p class="text-gray-600 mt-1 sm:mt-2 text-sm sm:text-base lg:mt-0">Review and manage reported posts and comments</p>
+                <div>
+                    <!-- Title -->
+                    <h1 class="text-2xl sm:text-3xl font-bold text-gray-900">Reported Content</h1>
+                    <!-- Description -->
+                    <p class="text-gray-600 mt-1 sm:mt-2 text-sm sm:text-base lg:mt-0">Review and manage reported posts and
+                        comments</p>
+                </div>
+
                 <!-- Controls: Sort and Filter Tabs -->
                 <div class="flex flex-col lg:flex-row w-full lg:w-auto gap-4 items-center justify-center">
                     <div class="flex justify-start w-full">
