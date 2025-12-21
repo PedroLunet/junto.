@@ -35,7 +35,7 @@ class GroupController extends Controller
         ]);
         $inviteRequest = \App\Models\Request::create([
             'notificationid' => $notification->id,
-            'senderid' => auth()->id(),
+            'senderid' => $userId, 
             'status' => 'pending',
         ]);
         \App\Models\GroupInviteRequest::create([
@@ -59,7 +59,6 @@ class GroupController extends Controller
         if ($group->isprivate) {
             $owner = $group->owner()->first();
             if ($owner) {
-                $invite->update(['status' => 'waiting_approval']);
                 \App\Models\Notification::create([
                     'receiverid' => $owner->id,
                     'message' => auth()->user()->name.' accepted your invite to join '.$group->name.'. Please approve.',
@@ -78,15 +77,17 @@ class GroupController extends Controller
     {
         $this->authorize('update', $group);
         $invite = \App\Models\Request::where('notificationid', $requestId)
-            ->where('status', 'waiting_approval')
+            ->where('status', 'pending')
             ->whereHas('groupInviteRequest', function ($q) use ($group) {
                 $q->where('groupid', $group->id);
             })
             ->first();
-        if ($invite) {
-            $group->members()->attach($invite->senderid, ['isowner' => false]);
-            $invite->update(['status' => 'accepted']);
-            return back()->with('success', 'Invite approved. User added to group.');
+            if ($invite) {
+                if (!$group->members()->where('users.id', $invite->senderid)->exists()) {
+                    $group->members()->attach($invite->senderid, ['isowner' => false]);
+                }
+                $invite->update(['status' => 'accepted']);
+                return back()->with('success', 'Invite approved. User added to group.');
         }
         return back()->with('error', 'Invite not found or already handled.');
     }
@@ -95,7 +96,7 @@ class GroupController extends Controller
     {
         $this->authorize('update', $group);
         $invite = \App\Models\Request::where('notificationid', $requestId)
-            ->where('status', 'waiting_approval')
+            ->where('status', 'pending')
             ->whereHas('groupInviteRequest', function ($q) use ($group) {
                 $q->where('groupid', $group->id);
             })

@@ -179,15 +179,13 @@
                             ->whereHas('groupInviteRequest', function ($q) use ($group) {
                                 $q->where('groupid', $group->id);
                             })
-                            ->where('notificationid', '!=', null)
-                            ->where('senderid', '!=', auth()->id())
                             ->whereHas('notification', function ($q) {
                                 $q->where('receiverid', auth()->id());
                             })
                             ->get();
                         $waitingApprovalInvites = [];
                         if ($isOwner) {
-                            $waitingApprovalInvites = \App\Models\Request::where('status', 'waiting_approval')
+                            $waitingApprovalInvites = \App\Models\Request::where('status', 'pending')
                                 ->whereHas('groupInviteRequest', function ($q) use ($group) {
                                     $q->where('groupid', $group->id);
                                 })
