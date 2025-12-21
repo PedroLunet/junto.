@@ -13,7 +13,7 @@
             <!-- Remove button  -->
             @if (Auth::id() === $user->id)
                 <x-ui.icon-button onclick="removeFavorite('{{ $type }}')" variant="red"
-                    title="Remove your favorite {{ ucfirst($type) }}"
+                    title="Remove favorite {{ ucfirst($type) }}"
                     class="bg-white absolute -top-3 -right-3 w-7 h-7 flex items-center justify-center z-10 px-0 py-0">
                     <i class="fa fa-trash w-4 h-4"></i>
                 </x-ui.icon-button>
