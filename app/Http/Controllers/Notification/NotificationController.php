@@ -14,7 +14,7 @@ class NotificationController extends Controller
     public function index(): View
     {
         $user = Auth::user();
-        
+
         $notifications = Notification::where('receiverid', Auth::id())
             ->excludeSelfInteractions()
             ->orderBy('createdat', 'desc')
@@ -39,18 +39,21 @@ class NotificationController extends Controller
             ->with(['request.notification'])
             ->get();
 
+        $snoozedUntil = session('notifications_snoozed_until');
+        $snoozed = $snoozedUntil && $snoozedUntil > now();
         return view('pages.notifications.index', [
             'notifications' => $notifications,
             'friendRequests' => $friendRequests,
             'sentRequests' => $sentRequests,
-            'pageTitle' => 'Inbox'
+            'pageTitle' => 'Inbox',
+            'snoozed' => $snoozed,
         ]);
     }
 
     public function markAsRead($id)
     {
         $notification = Notification::findOrFail($id);
-        
+
         if ($notification->receiverid !== Auth::id()) {
             return response()->json(['success' => false, 'message' => 'Unauthorized'], 403);
         }
@@ -76,7 +79,7 @@ class NotificationController extends Controller
         ]);
 
         $snoozedUntil = now()->addMinutes($validated['duration']);
-        
+
         session(['notifications_snoozed_until' => $snoozedUntil]);
 
         return response()->json(['success' => true, 'snoozed_until' => $snoozedUntil]);
@@ -85,7 +88,7 @@ class NotificationController extends Controller
     public function clearSnooze()
     {
         session()->forget('notifications_snoozed_until');
-        
+
         return response()->json(['success' => true]);
     }
 

@@ -25,7 +25,7 @@
     </div>
     <div class="flex-1">
         <div class="font-semibold text-base {{ $iconColor }} mb-0.5">{{ $title }}</div>
-        <div class="text-gray-700 text-sm">{{ $message }}</div>
+        <div class="text-gray-700 text-sm" id="js-alert-message">{{ $message }}</div>
     </div>
     @if ($dismissible)
         <x-ui.icon-button variant="green" class="absolute top-2 right-2" type="button"
