@@ -9,18 +9,22 @@
 <div
     class="bg-white shadow-sm rounded-3xl overflow-hidden hover:shadow-md transition-shadow border border-gray-100 w-full">
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-0 p-3 sm:p-4">
-        <a href="{{ route('profile.show', $user->username) }}" class="flex items-center gap-3 flex-1 min-w-0">
+        <a href="{{ route('profile.show', $user->username) }}"
+            class="flex items-start sm:items-center space-x-2 sm:space-x-3 flex-1 min-w-0">
             @if ($user->profilepicture)
                 <img src="{{ asset('profile/' . $user->profilepicture) }}" alt="{{ $user->name }}"
-                    class="w-14 h-14 sm:w-16 sm:h-16 rounded-full object-cover shrink-0"
+                    class="w-12 sm:w-16 h-12 sm:h-16 rounded-full object-cover shrink-0"
                     onerror="this.onerror=null; this.src='{{ asset('profile/default.png') }}';">
             @else
                 <img src="{{ asset('profile/default.png') }}" alt="{{ $user->name }}"
-                    class="w-14 h-14 sm:w-16 sm:h-16 rounded-full object-cover shrink-0">
+                    class="w-12 sm:w-16 h-12 sm:h-16 rounded-full object-cover shrink-0">
             @endif
             <div class="min-w-0 flex-1">
-                <h3 class="font-semibold text-base sm:text-lg text-gray-900 truncate">{{ $user->name }}</h3>
-                <p class="text-gray-500 text-sm sm:text-base truncate">@<span>{{ $user->username }}</span></p>
+                <h3 class="font-semibold text-lg sm:text-3xl text-gray-900 truncate">{{ $user->name }}</h3>
+                <p class="text-gray-500 text-sm sm:text-2xl truncate">@<!-- -->{{ $user->username }}</p>
+                @if ($user->bio)
+                    <p class="text-gray-600 text-xs sm:text-lg mt-1 sm:mt-2 line-clamp-2">{{ $user->bio }}</p>
+                @endif
             </div>
         </a>
 

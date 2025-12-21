@@ -218,6 +218,39 @@ class User extends Authenticatable
         return $query->where('isdeleted', true);
     }
 
+    public function scopeSearchByProfile($query, $searchTerm)
+    {
+        if (empty($searchTerm)) {
+            return $query;
+        }
+
+        return $query->where(function ($q) use ($searchTerm) {
+            $q->where('name', 'ilike', "%{$searchTerm}%")
+              ->orWhere('username', 'ilike', "%{$searchTerm}%")
+              ->orWhere('bio', 'ilike', "%{$searchTerm}%");
+        });
+    }
+
+    public function scopeOrderByNameAsc($query)
+    {
+        return $query->orderBy('name', 'asc');
+    }
+
+    public function scopeOrderByNameDesc($query)
+    {
+        return $query->orderBy('name', 'desc');
+    }
+
+    public function scopeOrderByJoinDateAsc($query)
+    {
+        return $query->orderBy('id', 'asc');
+    }
+
+    public function scopeOrderByJoinDateDesc($query)
+    {
+        return $query->orderBy('id', 'desc');
+    }
+
     public function markAsDeleted()
     {
         $oldName = $this->name;
@@ -232,9 +265,17 @@ class User extends Authenticatable
         $this->isdeleted = true;
         $this->save();
         
-        \DB::table('notification')
+    
+        $notifications = \DB::table('notification')
             ->where('message', 'like', '%from ' . $oldName . '%')
-            ->update(['message' => \DB::raw("REPLACE(message, 'from " . $oldName . "', 'from Deleted User')")]);
+            ->get();
+        
+        foreach ($notifications as $notification) {
+            $newMessage = str_replace('from ' . $oldName, 'from Deleted User', $notification->message);
+            \DB::table('notification')
+                ->where('id', $notification->id)
+                ->update(['message' => $newMessage]);
+        }
         
         \DB::table('request')
             ->where('senderid', $this->id)

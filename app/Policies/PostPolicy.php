@@ -48,6 +48,24 @@ class PostPolicy
      */
     public function delete(User $user, Post $post): bool
     {
-        return $user->id === $post->userid || $user->isadmin;
+        if ($user->id === $post->userid) {
+            return true;
+        }
+
+        if ($user->isadmin) {
+            return true;
+        }
+
+        if ($post->groupid) {
+            $group = \App\Models\Group::find($post->groupid);
+            if ($group) {
+                $membership = $group->members()->where('userid', $user->id)->first();
+                if ($membership && $membership->pivot->isowner) {
+                    return true;
+                }
+            }
+        }
+        
+        return false;
     }
 }

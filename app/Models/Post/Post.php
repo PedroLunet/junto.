@@ -160,6 +160,7 @@ class Post extends Model
             JOIN lbaw2544.review r ON p.id = r.postId
             JOIN lbaw2544.media m ON r.mediaId = m.id
             WHERE EXISTS (SELECT 1 FROM lbaw2544.film f WHERE f.mediaId = m.id)
+            AND p.groupId IS NULL
             ORDER BY p.id DESC
         ';
 
@@ -200,6 +201,7 @@ class Post extends Model
             JOIN lbaw2544.review r ON p.id = r.postId
             JOIN lbaw2544.media m ON r.mediaId = m.id
             WHERE EXISTS (SELECT 1 FROM lbaw2544.book b WHERE b.mediaId = m.id)
+            AND p.groupId IS NULL
             ORDER BY p.id DESC
         ';
 
@@ -240,6 +242,7 @@ class Post extends Model
             JOIN lbaw2544.review r ON p.id = r.postId
             JOIN lbaw2544.media m ON r.mediaId = m.id
             WHERE EXISTS (SELECT 1 FROM lbaw2544.music mu WHERE mu.mediaId = m.id)
+            AND p.groupId IS NULL
             ORDER BY p.id DESC
         ';
 
@@ -250,37 +253,36 @@ class Post extends Model
 
     public static function toggleLike($postId, $userId)
     {
-        // Check if already liked
-        $existing = DB::select('
-            SELECT * FROM lbaw2544.post_like
-            WHERE postId = ? AND userId = ?
-        ', [$postId, $userId]);
+        $post = self::find($postId);
+        $user = User::find($userId);
+        
+        $existing = DB::table('lbaw2544.post_like')
+            ->where('postid', $postId)
+            ->where('userid', $userId)
+            ->first();
 
-        if (count($existing) > 0) {
-            // Unlike
-            DB::delete('
-                DELETE FROM lbaw2544.post_like
-                WHERE postId = ? AND userId = ?
-            ', [$postId, $userId]);
+        if ($existing) {
+            DB::table('lbaw2544.post_like')
+                ->where('postid', $postId)
+                ->where('userid', $userId)
+                ->delete();
             $liked = false;
         } else {
-            // Like
-            DB::insert('
-                INSERT INTO lbaw2544.post_like (postId, userId, createdAt)
-                VALUES (?, ?, CURRENT_TIMESTAMP)
-            ', [$postId, $userId]);
+            DB::table('lbaw2544.post_like')->insert([
+                'postid' => $postId,
+                'userid' => $userId,
+                'createdat' => now(),
+            ]);
             $liked = true;
         }
 
-        // Get updated likes count
-        $count = DB::select('
-            SELECT COUNT(*) as count FROM lbaw2544.post_like
-            WHERE postId = ?
-        ', [$postId]);
+        $likesCount = DB::table('lbaw2544.post_like')
+            ->where('postid', $postId)
+            ->count();
 
         return [
             'liked' => $liked,
-            'likes_count' => $count[0]->count,
+            'likes_count' => $likesCount,
         ];
     }
 

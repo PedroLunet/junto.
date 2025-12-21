@@ -1,4 +1,4 @@
-<div class="space-y-6">
+<div class="space-y-4 sm:space-y-6">
     <div>
         <h3 class="text-lg font-semibold text-gray-900 mb-4">Received Requests</h3>
         <x-friend-requests.received-requests :friendRequests="$friendRequests" />

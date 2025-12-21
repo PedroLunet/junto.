@@ -135,6 +135,8 @@
     @hasSection('modals')
         @yield('modals')
     @endif
+
+    <x-ui.notification-alert />
 </body>
 
 </html>

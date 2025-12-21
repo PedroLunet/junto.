@@ -17,19 +17,23 @@ class ActivityNotification extends Model
         'postid',
     ];
 
-    /**
-     * Get the notification associated with this activity notification.
-     */
     public function notification()
     {
         return $this->belongsTo(Notification::class, 'notificationid', 'id');
     }
 
-    /**
-     * Get the post associated with this activity notification.
-     */
     public function post()
     {
         return $this->belongsTo(Post::class, 'postid', 'id');
+    }
+
+    public function likeNotification()
+    {
+        return $this->hasOne(LikeNotification::class, 'notificationid', 'notificationid');
+    }
+
+    public function commentNotification()
+    {
+        return $this->hasOne(CommentNotification::class, 'notificationid', 'notificationid');
     }
 }

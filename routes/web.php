@@ -50,6 +50,8 @@ Route::middleware('regular.user')->group(function () {
 Route::middleware(['auth', 'regular.user'])->group(function () {
     Route::get('/friends-feed', [HomeController::class, 'friendsFeed'])->name('friends-feed');
     Route::post('/posts/{id}/comments', [CommentController::class, 'store'])->name('post.comments.add');
+    Route::put('/comments/{id}', [CommentController::class, 'update'])->name('comments.update');
+    Route::delete('/comments/{id}', [CommentController::class, 'destroy'])->name('comments.delete');
     Route::post('/posts/{id}/like', [HomeController::class, 'toggleLike'])->name('post.like');
 
     // Messages
@@ -224,7 +226,11 @@ Route::middleware(['auth', 'regular.user'])->controller(NotificationController::
     Route::get('/notifications', 'index')->name('notifications.index');
     Route::post('/notifications/{id}/read', 'markAsRead')->name('notifications.mark-read');
     Route::post('/notifications/read-all', 'markAllAsRead')->name('notifications.mark-all-read');
+    Route::post('/notifications/snooze', 'snoozeNotifications')->name('notifications.snooze');
+    Route::post('/notifications/snooze/clear', 'clearSnooze')->name('notifications.snooze-clear');
+    Route::get('/notifications/snooze/status', 'getSnoozeStatus')->name('notifications.snooze-status');
     Route::get('/notifications/unread-count', 'getUnreadCount')->name('notifications.unread-count');
+    Route::get('/notifications/latest-unread', 'getLatestUnread')->name('notifications.latest-unread');
 });
 
 // Static pages

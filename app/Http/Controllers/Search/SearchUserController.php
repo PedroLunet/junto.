@@ -15,33 +15,35 @@ class SearchUserController extends Controller
     {
         $request->validate([
             'query' => ['nullable', 'string', 'max:255'],
+            'sort' => ['nullable', 'string', 'in:name_asc,name_desc,date_asc,date_desc'],
         ]);
 
         $search = $request->input('query', '') ?? "";
+        $sort = $request->input('sort', 'name_asc');
 
         $users = User::query()
+            ->where('isdeleted', false)
+            ->where('isblocked', false)
             ->when($search, function ($query, $search) {
-                $query->where(function ($q) use ($search) {
-                    $q->whereRaw("fts_document @@ plainto_tsquery('english', ?)", [$search])
-                      ->orWhere('username', 'ILIKE', "%$search%")
-                      ->orWhere('name', 'ILIKE', "%$search%");
-                })
-                ->orderByRaw("ts_rank(fts_document, plainto_tsquery('english', ?)) DESC NULLS LAST", [$search]);
-            })
-            ->limit(10)
-            ->get();
+                return $query->searchByProfile($search);
+            });
 
-        if ($request->wantsJson() || $request->ajax()) {
-            return response()->json([
-                'users' => $users->map(function($u) {
-                    return [
-                        'id' => $u->id,
-                        'name' => $u->name,
-                        'username' => $u->username,
-                    ];
-                }),
-            ]);
+        switch ($sort) {
+            case 'name_desc':
+                $users = $users->orderByNameDesc();
+                break;
+            case 'date_asc':
+                $users = $users->orderByJoinDateAsc();
+                break;
+            case 'date_desc':
+                $users = $users->orderByJoinDateDesc();
+                break;
+            case 'name_asc':
+            default:
+                $users = $users->orderByNameAsc();
         }
+
+        $users = $users->get();
 
         $user = auth()->user();
         if ($user) {
@@ -51,6 +53,11 @@ class SearchUserController extends Controller
         }
 
         $friendService = app(FriendService::class);
-        return view("pages.search.index", ['users' => $users, "friends" => $friends, "friendService" => $friendService]);
+        return view("pages.search.index", [
+            'users' => $users,
+            'friends' => $friends,
+            'friendService' => $friendService,
+            'sort' => $sort,
+        ]);
     }
 }

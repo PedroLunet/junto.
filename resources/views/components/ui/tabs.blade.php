@@ -16,7 +16,7 @@
     <div class="flex-1 overflow-y-auto">
         @foreach ($tabs as $key => $tab)
             <div id="{{ $key }}-content"
-                class="tab-content px-2 sm:px-8 lg:px-10 {{ $loop->first ? '' : 'hidden' }}">
+                class="tab-content px-4 sm:px-8 md:px-10 {{ $loop->first ? '' : 'hidden' }}">
                 {!! $tab['content'] !!}
             </div>
         @endforeach
