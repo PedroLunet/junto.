@@ -59,6 +59,7 @@ class GroupController extends Controller
         if ($group->isprivate) {
             $owner = $group->owner()->first();
             if ($owner) {
+                $invite->update(['status' => 'waiting_approval']);
                 \App\Models\Notification::create([
                     'receiverid' => $owner->id,
                     'message' => auth()->user()->name.' accepted an invite to join '.$group->name.'. Please approve.',
@@ -77,17 +78,17 @@ class GroupController extends Controller
     {
         $this->authorize('update', $group);
         $invite = \App\Models\Request::where('notificationid', $requestId)
-            ->where('status', 'pending')
+            ->where('status', 'waiting_approval')
             ->whereHas('groupInviteRequest', function ($q) use ($group) {
                 $q->where('groupid', $group->id);
             })
             ->first();
-            if ($invite) {
-                if (!$group->members()->where('users.id', $invite->senderid)->exists()) {
-                    $group->members()->attach($invite->senderid, ['isowner' => false]);
-                }
-                $invite->update(['status' => 'accepted']);
-                return back()->with('success', 'Invite approved. User added to group.');
+        if ($invite) {
+            if (!$group->members()->where('users.id', $invite->senderid)->exists()) {
+                $group->members()->attach($invite->senderid, ['isowner' => false]);
+            }
+            $invite->update(['status' => 'accepted']);
+            return back()->with('success', 'Invite approved. User added to group.');
         }
         return back()->with('error', 'Invite not found or already handled.');
     }
