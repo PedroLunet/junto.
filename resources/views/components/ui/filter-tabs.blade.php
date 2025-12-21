@@ -1,6 +1,7 @@
 @props(['filters', 'activeFilter' => null])
 
-<div class="inline-flex bg-gray-200 rounded-lg p-1 sm:p-2 gap-0 sm:gap-1 md:gap-2 relative overflow-x-auto max-w-full">
+<div class="inline-flex bg-gray-200 rounded-lg p-1 sm:p-2 gap-0 sm:gap-1 md:gap-2 relative overflow-x-auto"
+    style="width: fit-content; min-width: 0;">
     <!-- Animated background slider -->
     <div id="filter-slider"
         class="absolute bg-white shadow-sm rounded-md transition-all duration-300 ease-in-out pointer-events-none"
