@@ -15,8 +15,10 @@
 
             <!-- Illustration -->
             <div class="py-8">
-                <div class="text-9xl flex items-center justify-center gap-4">
-                    🎬 📚 🎵
+                <div class="flex items-center justify-center gap-8">
+                    <img src="{{ asset('404-movie.svg') }}" alt="Movie" class="w-28 h-28 object-contain">
+                    <img src="{{ asset('404-book.svg') }}" alt="Book" class="w-28 h-28 object-contain">
+                    <img src="{{ asset('404-music.svg') }}" alt="Music" class="w-28 h-28 object-contain">
                 </div>
                 <p class="text-gray-600 text-lg mt-4">Error 404</p>
             </div>
