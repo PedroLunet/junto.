@@ -54,9 +54,6 @@
             <h1><a href="/" class="text-3xl font-bold hover:text-[#a17f8f]">junto.</a></h1>
             <div class="flex items-center justify-end">
                 @yield('header-actions')
-                <button onclick="toggleMobileMenu()" class="lg:hidden text-white">
-                    <i class="fa-solid fa-times"></i>
-                </button>
             </div>
         </div>
 
