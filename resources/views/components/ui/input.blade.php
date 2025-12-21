@@ -23,8 +23,9 @@
 
 <div class="mb-4">
     @if ($label)
-        <div class="flex items-center gap-2 mb-1">
-            <label for="{{ $inputId }}" class="block font-medium text-gray-700">
+        <div class="flex items-center gap-2 mb-2">
+            <label for="{{ $inputId }}"
+                class="block text-base sm:text-lg md:text-xl lg:text-lg font-medium text-gray-700">
                 {{ $label }}
             </label>
             @if ($help)
@@ -44,15 +45,15 @@
 
     <div class="relative flex items-center">
         @if ($isTextarea)
-            <textarea id="{{ $inputId }}" name="{{ $name }}" rows="{{ $rows }}" placeholder="{{ $placeholder }}"
-                {{ $required ? 'required' : '' }} {{ $disabled ? 'disabled' : '' }}
-                {{ $attributes->merge(['class' => 'w-full px-3 py-2 text-sm text-gray-800 border rounded-lg outline-none transition-all duration-200 placeholder:text-gray-400 focus:border-[#820273] focus:ring-4 focus:ring-purple-100 resize-none ' . ($disabled ? 'bg-gray-400 cursor-not-allowed' : '') . ' ' . ($error ? 'border-red-500 pr-12 focus:border-red-500 focus:ring-red-100' : 'border-gray-300')]) }}>{{ old($name, $value) }}</textarea>
+            <textarea id="{{ $inputId }}" name="{{ $name }}" rows="{{ $rows }}"
+                placeholder="{{ $placeholder }}" {{ $required ? 'required' : '' }} {{ $disabled ? 'disabled' : '' }}
+                {{ $attributes->merge(['class' => 'w-full px-3 sm:px-4 py-2 sm:py-3 text-sm text-gray-800 border rounded-lg outline-none transition-all duration-200 placeholder:text-gray-400 focus:border-[#820273] focus:ring-4 focus:ring-purple-100 resize-none ' . ($disabled ? 'bg-gray-400 cursor-not-allowed' : '') . ' ' . ($error ? 'border-red-500 pr-12 focus:border-red-500 focus:ring-red-100' : 'border-gray-300')]) }}>{{ old($name, $value) }}</textarea>
         @else
             <input type="{{ $type }}" id="{{ $inputId }}" name="{{ $name }}"
                 value="{{ old($name, $value) }}" placeholder="{{ $placeholder }}" {{ $required ? 'required' : '' }}
                 {{ $disabled ? 'disabled' : '' }}
                 @if ($isEmail) pattern="{{ $emailPattern }}" title="Please enter a valid email address" @endif
-                {{ $attributes->merge(['class' => 'w-full px-3 py-2 text-sm text-gray-800 border rounded-lg outline-none transition-all duration-200 placeholder:text-gray-400 focus:border-[#820273] focus:ring-4 focus:ring-purple-100 ' . ($disabled ? 'bg-gray-400 cursor-not-allowed' : '') . ' ' . ($error ? 'border-red-500 pr-12 focus:border-red-500 focus:ring-red-100' : 'border-gray-300')]) }} />
+                {{ $attributes->merge(['class' => 'w-full px-3 sm:px-4 py-2 sm:py-3 text-base sm:text-lg md:text-xl lg:text-base text-gray-800 border rounded-lg outline-none transition-all duration-200 placeholder:text-gray-400 focus:border-[#820273] focus:ring-4 focus:ring-purple-100 ' . ($disabled ? 'bg-gray-400 cursor-not-allowed' : '') . ' ' . ($error ? 'border-red-500 pr-12 focus:border-red-500 focus:ring-red-100' : 'border-gray-300')]) }} />
         @endif
 
         @if ($type === 'password' && !$disabled)

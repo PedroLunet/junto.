@@ -1,8 +1,8 @@
 @extends('layouts.app')
 
 @section('content')
-    <!-- alert container -->
-    <div id="appealAlert" class="fixed top-4 right-4 z-60 hidden" style="max-width: 400px;">
+    <!-- alert container (placed at top of content for stacking) -->
+    <div id="appealAlert" class="fixed top-4 right-4 z-[9999] pointer-events-none hidden" style="max-width: 400px;">
         <div id="successAlert" class="hidden">
             <x-ui.alert-card type="success" title="Success" message="" id="successAlertCard" />
         </div>
@@ -10,7 +10,6 @@
             <x-ui.alert-card type="error" title="Error" message="" id="errorAlertCard" />
         </div>
     </div>
-
     <!-- blocked modal overlay -->
     <div class="fixed inset-0 bg-black bg-opacity-60 z-50 flex items-center justify-center p-4">
         <div class="max-w-2xl w-full">
@@ -157,5 +156,24 @@
                 closeAppealModal();
             }
         });
+
+        // periodically check if user is still blocked
+        setInterval(async function() {
+            try {
+                const response = await fetch('/blocked/status', {
+                    headers: {
+                        'Accept': 'application/json'
+                    }
+                });
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data && data.isblocked === false) {
+                        window.location.href = '/'; // redirect to homepage or dashboard
+                    }
+                }
+            } catch (e) {
+                // ignore errors
+            }
+        }, 10000); // every 10 seconds
     </script>
 @endsection

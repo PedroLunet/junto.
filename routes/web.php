@@ -24,13 +24,14 @@ use App\Http\Controllers\Notification\NotificationController;
 use App\Http\Controllers\Search\SearchUserController;
 use App\Http\Controllers\User\ProfileController;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
 
 // Home
 // Route::redirect('/', '/login');
 
 // Blocked user page
 Route::middleware('auth')->get('/blocked', function () {
-    $hasRejectedAppeal = \App\Models\UnblockAppeal::where('userid', auth()->id())
+    $hasRejectedAppeal = \App\Models\UnblockAppeal::where('userid', Auth::id())
         ->where('status', 'rejected')
         ->exists();
 
@@ -190,6 +191,11 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::post('/admin/account-security/validate-password', [AdminController::class, 'validatePassword'])->name('admin.validate-password');
 });
 
+// Admin: Delete user (with password confirmation)
+Route::post('/admin/users/{id}/delete', [\App\Http\Controllers\Admin\AdminController::class, 'deleteUser'])
+    ->middleware(['auth', 'admin'])
+    ->name('admin.users.delete');
+
 // GROUPS ROUTES
 Route::middleware(['auth'])->group(function () {
     Route::delete('/groups/{group}/remove-member/{user}', [GroupController::class, 'removeMember'])->name('groups.removeMember');
@@ -239,4 +245,9 @@ Route::get('/features', function () {
 
 Route::middleware('regular.user')->controller(ProfileController::class)->group(function () {
     Route::get('/{username}', 'show')->name('profile.show');
+});
+
+// blocked status check for AJAX polling
+Route::middleware('auth')->get('/blocked/status', function () {
+    return response()->json(['isblocked' => Auth::user()->isblocked]);
 });

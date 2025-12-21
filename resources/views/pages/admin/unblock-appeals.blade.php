@@ -6,70 +6,60 @@
     <div class="flex flex-col h-[calc(100vh-4rem)]">
         <!-- Fixed Header -->
         <div class="flex-none bg-[#F1EBF4]">
-            <div class="mx-20 mt-10 mb-4 flex items-center justify-between">
-                <div>
-                    <h1 class="text-3xl font-bold text-gray-900">Unblock Appeals</h1>
-                    <p class="text-gray-600 mt-2 text-base">Review and manage user appeal requests</p>
+            <div class="mx-4 sm:mx-8 lg:mx-20 mt-6 sm:mt-8 lg:mt-10 mb-4 flex flex-col gap-4">
+                <div><!-- Title -->
+                    <h1 class="text-2xl sm:text-3xl font-bold text-gray-900">Unblock Appeals</h1>
+                    <!-- Description -->
+                    <p class="text-gray-600 mt-1 sm:mt-2 text-sm sm:text-base lg:mt-0">Review and manage user appeal requests
+                    </p>
                 </div>
-                <div class="flex items-center gap-6">
-                    <!-- Sort By Dropdown -->
-                    <x-ui.sort-dropdown :options="[
-                        'created_date' => 'Created Date',
-                        'user_name' => 'User Name'
-                    ]" defaultValue="created_date" />
 
-                    <!-- Filter Tabs -->
-                    <x-ui.filter-tabs :filters="[
-                        'all' => [
-                            'label' => 'All',
-                            'count' => count($appeals),
-                            'onclick' => 'filterAppeals(\'all\')'
-                        ],
-                        'pending' => [
-                            'label' => 'Pending',
-                            'count' => collect($appeals)->filter(fn($a) => $a->status === 'pending')->count(),
-                            'onclick' => 'filterAppeals(\'pending\')'
-                        ],
-                        'approved' => [
-                            'label' => 'Approved',
-                            'count' => collect($appeals)->filter(fn($a) => $a->status === 'approved')->count(),
-                            'onclick' => 'filterAppeals(\'approved\')'
-                        ],
-                        'rejected' => [
-                            'label' => 'Rejected',
-                            'count' => collect($appeals)->filter(fn($a) => $a->status === 'rejected')->count(),
-                            'onclick' => 'filterAppeals(\'rejected\')'
-                        ]
-                    ]" activeFilter="all" />
+                <!-- Controls: Sort and Filter Tabs -->
+                <div class="flex flex-col lg:flex-row w-full lg:w-auto gap-4 items-center justify-center">
+                    <div class="flex justify-start w-full">
+                        <x-ui.sort-dropdown :options="[
+                            'created_date' => 'Created Date',
+                            'user_name' => 'User Name',
+                        ]" defaultValue="created_date" />
+                    </div>
+                    <div class="w-full flex justify-center lg:justify-end mt-2 lg:mt-0">
+                        <x-ui.filter-tabs :filters="[
+                            'all' => [
+                                'label' => 'All',
+                                'count' => $counts['all'],
+                                'onclick' => 'filterAppeals(\'all\')',
+                            ],
+                            'pending' => [
+                                'label' => 'Pending',
+                                'count' => $counts['pending'],
+                                'onclick' => 'filterAppeals(\'pending\')',
+                            ],
+                            'approved' => [
+                                'label' => 'Approved',
+                                'count' => $counts['approved'],
+                                'onclick' => 'filterAppeals(\'approved\')',
+                            ],
+                            'rejected' => [
+                                'label' => 'Rejected',
+                                'count' => $counts['rejected'],
+                                'onclick' => 'filterAppeals(\'rejected\')',
+                            ],
+                        ]" activeFilter="all" :hideCountsOnMobile="true" />
+                    </div>
                 </div>
             </div>
         </div>
 
         <!-- Scrollable Content -->
         <div class="flex-1 overflow-y-auto">
-            <div id="appeals-container" class="mx-20 my-6">
-                @if ($appeals->isEmpty())
-                    <div class="bg-blue-50 border border-blue-200 text-blue-700 px-6 py-4 rounded-lg">
-                        <div class="flex items-center">
-                            <i class="fas fa-info-circle mr-3 text-xl"></i>
-                            <p class="font-medium">No pending appeals at this time.</p>
-                        </div>
-                    </div>
-                @else
-                    <div class="grid gap-6">
-                        @foreach ($appeals as $appeal)
-                            <div class="appeal-item">
-                                <x-admin.appeal-card :appeal="$appeal" />
-                            </div>
-                        @endforeach
-                    </div>
-                @endif
+            <div id="appeals-container" class="mx-2 sm:mx-8 lg:mx-20 my-6">
+                <x-admin.appeals.appeals-list :appeals="$appeals" />
             </div>
         </div>
     </div>
 
     <x-ui.confirm />
-    <x-admin.admin-notes-modal />
+    <x-admin.appeals.admin-notes-modal />
 
 @endsection
 
@@ -83,7 +73,7 @@
         function toggleSortOrder() {
             sortAscending = !sortAscending;
             const icon = document.getElementById('sort-order-icon');
-            
+
             if (sortAscending) {
                 icon.classList.remove('fa-arrow-down');
                 icon.classList.add('fa-arrow-up');
@@ -91,7 +81,7 @@
                 icon.classList.remove('fa-arrow-up');
                 icon.classList.add('fa-arrow-down');
             }
-            
+
             applyFilterAndSort();
         }
 
@@ -101,9 +91,9 @@
         }
 
         function applyFilterAndSort() {
-            let filteredAppeals = currentFilter === 'all' 
-                ? allAppeals 
-                : allAppeals.filter(a => a.status === currentFilter);
+            let filteredAppeals = currentFilter === 'all' ?
+                allAppeals :
+                allAppeals.filter(a => a.status === currentFilter);
 
             // Sort appeals
             if (currentSort === 'created_date') {
@@ -123,7 +113,7 @@
             // Update display
             const appealItems = document.querySelectorAll('.appeal-item');
             const container = document.querySelector('#appeals-container .grid');
-            
+
             // Create a map of appeal IDs to their elements
             const appealMap = new Map();
             appealItems.forEach(item => {
@@ -224,4 +214,3 @@
         }
     </script>
 @endpush
-
