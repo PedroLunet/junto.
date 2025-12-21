@@ -28,19 +28,21 @@
 
                         <!-- Selected Movie Preview -->
                         <div id="modalSelectedMovie"
-                            class="hidden mt-4 p-4 border rounded-lg bg-gray-50 flex items-start gap-4 relative">
+                            class="hidden mt-4 p-4 border rounded-lg bg-gray-50 relative">
                             <input type="hidden" name="tmdb_id" id="selectedMovieId">
-                            <img id="selectedMoviePoster" src="" alt="Poster"
-                                class="h-80 object-cover rounded shadow-sm">
-                            <div>
-                                <h4 id="selectedMovieTitle" class="text-4xl font-bold text-gray-800"></h4>
-                                <p id="selectedMovieDirector" class="text-gray-600"></p>
-                                <p id="selectedMovieYear" class="text-gray-600 text-xl"></p>
-                            </div>
                             <button type="button" id="removeMovieBtn"
-                                class="absolute top-2 right-2 text-gray-400 hover:text-red-500">
+                                class="absolute top-2 right-2 text-gray-400 hover:text-red-500 z-10">
                                 <i class="fa-solid fa-times"></i>
                             </button>
+                            <div class="flex flex-col sm:flex-row items-start gap-4">
+                                <img id="selectedMoviePoster" src="" alt="Poster"
+                                    class="w-32 h-48 sm:w-24 sm:h-36 object-cover rounded shadow-sm mx-auto sm:mx-0 shrink-0">
+                                <div class="flex-1 min-w-0 text-center sm:text-left">
+                                    <h4 id="selectedMovieTitle" class="text-lg sm:text-xl font-bold text-gray-800 break-words mb-1"></h4>
+                                    <p id="selectedMovieDirector" class="text-sm text-gray-600 mb-0.5"></p>
+                                    <p id="selectedMovieYear" class="text-sm text-gray-600"></p>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
