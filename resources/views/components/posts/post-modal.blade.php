@@ -108,6 +108,8 @@
 
 <script>
     let currentPostId = null;
+    let commentRefreshInterval = null;
+
     window.openPostModal = function(post) {
         const modal = document.getElementById('postModal');
         const content = document.getElementById('modalContent');
@@ -234,27 +236,56 @@
             document.getElementById('reportButton').style.display = 'flex';
         }
         modal.classList.remove('hidden');
+
+        if (commentRefreshInterval) {
+            clearInterval(commentRefreshInterval);
+        }
+        commentRefreshInterval = setInterval(() => {
+            if (currentPostId) {
+                window.loadComments(currentPostId, true);
+            }
+        }, 5000);
     }
-    window.loadComments = function(postId) {
+
+    window.loadComments = function(postId, silent = false) {
         const commentsSection = document.getElementById('commentsSection');
-        commentsSection.innerHTML = `
-        <div class="flex justify-center items-center py-8 text-gray-400">
-            <i class="fas fa-circle-notch fa-spin text-2xl"></i>
-        </div>
-    `;
+
+        if (!silent) {
+            commentsSection.innerHTML = `
+            <div class="flex justify-center items-center py-8 text-gray-400">
+                <i class="fas fa-circle-notch fa-spin text-2xl"></i>
+            </div>
+        `;
+        }
+
         fetch(`/posts/${postId}/comments`)
             .then(response => response.text())
             .then(html => {
                 commentsSection.innerHTML = html;
+
+                const commentElements = commentsSection.querySelectorAll('[data-comment-id]');
+                const actualCount = commentElements.length;
+
+                const modalCountElem = document.getElementById('commentsCount');
+                if (modalCountElem) {
+                    modalCountElem.textContent = actualCount;
+                }
+
+                const feedCountElem = document.getElementById(`comment-count-${postId}`);
+                if (feedCountElem) {
+                    feedCountElem.textContent = actualCount;
+                }
             })
             .catch(error => {
                 console.error('Error loading comments:', error);
-                commentsSection.innerHTML = `
-            <div class="text-center py-8 text-red-500">
-                <p>Error loading comments</p>
-                <button onclick="window.loadComments(${postId})" class="text-sm underline mt-2">Try again</button>
-            </div>
-        `;
+                if (!silent) {
+                    commentsSection.innerHTML = `
+                    <div class="text-center py-8 text-red-500">
+                        <p>Error loading comments</p>
+                        <button onclick="window.loadComments(${postId})" class="text-sm underline mt-2">Try again</button>
+                    </div>
+                `;
+                }
             });
     }
     window.closePostModal = function() {
@@ -262,6 +293,11 @@
         modal.classList.add('hidden');
         currentPostId = null;
         document.getElementById('commentInput').value = '';
+
+        if (commentRefreshInterval) {
+            clearInterval(commentRefreshInterval);
+            commentRefreshInterval = null;
+        }
     }
     window.likePost = function(event) {
         event.stopPropagation();
@@ -348,13 +384,6 @@
                 if (data.success) {
                     input.value = '';
                     window.loadComments(currentPostId);
-                    const modalCountElem = document.getElementById('commentsCount');
-                    modalCountElem.textContent = parseInt(modalCountElem.textContent) + 1;
-                    const timelineCommentCount = document.querySelector(
-                        `#post-${currentPostId} .comments-count`);
-                    if (timelineCommentCount) {
-                        timelineCommentCount.textContent = parseInt(timelineCommentCount.textContent) + 1;
-                    }
                 }
             })
             .catch(error => {
@@ -509,16 +538,17 @@
                         commentDiv.remove();
                     }
 
+                    const commentElements = document.querySelectorAll('[data-comment-id]');
+                    const actualCount = commentElements.length;
+
                     const modalCountElem = document.getElementById('commentsCount');
                     if (modalCountElem) {
-                        modalCountElem.textContent = Math.max(0, parseInt(modalCountElem.textContent) - 1);
+                        modalCountElem.textContent = actualCount;
                     }
 
-                    const timelineCommentCount = document.querySelector(
-                        `#post-${currentPostId} .comments-count`);
-                    if (timelineCommentCount) {
-                        timelineCommentCount.textContent = Math.max(0, parseInt(timelineCommentCount
-                            .textContent) - 1);
+                    const feedCountElem = document.getElementById(`comment-count-${currentPostId}`);
+                    if (feedCountElem) {
+                        feedCountElem.textContent = actualCount;
                     }
                 } else {
                     alert(data.message || 'Failed to delete comment. Please try again.');
