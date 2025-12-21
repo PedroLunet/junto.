@@ -21,11 +21,28 @@ class SearchUserController extends Controller
 
         $users = User::query()
             ->when($search, function ($query, $search) {
-                $query
-                    ->whereRaw("fts_document @@ plainto_tsquery('english', ?)", [$search])
-                    ->orderByRaw("ts_rank(fts_document, plainto_tsquery('english', ?)) DESC", [$search]);
+                $query->where(function ($q) use ($search) {
+                    $q->whereRaw("fts_document @@ plainto_tsquery('english', ?)", [$search])
+                      ->orWhere('username', 'ILIKE', "%$search%")
+                      ->orWhere('name', 'ILIKE', "%$search%");
+                })
+                ->orderByRaw("ts_rank(fts_document, plainto_tsquery('english', ?)) DESC NULLS LAST", [$search]);
             })
+            ->limit(10)
             ->get();
+
+        if ($request->wantsJson() || $request->ajax()) {
+            return response()->json([
+                'users' => $users->map(function($u) {
+                    return [
+                        'id' => $u->id,
+                        'name' => $u->name,
+                        'username' => $u->username,
+                    ];
+                }),
+            ]);
+        }
+
         $user = auth()->user();
         if ($user) {
             $friends = $user->friends()->pluck('id')->toArray();
