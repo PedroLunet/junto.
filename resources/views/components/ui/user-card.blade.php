@@ -20,10 +20,10 @@
                     class="w-12 sm:w-16 h-12 sm:h-16 rounded-full object-cover shrink-0">
             @endif
             <div class="min-w-0 flex-1">
-                <h3 class="font-semibold text-lg sm:text-3xl text-gray-900 truncate">{{ $user->name }}</h3>
-                <p class="text-gray-500 text-sm sm:text-2xl truncate">@<!-- -->{{ $user->username }}</p>
+                <h3 class="font-semibold text-base sm:text-lg text-gray-900 truncate">{{ $user->name }}</h3>
+                <p class="text-gray-500 text-sm sm:text-base truncate">@<span>{{ $user->username }}</span></p>
                 @if ($user->bio)
-                    <p class="text-gray-600 text-xs sm:text-lg mt-1 sm:mt-2 line-clamp-2">{{ $user->bio }}</p>
+                    <p class="text-gray-600 text-xs sm:text-sm mt-1 sm:mt-2 line-clamp-2">{{ $user->bio }}</p>
                 @endif
             </div>
         </a>
