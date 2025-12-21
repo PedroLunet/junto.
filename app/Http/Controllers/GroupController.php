@@ -61,7 +61,7 @@ class GroupController extends Controller
             if ($owner) {
                 \App\Models\Notification::create([
                     'receiverid' => $owner->id,
-                    'message' => auth()->user()->name.' accepted your invite to join '.$group->name.'. Please approve.',
+                    'message' => auth()->user()->name.' accepted an invite to join '.$group->name.'. Please approve.',
                 ]);
                 return back()->with('success', 'Invite accepted. Waiting for owner approval.');
             }
