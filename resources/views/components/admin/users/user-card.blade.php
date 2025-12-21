@@ -15,12 +15,14 @@
     <div class="space-y-4 mb-6">
         <div class="flex justify-between border-b border-gray-50 pb-2">
             <span class="text-gray-500 text-sm">Username</span>
-            <span class="text-gray-900 font-medium text-sm">{{ $user->username }}</span>
+            <span class="text-gray-900 font-medium text-sm"
+                data-user-username="{{ $user->username }}">{{ $user->username }}</span>
         </div>
 
         <div class="flex justify-between border-b border-gray-50 pb-2">
             <span class="text-gray-500 text-sm">Email</span>
-            <span class="text-gray-900 font-medium text-sm">{{ $user->email }}</span>
+            <span class="text-gray-900 font-medium text-sm"
+                data-user-email="{{ $user->email }}">{{ $user->email }}</span>
         </div>
 
         <div class="flex justify-between border-b border-gray-50 pb-2">
