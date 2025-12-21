@@ -1,5 +1,5 @@
 @if($notifications->count() > 0)
-    <div class="space-y-4">
+    <div class="space-y-3 sm:space-y-4">
         @foreach($notifications as $notification)
             @php
                 $isSnoozed = $notification->snoozed_until && $notification->snoozed_until > now();
@@ -13,9 +13,9 @@
                 $type = $notification->type ?? null;
                 $colors = $typeColors[$type] ?? null;
             @endphp
-            <div class="notification-item bg-white border-l-4 {{ $notification->isread ? 'border-gray-200' : 'border-[#820263]' }} rounded-xl shadow-sm hover:shadow-md transition-shadow p-6"
+            <div class="notification-item bg-white border-l-4 {{ $notification->isread ? 'border-gray-200' : 'border-[#820263]' }} rounded-xl shadow-sm hover:shadow-md transition-shadow p-4 sm:p-6"
                 id="notification-{{ $notification->id }}">
-                <div class="flex justify-between items-start gap-6">
+                <div class="flex flex-col sm:flex-row justify-between items-start gap-3 sm:gap-6">
                     <div class="flex-1 min-w-0">
                         <div class="flex items-start gap-3">
                             <div class="text-[#820263] text-xl mt-1 shrink-0">
@@ -41,12 +41,13 @@
                             </div>
                         </div>
                     </div>
-                    <div class="flex gap-2 flex-shrink-0 flex-wrap justify-end">
+                    <div class="flex gap-2 w-full sm:w-auto sm:flex-shrink-0 flex-wrap justify-start sm:justify-end">
                         @if(!$notification->isread)
                             <button onclick="markAsRead({{ $notification->id }})" 
-                                class="inline-flex items-center text-sm text-white font-semibold px-4 py-2 rounded-lg bg-[#820263] hover:bg-[#600149] transition-colors">
+                                class="inline-flex items-center text-xs sm:text-sm text-white font-semibold px-3 sm:px-4 py-2 rounded-lg bg-[#820263] hover:bg-[#600149] transition-colors flex-1 sm:flex-none justify-center">
                                 <i class="fas fa-check mr-2"></i>
-                                Mark read
+                                <span class="hidden sm:inline">Mark read</span>
+                                <span class="sm:hidden">Read</span>
                             </button>
                         @endif
                     </div>
@@ -56,25 +57,25 @@
     </div>
 
     @if($notifications->hasPages())
-        <div class="mt-12 flex justify-center items-center gap-3 flex-wrap">
+        <div class="mt-8 sm:mt-12 flex justify-center items-center gap-2 sm:gap-3 flex-wrap">
             @if ($notifications->onFirstPage())
-                <span class="px-4 py-2 text-gray-400 text-sm font-medium">← Previous</span>
+                <span class="px-2 sm:px-4 py-2 text-gray-400 text-xs sm:text-sm font-medium">← Previous</span>
             @else
-                <a href="{{ $notifications->previousPageUrl() }}" class="px-4 py-2 text-gray-700 hover:text-[#820263] font-medium text-sm border border-gray-300 rounded-lg hover:border-[#820263] transition-colors">← Previous</a>
+                <a href="{{ $notifications->previousPageUrl() }}" class="px-2 sm:px-4 py-2 text-gray-700 hover:text-[#820263] font-medium text-xs sm:text-sm border border-gray-300 rounded-lg hover:border-[#820263] transition-colors">← Previous</a>
             @endif
 
             @foreach ($notifications->getUrlRange(1, $notifications->lastPage()) as $page => $url)
                 @if ($page == $notifications->currentPage())
-                    <span class="px-4 py-2 bg-[#820263] text-white rounded-lg font-semibold text-sm">{{ $page }}</span>
+                    <span class="px-2 sm:px-4 py-2 bg-[#820263] text-white rounded-lg font-semibold text-xs sm:text-sm">{{ $page }}</span>
                 @else
-                    <a href="{{ $url }}" class="px-4 py-2 text-gray-700 hover:text-[#820263] font-medium text-sm border border-gray-300 rounded-lg hover:border-[#820263] transition-colors">{{ $page }}</a>
+                    <a href="{{ $url }}" class="px-2 sm:px-4 py-2 text-gray-700 hover:text-[#820263] font-medium text-xs sm:text-sm border border-gray-300 rounded-lg hover:border-[#820263] transition-colors">{{ $page }}</a>
                 @endif
             @endforeach
 
             @if ($notifications->hasMorePages())
-                <a href="{{ $notifications->nextPageUrl() }}" class="px-4 py-2 text-gray-700 hover:text-[#820263] font-medium text-sm border border-gray-300 rounded-lg hover:border-[#820263] transition-colors">Next →</a>
+                <a href="{{ $notifications->nextPageUrl() }}" class="px-2 sm:px-4 py-2 text-gray-700 hover:text-[#820263] font-medium text-xs sm:text-sm border border-gray-300 rounded-lg hover:border-[#820263] transition-colors">Next →</a>
             @else
-                <span class="px-4 py-2 text-gray-400 text-sm font-medium">Next →</span>
+                <span class="px-2 sm:px-4 py-2 text-gray-400 text-xs sm:text-sm font-medium">Next →</span>
             @endif
         </div>
     @endif
