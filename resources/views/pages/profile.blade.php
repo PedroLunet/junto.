@@ -1,9 +1,9 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="flex flex-col min-h-0 h-full -m-6">
-        <!-- Fixed Header Section -->
-        <div class="shrink-0 px-16 pt-10 pb-6">
+    <div class="flex flex-col h-full -mx-6 -mt-6 overflow-y-auto">
+        <!-- Header Section -->
+        <div class="px-16 pt-10 pb-6">
             <div class="flex items-start justify-between gap-6 md:gap-8 lg:gap-10 mb-6 md:mb-8">
                 <!-- profile header -->
                 <div class="flex items-center gap-4 md:gap-6">
@@ -77,7 +77,7 @@
 
             <!-- bio -->
             <div class="mb-6 md:mb-8 px-10 py-2">
-                <h2 class="text-xl md:text-2xl font-bold text-gray-900 mb-2">About Me</h2>
+                <h2 class="text-xl font-bold text-gray-900 mb-2">About Me</h2>
                 @if ($user->bio)
                     <p class="text-base md:text-lg text-gray-700 leading-relaxed">{{ $user->bio }}</p>
                 @else
@@ -90,8 +90,8 @@
             </div>
         </div>
 
-        <!-- Scrollable Content Section -->
-        <div class="flex-1 overflow-hidden px-16">
+        <!-- Content Section -->
+        <div class="px-16 pb-6">
             <!-- Only show private message if profile is actually private -->
             @if (!$canViewPosts)
                 <div class="flex flex-col items-center justify-center py-12">
