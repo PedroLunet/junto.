@@ -45,4 +45,9 @@ class Request extends Model
     {
         return $this->hasOne(GroupJoinRequest::class, 'requestid', 'notificationid');
     }
+
+    public function groupInviteRequest()
+    {
+        return $this->hasOne(\App\Models\GroupInviteRequest::class, 'requestid', 'notificationid');
+    }
 }
