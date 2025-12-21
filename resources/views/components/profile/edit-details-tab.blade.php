@@ -3,10 +3,11 @@
     @csrf
     @method('PUT')
 
-    <div class="flex items-center gap-6">
+
+    <div class="flex flex-col gap-6 md:flex-row md:items-center md:gap-8">
         <!-- profile picture -->
-        <div class="flex flex-col items-center mr-6">
-            <div class="shrink-0 w-40 h-40 md:w-44 md:h-44 lg:w-48 lg:h-48 relative mb-3">
+        <div class="flex flex-col items-center mb-4 md:mb-0 md:mr-6 w-full md:w-auto">
+            <div class="shrink-0 w-32 h-32 sm:w-36 sm:h-36 md:w-44 md:h-44 lg:w-48 lg:h-48 relative mb-3">
                 <div class="w-full h-full rounded-full overflow-hidden relative">
                     <img id="profileImagePreview"
                         src="{{ $user->profilepicture ? asset('profile/' . $user->profilepicture) : asset('profile/default.png') }}"
@@ -15,52 +16,57 @@
                 </div>
                 <!-- Profile image upload button and hidden file input -->
                 <input type="file" id="profileImageInput" name="profilePicture" accept="image/*" class="hidden" />
-                <x-ui.button type="button" id="editProfileImageBtn" variant="outline" title="Upload photo"
-                    class="absolute -top-1 -right-1 rounded-full flex items-center justify-center text-lg font-bold z-10 px-0 py-0 bg-white border border-gray-300 shadow-lg hover:bg-gray-100">
-                    <i class="fas fa-pencil text-[#820273]"></i>
-                </x-ui.button>
-                <x-ui.button type="button" id="resetProfileImageBtn" variant="outline" title="Reset to Default"
-                    class="absolute -top-1 -left-1 rounded-full flex items-center justify-center text-lg font-bold z-10 px-0 py-0 bg-white border border-gray-300 shadow-lg hover:bg-gray-100">
-                    <i class="fas fa-trash text-red-500"></i>
-                </x-ui.button>
+                <x-ui.icon-button type="button" id="editProfileImageBtn" variant="blue" title="Upload photo"
+                    class="absolute -top-0.5 -right-0.5 rounded-full flex items-center justify-center text-base md:text-lg font-bold z-10 p-3 shadow-lg">
+                    <i class="fas fa-pencil"></i>
+                </x-ui.icon-button>
+                <x-ui.icon-button type="button" id="resetProfileImageBtn" variant="red" title="Reset to Default"
+                    class="absolute -top-0.5 -left-0.5 rounded-full flex items-center justify-center text-base md:text-lg font-bold z-10 p-3 shadow-lg">
+                    <i class="fas fa-trash"></i>
+                </x-ui.icon-button>
             </div>
-            <p class="text-sm text-gray-500 text-center max-w-[200px]">
+            <p class="text-xs sm:text-sm text-gray-500 text-center max-w-[180px] sm:max-w-[200px]">
                 Supported formats: JPG, JPEG, PNG<br>
                 Max size: 2MB
             </p>
         </div>
 
-        <div class="flex-1 space-y-6">
+        <div class="flex-1 w-full space-y-4 sm:space-y-6">
             <!-- name -->
             <x-ui.input label="Name" name="name" type="text" value="{{ old('name', $user->name ?? '') }}"
-                :error="$errors->first('name')" />
+                :error="$errors->first('name')" class="w-full" />
 
             <!-- username -->
             <x-ui.input label="Username" name="username" type="text"
-                value="{{ old('username', $user->username ?? '') }}" :error="$errors->first('username')" />
+                value="{{ old('username', $user->username ?? '') }}" :error="$errors->first('username')" class="w-full" />
 
             <!-- email -->
             <x-ui.input label="Email" name="email" type="email" value="{{ old('email', $user->email ?? '') }}"
-                :error="$errors->first('email')" id="editEmailInput" />
+                :error="$errors->first('email')" id="editEmailInput" class="w-full" />
         </div>
     </div>
 
 
 
+
     <!-- bio -->
-    <x-ui.input label="Bio" name="bio" type="textarea" value="{{ old('bio', $user->bio ?? '') }}"
-        placeholder="Tell others about yourself..." rows="4" :error="$errors->first('bio')"
-        help="Write a short description about yourself that will be visible on your profile." />
+    <div class="w-full mt-2 mb-4">
+        <x-ui.input label="Bio" name="bio" type="textarea" value="{{ old('bio', $user->bio ?? '') }}"
+            placeholder="Tell others about yourself..." rows="4" :error="$errors->first('bio')"
+            help="Write a short description about yourself that will be visible on your profile." class="w-full" />
+    </div>
 
     <!-- Save Button -->
-    <div class="flex justify-end">
-        <x-ui.button type="submit" variant="primary" class="text-base" id="saveProfileBtn">
+    <div class="flex justify-end w-full mt-2">
+        <x-ui.button type="submit" variant="primary" class="text-base w-full sm:w-auto" id="saveProfileBtn">
             Save Changes
         </x-ui.button>
     </div>
 
 </form>
-<div id="profileUpdateAlertContainer" class="fixed top-6 right-6 z-50 flex flex-col gap-4 items-end"></div>
+<div id="profileUpdateAlertContainer"
+    class="fixed top-4 right-2 sm:top-6 sm:right-6 z-50 flex flex-col gap-2 sm:gap-4 items-end w-[90vw] max-w-xs sm:max-w-sm md:max-w-md">
+</div>
 
 <script>
     function openChangeEmailModal() {
