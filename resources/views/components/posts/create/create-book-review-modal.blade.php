@@ -14,35 +14,26 @@
                     @csrf
                     <input type="hidden" name="type" value="book">
 
-                    <!-- book search section -->
-                    <div class="mb-6">
-                        <label class="block font-medium text-gray-700 mb-2">What book did you read?</label>
-                        <div class="relative" id="bookSearchContainer">
-                            <input type="text" id="modalBookSearch" placeholder="Search for a book..."
-                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#38157a] focus:border-transparent"
-                                autocomplete="off">
-                            <div id="modalBookSearchResults"
-                                class="absolute top-full left-0 w-full bg-white border rounded-lg shadow-lg hidden max-h-60 overflow-y-auto z-20 mt-1">
-                            </div>
+                    <!-- book search section using media-search-preview -->
+                    <x-ui.media-search type="book" searchId="modalBookSearch"
+                        searchResultsId="modalBookSearchResults" selectedId="modalSelectedBook"
+                        inputName="google_book_id" removeBtnId="removeBookBtn" searchPlaceholder="Search for a book..."
+                        label="What book did you read?" />
+                    <!-- selected book preview -->
+                    <div id="modalSelectedBook"
+                        class="hidden mt-4 p-4 border rounded-lg bg-gray-50 flex items-start gap-4 relative">
+                        <input type="hidden" name="google_book_id" id="selectedBookId">
+                        <img id="selectedBookCover" src="" alt="Cover"
+                            class="h-80 object-cover rounded shadow-sm">
+                        <div>
+                            <h4 id="selectedBookTitle" class="text-4xl font-bold text-gray-800"></h4>
+                            <p id="selectedBookAuthor" class="text-gray-600"></p>
+                            <p id="selectedBookYear" class="text-gray-600 text-xl"></p>
                         </div>
-
-                        <!-- selected book preview -->
-                        <div id="modalSelectedBook"
-                            class="hidden mt-4 p-4 border rounded-lg bg-gray-50 flex items-start gap-4 relative">
-                            <input type="hidden" name="google_book_id" id="selectedBookId">
-
-                            <img id="selectedBookCover" src="" alt="Cover"
-                                class="h-80 object-cover rounded shadow-sm">
-                            <div>
-                                <h4 id="selectedBookTitle" class="text-4xl font-bold text-gray-800"></h4>
-                                <p id="selectedBookAuthor" class="text-gray-600"></p>
-                                <p id="selectedBookYear" class="text-gray-600 text-xl"></p>
-                            </div>
-                            <button type="button" id="removeBookBtn"
-                                class="absolute top-2 right-2 text-gray-400 hover:text-red-500">
-                                <i class="fa-solid fa-times"></i>
-                            </button>
-                        </div>
+                        <button type="button" id="removeBookBtn"
+                            class="absolute top-2 right-2 text-gray-400 hover:text-red-500">
+                            <i class="fa-solid fa-times"></i>
+                        </button>
                     </div>
 
                     <div class="mb-6">
@@ -89,7 +80,8 @@
         const searchInput = document.getElementById('modalBookSearch');
         const resultsDiv = document.getElementById('modalBookSearchResults');
         const selectedBookDiv = document.getElementById('modalSelectedBook');
-        const searchContainer = document.getElementById('bookSearchContainer');
+        // Fix: use correct container ID from media-search-preview
+        const searchContainer = document.getElementById('modalBookSearchContainer');
         const removeBookBtn = document.getElementById('removeBookBtn');
 
         // Selected book inputs
