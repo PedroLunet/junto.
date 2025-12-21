@@ -21,6 +21,9 @@
             <div class="min-w-0 flex-1">
                 <h3 class="font-semibold text-3xl text-gray-900 truncate">{{ $user->name }}</h3>
                 <p class="text-gray-500 text-2xl truncate">@<!-- -->{{ $user->username }}</p>
+                @if ($user->bio)
+                    <p class="text-gray-600 text-lg mt-2 line-clamp-2">{{ $user->bio }}</p>
+                @endif
             </div>
         </a>
 

@@ -7,9 +7,21 @@
             <p class="text-center">Start by typing your friend's name!</p>
         </div>
 
-        <form method="get" class="flex flex-row gap-4 items-start w-full">
-            <input value="{{ old('query', request('query')) }}" type="text" name="query" class="max-w-3/4 w-full" />
-            <x-ui.button>Search</x-ui.button>
+        <form method="get" class="flex flex-col gap-6 w-full">
+            <div class="flex flex-col sm:flex-row gap-4 items-start sm:items-center w-full">
+                <input value="{{ old('query', request('query')) }}" type="text" name="query" placeholder="Search by name, username, or bio..." class="flex-1 w-full" />
+                <x-ui.button>Search</x-ui.button>
+            </div>
+
+            <div class="flex flex-col sm:flex-row gap-4 items-start sm:items-center w-full">
+                <label for="sort" class="text-sm font-medium text-gray-600 whitespace-nowrap">SORT BY</label>
+                <select name="sort" id="sort" class="w-full sm:w-auto bg-white border border-gray-300 rounded-lg px-4 py-2 text-sm font-medium text-gray-700 hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent cursor-pointer transition-colors" onchange="this.form.submit()">
+                    <option value="name_asc" {{ $sort === 'name_asc' ? 'selected' : '' }}>Name (A-Z)</option>
+                    <option value="name_desc" {{ $sort === 'name_desc' ? 'selected' : '' }}>Name (Z-A)</option>
+                    <option value="date_desc" {{ $sort === 'date_desc' ? 'selected' : '' }}>Newest first</option>
+                    <option value="date_asc" {{ $sort === 'date_asc' ? 'selected' : '' }}>Oldest first</option>
+                </select>
+            </div>
         </form>
 
         <div class="w-full flex flex-col gap-4">

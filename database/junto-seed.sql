@@ -386,9 +386,7 @@ $$ LANGUAGE plpgsql;
 -- TRIGGER: Notify Like on Post
 CREATE OR REPLACE TRIGGER trg_post_like_notify
 AFTER INSERT ON post_like 
-FOR EACH ROW EXECUTE FUNCTION fn_notify_post_like();
-
--- FUNCTION: Notify Like on Comment
+FOR EACH ROW EXECUTE FUNCTION fn_notify_post_like();-- FUNCTION: Notify Like on Comment
 CREATE OR REPLACE FUNCTION fn_notify_comment_like() RETURNS TRIGGER AS $$
 DECLARE 
     notif_id INTEGER;

@@ -250,37 +250,52 @@ class Post extends Model
 
     public static function toggleLike($postId, $userId)
     {
-        // Check if already liked
-        $existing = DB::select('
-            SELECT * FROM lbaw2544.post_like
-            WHERE postId = ? AND userId = ?
-        ', [$postId, $userId]);
+        $post = self::find($postId);
+        $user = User::find($userId);
+        
+        $existing = DB::table('lbaw2544.post_like')
+            ->where('postid', $postId)
+            ->where('userid', $userId)
+            ->first();
 
-        if (count($existing) > 0) {
-            // Unlike
-            DB::delete('
-                DELETE FROM lbaw2544.post_like
-                WHERE postId = ? AND userId = ?
-            ', [$postId, $userId]);
+        if ($existing) {
+            DB::table('lbaw2544.post_like')
+                ->where('postid', $postId)
+                ->where('userid', $userId)
+                ->delete();
             $liked = false;
         } else {
-            // Like
-            DB::insert('
-                INSERT INTO lbaw2544.post_like (postId, userId, createdAt)
-                VALUES (?, ?, CURRENT_TIMESTAMP)
-            ', [$postId, $userId]);
+            DB::table('lbaw2544.post_like')->insert([
+                'postid' => $postId,
+                'userid' => $userId,
+                'createdat' => now(),
+            ]);
+            
+            if ($post && $post->userid != $userId) {
+                $notification = new \App\Models\User\Notification([
+                    'message' => 'Your post received a like from ' . $user->name,
+                    'receiverid' => $post->userid,
+                    'isread' => false,
+                    'createdat' => now(),
+                ]);
+                $notification->save();
+                
+                $activityNotif = new \App\Models\Notification\ActivityNotification([
+                    'notificationid' => $notification->id,
+                    'postid' => $postId,
+                ]);
+                $activityNotif->save();
+            }
             $liked = true;
         }
 
-        // Get updated likes count
-        $count = DB::select('
-            SELECT COUNT(*) as count FROM lbaw2544.post_like
-            WHERE postId = ?
-        ', [$postId]);
+        $likesCount = DB::table('lbaw2544.post_like')
+            ->where('postid', $postId)
+            ->count();
 
         return [
             'liked' => $liked,
-            'likes_count' => $count[0]->count,
+            'likes_count' => $likesCount,
         ];
     }
 

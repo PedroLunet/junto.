@@ -16,24 +16,7 @@ class NotificationController extends Controller
         $user = Auth::user();
         
         $notifications = Notification::where('receiverid', Auth::id())
-            ->where(function ($query) {
-                $query->whereNotIn('id', 
-                    \DB::table('activity_notification as an')
-                        ->join('like_notification as ln', 'an.notificationid', '=', 'ln.notificationid')
-                        ->join('post_like as pl', 'ln.postid', '=', 'pl.postid')
-                        ->join('post', 'ln.postid', '=', 'post.id')
-                        ->where('pl.userid', '=', \DB::raw('post.userid'))
-                        ->pluck('an.notificationid')
-                )
-                ->orWhereNotIn('id',
-                    \DB::table('activity_notification as an')
-                        ->join('comment_notification as cn', 'an.notificationid', '=', 'cn.notificationid')
-                        ->join('comment as c', 'cn.commentid', '=', 'c.id')
-                        ->join('post', 'an.postid', '=', 'post.id')
-                        ->where('c.userid', '=', \DB::raw('post.userid'))
-                        ->pluck('an.notificationid')
-                );
-            })
+            ->excludeSelfInteractions()
             ->orderBy('createdat', 'desc')
             ->paginate(15);
 
@@ -94,24 +77,7 @@ class NotificationController extends Controller
 
         $count = Notification::where('receiverid', Auth::id())
             ->where('isread', false)
-            ->where(function ($query) {
-                $query->whereNotIn('id', 
-                    \DB::table('activity_notification as an')
-                        ->join('like_notification as ln', 'an.notificationid', '=', 'ln.notificationid')
-                        ->join('post_like as pl', 'ln.postid', '=', 'pl.postid')
-                        ->join('post', 'ln.postid', '=', 'post.id')
-                        ->where('pl.userid', '=', \DB::raw('post.userid'))
-                        ->pluck('an.notificationid')
-                )
-                ->orWhereNotIn('id',
-                    \DB::table('activity_notification as an')
-                        ->join('comment_notification as cn', 'an.notificationid', '=', 'cn.notificationid')
-                        ->join('comment as c', 'cn.commentid', '=', 'c.id')
-                        ->join('post', 'an.postid', '=', 'post.id')
-                        ->where('c.userid', '=', \DB::raw('post.userid'))
-                        ->pluck('an.notificationid')
-                );
-            })
+            ->excludeSelfInteractions()
             ->count();
 
         return response()->json(['count' => $count]);

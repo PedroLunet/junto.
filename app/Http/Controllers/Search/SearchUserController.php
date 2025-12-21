@@ -15,17 +15,36 @@ class SearchUserController extends Controller
     {
         $request->validate([
             'query' => ['nullable', 'string', 'max:255'],
+            'sort' => ['nullable', 'string', 'in:name_asc,name_desc,date_asc,date_desc'],
         ]);
 
         $search = $request->input('query', '') ?? "";
+        $sort = $request->input('sort', 'name_asc');
 
         $users = User::query()
+            ->where('isdeleted', false)
+            ->where('isblocked', false)
             ->when($search, function ($query, $search) {
-                $query
-                    ->whereRaw("fts_document @@ plainto_tsquery('english', ?)", [$search])
-                    ->orderByRaw("ts_rank(fts_document, plainto_tsquery('english', ?)) DESC", [$search]);
-            })
-            ->get();
+                return $query->searchByProfile($search);
+            });
+
+        switch ($sort) {
+            case 'name_desc':
+                $users = $users->orderByNameDesc();
+                break;
+            case 'date_asc':
+                $users = $users->orderByJoinDateAsc();
+                break;
+            case 'date_desc':
+                $users = $users->orderByJoinDateDesc();
+                break;
+            case 'name_asc':
+            default:
+                $users = $users->orderByNameAsc();
+        }
+
+        $users = $users->get();
+
         $user = auth()->user();
         if ($user) {
             $friends = $user->friends()->pluck('id')->toArray();
@@ -34,6 +53,11 @@ class SearchUserController extends Controller
         }
 
         $friendService = app(FriendService::class);
-        return view("pages.search.index", ['users' => $users, "friends" => $friends, "friendService" => $friendService]);
+        return view("pages.search.index", [
+            'users' => $users,
+            'friends' => $friends,
+            'friendService' => $friendService,
+            'sort' => $sort,
+        ]);
     }
 }
