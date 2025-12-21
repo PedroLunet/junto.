@@ -16,24 +16,7 @@ class NotificationController extends Controller
         $user = Auth::user();
         
         $notifications = Notification::where('receiverid', Auth::id())
-            ->where(function ($query) {
-                $query->whereNotIn('id', 
-                    \DB::table('activity_notification as an')
-                        ->join('like_notification as ln', 'an.notificationid', '=', 'ln.notificationid')
-                        ->join('post_like as pl', 'ln.postid', '=', 'pl.postid')
-                        ->join('post', 'ln.postid', '=', 'post.id')
-                        ->where('pl.userid', '=', \DB::raw('post.userid'))
-                        ->pluck('an.notificationid')
-                )
-                ->orWhereNotIn('id',
-                    \DB::table('activity_notification as an')
-                        ->join('comment_notification as cn', 'an.notificationid', '=', 'cn.notificationid')
-                        ->join('comment as c', 'cn.commentid', '=', 'c.id')
-                        ->join('post', 'an.postid', '=', 'post.id')
-                        ->where('c.userid', '=', \DB::raw('post.userid'))
-                        ->pluck('an.notificationid')
-                );
-            })
+            ->excludeSelfInteractions()
             ->orderBy('createdat', 'desc')
             ->paginate(15);
 
@@ -86,34 +69,84 @@ class NotificationController extends Controller
         return response()->json(['success' => true]);
     }
 
+    public function snoozeNotifications(Request $request)
+    {
+        $validated = $request->validate([
+            'duration' => 'required|integer|min:1|max:10080',
+        ]);
+
+        $snoozedUntil = now()->addMinutes($validated['duration']);
+        
+        session(['notifications_snoozed_until' => $snoozedUntil]);
+
+        return response()->json(['success' => true, 'snoozed_until' => $snoozedUntil]);
+    }
+
+    public function clearSnooze()
+    {
+        session()->forget('notifications_snoozed_until');
+        
+        return response()->json(['success' => true]);
+    }
+
+    public function getSnoozeStatus()
+    {
+        if (!Auth::check()) {
+            return response()->json(['snoozed' => false], 401);
+        }
+
+        $snoozedUntil = session('notifications_snoozed_until');
+        $isSnoozed = $snoozedUntil && $snoozedUntil > now();
+
+        return response()->json([
+            'snoozed' => $isSnoozed,
+            'snoozed_until' => $isSnoozed ? $snoozedUntil : null,
+        ]);
+    }
+
     public function getUnreadCount()
     {
         if (!Auth::check()) {
             return response()->json(['count' => 0], 401);
         }
 
+        $snoozedUntil = session('notifications_snoozed_until');
+        if ($snoozedUntil && $snoozedUntil > now()) {
+            return response()->json(['count' => 0]);
+        }
+
         $count = Notification::where('receiverid', Auth::id())
             ->where('isread', false)
-            ->where(function ($query) {
-                $query->whereNotIn('id', 
-                    \DB::table('activity_notification as an')
-                        ->join('like_notification as ln', 'an.notificationid', '=', 'ln.notificationid')
-                        ->join('post_like as pl', 'ln.postid', '=', 'pl.postid')
-                        ->join('post', 'ln.postid', '=', 'post.id')
-                        ->where('pl.userid', '=', \DB::raw('post.userid'))
-                        ->pluck('an.notificationid')
-                )
-                ->orWhereNotIn('id',
-                    \DB::table('activity_notification as an')
-                        ->join('comment_notification as cn', 'an.notificationid', '=', 'cn.notificationid')
-                        ->join('comment as c', 'cn.commentid', '=', 'c.id')
-                        ->join('post', 'an.postid', '=', 'post.id')
-                        ->where('c.userid', '=', \DB::raw('post.userid'))
-                        ->pluck('an.notificationid')
-                );
-            })
+            ->excludeSelfInteractions()
             ->count();
 
         return response()->json(['count' => $count]);
+    }
+
+    public function getLatestUnread()
+    {
+        if (!Auth::check()) {
+            return response()->json(['notification' => null], 401);
+        }
+
+        $snoozedUntil = session('notifications_snoozed_until');
+        if ($snoozedUntil && $snoozedUntil > now()) {
+            return response()->json(['notification' => null]);
+        }
+
+        $notification = Notification::where('receiverid', Auth::id())
+            ->where('isread', false)
+            ->excludeSelfInteractions()
+            ->orderBy('createdat', 'desc')
+            ->first();
+
+        if (!$notification) {
+            return response()->json(['notification' => null]);
+        }
+
+        return response()->json(['notification' => [
+            'id' => $notification->id,
+            'message' => $notification->message,
+        ]]);
     }
 }

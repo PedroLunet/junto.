@@ -226,7 +226,11 @@ Route::middleware(['auth', 'regular.user'])->controller(NotificationController::
     Route::get('/notifications', 'index')->name('notifications.index');
     Route::post('/notifications/{id}/read', 'markAsRead')->name('notifications.mark-read');
     Route::post('/notifications/read-all', 'markAllAsRead')->name('notifications.mark-all-read');
+    Route::post('/notifications/snooze', 'snoozeNotifications')->name('notifications.snooze');
+    Route::post('/notifications/snooze/clear', 'clearSnooze')->name('notifications.snooze-clear');
+    Route::get('/notifications/snooze/status', 'getSnoozeStatus')->name('notifications.snooze-status');
     Route::get('/notifications/unread-count', 'getUnreadCount')->name('notifications.unread-count');
+    Route::get('/notifications/latest-unread', 'getLatestUnread')->name('notifications.latest-unread');
 });
 
 // Static pages

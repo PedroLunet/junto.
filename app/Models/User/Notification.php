@@ -25,9 +25,7 @@ class Notification extends Model
         'createdat' => 'datetime',
     ];
 
-    /**
-     * Get the user who receives this notification.
-     */
+  
     public function receiver()
     {
         return $this->belongsTo(User::class, 'receiverid', 'id');
@@ -42,25 +40,18 @@ class Notification extends Model
         return $user;
     }
 
-    /**
-     * Get the request associated with this notification (if any).
-     */
     public function request()
     {
         return $this->hasOne(Request::class, 'notificationid', 'id');
     }
 
-    /**
-     * Get the activity notification associated with this notification.
-     */
+ 
     public function activityNotification()
     {
         return $this->hasOne(ActivityNotification::class, 'notificationid', 'id');
     }
 
-    /**
-     * Mark this notification as read.
-     */
+ 
     public function markAsRead()
     {
         if (!$this->isread) {
@@ -69,14 +60,34 @@ class Notification extends Model
         }
     }
 
-    /**
-     * Mark this notification as unread.
-     */
+   
     public function markAsUnread()
     {
         if ($this->isread) {
             $this->isread = false;
             $this->save();
         }
+    }
+
+  
+    public function scopeExcludeSelfInteractions($query)
+    {
+        return $query
+            ->whereNotIn('id', function ($subquery) {
+                $subquery->select('an.notificationid')
+                    ->from('activity_notification as an')
+                    ->join('like_notification as ln', 'an.notificationid', '=', 'ln.notificationid')
+                    ->join('post_like as pl', 'ln.postid', '=', 'pl.postid')
+                    ->join('post as p', 'ln.postid', '=', 'p.id')
+                    ->whereColumn('pl.userid', '=', 'p.userid');
+            })
+            ->whereNotIn('id', function ($subquery) {
+                $subquery->select('an.notificationid')
+                    ->from('activity_notification as an')
+                    ->join('comment_notification as cn', 'an.notificationid', '=', 'cn.notificationid')
+                    ->join('comment as c', 'cn.commentid', '=', 'c.id')
+                    ->join('post as p', 'c.postid', '=', 'p.id')
+                    ->whereColumn('c.userid', '=', 'p.userid');
+            });
     }
 }
