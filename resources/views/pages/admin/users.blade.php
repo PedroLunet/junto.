@@ -25,9 +25,19 @@
                     <div class="order-1 sm:order-2 w-full sm:w-auto hidden md:block">
                         <x-ui.search-bar id="searchUserTable" placeholder="Search User" class="w-full sm:w-52" />
                     </div>
+
                     <!-- Search Bar: Mobile (card list) -->
                     <div class="order-1 sm:order-2 w-full sm:w-auto block md:hidden">
                         <x-ui.search-bar id="searchUserList" placeholder="Search User" class="w-full sm:w-52" />
+                        <div class="mt-2 mb-4 flex justify-center">
+                            <x-ui.sort-dropdown :options="[
+                                'name' => 'Name',
+                                'username' => 'Username',
+                                'email' => 'Email',
+                                'date' => 'Joined',
+                            ]" defaultValue="name" onSort="sortUserCards"
+                                onToggleOrder="toggleUserCardsOrder" />
+                        </div>
                     </div>
 
                     <!-- Add User Button -->
@@ -94,8 +104,21 @@
                 // Show/hide empty state if present
                 const emptyState = cardContainer.querySelector(
                 'x-ui-empty-state, .empty-state, [data-empty-state]');
-                if (emptyState) {
-                    emptyState.style.display = visibleCount === 0 ? '' : 'none';
+                let noResultsDiv = document.getElementById('no-results-card-list');
+                if (visibleCount === 0 && searchTerm !== '') {
+                    if (emptyState) emptyState.style.display = 'none';
+                    if (!noResultsDiv) {
+                        noResultsDiv = document.createElement('div');
+                        noResultsDiv.id = 'no-results-card-list';
+                        noResultsDiv.className =
+                            'col-span-full py-10 text-center text-gray-500 bg-white rounded-xl border border-dashed border-gray-300 mt-4';
+                        cardContainer.appendChild(noResultsDiv);
+                    }
+                    noResultsDiv.textContent = `No users found matching "${searchTerm}"`;
+                    noResultsDiv.style.display = '';
+                } else {
+                    if (noResultsDiv) noResultsDiv.style.display = 'none';
+                    if (emptyState) emptyState.style.display = visibleCount === 0 ? '' : 'none';
                 }
             }
             searchInput.addEventListener('input', filterCards);
