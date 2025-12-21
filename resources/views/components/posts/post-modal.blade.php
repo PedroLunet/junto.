@@ -74,7 +74,8 @@
                     </div>
 
                     <!-- Add Comment Input -->
-                    <div id="addCommentSection" class="h-20 px-6 py-4 border-t border-gray-200 bg-white shrink-0 flex items-center">
+                    <div id="addCommentSection"
+                        class="h-20 px-6 py-4 border-t border-gray-200 bg-white shrink-0 flex items-center">
                         <div class="flex gap-3 items-center w-full">
                             @php
                                 $currentUserProfilePicture =
@@ -107,6 +108,8 @@
 
 <script>
     let currentPostId = null;
+    let commentRefreshInterval = null;
+
     window.openPostModal = function(post) {
         const modal = document.getElementById('postModal');
         const content = document.getElementById('modalContent');
@@ -233,27 +236,56 @@
             document.getElementById('reportButton').style.display = 'flex';
         }
         modal.classList.remove('hidden');
+
+        if (commentRefreshInterval) {
+            clearInterval(commentRefreshInterval);
+        }
+        commentRefreshInterval = setInterval(() => {
+            if (currentPostId) {
+                window.loadComments(currentPostId, true);
+            }
+        }, 5000);
     }
-    window.loadComments = function(postId) {
+
+    window.loadComments = function(postId, silent = false) {
         const commentsSection = document.getElementById('commentsSection');
-        commentsSection.innerHTML = `
-        <div class="flex justify-center items-center py-8 text-gray-400">
-            <i class="fas fa-circle-notch fa-spin text-2xl"></i>
-        </div>
-    `;
+
+        if (!silent) {
+            commentsSection.innerHTML = `
+            <div class="flex justify-center items-center py-8 text-gray-400">
+                <i class="fas fa-circle-notch fa-spin text-2xl"></i>
+            </div>
+        `;
+        }
+
         fetch(`/posts/${postId}/comments`)
             .then(response => response.text())
             .then(html => {
                 commentsSection.innerHTML = html;
+
+                const commentElements = commentsSection.querySelectorAll('[data-comment-id]');
+                const actualCount = commentElements.length;
+
+                const modalCountElem = document.getElementById('commentsCount');
+                if (modalCountElem) {
+                    modalCountElem.textContent = actualCount;
+                }
+
+                const feedCountElem = document.getElementById(`comment-count-${postId}`);
+                if (feedCountElem) {
+                    feedCountElem.textContent = actualCount;
+                }
             })
             .catch(error => {
                 console.error('Error loading comments:', error);
-                commentsSection.innerHTML = `
-            <div class="text-center py-8 text-red-500">
-                <p>Error loading comments</p>
-                <button onclick="window.loadComments(${postId})" class="text-sm underline mt-2">Try again</button>
-            </div>
-        `;
+                if (!silent) {
+                    commentsSection.innerHTML = `
+                    <div class="text-center py-8 text-red-500">
+                        <p>Error loading comments</p>
+                        <button onclick="window.loadComments(${postId})" class="text-sm underline mt-2">Try again</button>
+                    </div>
+                `;
+                }
             });
     }
     window.closePostModal = function() {
@@ -261,6 +293,11 @@
         modal.classList.add('hidden');
         currentPostId = null;
         document.getElementById('commentInput').value = '';
+
+        if (commentRefreshInterval) {
+            clearInterval(commentRefreshInterval);
+            commentRefreshInterval = null;
+        }
     }
     window.likePost = function(event) {
         event.stopPropagation();
@@ -347,13 +384,6 @@
                 if (data.success) {
                     input.value = '';
                     window.loadComments(currentPostId);
-                    const modalCountElem = document.getElementById('commentsCount');
-                    modalCountElem.textContent = parseInt(modalCountElem.textContent) + 1;
-                    const timelineCommentCount = document.querySelector(
-                        `#post-${currentPostId} .comments-count`);
-                    if (timelineCommentCount) {
-                        timelineCommentCount.textContent = parseInt(timelineCommentCount.textContent) + 1;
-                    }
                 }
             })
             .catch(error => {
@@ -404,6 +434,129 @@
             .catch(error => {
                 console.error('Error submitting report:', error);
                 alert('Failed to submit report. Please try again.');
+            });
+    }
+
+    window.toggleEditComment = function(commentId) {
+        const commentDiv = document.querySelector(`[data-comment-id="${commentId}"]`);
+        if (!commentDiv) return;
+
+        const textElement = commentDiv.querySelector('.comment-text');
+        const editForm = commentDiv.querySelector('.comment-edit-form');
+        const editBtn = commentDiv.querySelector('.edit-btn');
+
+        textElement.classList.add('hidden');
+        editForm.classList.remove('hidden');
+        editBtn.classList.add('hidden');
+    }
+
+    window.cancelCommentEdit = function(commentId) {
+        const commentDiv = document.querySelector(`[data-comment-id="${commentId}"]`);
+        if (!commentDiv) return;
+
+        const textElement = commentDiv.querySelector('.comment-text');
+        const editForm = commentDiv.querySelector('.comment-edit-form');
+        const editBtn = commentDiv.querySelector('.edit-btn');
+        const textarea = commentDiv.querySelector('.edit-textarea');
+
+        textarea.value = textElement.textContent;
+
+        textElement.classList.remove('hidden');
+        editForm.classList.add('hidden');
+        editBtn.classList.remove('hidden');
+    }
+
+    window.saveCommentEdit = function(commentId) {
+        const commentDiv = document.querySelector(`[data-comment-id="${commentId}"]`);
+        if (!commentDiv) return;
+
+        const textarea = commentDiv.querySelector('.edit-textarea');
+        const newContent = textarea.value.trim();
+
+        if (!newContent) {
+            alert('Comment cannot be empty.');
+            return;
+        }
+
+        if (newContent.length > 1000) {
+            alert('Comment must be 1000 characters or less.');
+            return;
+        }
+
+        const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+        fetch(`/comments/${commentId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': csrfToken
+                },
+                body: JSON.stringify({
+                    content: newContent
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    const textElement = commentDiv.querySelector('.comment-text');
+                    const editForm = commentDiv.querySelector('.comment-edit-form');
+                    const editBtn = commentDiv.querySelector('.edit-btn');
+
+                    textElement.textContent = newContent;
+                    textElement.classList.remove('hidden');
+                    editForm.classList.add('hidden');
+                    editBtn.classList.remove('hidden');
+                } else {
+                    alert(data.message || 'Failed to update comment. Please try again.');
+                }
+            })
+            .catch(error => {
+                console.error('Error updating comment:', error);
+                alert('Failed to update comment. Please try again.');
+            });
+    }
+
+    window.deleteComment = function(commentId) {
+        if (!confirm('Are you sure you want to delete this comment? This action cannot be undone.')) {
+            return;
+        }
+
+        const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+        fetch(`/comments/${commentId}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': csrfToken
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    const commentDiv = document.querySelector(`[data-comment-id="${commentId}"]`);
+                    if (commentDiv) {
+                        commentDiv.remove();
+                    }
+
+                    const commentElements = document.querySelectorAll('[data-comment-id]');
+                    const actualCount = commentElements.length;
+
+                    const modalCountElem = document.getElementById('commentsCount');
+                    if (modalCountElem) {
+                        modalCountElem.textContent = actualCount;
+                    }
+
+                    const feedCountElem = document.getElementById(`comment-count-${currentPostId}`);
+                    if (feedCountElem) {
+                        feedCountElem.textContent = actualCount;
+                    }
+                } else {
+                    alert(data.message || 'Failed to delete comment. Please try again.');
+                }
+            })
+            .catch(error => {
+                console.error('Error deleting comment:', error);
+                alert('Failed to delete comment. Please try again.');
             });
     }
 </script>

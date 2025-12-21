@@ -15,15 +15,49 @@ class CommentController extends Controller
     }
 
     public function store(Request $request, $postId)
+{
+    $this->authorize('create', Comment::class);
+
+    $request->validate([
+        'content' => 'required|string|max:1000'
+    ]);
+
+    $comment = Comment::addComment($postId, auth()->id(), $request->input('content'));
+
+    return response()->json([
+        'success' => true,
+        'message' => 'Comment posted successfully!',
+        'comment' => $comment
+    ], 201); 
+}
+
+    public function update(Request $request, $commentId)
     {
-        $this->authorize('create', Comment::class);
+        $comment = Comment::findOrFail($commentId);
+        $this->authorize('update', $comment);
 
         $request->validate([
             'content' => 'required|string|max:1000'
         ]);
 
-        $comment = Comment::addComment($postId, auth()->id(), $request->input('content'));
+        Comment::updateComment($commentId, $request->input('content'));
 
-       
-}
+        return response()->json([
+            'success' => true,
+            'message' => 'Comment updated successfully!'
+        ]);
+    }
+
+    public function destroy($commentId)
+    {
+        $comment = Comment::findOrFail($commentId);
+        $this->authorize('delete', $comment);
+
+        Comment::deleteComment($commentId);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Comment deleted successfully!'
+        ]);
+    }
 }

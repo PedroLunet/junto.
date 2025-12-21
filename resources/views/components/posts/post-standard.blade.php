@@ -70,7 +70,8 @@
         <!-- comments -->
         <div class="flex items-center gap-1">
             <i class="far fa-comment text-lg"></i>
-            <span class="text-lg">{{ $post->comments_count ?? 0 }}</span>
+            <span class="text-lg comments-count"
+                id="comment-count-{{ $post->id }}">{{ $post->comments_count ?? 0 }}</span>
         </div>
     </div>
 </div>
