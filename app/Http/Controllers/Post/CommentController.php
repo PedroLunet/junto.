@@ -47,4 +47,17 @@ class CommentController extends Controller
             'message' => 'Comment updated successfully!'
         ]);
     }
+
+    public function destroy($commentId)
+    {
+        $comment = Comment::findOrFail($commentId);
+        $this->authorize('delete', $comment);
+
+        Comment::deleteComment($commentId);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Comment deleted successfully!'
+        ]);
+    }
 }
