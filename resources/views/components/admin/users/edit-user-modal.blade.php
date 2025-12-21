@@ -1,19 +1,17 @@
 <div id="editUserModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden items-center justify-center">
-    <div class="bg-white rounded-2xl shadow-xl max-w-2xl w-full mx-4">
+    <div
+        class="bg-white rounded-2xl shadow-xl w-full max-w-sm sm:max-w-md md:max-w-lg lg:max-w-lg xl:max-w-xl mx-2 sm:mx-4">
         <!-- header -->
-        <div class="flex items-center justify-between p-10">
-            <h2 class="text-4xl font-bold text-gray-900">Edit User</h2>
-            <a id="closeEditUserModal" class="text-gray-400 hover:text-gray-600 transition-colors">
-                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12">
-                    </path>
-                </svg>
-            </a>
+        <div class="flex items-center justify-between p-2 sm:p-4 md:p-8 lg:p-10">
+            <h2 class="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold text-gray-900">Edit User</h2>
+            <x-ui.icon-button id="closeEditUserModal" onclick="closeEditUserModal()" variant="gray" aria-label="Close">
+                <i class="fas fa-times text-base sm:text-xl md:text-2xl"></i>
+            </x-ui.icon-button>
         </div>
 
         <!-- body -->
-        <div class="flex-1 px-10">
-            <form id="editUserForm" class="space-y-2">
+        <div class="flex-1 px-2 sm:px-4 md:px-6 lg:px-10">
+            <form id="editUserForm" class="space-y-4 sm:space-y-6 md:space-y-8">
                 @csrf
                 <input type="hidden" id="editUserId" name="id">
 
@@ -27,22 +25,24 @@
                     placeholder="Tell others about this user..." :rows="3" />
 
                 <!-- admin status -->
-                <div class="mb-6">
-                    <label class="flex items-center space-x-4">
+                <div class="mb-2 sm:mb-4">
+                    <label class="flex items-center space-x-2 sm:space-x-4">
                         <input type="checkbox" id="editIsAdmin" name="is_admin"
-                            class="w-6 h-6 rounded border-gray-300 text-[#38157a] focus:ring-[#38157a] shrink-0">
-                        <span class="text-2xl font-medium text-gray-700">Admin User</span>
+                            class="w-5 h-5 sm:w-6 sm:h-6 rounded border-gray-300 text-[#38157a] focus:ring-[#38157a] shrink-0">
+                        <span class="text-base sm:text-xl md:text-2xl font-medium text-gray-700">Admin User</span>
                     </label>
                 </div>
             </form>
         </div>
 
         <!-- footer -->
-        <div class="flex justify-end gap-4 p-8">
-            <x-ui.button variant="secondary" type="button" onclick="closeEditUserModal()" class="text-2xl">
+        <div class="flex justify-end gap-2 sm:gap-4 p-2 sm:p-4 md:p-8 mt-2 sm:mt-4 md:mt-8">
+            <x-ui.button variant="secondary" type="button" onclick="closeEditUserModal()"
+                class="text-base sm:text-xl md:text-2xl">
                 Cancel
             </x-ui.button>
-            <x-ui.button variant="primary" type="submit" form="editUserForm" class="text-2xl px-10 py-4">
+            <x-ui.button variant="primary" type="submit" form="editUserForm"
+                class="text-base sm:text-xl md:text-2xl px-4 sm:px-8 md:px-10 py-2 sm:py-3 md:py-4">
                 Update User
             </x-ui.button>
         </div>

@@ -1,14 +1,16 @@
 <div id="adminDeleteUserModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-    <div class="bg-white rounded-lg p-6 max-w-sm w-full mx-4">
-        <h3 class="text-2xl font-semibold text-gray-900 mb-4">Delete User<span id="deleteUserPlural"></span></h3>
-        <p class="text-gray-600 mb-4">This action cannot be undone. Enter your password to confirm deletion of <span
-                id="deleteUserNames" class="font-bold"></span>.</p>
+    <div
+        class="bg-white rounded-lg w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg xl:max-w-xl mx-2 sm:mx-4 p-2 sm:p-4 md:p-6">
+        <h3 class="text-lg sm:text-xl md:text-2xl font-semibold text-gray-900 mb-2 sm:mb-4">Delete User<span
+                id="deleteUserPlural"></span></h3>
+        <p class="text-gray-600 mb-2 sm:mb-4 text-sm sm:text-base">This action cannot be undone. Enter your password to
+            confirm deletion of <span id="deleteUserNames" class="font-bold"></span>.</p>
         <x-ui.input type="password" id="adminDeleteUserPassword" name="adminDeleteUserPassword"
-            placeholder="Enter your password" class="mb-4" label="" />
-        <div class="flex gap-4">
-            <x-ui.button type="button" variant="secondary" class="flex-1"
+            placeholder="Enter your password" class="mb-2 sm:mb-4" label="" />
+        <div class="flex gap-2 sm:gap-4">
+            <x-ui.button type="button" variant="secondary" class="flex-1 text-base sm:text-xl"
                 onclick="closeAdminDeleteUserModal()">Cancel</x-ui.button>
-            <x-ui.button type="button" variant="danger" class="flex-1"
+            <x-ui.button type="button" variant="danger" class="flex-1 text-base sm:text-xl"
                 onclick="confirmAdminDeleteUser()">Delete</x-ui.button>
         </div>
     </div>
@@ -70,7 +72,8 @@
             }
             if (allSuccess) {
                 alert(
-                    `User${deleteUserNames.length > 1 ? 's' : ''} ${deleteUserNames.join(' and ')} ${deleteUserNames.length > 1 ? 'have' : 'has'} been deleted successfully.`);
+                    `User${deleteUserNames.length > 1 ? 's' : ''} ${deleteUserNames.join(' and ')} ${deleteUserNames.length > 1 ? 'have' : 'has'} been deleted successfully.`
+                );
                 window.location.reload();
             } else {
                 alert(errorMessages.join('\n'));
@@ -81,7 +84,7 @@
         // Attach event listeners to delete buttons
         document.querySelectorAll('.delete-user-btn').forEach(button => {
             button.addEventListener('click', function() {
-                // Get all selected users
+                // Get all selected users (table)
                 const checkedBoxes = Array.from(document.querySelectorAll(
                     '.user-checkbox:checked'));
                 let selectedIds = [];
@@ -89,18 +92,31 @@
                 if (checkedBoxes.length > 0) {
                     checkedBoxes.forEach(checkbox => {
                         const row = checkbox.closest('tr');
-                        const nameCell = row.querySelector('td:nth-child(2) div');
+                        const nameCell = row ? row.querySelector(
+                            'td:nth-child(2) div') : null;
                         selectedIds.push(checkbox.value);
                         selectedNames.push(nameCell ? nameCell.textContent.trim() : '');
                     });
-                } else {
-                    // fallback to single user if none selected
-                    const userRow = this.closest('tr');
-                    const userId = userRow.querySelector('.user-checkbox').value;
-                    const nameCell = userRow.querySelector('td:nth-child(2) div');
-                    const userName = nameCell ? nameCell.textContent.trim() : '';
+                } else if (this.dataset.userId && this.closest('.user-card')) {
+                    // Card view (mobile/tablet)
+                    const userId = this.dataset.userId;
+                    const userCard = this.closest('.user-card');
+                    // Try to get the name from the card
+                    let userName = '';
+                    const nameEl = userCard ? userCard.querySelector('h3') : null;
+                    if (nameEl) userName = nameEl.textContent.trim();
                     selectedIds = [userId];
                     selectedNames = [userName];
+                } else {
+                    // fallback to single user if none selected (table)
+                    const userRow = this.closest('tr');
+                    if (userRow) {
+                        const userId = userRow.querySelector('.user-checkbox').value;
+                        const nameCell = userRow.querySelector('td:nth-child(2) div');
+                        const userName = nameCell ? nameCell.textContent.trim() : '';
+                        selectedIds = [userId];
+                        selectedNames = [userName];
+                    }
                 }
                 openAdminDeleteUserModal(selectedIds, selectedNames);
             });

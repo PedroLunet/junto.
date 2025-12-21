@@ -24,12 +24,14 @@
 <div class="mb-6">
     @if ($label)
         <div class="flex items-center gap-2 mb-2">
-            <label for="{{ $inputId }}" class="block text-2xl font-medium text-gray-700">
+            <label for="{{ $inputId }}"
+                class="block text-base sm:text-lg md:text-xl lg:text-lg font-medium text-gray-700">
                 {{ $label }}
             </label>
             @if ($help)
                 <div class="group relative flex items-center ml-1">
-                    <i class="fas fa-question-circle text-gray-400 hover:text-[#820263] cursor-help text-xl transition-colors"></i>
+                    <i
+                        class="fas fa-question-circle text-gray-400 hover:text-[#820263] cursor-help text-xl transition-colors"></i>
                     <div
                         class="absolute bottom-full left-1/2 -translate-x-1/2 mb-3 invisible group-hover:visible opacity-0 group-hover:opacity-100 transition-all duration-200 w-64 p-3 bg-[#291720] text-white text-sm font-medium rounded-xl shadow-xl z-20 text-center pointer-events-none transform translate-y-1 group-hover:translate-y-0">
                         {{ $help }}
@@ -44,15 +46,15 @@
 
     <div class="relative flex items-center">
         @if ($isTextarea)
-            <textarea id="{{ $inputId }}" name="{{ $name }}" rows="{{ $rows }}" placeholder="{{ $placeholder }}"
-                {{ $required ? 'required' : '' }} {{ $disabled ? 'disabled' : '' }}
-                {{ $attributes->merge(['class' => 'w-full px-4 py-3 text-2xl text-gray-800 border rounded-lg outline-none transition-all duration-200 placeholder:text-gray-400 focus:border-[#820273] focus:ring-4 focus:ring-purple-100 resize-none ' . ($disabled ? 'bg-gray-400 cursor-not-allowed' : '') . ' ' . ($error ? 'border-red-500 pr-12 focus:border-red-500 focus:ring-red-100' : 'border-gray-300')]) }}>{{ old($name, $value) }}</textarea>
+            <textarea id="{{ $inputId }}" name="{{ $name }}" rows="{{ $rows }}"
+                placeholder="{{ $placeholder }}" {{ $required ? 'required' : '' }} {{ $disabled ? 'disabled' : '' }}
+                {{ $attributes->merge(['class' => 'w-full px-3 sm:px-4 py-2 sm:py-3 text-base sm:text-lg md:text-xl lg:text-base text-gray-800 border rounded-lg outline-none transition-all duration-200 placeholder:text-gray-400 focus:border-[#820273] focus:ring-4 focus:ring-purple-100 resize-none ' . ($disabled ? 'bg-gray-400 cursor-not-allowed' : '') . ' ' . ($error ? 'border-red-500 pr-12 focus:border-red-500 focus:ring-red-100' : 'border-gray-300')]) }}>{{ old($name, $value) }}</textarea>
         @else
             <input type="{{ $type }}" id="{{ $inputId }}" name="{{ $name }}"
                 value="{{ old($name, $value) }}" placeholder="{{ $placeholder }}" {{ $required ? 'required' : '' }}
                 {{ $disabled ? 'disabled' : '' }}
                 @if ($isEmail) pattern="{{ $emailPattern }}" title="Please enter a valid email address" @endif
-                {{ $attributes->merge(['class' => 'w-full px-4 py-3 text-2xl text-gray-800 border rounded-lg outline-none transition-all duration-200 placeholder:text-gray-400 focus:border-[#820273] focus:ring-4 focus:ring-purple-100 ' . ($disabled ? 'bg-gray-400 cursor-not-allowed' : '') . ' ' . ($error ? 'border-red-500 pr-12 focus:border-red-500 focus:ring-red-100' : 'border-gray-300')]) }} />
+                {{ $attributes->merge(['class' => 'w-full px-3 sm:px-4 py-2 sm:py-3 text-base sm:text-lg md:text-xl lg:text-base text-gray-800 border rounded-lg outline-none transition-all duration-200 placeholder:text-gray-400 focus:border-[#820273] focus:ring-4 focus:ring-purple-100 ' . ($disabled ? 'bg-gray-400 cursor-not-allowed' : '') . ' ' . ($error ? 'border-red-500 pr-12 focus:border-red-500 focus:ring-red-100' : 'border-gray-300')]) }} />
         @endif
 
         @if ($type === 'password' && !$disabled)
@@ -84,7 +86,7 @@
     </div>
 
     @if ($error)
-        <p class="mt-2 text-xl text-red-500 font-medium">{{ $error }}</p>
+        <p class="mt-2 text-base sm:text-xl text-red-500 font-medium">{{ $error }}</p>
     @endif
 </div>
 
