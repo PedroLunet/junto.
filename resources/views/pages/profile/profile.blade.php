@@ -1,7 +1,9 @@
 @extends('layouts.app')
 
 @section('content')
+    <div id="profileUpdateAlertContainer" class="fixed top-6 right-6 z-50 flex flex-col gap-4 items-end"></div>
     <div class="flex flex-col -m-6">
+        <div id="profileUpdateAlertContainer" class="fixed top-6 right-6 z-50 flex flex-col gap-4 items-end"></div>
         <!-- Fixed Header Section -->
         <div class="shrink-0 px-16 pt-10 pb-6">
             <div class="flex flex-col md:flex-row items-start justify-between gap-6 md:gap-8 lg:gap-10 mb-6 md:mb-8">
@@ -133,12 +135,55 @@
             @endif
         </div>
 
+
         <x-posts.post-modal />
         <x-profile.add-fav-modal />
         <x-ui.confirm />
+        <div id="profileUpdateAlertContainer" class="fixed top-6 right-6 z-50 flex flex-col gap-4 items-end"></div>
     </div>
 
     <script>
+        // Show alert-card if profile was updated
+        document.addEventListener('DOMContentLoaded', function() {
+            const msg = localStorage.getItem('profileUpdateSuccess');
+            if (msg) {
+                fetch('/profile/render-alert', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute(
+                                'content'),
+                            'Accept': 'text/html'
+                        },
+                        body: JSON.stringify({
+                            type: 'success',
+                            title: 'Profile updated',
+                            message: msg,
+                            id: 'profile-update-alert-' + Date.now()
+                        })
+                    })
+                    .then(response => response.text())
+                    .then(html => {
+                        let container = document.getElementById('profileUpdateAlertContainer');
+                        if (!container) {
+                            // fallback: create and append to body
+                            container = document.createElement('div');
+                            container.id = 'profileUpdateAlertContainer';
+                            container.className = 'fixed top-6 right-6 z-50 flex flex-col gap-4 items-end';
+                            document.body.appendChild(container);
+                        }
+                        const wrapper = document.createElement('div');
+                        wrapper.innerHTML = html;
+                        container.appendChild(wrapper);
+                        setTimeout(() => {
+                            wrapper.style.opacity = '0';
+                            setTimeout(() => wrapper.remove(), 600);
+                        }, 3000);
+                    });
+                localStorage.removeItem('profileUpdateSuccess');
+            }
+        });
+
         function removeFavorite(type) {
             window.showAlert({
                 title: 'Remove Favorite',

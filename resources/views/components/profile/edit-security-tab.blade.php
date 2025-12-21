@@ -2,24 +2,13 @@
     <div>
         <h2 class="text-2xl font-semibold text-gray-900 py-3 mb-4 border-b border-[#7a5466]">Account Settings</h2>
 
-        <!-- Email -->
-        <div class="flex items-end gap-4 mb-6">
-            <div class="flex-1">
-                <x-ui.input label="Email" name="email" type="email" value="{{ old('email', $user->email ?? '') }}"
-                    :error="$errors->first('email')" disabled />
-            </div>
-            <x-ui.button type="button" variant="secondary" class="text-base mb-7 text-gray-700 whitespace-nowrap">
-                Change email
-            </x-ui.button>
-        </div>
-
         <!-- Password -->
         <div class="flex items-end gap-4">
             <div class="flex-1">
                 <x-ui.input label="Password" name="password_display" type="password" value="••••••••••••"
                     :error="$errors->first('password')" disabled />
             </div>
-            <x-ui.button type="button" variant="secondary" class="text-base mb-7 text-gray-700 whitespace-nowrap"
+            <x-ui.button type="button" variant="secondary" class="text-base mb-5 text-gray-700 whitespace-nowrap"
                 onclick="openPasswordModal()">
                 Change password
             </x-ui.button>

@@ -38,8 +38,14 @@
             <!-- username -->
             <x-ui.input label="Username" name="username" type="text"
                 value="{{ old('username', $user->username ?? '') }}" :error="$errors->first('username')" />
+
+            <!-- email -->
+            <x-ui.input label="Email" name="email" type="email" value="{{ old('email', $user->email ?? '') }}"
+                :error="$errors->first('email')" id="editEmailInput" />
         </div>
     </div>
+
+
 
     <!-- bio -->
     <x-ui.input label="Bio" name="bio" type="textarea" value="{{ old('bio', $user->bio ?? '') }}"
@@ -52,12 +58,65 @@
             Save Changes
         </x-ui.button>
     </div>
+
 </form>
-<div id="profileUpdateSuccess" class="hidden mt-6 text-green-600 text-base font-semibold"></div>
-<div id="profileUpdateError" class="hidden mt-6 text-red-600 text-base font-semibold"></div>
+<div id="profileUpdateAlertContainer" class="fixed top-6 right-6 z-50 flex flex-col gap-4 items-end"></div>
 
 <script>
+    function openChangeEmailModal() {
+        document.getElementById('changeEmailModal').classList.remove('hidden');
+        document.getElementById('newEmailInput').value = '';
+        document.getElementById('currentPasswordInput').value = '';
+        document.getElementById('changeEmailError').classList.add('hidden');
+    }
+
+    function closeChangeEmailModal() {
+        document.getElementById('changeEmailModal').classList.add('hidden');
+        document.getElementById('newEmailInput').value = '';
+        document.getElementById('currentPasswordInput').value = '';
+        document.getElementById('changeEmailError').classList.add('hidden');
+    }
+
+    function confirmChangeEmail() {
+        const newEmail = document.getElementById('newEmailInput').value;
+        const password = document.getElementById('currentPasswordInput').value;
+        const errorDiv = document.getElementById('changeEmailError');
+        errorDiv.classList.add('hidden');
+        if (!newEmail || !password) {
+            errorDiv.textContent = 'Please enter both email and password.';
+            errorDiv.classList.remove('hidden');
+            return;
+        }
+        fetch('/profile/change-email', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({
+                    email: newEmail,
+                    password: password
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    document.getElementById('editEmailInput').value = newEmail;
+                    closeChangeEmailModal();
+                } else {
+                    errorDiv.textContent = data.message || 'Failed to change email.';
+                    errorDiv.classList.remove('hidden');
+                }
+            })
+            .catch(() => {
+                errorDiv.textContent = 'An error occurred. Please try again.';
+                errorDiv.classList.remove('hidden');
+            });
+    }
     document.addEventListener('DOMContentLoaded', function() {
+        // Change email button logic
+        document.getElementById('changeEmailBtn').addEventListener('click', openChangeEmailModal);
         const form = document.getElementById('editProfileForm');
         const saveBtn = document.getElementById('saveProfileBtn');
         const successDiv = document.getElementById('profileUpdateSuccess');
@@ -132,11 +191,13 @@
                 })
                 .then(data => {
                     if (data.success) {
-                        if (data.user && data.user.username) {
-                            window.location.href = `/${data.user.username}/edit`;
-                        } else {
-                            window.location.reload();
-                        }
+                        // Set flag for alert on profile page
+                        localStorage.setItem('profileUpdateSuccess', data.message ||
+                            'Profile updated successfully');
+                        setTimeout(() => window.location.reload(), 1200);
+                    } else {
+                        showProfileAlert('error', 'Update failed', data.message ||
+                            'An error occurred while updating your profile');
                     }
                 })
                 .catch((error) => {
@@ -200,16 +261,48 @@
                                 });
                             }
                         });
+                        showProfileAlert('error', 'Validation error',
+                            'Please fix the highlighted fields.');
                     } else {
-                        errorDiv.textContent = error.message ||
-                            'An error occurred while updating your profile.';
-                        errorDiv.classList.remove('hidden');
+                        showProfileAlert('error', 'Update failed', error.message ||
+                            'An error occurred while updating your profile.');
                     }
                 })
-                .finally(() => {
-                    saveBtn.disabled = false;
-                    saveBtn.textContent = 'Save Changes';
-                });
+            // Show alert-card on top right
+            function showProfileAlert(type, title, message) {
+                fetch('/profile/render-alert', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')
+                                .getAttribute('content'),
+                            'Accept': 'text/html'
+                        },
+                        body: JSON.stringify({
+                            type,
+                            title,
+                            message,
+                            id: 'profile-update-alert-' + Date.now()
+                        })
+                    })
+                    .then(response => response.text())
+                    .then(html => {
+                        const container = document.getElementById('profileUpdateAlertContainer');
+                        if (container) {
+                            const wrapper = document.createElement('div');
+                            wrapper.innerHTML = html;
+                            container.appendChild(wrapper);
+                            setTimeout(() => {
+                                wrapper.style.opacity = '0';
+                                setTimeout(() => wrapper.remove(), 600);
+                            }, 3000);
+                        }
+                    });
+            }
+            .finally(() => {
+                saveBtn.disabled = false;
+                saveBtn.textContent = 'Save Changes';
+            });
         });
     });
 </script>

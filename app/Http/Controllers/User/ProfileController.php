@@ -221,7 +221,6 @@ class ProfileController extends Controller
                 'bio' => $request->input('bio'),
             ];
 
-
             // Handle profile picture upload or reset
             if ($request->has('reset_profile_picture') && $request->input('reset_profile_picture') == '1') {
                 // User requested to reset to default
@@ -237,11 +236,14 @@ class ProfileController extends Controller
                 ->where('id', $user->id)
                 ->update($updateData);
 
-            return response()->json([
-                'success' => true,
-                'message' => 'Profile updated successfully',
-                'redirect_url' => '/' . $request->input('username') // redirect to new username if changed
-            ]);
+            if ($request->ajax() || $request->wantsJson()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Profile updated successfully'
+                ]);
+            } else {
+                return redirect('/' . $request->input('username'))->with('success', 'Profile updated successfully');
+            }
         } catch (\Exception $e) {
             Log::error('Profile update error: ' . $e->getMessage() . "\n" . $e->getTraceAsString());
             return response()->json([
