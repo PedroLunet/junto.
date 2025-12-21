@@ -1,6 +1,6 @@
 @php
     $sizeClasses = match ($type) {
-        'music' => 'w-36 h-36 md:w-36 md:h-36 lg:w-40 lg:h-40',
+        'music' => 'w-36 h-36 md:w-42 md:h-42 lg:w-48 lg:h-48',
         default => 'w-24 h-36 md:w-28 md:h-42 lg:w-32 lg:h-48',
     };
 @endphp
