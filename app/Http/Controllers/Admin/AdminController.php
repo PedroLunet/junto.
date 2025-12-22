@@ -729,6 +729,12 @@ class AdminController extends Controller
 
             // verify admin password
             if (!password_verify($request->password, $admin->passwordhash)) {
+                if ($request->expectsJson()) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Incorrect password.'
+                    ], 403);
+                }
                 return redirect()->route('admin.users')->with('alert', [
                     'type' => 'error',
                     'title' => 'Incorrect Password',
@@ -738,6 +744,12 @@ class AdminController extends Controller
 
             $user = User::findOrFail($id);
             if ($user->isadmin) {
+                if ($request->expectsJson()) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Cannot delete another admin.'
+                    ], 403);
+                }
                 return redirect()->route('admin.users')->with('alert', [
                     'type' => 'error',
                     'title' => 'Delete Failed',
@@ -755,18 +767,36 @@ class AdminController extends Controller
 
             Log::info('Admin deleted user: ' . $user->username . ' (ID: ' . $user->id . ')');
 
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'User deleted successfully.'
+                ]);
+            }
             return redirect()->route('admin.users')->with('alert', [
                 'type' => 'success',
                 'title' => 'User Deleted',
                 'message' => 'User deleted successfully.'
             ]);
         } catch (ModelNotFoundException $e) {
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'User not found.'
+                ], 404);
+            }
             return redirect()->route('admin.users')->with('alert', [
                 'type' => 'error',
                 'title' => 'User Not Found',
                 'message' => 'User not found.'
             ]);
         } catch (ValidationException $e) {
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Validation failed: ' . implode(' ', $e->validator->errors()->all())
+                ], 422);
+            }
             return redirect()->route('admin.users')->with('alert', [
                 'type' => 'error',
                 'title' => 'Validation Error',
@@ -774,6 +804,12 @@ class AdminController extends Controller
             ]);
         } catch (\Exception $e) {
             Log::error('Admin delete user error: ' . $e->getMessage());
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Failed to delete user: ' . $e->getMessage()
+                ], 500);
+            }
             return redirect()->route('admin.users')->with('alert', [
                 'type' => 'error',
                 'title' => 'Delete Failed',
