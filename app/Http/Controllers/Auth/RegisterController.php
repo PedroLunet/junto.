@@ -25,7 +25,7 @@ class RegisterController extends Controller
             return redirect()->route('home');
         } else {
             $posts = Post::getPostsWithDetails();
-            return view('auth.register', compact('posts'));
+            return view('pages.auth.register', compact('posts'));
         }
     }
 
