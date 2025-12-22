@@ -11,21 +11,19 @@
         <div class="flex flex-row sm:flex-row items-start gap-4 flex-1 w-full">
             <!-- icon -->
             <div class="shrink-0">
-                @if ($group->icon)
-                    <img src="{{ asset('groups/' . $group->icon) }}" alt="{{ $group->name }}"
-                        class="w-14 h-14 sm:w-16 sm:h-16 rounded-full object-cover"
-                        onerror="this.onerror=null; this.src='{{ asset('profile/default.png') }}'">
-                @else
-                    <div class="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-purple-100 flex items-center justify-center">
-                        <i class="fas fa-users text-purple-600 text-xl sm:text-2xl"></i>
+                <div class="bg-white p-2 rounded-2xl shadow-sm inline-block">
+                    <div
+                        class="h-14 w-14 sm:h-16 sm:w-16 bg-[#820263] rounded-xl flex items-center justify-center text-white text-2xl sm:text-3xl font-extrabold shadow-inner">
+                        {{ substr($group->name, 0, 1) }}
                     </div>
-                @endif
+                </div>
             </div>
 
             <!-- details -->
             <div class="flex-1 min-w-0">
                 <div class="flex flex-wrap items-center gap-2 mb-1">
-                    <p class="text-lg sm:text-xl font-semibold text-gray-900 transition-colors group-name wrap-break-word">
+                    <p
+                        class="text-lg sm:text-xl font-semibold text-gray-900 transition-colors group-name wrap-break-word">
                         {{ $group->name }}
                     </p>
                     @if ($group->isprivate)
