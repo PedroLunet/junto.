@@ -7,13 +7,13 @@ use Illuminate\Database\Eloquent\Model;
 
 class StandardPost extends Model
 {
-    protected $table = 'lbaw2544.standard_post';
+    protected $table = 'standard_post';
 
     protected $primaryKey = 'postid';
 
     public $timestamps = false;
 
-    protected $fillable = ['text', 'imageurl'];
+    protected $fillable = ['postid', 'text', 'imageurl'];
 
     public function getImageUrl()
     {

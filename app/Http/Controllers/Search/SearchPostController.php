@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Models\Post\Post;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 
 class SearchPostController extends Controller
 {
@@ -21,65 +20,91 @@ class SearchPostController extends Controller
         $sort = $request->input('sort', 'date_desc');
         $currentUserId = Auth::id();
 
-        $sql = "
-            SELECT 
-                p.id,
-                p.createdAt as created_at,
-                u.name as author_name,
-                u.username,
-                u.profilePicture as author_image,
-                g.name as group_name,
-                p.groupId as groupid,
-                COALESCE(sp.text, r.content) as content,
-                CASE 
-                    WHEN sp.postId IS NOT NULL THEN 'standard'
-                    WHEN r.postId IS NOT NULL THEN 'review'
-                END as post_type,
-                r.rating,
-                m.title as media_title,
-                m.coverImage as media_poster,
-                m.releaseYear as media_year,
-                m.creator as media_creator,
-                CASE
-                    WHEN EXISTS (SELECT 1 FROM lbaw2544.book b WHERE b.mediaId = m.id) THEN 'book'
-                    WHEN EXISTS (SELECT 1 FROM lbaw2544.film f WHERE f.mediaId = m.id) THEN 'movie'
-                    WHEN EXISTS (SELECT 1 FROM lbaw2544.music mu WHERE mu.mediaId = m.id) THEN 'music'
-                END as media_type,
-                (SELECT COUNT(*) FROM lbaw2544.post_like pl WHERE pl.postId = p.id) as likes_count,
-                (SELECT COUNT(*) > 0 FROM lbaw2544.post_like pl WHERE pl.postId = p.id AND pl.userId = ?) as is_liked,
-                (SELECT COUNT(*) FROM lbaw2544.comment c WHERE c.postId = p.id) as comments_count,
-                sp.imageUrl as image_url
-            FROM lbaw2544.post p
-            JOIN lbaw2544.users u ON p.userId = u.id
-            LEFT JOIN lbaw2544.groups g ON p.groupId = g.id
-            LEFT JOIN lbaw2544.standard_post sp ON p.id = sp.postId
-            LEFT JOIN lbaw2544.review r ON p.id = r.postId
-            LEFT JOIN lbaw2544.media m ON r.mediaId = m.id
-            WHERE u.isdeleted = false AND u.isblocked = false
-        ";
-
-        $params = [$currentUserId];
+        $query = Post::with(['user', 'group', 'standardPost', 'review.media.book', 'review.media.film', 'review.media.music', 'tags'])
+            ->withCount(['likes', 'comments'])
+            ->whereHas('user', function ($q) {
+                $q->where('isdeleted', false)->where('isblocked', false);
+            });
 
         if (!empty($search)) {
-            $sql .= " AND (
-                COALESCE(sp.text, r.content) ILIKE ? 
-                OR u.name ILIKE ?
-                OR u.username ILIKE ?
-            )";
-            $searchTerm = "%{$search}%";
-            $params[] = $searchTerm;
-            $params[] = $searchTerm;
-            $params[] = $searchTerm;
+            $query->where(function ($q) use ($search) {
+                $q->whereHas('standardPost', function ($q) use ($search) {
+                    $q->where('text', 'ILIKE', "%{$search}%");
+                })
+                ->orWhereHas('review', function ($q) use ($search) {
+                    $q->where('content', 'ILIKE', "%{$search}%");
+                })
+                ->orWhereHas('user', function ($q) use ($search) {
+                    $q->where('name', 'ILIKE', "%{$search}%")
+                      ->orWhere('username', 'ILIKE', "%{$search}%");
+                });
+            });
         }
 
         if ($sort === 'date_asc') {
-            $sql .= " ORDER BY p.createdAt ASC";
+            $query->orderBy('createdat', 'asc');
         } else {
-            $sql .= " ORDER BY p.createdAt DESC";
+            $query->orderBy('createdat', 'desc');
         }
 
-        $posts = DB::select($sql, $params);
-        $posts = Post::attachTagsToPostData($posts);
+        if ($currentUserId) {
+             $query->withExists(['likes as is_liked' => function ($q) use ($currentUserId) {
+                $q->where('userid', $currentUserId);
+            }]);
+        }
+
+        $posts = $query->get();
+
+        // Transform to match the view's expected format
+        $posts = $posts->map(function ($post) {
+            $transformedPost = (object) [
+                'id' => $post->id,
+                'created_at' => $post->createdat,
+                'author_name' => $post->user->name,
+                'username' => $post->user->username,
+                'author_image' => $post->user->profilepicture,
+                'group_name' => $post->group ? $post->group->name : null,
+                'groupid' => $post->groupid,
+                'likes_count' => $post->likes_count,
+                'comments_count' => $post->comments_count,
+                'is_liked' => $post->is_liked ?? false,
+                'tagged_users' => $post->tags->map(function($user) {
+                    return (object) [
+                        'id' => $user->id,
+                        'name' => $user->name,
+                        'username' => $user->username
+                    ];
+                })
+            ];
+
+            if ($post->standardPost) {
+                $transformedPost->content = $post->standardPost->text;
+                $transformedPost->image_url = $post->standardPost->imageurl;
+                $transformedPost->post_type = 'standard';
+            } elseif ($post->review) {
+                $transformedPost->content = $post->review->content;
+                $transformedPost->rating = $post->review->rating;
+                $transformedPost->post_type = 'review';
+                
+                if ($post->review->media) {
+                    $media = $post->review->media;
+                    $transformedPost->media_title = $media->title;
+                    $transformedPost->media_poster = $media->coverimage;
+                    $transformedPost->media_year = $media->releaseyear;
+                    $transformedPost->media_creator = $media->creator;
+                    
+                    if ($media->book) {
+                        $transformedPost->media_type = 'book';
+                    } elseif ($media->music) {
+                        $transformedPost->media_type = 'music';
+                    } else {
+                        $transformedPost->media_type = 'movie';
+                    }
+                }
+            }
+            
+            return $transformedPost;
+        });
 
         if ($request->expectsJson() || $request->header('Accept') === 'application/json') {
             return response()->json([

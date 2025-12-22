@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class CommentNotification extends Model
 {
-    protected $table = 'lbaw2544.comment_notification';
+    protected $table = 'comment_notification';
     public $timestamps = false;
     protected $primaryKey = 'notificationid';
 

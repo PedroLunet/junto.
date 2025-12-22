@@ -8,11 +8,11 @@ use Illuminate\Database\Eloquent\Model;
 
 class Review extends Model
 {
-    protected $table = 'lbaw2544.review';
+    protected $table = 'review';
     protected $primaryKey = 'postid';
     public $timestamps = false;
     
-    protected $fillable = ['content', 'rating', 'mediaid'];
+    protected $fillable = ['postid', 'content', 'rating', 'mediaid'];
     
     public function media()
     {

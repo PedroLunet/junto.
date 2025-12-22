@@ -49,40 +49,32 @@ class FavoriteService
 
             // if it doesn't exist, create it
             if (!$mediaId) {
-                switch ($type) {
-                    case 'book':
-                        $result = DB::select('SELECT fn_create_book(?, ?, ?, ?) as id', [
-                            $title,
-                            $creator,
-                            $releaseYear,
-                            $coverImage
-                        ]);
-                        $mediaId = $result[0]->id;
-                        break;
+                DB::transaction(function () use ($title, $creator, $releaseYear, $coverImage, $type, &$mediaId) {
+                    $media = \App\Models\Media\Media::create([
+                        'title' => $title,
+                        'creator' => $creator,
+                        'releaseyear' => $releaseYear,
+                        'coverimage' => $coverImage
+                    ]);
+                    $mediaId = $media->id;
 
-                    case 'movie':
-                        $result = DB::select('SELECT fn_create_film(?, ?, ?, ?) as id', [
-                            $title,
-                            $creator,
-                            $releaseYear,
-                            $coverImage
-                        ]);
-                        $mediaId = $result[0]->id;
-                        break;
+                    switch ($type) {
+                        case 'book':
+                            \App\Models\Media\Book::create(['mediaid' => $mediaId]);
+                            break;
 
-                    case 'music':
-                        $result = DB::select('SELECT fn_create_music(?, ?, ?, ?) as id', [
-                            $title,
-                            $creator,
-                            $releaseYear,
-                            $coverImage
-                        ]);
-                        $mediaId = $result[0]->id;
-                        break;
+                        case 'movie':
+                            \App\Models\Media\Film::create(['mediaid' => $mediaId]);
+                            break;
 
-                    default:
-                        return ['success' => false, 'message' => 'Invalid media type'];
-                }
+                        case 'music':
+                            \App\Models\Media\Music::create(['mediaid' => $mediaId]);
+                            break;
+
+                        default:
+                            throw new \Exception('Invalid media type');
+                    }
+                });
             }
 
             // update user's favorite field

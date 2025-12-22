@@ -33,8 +33,8 @@
         @else
             <div class="flex w-full sm:w-auto justify-end">
                 @if ($showUnfriendButton && $unfriendRoute)
-                    <form action="{{ $unfriendRoute }}" method="POST"
-                        onsubmit="return confirm('{{ $confirmMessage }}')" class="mt-2 sm:mt-0 sm:ml-3">
+                    <form action="{{ $unfriendRoute }}" method="POST" onsubmit="return confirm('{{ $confirmMessage }}')"
+                        class="mt-2 sm:mt-0 sm:ml-3">
                         @csrf
                         @method('DELETE')
                         <x-ui.button type="submit" variant="danger" class="px-3 py-1 text-sm sm:text-base">
@@ -51,11 +51,3 @@
     </div>
     {{ $slot }}
 </div>
-{{ $slot }}
-</div>
-
-@if (session('success'))
-    <x-ui.alert-card type="success" :title="'Success'" :message="session('success')" />
-@elseif (session('error'))
-    <x-ui.alert-card type="error" :title="'Error'" :message="session('error')" />
-@endif

@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class ActivityNotification extends Model
 {
-    protected $table = 'lbaw2544.activity_notification';
+    protected $table = 'activity_notification';
     public $timestamps = false;
     protected $primaryKey = 'notificationid';
 

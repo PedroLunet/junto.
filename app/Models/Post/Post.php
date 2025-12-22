@@ -9,9 +9,15 @@ use Illuminate\Support\Facades\DB;
 
 class Post extends Model
 {
-    protected $table = 'lbaw2544.post';
+    protected $table = 'post';
 
     public $timestamps = false;
+
+    protected $fillable = [
+        'userid',
+        'groupid',
+        'createdat',
+    ];
 
     public function standardPost()
     {
@@ -28,11 +34,26 @@ class Post extends Model
         return $this->belongsTo(User::class, 'userid', 'id');
     }
 
+    public function group()
+    {
+        return $this->belongsTo(\App\Models\Group::class, 'groupid', 'id');
+    }
+
     public function tags()
     {
-        return $this->belongsToMany(User::class, 'lbaw2544.post_tag', 'postid', 'userid')
+        return $this->belongsToMany(User::class, 'post_tag', 'postid', 'userid')
             ->withPivot('createdat')
-            ->orderBy('lbaw2544.post_tag.createdat', 'asc');
+            ->orderBy('post_tag.createdat', 'asc');
+    }
+
+    public function likes()
+    {
+        return $this->belongsToMany(User::class, 'post_like', 'postid', 'userid');
+    }
+
+    public function comments()
+    {
+        return $this->hasMany(Comment::class, 'postid', 'id');
     }
 
     public function getAuthorAttribute()
@@ -42,6 +63,134 @@ class Post extends Model
             return DeletedUser::getDeletedUserPlaceholder();
         }
         return $user;
+    }
+
+    public function getAuthorNameAttribute()
+    {
+        $user = $this->getAuthorAttribute();
+        return $user ? $user->name : 'Unknown';
+    }
+
+    public function getUsernameAttribute()
+    {
+        $user = $this->getAuthorAttribute();
+        return $user ? $user->username : 'unknown';
+    }
+
+    public function getIsReviewAttribute()
+    {
+        return $this->review !== null;
+    }
+
+    public function getContentAttribute()
+    {
+        if ($this->standardPost)
+            return $this->standardPost->text;
+        if ($this->review)
+            return $this->review->content;
+        return null;
+    }
+
+    public function getImageUrlAttribute()
+    {
+        if ($this->standardPost)
+            return $this->standardPost->imageurl;
+        if ($this->review && $this->review->media)
+            return $this->review->media->coverimage;
+        return null;
+    }
+
+    public function getRatingAttribute()
+    {
+        return $this->review ? $this->review->rating : null;
+    }
+
+    public function getMediaTitleAttribute()
+    {
+        return $this->review && $this->review->media ? $this->review->media->title : null;
+    }
+
+    public function getMediaPosterAttribute()
+    {
+        return $this->review && $this->review->media ? $this->review->media->coverimage : null;
+    }
+
+    public function getMediaCreatorAttribute()
+    {
+        return $this->review && $this->review->media ? $this->review->media->creator : null;
+    }
+
+    public function getMediaYearAttribute()
+    {
+        return $this->review && $this->review->media ? $this->review->media->releaseyear : null;
+    }
+
+    public function getMediaTypeAttribute()
+    {
+        if (!$this->review || !$this->review->media)
+            return 'unknown';
+
+        $media = $this->review->media;
+        if ($media->book)
+            return 'book';
+        if ($media->film)
+            return 'movie';
+        if ($media->music)
+            return 'music';
+
+        return 'unknown';
+    }
+
+    public static function getPostDetails($id, $currentUserId = null)
+    {
+        $sql = "
+            SELECT 
+                p.id,
+                p.createdAt as created_at,
+                u.name as author_name,
+                u.username,
+                u.profilepicture as author_image,
+                g.name as group_name,
+                p.groupid as groupid,
+                COALESCE(sp.text, r.content) as content,
+                CASE 
+                    WHEN sp.postid IS NOT NULL THEN 'standard'
+                    WHEN r.postid IS NOT NULL THEN 'review'
+                END as post_type,
+                r.rating,
+                m.title as media_title,
+                m.coverimage as media_poster,
+                m.releaseyear as media_year,
+                m.creator as media_creator,
+                CASE
+                    WHEN EXISTS (SELECT 1 FROM book b WHERE b.mediaid = m.id) THEN 'book'
+                    WHEN EXISTS (SELECT 1 FROM film f WHERE f.mediaid = m.id) THEN 'movie'
+                    WHEN EXISTS (SELECT 1 FROM music mu WHERE mu.mediaid = m.id) THEN 'music'
+                END as media_type,
+                (SELECT COUNT(*) FROM post_like pl WHERE pl.postid = p.id) as likes_count,
+                " . ($currentUserId ? '(SELECT COUNT(*) > 0 FROM post_like pl WHERE pl.postid = p.id AND pl.userid = ?) as is_liked,' : 'FALSE as is_liked,') . "
+                (SELECT COUNT(*) FROM comment c WHERE c.postid = p.id) as comments_count,
+                sp.imageurl as image_url
+            FROM post p
+            JOIN users u ON p.userid = u.id
+            LEFT JOIN groups g ON p.groupid = g.id
+            LEFT JOIN standard_post sp ON p.id = sp.postid
+            LEFT JOIN review r ON p.id = r.postid
+            LEFT JOIN media m ON r.mediaid = m.id
+            WHERE p.id = ? AND u.isdeleted = false AND u.isblocked = false
+        ";
+
+        $params = $currentUserId ? [$currentUserId, $id] : [$id];
+        $post = DB::selectOne($sql, $params);
+
+        if (!$post) {
+            return null;
+        }
+
+        $posts = [$post];
+        $posts = self::attachTagsToPostData($posts);
+
+        return $posts[0];
     }
 
     public static function getPostsWithDetails($currentUserId = null)
@@ -56,7 +205,7 @@ class Post extends Model
                     OR u.isPrivate = FALSE 
                     OR p.userId = ? 
                     OR EXISTS (
-                        SELECT 1 FROM lbaw2544.friendship f 
+                        SELECT 1 FROM friendship f 
                         WHERE f.userId1 = LEAST(p.userId, ?) 
                         AND f.userId2 = GREATEST(p.userId, ?)
                     )
@@ -85,26 +234,26 @@ class Post extends Model
                 m.releaseYear as media_year,
                 m.creator as media_creator,
                 CASE
-                    WHEN EXISTS (SELECT 1 FROM lbaw2544.book b WHERE b.mediaId = m.id) THEN 'book'
-                    WHEN EXISTS (SELECT 1 FROM lbaw2544.film f WHERE f.mediaId = m.id) THEN 'movie'
-                    WHEN EXISTS (SELECT 1 FROM lbaw2544.music mu WHERE mu.mediaId = m.id) THEN 'music'
+                    WHEN EXISTS (SELECT 1 FROM book b WHERE b.mediaId = m.id) THEN 'book'
+                    WHEN EXISTS (SELECT 1 FROM film f WHERE f.mediaId = m.id) THEN 'movie'
+                    WHEN EXISTS (SELECT 1 FROM music mu WHERE mu.mediaId = m.id) THEN 'music'
                 END as media_type,
-                (SELECT COUNT(*) FROM lbaw2544.post_like pl WHERE pl.postId = p.id) as likes_count,
-                " . ($currentUserId ? '(SELECT COUNT(*) > 0 FROM lbaw2544.post_like pl WHERE pl.postId = p.id AND pl.userId = ?) as is_liked,' : 'FALSE as is_liked,') . '
-                (SELECT COUNT(*) FROM lbaw2544.comment c WHERE c.postId = p.id) as comments_count,
+                (SELECT COUNT(*) FROM post_like pl WHERE pl.postId = p.id) as likes_count,
+                " . ($currentUserId ? '(SELECT COUNT(*) > 0 FROM post_like pl WHERE pl.postId = p.id AND pl.userId = ?) as is_liked,' : 'FALSE as is_liked,') . '
+                (SELECT COUNT(*) FROM comment c WHERE c.postId = p.id) as comments_count,
                 sp.imageUrl as image_url
-            FROM lbaw2544.post p
-            JOIN lbaw2544.users u ON p.userId = u.id
-            LEFT JOIN lbaw2544.groups g ON p.groupId = g.id
-            LEFT JOIN lbaw2544.standard_post sp ON p.id = sp.postId
-            LEFT JOIN lbaw2544.review r ON p.id = r.postId
-            LEFT JOIN lbaw2544.media m ON r.mediaId = m.id
+            FROM post p
+            JOIN users u ON p.userId = u.id
+            LEFT JOIN groups g ON p.groupId = g.id
+            LEFT JOIN standard_post sp ON p.id = sp.postId
+            LEFT JOIN review r ON p.id = r.postId
+            LEFT JOIN media m ON r.mediaId = m.id
             ' . $whereClause . '
             ORDER BY p.createdAt DESC
         ';
 
         $posts = DB::select($sql, $params);
-        
+
         return self::attachTagsToPostData($posts);
     }
 
@@ -114,18 +263,20 @@ class Post extends Model
             return $posts;
         }
 
-        $postIds = array_map(function ($post) { return $post->id; }, $posts);
+        $postIds = array_map(function ($post) {
+            return $post->id;
+        }, $posts);
         $tagsSql = "
             SELECT pt.postId, u.id, u.name, u.username
-            FROM lbaw2544.post_tag pt
-            JOIN lbaw2544.users u ON pt.userId = u.id
+            FROM post_tag pt
+            JOIN users u ON pt.userId = u.id
             WHERE pt.postId IN (" . implode(',', array_fill(0, count($postIds), '?')) . ")
             AND u.isadmin = false
             ORDER BY pt.createdAt ASC
         ";
-        
+
         $tags = DB::select($tagsSql, $postIds);
-        
+
         $tagsByPost = [];
         foreach ($tags as $tag) {
             if (!isset($tagsByPost[$tag->postid])) {
@@ -167,47 +318,47 @@ class Post extends Model
                 m.releaseYear as media_year,
                 m.creator as media_creator,
                 CASE
-                    WHEN EXISTS (SELECT 1 FROM lbaw2544.book b WHERE b.mediaId = m.id) THEN 'book'
-                    WHEN EXISTS (SELECT 1 FROM lbaw2544.film f WHERE f.mediaId = m.id) THEN 'movie'
-                    WHEN EXISTS (SELECT 1 FROM lbaw2544.music mu WHERE mu.mediaId = m.id) THEN 'music'
+                    WHEN EXISTS (SELECT 1 FROM book b WHERE b.mediaId = m.id) THEN 'book'
+                    WHEN EXISTS (SELECT 1 FROM film f WHERE f.mediaId = m.id) THEN 'movie'
+                    WHEN EXISTS (SELECT 1 FROM music mu WHERE mu.mediaId = m.id) THEN 'music'
                 END as media_type,
-                (SELECT COUNT(*) FROM lbaw2544.post_like pl WHERE pl.postId = p.id) as likes_count,
-                (SELECT COUNT(*) > 0 FROM lbaw2544.post_like pl WHERE pl.postId = p.id AND pl.userId = ?) as is_liked,
-                (SELECT COUNT(*) FROM lbaw2544.comment c WHERE c.postId = p.id) as comments_count,
+                (SELECT COUNT(*) FROM post_like pl WHERE pl.postId = p.id) as likes_count,
+                (SELECT COUNT(*) > 0 FROM post_like pl WHERE pl.postId = p.id AND pl.userId = ?) as is_liked,
+                (SELECT COUNT(*) FROM comment c WHERE c.postId = p.id) as comments_count,
                 sp.imageUrl as image_url
-            FROM lbaw2544.post p
-            JOIN lbaw2544.users u ON p.userId = u.id
-            LEFT JOIN lbaw2544.groups g ON p.groupId = g.id
-            LEFT JOIN lbaw2544.standard_post sp ON p.id = sp.postId
-            LEFT JOIN lbaw2544.review r ON p.id = r.postId
-            LEFT JOIN lbaw2544.media m ON r.mediaId = m.id
+            FROM post p
+            JOIN users u ON p.userId = u.id
+            LEFT JOIN groups g ON p.groupId = g.id
+            LEFT JOIN standard_post sp ON p.id = sp.postId
+            LEFT JOIN review r ON p.id = r.postId
+            LEFT JOIN media m ON r.mediaId = m.id
             WHERE p.userId IN (
-                SELECT userId2 FROM lbaw2544.friendship WHERE userId1 = ?
+                SELECT userId2 FROM friendship WHERE userId1 = ?
                 UNION
-                SELECT userId1 FROM lbaw2544.friendship WHERE userId2 = ?
+                SELECT userId1 FROM friendship WHERE userId2 = ?
             )
             ORDER BY p.createdAt DESC
         ";
 
         $posts = DB::select($sql, [$currentUserId, $currentUserId, $currentUserId]);
-        
+
         return self::attachTagsToPostData($posts);
     }
 
     public static function getMovieReviewPosts($currentUserId = null)
     {
-        $whereClause = "WHERE EXISTS (SELECT 1 FROM lbaw2544.film f WHERE f.mediaId = m.id) AND p.groupId IS NULL AND u.isPrivate = FALSE";
+        $whereClause = "WHERE EXISTS (SELECT 1 FROM film f WHERE f.mediaId = m.id) AND p.groupId IS NULL AND u.isPrivate = FALSE";
         $params = [];
 
         if ($currentUserId) {
             $whereClause = "
-                WHERE EXISTS (SELECT 1 FROM lbaw2544.film f WHERE f.mediaId = m.id) 
+                WHERE EXISTS (SELECT 1 FROM film f WHERE f.mediaId = m.id) 
                 AND p.groupId IS NULL
                 AND (
                     u.isPrivate = FALSE 
                     OR p.userId = ? 
                     OR EXISTS (
-                        SELECT 1 FROM lbaw2544.friendship f 
+                        SELECT 1 FROM friendship f 
                         WHERE f.userId1 = LEAST(p.userId, ?) 
                         AND f.userId2 = GREATEST(p.userId, ?)
                     )
@@ -232,38 +383,38 @@ class Post extends Model
                 m.releaseYear as media_year,
                 m.creator as media_creator,
                 'movie' as media_type,
-                (SELECT COUNT(*) FROM lbaw2544.post_like pl WHERE pl.postId = p.id) as likes_count,
-                " . ($currentUserId ? '(SELECT COUNT(*) > 0 FROM lbaw2544.post_like pl WHERE pl.postId = p.id AND pl.userId = ?) as is_liked,' : 'FALSE as is_liked,') . '
-                (SELECT COUNT(*) FROM lbaw2544.comment c WHERE c.postId = p.id) as comments_count,
+                (SELECT COUNT(*) FROM post_like pl WHERE pl.postId = p.id) as likes_count,
+                " . ($currentUserId ? '(SELECT COUNT(*) > 0 FROM post_like pl WHERE pl.postId = p.id AND pl.userId = ?) as is_liked,' : 'FALSE as is_liked,') . '
+                (SELECT COUNT(*) FROM comment c WHERE c.postId = p.id) as comments_count,
                 NULL as image_url
-            FROM lbaw2544.post p
-            JOIN lbaw2544.users u ON p.userId = u.id
-            LEFT JOIN lbaw2544.groups g ON p.groupId = g.id
-            JOIN lbaw2544.review r ON p.id = r.postId
-            JOIN lbaw2544.media m ON r.mediaId = m.id
+            FROM post p
+            JOIN users u ON p.userId = u.id
+            LEFT JOIN groups g ON p.groupId = g.id
+            JOIN review r ON p.id = r.postId
+            JOIN media m ON r.mediaId = m.id
             ' . $whereClause . '
             ORDER BY p.createdAt DESC
         ';
 
         $posts = DB::select($sql, $params);
-        
+
         return self::attachTagsToPostData($posts);
     }
 
     public static function getBookReviewPosts($currentUserId = null)
     {
-        $whereClause = "WHERE EXISTS (SELECT 1 FROM lbaw2544.book b WHERE b.mediaId = m.id) AND p.groupId IS NULL AND u.isPrivate = FALSE";
+        $whereClause = "WHERE EXISTS (SELECT 1 FROM book b WHERE b.mediaId = m.id) AND p.groupId IS NULL AND u.isPrivate = FALSE";
         $params = [];
 
         if ($currentUserId) {
             $whereClause = "
-                WHERE EXISTS (SELECT 1 FROM lbaw2544.book b WHERE b.mediaId = m.id) 
+                WHERE EXISTS (SELECT 1 FROM book b WHERE b.mediaId = m.id) 
                 AND p.groupId IS NULL
                 AND (
                     u.isPrivate = FALSE 
                     OR p.userId = ? 
                     OR EXISTS (
-                        SELECT 1 FROM lbaw2544.friendship f 
+                        SELECT 1 FROM friendship f 
                         WHERE f.userId1 = LEAST(p.userId, ?) 
                         AND f.userId2 = GREATEST(p.userId, ?)
                     )
@@ -288,38 +439,38 @@ class Post extends Model
                 m.releaseYear as media_year,
                 m.creator as media_creator,
                 'book' as media_type,
-                (SELECT COUNT(*) FROM lbaw2544.post_like pl WHERE pl.postId = p.id) as likes_count,
-                " . ($currentUserId ? '(SELECT COUNT(*) > 0 FROM lbaw2544.post_like pl WHERE pl.postId = p.id AND pl.userId = ?) as is_liked,' : 'FALSE as is_liked,') . '
-                (SELECT COUNT(*) FROM lbaw2544.comment c WHERE c.postId = p.id) as comments_count,
+                (SELECT COUNT(*) FROM post_like pl WHERE pl.postId = p.id) as likes_count,
+                " . ($currentUserId ? '(SELECT COUNT(*) > 0 FROM post_like pl WHERE pl.postId = p.id AND pl.userId = ?) as is_liked,' : 'FALSE as is_liked,') . '
+                (SELECT COUNT(*) FROM comment c WHERE c.postId = p.id) as comments_count,
                 NULL as image_url
-            FROM lbaw2544.post p
-            JOIN lbaw2544.users u ON p.userId = u.id
-            LEFT JOIN lbaw2544.groups g ON p.groupId = g.id
-            JOIN lbaw2544.review r ON p.id = r.postId
-            JOIN lbaw2544.media m ON r.mediaId = m.id
+            FROM post p
+            JOIN users u ON p.userId = u.id
+            LEFT JOIN groups g ON p.groupId = g.id
+            JOIN review r ON p.id = r.postId
+            JOIN media m ON r.mediaId = m.id
             ' . $whereClause . '
             ORDER BY p.createdAt DESC
         ';
 
         $posts = DB::select($sql, $params);
-        
+
         return self::attachTagsToPostData($posts);
     }
 
     public static function getMusicReviewPosts($currentUserId = null)
     {
-        $whereClause = "WHERE EXISTS (SELECT 1 FROM lbaw2544.music mu WHERE mu.mediaId = m.id) AND p.groupId IS NULL AND u.isPrivate = FALSE";
+        $whereClause = "WHERE EXISTS (SELECT 1 FROM music mu WHERE mu.mediaId = m.id) AND p.groupId IS NULL AND u.isPrivate = FALSE";
         $params = [];
 
         if ($currentUserId) {
             $whereClause = "
-                WHERE EXISTS (SELECT 1 FROM lbaw2544.music mu WHERE mu.mediaId = m.id) 
+                WHERE EXISTS (SELECT 1 FROM music mu WHERE mu.mediaId = m.id) 
                 AND p.groupId IS NULL
                 AND (
                     u.isPrivate = FALSE 
                     OR p.userId = ? 
                     OR EXISTS (
-                        SELECT 1 FROM lbaw2544.friendship f 
+                        SELECT 1 FROM friendship f 
                         WHERE f.userId1 = LEAST(p.userId, ?) 
                         AND f.userId2 = GREATEST(p.userId, ?)
                     )
@@ -344,21 +495,21 @@ class Post extends Model
                 m.releaseYear as media_year,
                 m.creator as media_creator,
                 'music' as media_type,
-                (SELECT COUNT(*) FROM lbaw2544.post_like pl WHERE pl.postId = p.id) as likes_count,
-                " . ($currentUserId ? '(SELECT COUNT(*) > 0 FROM lbaw2544.post_like pl WHERE pl.postId = p.id AND pl.userId = ?) as is_liked,' : 'FALSE as is_liked,') . '
-                (SELECT COUNT(*) FROM lbaw2544.comment c WHERE c.postId = p.id) as comments_count,
+                (SELECT COUNT(*) FROM post_like pl WHERE pl.postId = p.id) as likes_count,
+                " . ($currentUserId ? '(SELECT COUNT(*) > 0 FROM post_like pl WHERE pl.postId = p.id AND pl.userId = ?) as is_liked,' : 'FALSE as is_liked,') . '
+                (SELECT COUNT(*) FROM comment c WHERE c.postId = p.id) as comments_count,
                 NULL as image_url
-            FROM lbaw2544.post p
-            JOIN lbaw2544.users u ON p.userId = u.id
-            LEFT JOIN lbaw2544.groups g ON p.groupId = g.id
-            JOIN lbaw2544.review r ON p.id = r.postId
-            JOIN lbaw2544.media m ON r.mediaId = m.id
+            FROM post p
+            JOIN users u ON p.userId = u.id
+            LEFT JOIN groups g ON p.groupId = g.id
+            JOIN review r ON p.id = r.postId
+            JOIN media m ON r.mediaId = m.id
             ' . $whereClause . '
             ORDER BY p.createdAt DESC
         ';
 
         $posts = DB::select($sql, $params);
-        
+
         return self::attachTagsToPostData($posts);
     }
 
@@ -366,20 +517,20 @@ class Post extends Model
     {
         $post = self::find($postId);
         $user = User::find($userId);
-        
-        $existing = DB::table('lbaw2544.post_like')
+
+        $existing = DB::table('post_like')
             ->where('postid', $postId)
             ->where('userid', $userId)
             ->first();
 
         if ($existing) {
-            DB::table('lbaw2544.post_like')
+            DB::table('post_like')
                 ->where('postid', $postId)
                 ->where('userid', $userId)
                 ->delete();
             $liked = false;
         } else {
-            DB::table('lbaw2544.post_like')->insert([
+            DB::table('post_like')->insert([
                 'postid' => $postId,
                 'userid' => $userId,
                 'createdat' => now(),
@@ -387,7 +538,7 @@ class Post extends Model
             $liked = true;
         }
 
-        $likesCount = DB::table('lbaw2544.post_like')
+        $likesCount = DB::table('post_like')
             ->where('postid', $postId)
             ->count();
 
@@ -408,12 +559,12 @@ class Post extends Model
                 g.name as group_name,
                 sp.text as content,
                 sp.imageUrl as image_url,
-                (SELECT COUNT(*) FROM lbaw2544.post_like pl WHERE pl.postId = p.id) as likes_count,
-                (SELECT COUNT(*) FROM lbaw2544.comment c WHERE c.postId = p.id) as comments_count
-            FROM lbaw2544.post p
-            JOIN lbaw2544.users u ON p.userId = u.id
-            LEFT JOIN lbaw2544.groups g ON p.groupId = g.id
-            JOIN lbaw2544.standard_post sp ON p.id = sp.postId
+                (SELECT COUNT(*) FROM post_like pl WHERE pl.postId = p.id) as likes_count,
+                (SELECT COUNT(*) FROM comment c WHERE c.postId = p.id) as comments_count
+            FROM post p
+            JOIN users u ON p.userId = u.id
+            LEFT JOIN groups g ON p.groupId = g.id
+            JOIN standard_post sp ON p.id = sp.postId
             WHERE p.userId = ?
             ORDER BY p.createdAt DESC
         ', [$userId]);
@@ -432,13 +583,13 @@ class Post extends Model
                 r.rating,
                 m.title as media_title,
                 m.coverimage as image_url,
-                (SELECT COUNT(*) FROM lbaw2544.post_like pl WHERE pl.postId = p.id) as likes_count,
-                (SELECT COUNT(*) FROM lbaw2544.comment c WHERE c.postId = p.id) as comments_count
-            FROM lbaw2544.post p
-            JOIN lbaw2544.users u ON p.userId = u.id
-            LEFT JOIN lbaw2544.groups g ON p.groupId = g.id
-            JOIN lbaw2544.review r ON p.id = r.postId
-            JOIN lbaw2544.media m ON r.mediaId = m.id
+                (SELECT COUNT(*) FROM post_like pl WHERE pl.postId = p.id) as likes_count,
+                (SELECT COUNT(*) FROM comment c WHERE c.postId = p.id) as comments_count
+            FROM post p
+            JOIN users u ON p.userId = u.id
+            LEFT JOIN groups g ON p.groupId = g.id
+            JOIN review r ON p.id = r.postId
+            JOIN media m ON r.mediaId = m.id
             WHERE p.userId = ?
             ORDER BY p.createdAt DESC
         ', [$userId]);

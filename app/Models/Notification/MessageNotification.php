@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class MessageNotification extends Model
 {
-    protected $table = 'lbaw2544.message_notification';
+    protected $table = 'message_notification';
     public $timestamps = false;
     protected $primaryKey = 'notificationid';
 

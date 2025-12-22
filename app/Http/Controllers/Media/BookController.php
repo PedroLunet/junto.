@@ -76,15 +76,21 @@ class BookController extends Controller
             // book already exists -> we just use its ID.
             $bookId = $existingBook->id;
         } else {
-            // call the SQL function to create Media + Book atomically
-            $result = DB::select('SELECT fn_create_book(?, ?, ?, ?) as id', [
-                $validated['title'],
-                $validated['creator'],
-                $validated['releaseyear'],
-                $validated['coverimage']
-            ]);
+            // Create Media + Book using Eloquent
+            DB::transaction(function () use ($validated, &$bookId) {
+                $media = \App\Models\Media\Media::create([
+                    'title' => $validated['title'],
+                    'creator' => $validated['creator'],
+                    'releaseyear' => $validated['releaseyear'],
+                    'coverimage' => $validated['coverimage']
+                ]);
 
-            $bookId = $result[0]->id;
+                \App\Models\Media\Book::create([
+                    'mediaid' => $media->id
+                ]);
+
+                $bookId = $media->id;
+            });
             $isNew = true;
         }
 

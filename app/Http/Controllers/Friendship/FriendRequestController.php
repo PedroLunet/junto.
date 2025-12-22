@@ -21,50 +21,7 @@ class FriendRequestController extends Controller
         $this->friendService = $friendService;
     }
 
-    /**
-     * Display a listing of received friend requests for the authenticated user.
-     */
-    public function index()
-    {
-        $user = Auth::user();
 
-        // Get pending friend requests (received)
-        $friendRequests = FriendRequest::whereHas('request.notification', function ($query) use ($user) {
-            $query->where('receiverid', $user->id);
-        })
-            ->whereHas('request', function ($query) {
-                $query->where('status', 'pending');
-            })
-            ->with(['request.sender', 'request.notification'])
-            ->get();
-
-        // Get sent friend requests
-        $sentRequests = FriendRequest::whereHas('request', function ($query) use ($user) {
-            $query->where('senderid', $user->id)
-                ->where('status', 'pending');
-        })
-            ->with(['request.notification'])
-            ->get();
-
-        return view('pages.friend-requests.index', compact('friendRequests', 'sentRequests'));
-    }
-
-    /**
-     * Display a listing of sent friend requests for the authenticated user.
-     */
-    public function sent()
-    {
-        $user = Auth::user();
-
-        $sentRequests = FriendRequest::whereHas('request', function ($query) use ($user) {
-            $query->where('senderid', $user->id)
-                ->where('status', 'pending');
-        })
-            ->with(['request.notification'])
-            ->get();
-
-        return view('friend-requests.sent', compact('sentRequests'));
-    }
 
     /**
      * Send a friend request to another user.

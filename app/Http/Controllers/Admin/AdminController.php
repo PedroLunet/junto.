@@ -29,42 +29,30 @@ class AdminController extends Controller
                 return self::isDeletedUser($user);
             })
             ->count();
-            
+
         $totalPosts = Post::count();
         $standardPosts = Post::whereDoesntHave('review')->count();
 
         // count different types of reviews
-        $musicReviews = DB::select("
-            SELECT COUNT(*) as count 
-            FROM lbaw2544.post p
-            JOIN lbaw2544.review r ON p.id = r.postId
-            JOIN lbaw2544.media m ON r.mediaId = m.id
-            WHERE EXISTS (SELECT 1 FROM lbaw2544.music mu WHERE mu.mediaId = m.id)
-        ")[0]->count ?? 0;
+        $musicReviews = \App\Models\Post\Review::whereHas('media', function ($q) {
+            $q->whereHas('music');
+        })->count();
 
-        $movieReviews = DB::select("
-            SELECT COUNT(*) as count 
-            FROM lbaw2544.post p
-            JOIN lbaw2544.review r ON p.id = r.postId
-            JOIN lbaw2544.media m ON r.mediaId = m.id
-            WHERE EXISTS (SELECT 1 FROM lbaw2544.film f WHERE f.mediaId = m.id)
-        ")[0]->count ?? 0;
+        $movieReviews = \App\Models\Post\Review::whereHas('media', function ($q) {
+            $q->whereHas('film');
+        })->count();
 
-        $bookReviews = DB::select("
-            SELECT COUNT(*) as count 
-            FROM lbaw2544.post p
-            JOIN lbaw2544.review r ON p.id = r.postId
-            JOIN lbaw2544.media m ON r.mediaId = m.id
-            WHERE EXISTS (SELECT 1 FROM lbaw2544.book b WHERE b.mediaId = m.id)
-        ")[0]->count ?? 0;
+        $bookReviews = \App\Models\Post\Review::whereHas('media', function ($q) {
+            $q->whereHas('book');
+        })->count();
 
         $pendingFriendRequests = FriendRequest::whereHas('request', function ($query) {
             $query->where('status', 'pending');
         })->count();
-        $totalFriendships = DB::table('friendship')->count();
+        $totalFriendships = Friendship::count();
 
         // Group stats
-        $totalGroups = DB::table('lbaw2544.groups')->count();
+        $totalGroups = \App\Models\Group::count();
 
         $stats = [
             'totalUsers' => $totalUsers,
@@ -173,7 +161,7 @@ class AdminController extends Controller
             Log::error('Validation failed: ', $e->errors());
             return response()->json([
                 'success' => false,
-                'message' => implode(' ', $e->validator->errors()->all()),
+                'message' => collect($e->errors())->flatten()->implode(' '),
                 'redirect_url' => route('admin.users', [], false)
             ], 422);
         } catch (\Exception $e) {
@@ -200,7 +188,8 @@ class AdminController extends Controller
                 ], 403);
             }
 
-            $user->update(['isblocked' => true]);
+            $user->isblocked = true;
+            $user->save();
 
             Log::info('User blocked successfully: ' . $user->username . ' (ID: ' . $user->id . ')');
 
@@ -231,7 +220,8 @@ class AdminController extends Controller
         try {
             $user = User::findOrFail($id);
 
-            $user->update(['isblocked' => false]);
+            $user->isblocked = false;
+            $user->save();
 
             // auto approve any pending appeals if user is unblocked directly
             UnblockAppeal::where('userid', $user->id)
@@ -263,106 +253,25 @@ class AdminController extends Controller
 
     public function listReports()
     {
-        $reports = DB::select("
-            SELECT 
-                r.id,
-                r.createdat,
-                r.reason,
-                r.status,
-                r.postid as post_id,
-                r.commentid as comment_id
-            FROM lbaw2544.report r
-            ORDER BY r.createdat DESC
-        ");
+        $reports = \App\Models\Post\Report::with([
+            'post.user',
+            'post.standardPost',
+            'post.review.media.book',
+            'post.review.media.film',
+            'post.review.media.music',
+            'post.group',
+            'comment.user'
+        ])
+            ->orderBy('createdat', 'desc')
+            ->get();
 
-        // enrich each report with full post or comment data
-        foreach ($reports as $report) {
-            if ($report->post_id) {
-                // fetch complete post data
-                $post = DB::selectOne("
-                    SELECT 
-                        p.id,
-                        p.createdat as created_at,
-                        sp.text as content,
-                        sp.imageurl as image_url,
-                        u.id as author_id,
-                        u.name as author_name,
-                        u.username,
-                        g.name as group_name,
-                        p.groupid as groupid,
-                        (SELECT COUNT(*) FROM lbaw2544.post_like pl WHERE pl.postid = p.id) as likes_count,
-                        (SELECT COUNT(*) FROM lbaw2544.comment c WHERE c.postid = p.id) as comments_count
-                    FROM lbaw2544.post p
-                    JOIN lbaw2544.users u ON p.userid = u.id
-                    LEFT JOIN lbaw2544.groups g ON p.groupid = g.id
-                    LEFT JOIN lbaw2544.standard_post sp ON p.id = sp.postid
-                    WHERE p.id = ?
-                ", [$report->post_id]);
 
-                if ($post) {
-                    // Check if it's a review
-                    $review = DB::selectOne("
-                        SELECT 
-                            r.rating,
-                            r.content as review_content,
-                            m.id as media_id,
-                            m.title,
-                            m.coverimage,
-                            m.creator,
-                            m.releaseyear,
-                            CASE 
-                                WHEN EXISTS (SELECT 1 FROM lbaw2544.music mu WHERE mu.mediaid = m.id) THEN 'music'
-                                WHEN EXISTS (SELECT 1 FROM lbaw2544.film f WHERE f.mediaid = m.id) THEN 'movie'
-                                WHEN EXISTS (SELECT 1 FROM lbaw2544.book b WHERE b.mediaid = m.id) THEN 'book'
-                                ELSE 'unknown'
-                            END as media_type
-                        FROM lbaw2544.review r
-                        JOIN lbaw2544.media m ON r.mediaid = m.id
-                        WHERE r.postid = ?
-                    ", [$report->post_id]);
-
-                    if ($review) {
-                        $post->is_review = true;
-                        $post->rating = $review->rating;
-                        $post->content = $review->review_content;
-                        $post->media_title = $review->title;
-                        $post->media_poster = $review->coverimage;
-                        $post->media_creator = $review->creator;
-                        $post->media_year = $review->releaseyear;
-                        $post->media_type = $review->media_type;
-                    } else {
-                        $post->is_review = false;
-                    }
-
-                    $report->post = $post;
-                }
-            } elseif ($report->comment_id) {
-                // fetch complete comment data
-                $comment = DB::selectOne("
-                    SELECT 
-                        c.id,
-                        c.content,
-                        c.createdat as created_at,
-                        u.id as author_id,
-                        u.name as author_name,
-                        u.username,
-                        u.profilepicture as author_picture
-                    FROM lbaw2544.comment c
-                    JOIN lbaw2544.users u ON c.userid = u.id
-                    WHERE c.id = ?
-                ", [$report->comment_id]);
-
-                if ($comment) {
-                    $report->comment = $comment;
-                }
-            }
-        }
 
         $counts = [
-            'all' => count($reports),
-            'pending' => count(array_filter($reports, fn($r) => $r->status === 'pending')),
-            'accepted' => count(array_filter($reports, fn($r) => $r->status === 'accepted')),
-            'rejected' => count(array_filter($reports, fn($r) => $r->status === 'rejected')),
+            'all' => $reports->count(),
+            'pending' => $reports->where('status', 'pending')->count(),
+            'accepted' => $reports->where('status', 'accepted')->count(),
+            'rejected' => $reports->where('status', 'rejected')->count(),
         ];
 
         return view('pages.admin.reports', compact('reports', 'counts'));
@@ -373,33 +282,17 @@ class AdminController extends Controller
         try {
             DB::beginTransaction();
 
-            // Get the report details
-            $report = DB::selectOne("
-                SELECT postid, commentid 
-                FROM lbaw2544.report 
-                WHERE id = ?
-            ", [$id]);
+            $report = \App\Models\Post\Report::findOrFail($id);
 
-            if ($report) {
-                // Delete the reported post if it exists
-                if ($report->postid) {
-                    DB::table('lbaw2544.post')
-                        ->where('id', $report->postid)
-                        ->delete();
-                }
-
-                // Delete the reported comment if it exists
-                if ($report->commentid) {
-                    DB::table('lbaw2544.comment')
-                        ->where('id', $report->commentid)
-                        ->delete();
-                }
+            if ($report->postid) {
+                Post::where('id', $report->postid)->delete();
             }
 
-            // Update report status
-            DB::table('lbaw2544.report')
-                ->where('id', $id)
-                ->update(['status' => 'accepted']);
+            if ($report->commentid) {
+                \App\Models\Post\Comment::where('id', $report->commentid)->delete();
+            }
+
+            $report->update(['status' => 'accepted']);
 
             DB::commit();
 
@@ -421,9 +314,7 @@ class AdminController extends Controller
     {
         try {
             // Update report status
-            DB::table('lbaw2544.report')
-                ->where('id', $id)
-                ->update(['status' => 'rejected']);
+            \App\Models\Post\Report::where('id', $id)->update(['status' => 'rejected']);
 
             return response()->json([
                 'success' => true,
@@ -440,28 +331,20 @@ class AdminController extends Controller
 
     public function groups()
     {
-        $groups = DB::select("
-            SELECT 
-                g.id,
-                g.name,
-                g.description,
-                g.isprivate,
-                g.icon,
-                g.createdat,
-                COUNT(DISTINCT m.userid) as members_count,
-                COUNT(DISTINCT p.id) as posts_count,
-                (SELECT u.name FROM lbaw2544.users u 
-                 JOIN lbaw2544.membership mem ON u.id = mem.userid 
-                 WHERE mem.groupid = g.id AND mem.isowner = true LIMIT 1) as owner_name,
-                (SELECT u.username FROM lbaw2544.users u 
-                 JOIN lbaw2544.membership mem ON u.id = mem.userid 
-                 WHERE mem.groupid = g.id AND mem.isowner = true LIMIT 1) as owner_username
-            FROM lbaw2544.groups g
-            LEFT JOIN lbaw2544.membership m ON g.id = m.groupid
-            LEFT JOIN lbaw2544.post p ON g.id = p.groupid
-            GROUP BY g.id, g.name, g.description, g.isprivate, g.icon, g.createdat
-            ORDER BY g.createdat DESC
-        ");
+        $groups = \App\Models\Group::withCount(['members', 'posts'])
+            ->with([
+                'members' => function ($q) {
+                    $q->where('membership.isowner', true);
+                }
+            ])
+            ->orderBy('createdat', 'desc')
+            ->get()
+            ->map(function ($group) {
+                $owner = $group->members->first();
+                $group->owner_name = $owner ? $owner->name : 'Unknown';
+                $group->owner_username = $owner ? $owner->username : 'unknown';
+                return $group;
+            });
 
         return view('pages.admin.groups', compact('groups'));
     }
@@ -469,7 +352,7 @@ class AdminController extends Controller
     public function deleteGroup($id)
     {
         try {
-            DB::delete("DELETE FROM lbaw2544.groups WHERE id = ?", [$id]);
+            \App\Models\Group::findOrFail($id)->delete();
 
             return response()->json([
                 'success' => true,
@@ -552,7 +435,7 @@ class AdminController extends Controller
         } catch (ValidationException $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Validation failed: ' . implode(', ', $e->validator->errors()->all())
+                'message' => 'Validation failed: ' . collect($e->errors())->flatten()->implode(', ')
             ], 422);
         } catch (\Exception $e) {
             Log::error('Submit appeal error: ' . $e->getMessage());
@@ -574,7 +457,8 @@ class AdminController extends Controller
 
             $user = $appeal->user;
 
-            $user->update(['isblocked' => false]);
+            $user->isblocked = false;
+            $user->save();
             $appeal->update(['status' => 'approved']);
 
             DB::commit();
@@ -805,13 +689,13 @@ class AdminController extends Controller
             if ($request->expectsJson()) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Validation failed: ' . implode(' ', $e->validator->errors()->all())
+                    'message' => 'Validation failed: ' . collect($e->errors())->flatten()->implode(' ')
                 ], 422);
             }
             return redirect()->route('admin.users')->with('alert', [
                 'type' => 'error',
                 'title' => 'Validation Error',
-                'message' => 'Validation failed: ' . implode(' ', $e->validator->errors()->all())
+                'message' => 'Validation failed: ' . collect($e->errors())->flatten()->implode(' ')
             ]);
         } catch (\Exception $e) {
             Log::error('Admin delete user error: ' . $e->getMessage());
@@ -832,9 +716,11 @@ class AdminController extends Controller
 
     public static function isDeletedUser($user)
     {
-        if (!$user) return false;
+        if (!$user)
+            return false;
         // Check by isdeleted flag if available
-        if (isset($user->isdeleted) && $user->isdeleted) return true;
+        if (isset($user->isdeleted) && $user->isdeleted)
+            return true;
         // Fallback: check by name or username pattern
         if (
             (isset($user->name) && $user->name === 'Deleted User') ||

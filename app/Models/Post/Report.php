@@ -7,15 +7,42 @@ use Illuminate\Support\Facades\DB;
 
 class Report extends Model
 {
-  protected $table = 'lbaw2544.report';
+  protected $table = 'report';
   public $timestamps = false;
+
+  protected $fillable = [
+    'reason',
+    'status',
+    'createdat',
+    'postid',
+    'commentid'
+  ];
+
+  public function post()
+  {
+    return $this->belongsTo(Post::class, 'postid', 'id');
+  }
+
+  public function comment()
+  {
+    return $this->belongsTo(Comment::class, 'commentid', 'id');
+  }
+  public function getPostIdAttribute()
+  {
+    return $this->attributes['postid'] ?? null;
+  }
+
+  public function getCommentIdAttribute()
+  {
+    return $this->attributes['commentid'] ?? null;
+  }
 
   /**
    * Create a new report for a post
    */
   public static function createPostReport($postId, $reason)
   {
-    DB::statement("SELECT lbaw2544.fn_report_post(?, ?)", [$postId, $reason]);
+    DB::statement("SELECT fn_report_post(?, ?)", [$postId, $reason]);
 
     return true;
   }
@@ -40,12 +67,12 @@ class Report extends Model
                 u.name as post_author,
                 u.username as post_author_username,
                 COALESCE(sp.text, rev.content, c.content) as content
-            FROM lbaw2544.report r
-            LEFT JOIN lbaw2544.post p ON r.postId = p.id
-            LEFT JOIN lbaw2544.users u ON p.userId = u.id
-            LEFT JOIN lbaw2544.standard_post sp ON p.id = sp.postId
-            LEFT JOIN lbaw2544.review rev ON p.id = rev.postId
-            LEFT JOIN lbaw2544.comment c ON r.commentId = c.id
+            FROM report r
+            LEFT JOIN post p ON r.postId = p.id
+            LEFT JOIN users u ON p.userId = u.id
+            LEFT JOIN standard_post sp ON p.id = sp.postId
+            LEFT JOIN review rev ON p.id = rev.postId
+            LEFT JOIN comment c ON r.commentId = c.id
             ORDER BY r.createdAt DESC
         ");
   }
@@ -70,12 +97,12 @@ class Report extends Model
                 u.name as post_author,
                 u.username as post_author_username,
                 COALESCE(sp.text, rev.content, c.content) as content
-            FROM lbaw2544.report r
-            LEFT JOIN lbaw2544.post p ON r.postId = p.id
-            LEFT JOIN lbaw2544.users u ON p.userId = u.id
-            LEFT JOIN lbaw2544.standard_post sp ON p.id = sp.postId
-            LEFT JOIN lbaw2544.review rev ON p.id = rev.postId
-            LEFT JOIN lbaw2544.comment c ON r.commentId = c.id
+            FROM report r
+            LEFT JOIN post p ON r.postId = p.id
+            LEFT JOIN users u ON p.userId = u.id
+            LEFT JOIN standard_post sp ON p.id = sp.postId
+            LEFT JOIN review rev ON p.id = rev.postId
+            LEFT JOIN comment c ON r.commentId = c.id
             WHERE r.status = 'pending'
             ORDER BY r.createdAt DESC
         ");
@@ -86,7 +113,7 @@ class Report extends Model
    */
   public static function updateReportStatus($reportId, $newStatus)
   {
-    DB::statement("SELECT lbaw2544.fn_manage_report(?, ?)", [$reportId, $newStatus]);
+    DB::statement("SELECT fn_manage_report(?, ?)", [$reportId, $newStatus]);
 
     return true;
   }

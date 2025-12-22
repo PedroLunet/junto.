@@ -19,7 +19,8 @@
     <meta property="og:title" content="@yield('title', 'Junto')" />
     <meta property="og:type" content="website" />
     <meta property="og:url" content="{{ url()->current() }}" />
-    <meta property="og:description" content="@yield('description', 'Junto - Connect with friends and share your interests.')" />
+    <meta property="og:description"
+        content="@yield('description', 'Junto - Connect with friends and share your interests.')" />
     <meta property="og:site_name" content="Junto" />
     <meta property="og:image" content="@yield('og:image', asset('illustration-friends.svg'))" />
 
@@ -47,7 +48,8 @@
 </head>
 
 <body class="flex h-screen bg-[#F1EBF4] overflow-hidden">
-    <a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-white focus:text-black focus:rounded-md focus:shadow-lg">
+    <a href="#main-content"
+        class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-white focus:text-black focus:rounded-md focus:shadow-lg">
         Skip to content
     </a>
 
@@ -81,7 +83,8 @@
 
         @auth
             <div class="p-4 border-t border-[#7a5466] flex items-center justify-between gap-2">
-                <a href="{{ route('profile.show', Auth::user()->username) }}" class="flex items-center gap-2 flex-1 min-w-0">
+                <a href="{{ route('profile.show', Auth::user()->username) }}"
+                    class="flex items-center gap-2 flex-1 min-w-0">
                     @if (Auth::user()->profilepicture)
                         <img src="{{ asset('profile/' . Auth::user()->profilepicture) }}" alt="{{ Auth::user()->name }}"
                             class="w-10 h-10 rounded-full object-cover shrink-0"
@@ -91,8 +94,10 @@
                             class="w-10 h-10 rounded-full object-cover shrink-0">
                     @endif
                     <div class="flex flex-col min-w-0">
-                        <span class="text-white font-semibold text-sm truncate" title="{{ Auth::user()->name }}">{{ Auth::user()->name }}</span>
-                        <span class="text-gray-300 text-xs truncate" title="@{{ Auth::user()->username }}">@<span>{{ Auth::user()->username }}</span></span>
+                        <span class="text-white font-semibold text-sm truncate"
+                            title="{{ Auth::user()->name }}">{{ Auth::user()->name }}</span>
+                        <span class="text-gray-300 text-xs truncate"
+                            title="@{{ Auth::user()->username }}">@<span>{{ Auth::user()->username }}</span></span>
                     </div>
                 </a>
                 <x-ui.button href="{{ url('/logout') }}" variant="ghost" title="Logout">
@@ -147,11 +152,17 @@
 
     <x-ui.notification-alert />
 
+    @if (session('success'))
+        <x-ui.alert-card type="success" :title="'Success'" :message="session('success')" />
+    @elseif (session('error'))
+        <x-ui.alert-card type="error" :title="'Error'" :message="session('error')" />
+    @endif
+
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             const forms = document.querySelectorAll('form');
             forms.forEach(form => {
-                form.addEventListener('submit', function() {
+                form.addEventListener('submit', function () {
                     const submitBtn = form.querySelector('button[type="submit"]');
                     if (submitBtn && !submitBtn.disabled) {
                         submitBtn.disabled = true;
@@ -159,7 +170,7 @@
                         const originalText = submitBtn.innerHTML;
                         // Optional: Add a spinner icon if FontAwesome is available
                         submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Processing...';
-                        
+
                         // Restore after a timeout in case of validation errors (handled by backend redirect usually, but good for safety)
                         // Or if the page doesn't reload.
                         setTimeout(() => {

@@ -31,7 +31,7 @@ class GroupController extends Controller
         if ($group->members()->where('users.id', $userId)->exists()) {
             return back()->with('error', 'User is already a member.');
         }
-        $existingInvite = \App\Models\Request::where('senderid', auth()->id())
+        $existingInvite = \App\Models\Request::where('senderid', $userId)
             ->where('status', 'pending')
             ->whereHas('groupInviteRequest', function ($q) use ($group, $userId) {
                 $q->where('groupid', $group->id);
@@ -473,23 +473,21 @@ class GroupController extends Controller
         $tags = $request->input('tags', []);
         if (! empty($tags)) {
             foreach ($tags as $userId) {
-                DB::insert('
-                    INSERT INTO lbaw2544.post_tag (postId, userId, createdAt)
-                    VALUES (?, ?, CURRENT_TIMESTAMP)
-                ', [$post->id, $userId]);
+                $post->tags()->attach($userId, ['createdat' => now()]);
 
                 if ((int)$userId !== $user->id) {
-                    $notification = DB::table('lbaw2544.notification')->insertGetId([
+                    $notification = \App\Models\Notification::create([
                         'message' => 'You were tagged in a post',
                         'isread' => false,
                         'receiverid' => $userId,
                         'createdat' => now(),
                     ]);
 
-                    DB::insert('
-                        INSERT INTO lbaw2544.tag_notification (notificationid, postid, taggerid)
-                        VALUES (?, ?, ?)
-                    ', [$notification, $post->id, $user->id]);
+                    \App\Models\Notification\TagNotification::create([
+                        'notificationid' => $notification->id,
+                        'postid' => $post->id,
+                        'taggerid' => $user->id,
+                    ]);
                 }
             }
         }

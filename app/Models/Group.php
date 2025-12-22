@@ -5,11 +5,18 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * @property int $id
+ * @property string $name
+ * @property string|null $description
+ * @property bool $isprivate
+ * @property string|null $icon
+ */
 class Group extends Model
 {
     use HasFactory;
 
-    protected $table = 'lbaw2544.groups';
+    protected $table = 'groups';
 
     public $timestamps = false;
 

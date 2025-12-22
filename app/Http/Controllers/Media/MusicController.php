@@ -77,15 +77,21 @@ class MusicController extends Controller
             // the song already exists, so we just use its ID.
             $songId = $existingSong->id;
         } else {
-            // call the SQL function to create Media + Music atomically.
-            $result = DB::select('SELECT fn_create_music(?, ?, ?, ?) as id', [
-                $validated['title'],
-                $validated['creator'],
-                $validated['releaseyear'],
-                $validated['coverimage']
-            ]);
+            // Create Media + Music using Eloquent
+            DB::transaction(function () use ($validated, &$songId) {
+                $media = \App\Models\Media\Media::create([
+                    'title' => $validated['title'],
+                    'creator' => $validated['creator'],
+                    'releaseyear' => $validated['releaseyear'],
+                    'coverimage' => $validated['coverimage']
+                ]);
 
-            $songId = $result[0]->id;
+                \App\Models\Media\Music::create([
+                    'mediaid' => $media->id
+                ]);
+
+                $songId = $media->id;
+            });
             $isNew = true;
         }
 

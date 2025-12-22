@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Media extends Model
 {
-    protected $table = 'lbaw2544.media';
+    protected $table = 'media';
     
     protected $fillable = [
         'title',
@@ -16,4 +16,19 @@ class Media extends Model
     ];
     
     public $timestamps = false;
+
+    public function book()
+    {
+        return $this->hasOne(Book::class, 'mediaid', 'id');
+    }
+
+    public function film()
+    {
+        return $this->hasOne(Film::class, 'mediaid', 'id');
+    }
+
+    public function music()
+    {
+        return $this->hasOne(Music::class, 'mediaid', 'id');
+    }
 }

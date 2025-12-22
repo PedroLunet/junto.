@@ -7,7 +7,7 @@ use App\Models\User\User;
 
 class UnblockAppeal extends Model
 {
-    protected $table = 'lbaw2544.unblock_appeal';
+    protected $table = 'unblock_appeal';
 
     protected $fillable = [
         'userid',

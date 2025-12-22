@@ -17,7 +17,7 @@ class User extends Authenticatable
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;
 
-    protected $table = 'lbaw2544.users';
+    protected $table = 'users';
 
     // Disable default created_at and updated_at timestamps for this model.
     public $timestamps = false;
@@ -26,7 +26,6 @@ class User extends Authenticatable
      * The attributes that are mass assignable.
      *
      * Only these fields may be filled using methods like create() or update().
-     * This protects against mass-assignment vulnerabilities.
      *
      * @var list<string>
      */
@@ -36,17 +35,13 @@ class User extends Authenticatable
         'bio',
         'email',
         'passwordhash',
-        'isadmin',
-        'isblocked',
         'isprivate',
         'createdat',
         'google_id',
-        'isdeleted',
     ];
 
     /**
      * The attributes that should be hidden when serializing the model
-     * (e.g., to arrays or JSON).
      *
      * @var list<string>
      */

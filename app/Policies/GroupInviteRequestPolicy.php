@@ -50,7 +50,8 @@ class GroupInviteRequestPolicy
             return true;
         }
 
-        return false;
+        // The group owner can also reject (cancel) the invite
+        return $this->cancel($user, $invite);
     }
 
     public function cancel(User $user, GroupInviteRequest $invite): bool
