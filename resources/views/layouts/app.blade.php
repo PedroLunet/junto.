@@ -54,17 +54,17 @@
 @section('navigation')
     <ul class="space-y-2">
         <li><a href="{{ route('friends-feed') }}"
-                class="block py-2 px-4 rounded hover:bg-[#7a5466] hover:text-white"><i class="fa-solid fa-user-group fa-fw mr-2"></i>Friends Feed</a></li>
-        <li><a href="{{ route('movies') }}" class="block py-2 px-4 rounded hover:bg-[#7a5466] hover:text-white"><i class="fa-solid fa-clapperboard fa-fw mr-2"></i>Movies</a>
+                class="block py-2 px-4 rounded hover:bg-[#7a5466] hover:text-white {{ request()->routeIs('friends-feed') ? 'bg-[#a17f8f] text-white' : '' }}"><i class="fa-solid fa-user-group fa-fw mr-2"></i>Friends Feed</a></li>
+        <li><a href="{{ route('movies') }}" class="block py-2 px-4 rounded hover:bg-[#7a5466] hover:text-white {{ request()->routeIs('movies') ? 'bg-[#a17f8f] text-white' : '' }}"><i class="fa-solid fa-clapperboard fa-fw mr-2"></i>Movies</a>
         </li>
-        <li><a href="{{ route('books') }}" class="block py-2 px-4 rounded hover:bg-[#7a5466] hover:text-white"><i class="fa-solid fa-book fa-fw mr-2"></i>Books</a>
+        <li><a href="{{ route('books') }}" class="block py-2 px-4 rounded hover:bg-[#7a5466] hover:text-white {{ request()->routeIs('books') ? 'bg-[#a17f8f] text-white' : '' }}"><i class="fa-solid fa-book fa-fw mr-2"></i>Books</a>
         </li>
-        <li><a href="{{ route('music') }}" class="block py-2 px-4 rounded hover:bg-[#7a5466] hover:text-white"><i class="fa-solid fa-music fa-fw mr-2"></i>Music</a>
+        <li><a href="{{ route('music') }}" class="block py-2 px-4 rounded hover:bg-[#7a5466] hover:text-white {{ request()->routeIs('music') ? 'bg-[#a17f8f] text-white' : '' }}"><i class="fa-solid fa-music fa-fw mr-2"></i>Music</a>
         </li>
         <li><a href="{{ route('groups.index') }}"
-                class="block py-2 px-4 rounded hover:bg-[#7a5466] hover:text-white"><i class="fa-solid fa-people-group fa-fw mr-2"></i>Groups</a></li>
+                class="block py-2 px-4 rounded hover:bg-[#7a5466] hover:text-white {{ request()->routeIs('groups.*') ? 'bg-[#a17f8f] text-white' : '' }}"><i class="fa-solid fa-people-group fa-fw mr-2"></i>Groups</a></li>
         <li><a href="{{ route('messages.index') }}"
-                class="block py-2 px-4 rounded hover:bg-[#7a5466] hover:text-white"><i class="fa-solid fa-envelope fa-fw mr-2"></i>Messages</a></li>
+                class="block py-2 px-4 rounded hover:bg-[#7a5466] hover:text-white {{ request()->routeIs('messages.*') ? 'bg-[#a17f8f] text-white' : '' }}"><i class="fa-solid fa-envelope fa-fw mr-2"></i>Messages</a></li>
         
     </ul>
 @endsection

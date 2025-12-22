@@ -15,7 +15,7 @@
                     </span>
                     @if (!empty($post->group_name))
                         <span class="text-gray-600 text-xs">
-                            in <span class="font-medium text-[#38157a]">{{ $post->group_name }}</span>
+                            in <a href="{{ route('groups.show', $post->groupid) }}" onclick="event.stopPropagation()" class="font-medium text-[#38157a] hover:underline">{{ $post->group_name }}</a>
                         </span>
                     @endif
                 </div>

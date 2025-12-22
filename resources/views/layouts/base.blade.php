@@ -138,6 +138,32 @@
     @endif
 
     <x-ui.notification-alert />
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const forms = document.querySelectorAll('form');
+            forms.forEach(form => {
+                form.addEventListener('submit', function() {
+                    const submitBtn = form.querySelector('button[type="submit"]');
+                    if (submitBtn && !submitBtn.disabled) {
+                        submitBtn.disabled = true;
+                        submitBtn.classList.add('opacity-50', 'cursor-wait');
+                        const originalText = submitBtn.innerHTML;
+                        // Optional: Add a spinner icon if FontAwesome is available
+                        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Processing...';
+                        
+                        // Restore after a timeout in case of validation errors (handled by backend redirect usually, but good for safety)
+                        // Or if the page doesn't reload.
+                        setTimeout(() => {
+                            submitBtn.disabled = false;
+                            submitBtn.classList.remove('opacity-50', 'cursor-wait');
+                            submitBtn.innerHTML = originalText;
+                        }, 5000);
+                    }
+                });
+            });
+        });
+    </script>
 </body>
 
 </html>
