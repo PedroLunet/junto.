@@ -22,16 +22,28 @@
 
     <!-- reported Content -->
     <div class="mb-4 pt-4 border-t border-gray-200">
-        @if ($report->post_id && isset($report->post))
-            @if ($report->post->is_review ?? false)
-                <x-posts.post-review :post="$report->post" :showAuthor="true" :isViewOnly="true" />
-            @else
-                <x-posts.post-standard :post="$report->post" :showAuthor="true" :isViewOnly="true" />
+        @if ($report->post_id)
+            @if (isset($report->post))
+                @if ($report->post->is_review ?? false)
+                    <x-posts.post-review :post="$report->post" :showAuthor="true" :isViewOnly="true" />
+                @else
+                    <x-posts.post-standard :post="$report->post" :showAuthor="true" :isViewOnly="true" />
+                @endif
+            @elseif ($report->status === 'accepted')
+                <div class="bg-gray-100 rounded-lg p-4 text-center text-gray-500 font-semibold">
+                    Content was deleted
+                </div>
             @endif
-        @elseif($report->comment_id && isset($report->comment))
-            <div class="bg-gray-50 rounded-lg p-4">
-                <x-posts.comment.comment :comment="$report->comment" :isViewOnly="true" />
-            </div>
+        @elseif($report->comment_id)
+            @if (isset($report->comment))
+                <div class="bg-gray-50 rounded-lg p-4">
+                    <x-posts.comment.comment :comment="$report->comment" :isViewOnly="true" />
+                </div>
+            @elseif ($report->status === 'accepted')
+                <div class="bg-gray-100 rounded-lg p-4 text-center text-gray-500 font-semibold">
+                    Content was deleted
+                </div>
+            @endif
         @endif
     </div>
 
