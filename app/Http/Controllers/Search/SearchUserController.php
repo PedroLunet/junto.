@@ -4,10 +4,8 @@ namespace App\Http\Controllers\Search;
 
 use App\Http\Controllers\Controller;
 use App\Models\User\User;
-
 use Illuminate\Http\Request;
 use App\Services\FriendService;
-use function Laravel\Prompts\search;
 
 class SearchUserController extends Controller
 {
@@ -27,6 +25,16 @@ class SearchUserController extends Controller
             ->when($search, function ($query, $search) {
                 return $query->searchByProfile($search);
             });
+
+        if ($request->expectsJson() || $request->header('Accept') === 'application/json') {
+            $currentUser = auth()->user();
+            if ($currentUser) {
+                $friendIds = $currentUser->friends()->pluck('id')->toArray();
+                $users = $users->whereIn('id', $friendIds);
+            } else {
+                $users = $users->where('id', '<', 0);
+            }
+        }
 
         switch ($sort) {
             case 'name_desc':

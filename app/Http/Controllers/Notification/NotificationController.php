@@ -16,6 +16,7 @@ class NotificationController extends Controller
         $user = Auth::user();
         
         $notifications = Notification::where('receiverid', Auth::id())
+            ->with(['tagNotification.tagger'])
             ->excludeSelfInteractions()
             ->orderBy('createdat', 'desc')
             ->paginate(15);

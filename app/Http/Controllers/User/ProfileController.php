@@ -124,6 +124,16 @@ class ProfileController extends Controller
                     $transformedPost->post_type = 'review';
                 }
 
+                // get tagged users
+                $taggedUsers = \Illuminate\Support\Facades\DB::select("
+                    SELECT u.id, u.name, u.username
+                    FROM lbaw2544.post_tag pt
+                    JOIN lbaw2544.users u ON pt.userid = u.id
+                    WHERE pt.postid = ?
+                    ORDER BY pt.createdat ASC
+                ", [$post->id]);
+                $transformedPost->tagged_users = $taggedUsers;
+
                 return $transformedPost;
             });
 

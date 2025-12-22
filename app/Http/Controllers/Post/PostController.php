@@ -16,6 +16,8 @@ class PostController extends Controller
         $request->validate([
             'content' => 'nullable|string|max:1000',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'tags' => 'nullable|array',
+            'tags.*' => 'integer|exists:users,id',
         ]);
 
         if (! $request->filled('content') && ! $request->hasFile('image')) {
@@ -23,6 +25,20 @@ class PostController extends Controller
                 'success' => false,
                 'message' => 'Post must contain either text or an image',
             ], 422);
+        }
+
+        $tags = $request->input('tags', []);
+        if (! empty($tags)) {
+            $friendIds = Auth::user()->friends()->pluck('id')->toArray();
+            $invalidTags = array_filter($tags, function ($userId) use ($friendIds) {
+                return !in_array($userId, $friendIds) && $userId !== Auth::id();
+            });
+            if (! empty($invalidTags)) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'You can only tag friends',
+                ], 403);
+            }
         }
 
         try {
@@ -47,6 +63,30 @@ class PostController extends Controller
                 INSERT INTO lbaw2544.standard_post (postId, text, imageUrl) 
                 VALUES (?, ?, ?)
             ', [$postId, $request->input('content'), $imagePath]);
+
+            $tags = $request->input('tags', []);
+            if (! empty($tags)) {
+                foreach ($tags as $userId) {
+                    DB::insert('
+                        INSERT INTO lbaw2544.post_tag (postId, userId, createdAt)
+                        VALUES (?, ?, CURRENT_TIMESTAMP)
+                    ', [$postId, $userId]);
+
+                    if ((int)$userId !== Auth::id()) {
+                        $notification = DB::table('lbaw2544.notification')->insertGetId([
+                            'message' => 'You were tagged in a post',
+                            'isread' => false,
+                            'receiverid' => $userId,
+                            'createdat' => now(),
+                        ]);
+
+                        DB::insert('
+                            INSERT INTO lbaw2544.tag_notification (notificationid, postid, taggerid)
+                            VALUES (?, ?, ?)
+                        ', [$notification, $postId, Auth::id()]);
+                    }
+                }
+            }
 
             DB::commit();
 
