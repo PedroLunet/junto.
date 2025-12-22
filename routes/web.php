@@ -22,6 +22,9 @@ use App\Http\Controllers\Post\ReportController;
 use App\Http\Controllers\Post\ReviewController;
 use App\Http\Controllers\Notification\NotificationController;
 use App\Http\Controllers\Search\SearchUserController;
+use App\Http\Controllers\Search\SearchPostController;
+use App\Http\Controllers\Search\SearchCommentController;
+use App\Http\Controllers\Search\SearchGroupController;
 use App\Http\Controllers\User\ProfileController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
@@ -108,6 +111,18 @@ Route::middleware('regular.user')->controller(SearchUserController::class)->grou
     Route::get('/search-users', 'index')->name('search.users');
 });
 
+Route::middleware('regular.user')->controller(SearchPostController::class)->group(function () {
+    Route::get('/search-posts', 'index')->name('search.posts');
+});
+
+Route::middleware('regular.user')->controller(SearchCommentController::class)->group(function () {
+    Route::get('/search-comments', 'index')->name('search.comments');
+});
+
+Route::middleware('regular.user')->controller(SearchGroupController::class)->group(function () {
+    Route::get('/search-groups', 'index')->name('search.groups');
+});
+
 // Friend Requests (authentication required)
 Route::middleware(['auth', 'regular.user'])->controller(FriendRequestController::class)->group(function () {
     Route::get('/friend-requests', 'index')->name('friend-requests.index');
@@ -154,6 +169,8 @@ Route::middleware(['auth', 'regular.user'])->group(function () {
     Route::put('/posts/{id}', [PostController::class, 'update'])->name('posts.update');
     Route::delete('/posts/{id}', [PostController::class, 'destroy'])->name('posts.destroy');
 });
+
+Route::get('/posts/{id}/view', [PostController::class, 'show'])->middleware('regular.user')->name('posts.show');
 
 // file upload routes
 Route::middleware('auth')->controller(FileController::class)->group(function () {
