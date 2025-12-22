@@ -39,6 +39,10 @@ class ProfileController extends Controller
             ->where('username', $username)
             ->firstOrFail();
 
+        if ($user->isadmin && (!Auth::check() || !Auth::user()->isadmin)) {
+            abort(404);
+        }
+
         // Guests can view posts if profile is public
         if (!$user->isprivate) {
             $canViewPosts = true;

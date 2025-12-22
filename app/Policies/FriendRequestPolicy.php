@@ -18,6 +18,10 @@ class FriendRequestPolicy
             return false;
         }
 
+        if ($user->isadmin || $receiver->isadmin) {
+            return false;
+        }
+
         // Cannot send if blocked
         if ($user->isblocked || $receiver->isblocked) {
             return false;

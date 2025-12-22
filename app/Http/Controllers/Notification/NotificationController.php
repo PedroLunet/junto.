@@ -61,10 +61,8 @@ class NotificationController extends Controller
     public function markAsRead($id)
     {
         $notification = Notification::findOrFail($id);
-
-        if ($notification->receiverid !== Auth::id()) {
-            return response()->json(['success' => false, 'message' => 'Unauthorized'], 403);
-        }
+        
+        $this->authorize('update', $notification);
 
         $notification->markAsRead();
 

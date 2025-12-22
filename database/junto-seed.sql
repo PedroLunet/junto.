@@ -889,7 +889,7 @@ INSERT INTO groups (name, description, isPrivate, icon) VALUES
 
 -- MEMBERSHIP
 INSERT INTO membership (userId, groupId, isOwner) VALUES 
-    (1, 1, TRUE), (2, 1, FALSE), (3, 3, TRUE), (4, 1, FALSE), (5, 2, TRUE), 
+    (2, 1, TRUE), (3, 3, TRUE), (4, 1, FALSE), (5, 2, TRUE), 
     (6, 3, FALSE), (9, 1, FALSE), (9, 10, TRUE), (10, 7, TRUE), (10, 8, FALSE), 
     (11, 5, TRUE), (11, 4, FALSE), (12, 6, TRUE), (12, 3, FALSE), (13, 4, TRUE), 
     (13, 5, FALSE), (14, 1, FALSE), (14, 9, TRUE), (15, 8, TRUE), (15, 1, FALSE), 
@@ -916,7 +916,7 @@ INSERT INTO post (userId, groupId, createdAt) VALUES
     (9, 10, NOW() - INTERVAL '14 days'), (12, 6, NOW() - INTERVAL '13 days'), (15, 8, NOW() - INTERVAL '12 days'), 
     (19, 9, NOW() - INTERVAL '11 days'),
     -- [GROUP POSTS 21-30]
-    (1, 1, NOW() - INTERVAL '10 days'), (6, 2, NOW() - INTERVAL '9 days'), (7, 3, NOW() - INTERVAL '8 days'), 
+    (18, 1, NOW() - INTERVAL '10 days'), (6, 2, NOW() - INTERVAL '9 days'), (7, 3, NOW() - INTERVAL '8 days'), 
     (20, 5, NOW() - INTERVAL '7 days'), (11, 4, NOW() - INTERVAL '6 days'), (10, 7, NOW() - INTERVAL '5 days'), 
     (14, 10, NOW() - INTERVAL '4 days'), (18, 6, NOW() - INTERVAL '3 days'), (10, 8, NOW() - INTERVAL '2 days'), 
     (14, 9, NOW() - INTERVAL '1 day'),
@@ -935,7 +935,12 @@ INSERT INTO post (userId, groupId, createdAt) VALUES
     (3, NULL, NOW() - INTERVAL '10 days'), (4, NULL, NOW() - INTERVAL '9 days'), (5, NULL, NOW() - INTERVAL '8 days'), 
     (6, NULL, NOW() - INTERVAL '7 days'), (7, NULL, NOW() - INTERVAL '6 days'), (8, NULL, NOW() - INTERVAL '5 days'), 
     (9, NULL, NOW() - INTERVAL '4 days'), (10, NULL, NOW() - INTERVAL '3 days'), (11, NULL, NOW() - INTERVAL '2 days'), 
-    (12, NULL, NOW() - INTERVAL '1 day');
+    (12, NULL, NOW() - INTERVAL '1 day'),
+    -- [SPAM & TOXIC POSTS 81-84]
+    (2, NULL, NOW() - INTERVAL '1 hours'),
+    (3, NULL, NOW() - INTERVAL '2 hours'),
+    (4, NULL, NOW() - INTERVAL '3 hours'),
+    (5, NULL, NOW() - INTERVAL '4 hours');
 
 INSERT INTO standard_post (postId, text, imageUrl) VALUES 
     -- GROUP POSTS (Must have "GROUP POST:")
@@ -988,7 +993,15 @@ INSERT INTO standard_post (postId, text, imageUrl) VALUES
     (56, 'Watching old cartoons and feeling nostalgic.', NULL),
     (58, 'Cleaned my room. Found things from 2010.', NULL),
     (59, 'Hiking trip this weekend was amazing.', NULL),
-    (60, 'Trying to bake bread. It looks like a rock.', 'bread.jpg');
+    (60, 'Binge-watching my favorite series again.', NULL),
+    (43, 'Just finished reading 1984. Mind blown.', '1984-review.jpg'),
+    (47, 'My homemade pizza turned out great!', 'pizza.jpg'),
+    (53, 'Trying out a new workout routine today.', NULL),
+    (57, 'Listening to some classic rock vibes.', NULL),
+    (61, 'Honestly, if you like Christopher Nolan movies, you clearly lack any real intelligence. Go watch a real movie for once.', NULL),
+    (62, '🔥 MAKE $5000 A DAY FROM HOME! Visit www.totally-not-a-scam.biz/easy-money NOW! 🔥', 'money-glitch.jpg'),
+    (63, 'SPOILER ALERT: In the new movie, the main character was actually a ghost the whole time and the dog dies at the end! LOL.', NULL),
+    (64, 'Hey @alice, your latest film review was pathetic. You should probably just delete your account and stop embarrassing yourself.', NULL);
 
 INSERT INTO review (postId, rating, mediaId, content) VALUES 
     -- GROUP REVIEWS (Must have "GROUP POST:")
@@ -1005,34 +1018,106 @@ INSERT INTO review (postId, rating, mediaId, content) VALUES
     (43, 4, 11, 'The Dark Knight is the best superhero movie. Period.'),
     (47, 5, 16, 'Spirited Away is pure magic. I cried.'),
     (53, 3, 21, 'Dune is great but the pacing is a bit slow.'),
-    (57, 5, 6, 'Interstellar soundtrack is a masterpiece.');
+    (57, 5, 6, 'Interstellar soundtrack is a masterpiece.'),
+    (59, 4, 14, 'Parasite is a brilliant social commentary. Highly recommend.'),
+    (60, 5, 4, 'The Matrix changed sci-fi forever. A must-watch.');
 
 -- POST INTERACTIONS
 INSERT INTO post_like (postId, userId) VALUES 
-    (1, 2), (1, 3), (1, 4), (31, 2), (31, 5), (31, 9), (2, 5), (2, 6), (33, 1), (33, 4),
+    (31, 2), (31, 5), (31, 9), (2, 5), (2, 6), (33, 1), (33, 4),
     (3, 5), (3, 12), (3, 15), (35, 12), (35, 18), (35, 19), (4, 11), (4, 13), (4, 20),
     (36, 1), (36, 10), (36, 14), (5, 13), (5, 14), (6, 10), (6, 16), (40, 3), (40, 8),
     (40, 15), (7, 9), (7, 10), (7, 12), (43, 2), (43, 5), (43, 11), (8, 12), (8, 17),
     (45, 6), (45, 18), (45, 20), (9, 11), (9, 15), (10, 19), (10, 14), (49, 2), (49, 5),
-    (11, 1), (11, 2), (11, 5), (50, 4), (50, 9), (50, 16), (12, 5), (12, 17), (12, 19);
+    (11, 1), (11, 2), (11, 5), (50, 4), (50, 9), (50, 16), (12, 5), (12, 17), (12, 19),
+    (53, 1), (53, 3), (53, 7), (13, 4), (13, 6), (14, 8), (14, 10), (56, 2), (56, 11),
+    (15, 9), (15, 12), (15, 14), (58, 1), (58, 5), (58, 13), (16, 7), (16, 15), (17, 18),
+    (60, 3), (60, 6), (60, 9), (18, 4), (18, 8), (19, 10), (19, 14), (20, 11), (20, 15),
+    (52, 2), (52, 7), (52, 12), (21, 5), (21, 9), (21, 13), (22, 6), (22, 10), (23, 8), (23, 14),
+    (24, 1), (24, 4), (24, 7), (25, 3), (25, 11), (26, 2), (26, 9), (27, 5), (27, 12),
+    (28, 6), (28, 10), (29, 8), (29, 15), (30, 4), (30, 13), (30, 19),
+    (34, 2), (34, 7), (34, 14), (37, 1), (37, 3), (37, 8), (38, 5), (38, 9), (38, 12),
+    (39, 4), (39, 10), (39, 15), (41, 6), (41, 11), (41, 16), (42, 2), (42, 8), (42, 14),
+    (44, 3), (44, 7), (44, 13), (46, 1), (46, 5), (46, 12), (47, 4), (47, 9), (47, 15),
+    (48, 2), (48, 6), (48, 11), (51, 3), (51, 8), (51, 14), (54, 1), (54, 7), (54, 10),
+    (55, 4), (55, 9), (55, 13), (57, 2), (57, 5), (57, 12), (59, 3), (59, 8), (59, 15),
+    (60, 1), (60, 4), (60, 10), (60, 14), (60, 18), (60, 20), (60, 7), (60, 13);
 
 INSERT INTO post_tag (postId, userId) VALUES 
-    (1, 3), (1, 4), (31, 4), (31, 5), (6, 10), (6, 12), (36, 9), (36, 16), (26, 18), (45, 12);
+    (31, 4), (31, 5), (6, 10), (6, 12), (36, 9), (36, 16), (26, 18), (45, 12),
+    (10, 14), (10, 15), (49, 3), (49, 7), (15, 11), (15, 13), (58, 4), (58, 8), (19, 9), (19, 10),
+    (20, 5), (20, 6), (52, 1), (52, 3), (52, 4), (52, 5), (52, 6);
 
 -- COMMENTS
 INSERT INTO comment (postId, userId, content, createdAt) VALUES 
-    (1, 2, 'Totally agree! It is a masterpiece.', NOW() - INTERVAL '9 days'),
-    (1, 3, 'Love that movie too.', NOW() - INTERVAL '8 days'),
-    (31, 1, 'So cute!!', NOW() - INTERVAL '29 days'),
-    (31, 4, 'What a lovely cat.', NOW() - INTERVAL '29 days'),
-    (2, 6, 'Sad ending though.', NOW() - INTERVAL '19 days'),
-    (33, 5, 'The spinning top fell!', NOW() - INTERVAL '20 days');
+    (1, 3, 'The cinematography in the trailer looks insane.', NOW() - INTERVAL '29 days'),
+    (1, 5, 'I hope they stick to the book more than the 84 version.', NOW() - INTERVAL '28 days'),
+    (1, 11, 'Denis Villeneuve never misses. This is going to be epic.', NOW() - INTERVAL '27 days'),
+    (1, 2, 'Are we organizing a group trip to the IMAX for this?', NOW() - INTERVAL '26 days'),
+    (1, 15, 'The sound design alone is worth the ticket.', NOW() - INTERVAL '25 days'),
+    (2, 6, 'The ending of Gatsby always gets me. So tragic.', NOW() - INTERVAL '27 days'),
+    (2, 17, 'Fitzgerald really captured the "hollow" feeling of that era.', NOW() - INTERVAL '26 days'),
+    (2, 5, 'Leo was the perfect choice for the film adaptation too.', NOW() - INTERVAL '25 days'),
+    (2, 10, 'The green light symbolism is so iconic.', NOW() - INTERVAL '24 days'),
+    (3, 12, 'Daft Punk really went out on a high note with this album.', NOW() - INTERVAL '25 days'),
+    (3, 7, 'That Nile Rodgers guitar riff is legendary.', NOW() - INTERVAL '24 days'),
+    (3, 14, 'I still listen to Random Access Memories on repeat.', NOW() - INTERVAL '23 days'),
+    (4, 13, 'Dont forget to stretch! Leg day is no joke.', NOW() - INTERVAL '24 days'),
+    (4, 20, 'Walking is going to be an option for you tomorrow, Bruno.', NOW() - INTERVAL '23 days'),
+    (4, 11, 'Consistency is key! Keep it up.', NOW() - INTERVAL '22 days'),
+    (4, 12, 'The pump is real though.', NOW() - INTERVAL '21 days'),
+    (5, 14, 'Type hinting in 3.12 is a game changer for me.', NOW() - INTERVAL '23 days'),
+    (5, 3, 'Finally, some better error messages!', NOW() - INTERVAL '22 days'),
+    (5, 12, 'I am still stuck on 3.9 for work... send help.', NOW() - INTERVAL '21 days'),
+    (5, 19, 'The performance improvements are actually noticeable.', NOW() - INTERVAL '20 days'),
+    (6, 11, 'Bali is amazing, make sure to visit Ubud!', NOW() - INTERVAL '22 days'),
+    (6, 10, 'If you go, you HAVE to try the local coffee.', NOW() - INTERVAL '21 days'),
+    (6, 16, 'Are there still spots left for this trip?', NOW() - INTERVAL '20 days'),
+    (6, 2, 'I went last year, let me know if you want a list of spots.', NOW() - INTERVAL '19 days'),
+    (7, 2, 'The composition here is perfect. What lens?', NOW() - INTERVAL '21 days'),
+    (7, 9, 'The lighting in the background really makes the subject pop.', NOW() - INTERVAL '20 days'),
+    (7, 10, 'Was this shot at sunset?', NOW() - INTERVAL '19 days'),
+    (7, 13, 'Great use of the rule of thirds.', NOW() - INTERVAL '18 days'),
+    (10, 20, 'I am down for the study session! Need to prep for Calc.', NOW() - INTERVAL '18 days'),
+    (10, 14, 'Is this happening on the main server or a private call?', NOW() - INTERVAL '17 days'),
+    (10, 19, 'I can join after 9 PM. Got work until then.', NOW() - INTERVAL '16 days'),
+    (10, 6, 'Good luck everyone! Exams are rough.', NOW() - INTERVAL '15 days'),
+    (19, 16, 'Homemade pasta is a messy but rewarding process!', NOW() - INTERVAL '9 days'),
+    (19, 15, 'Did you use 00 flour or just regular?', NOW() - INTERVAL '8 days'),
+    (19, 10, 'Looks better than the stuff I buy at the store.', NOW() - INTERVAL '7 days'),
+    (19, 8, 'I tried this once and it turned into a giant clump. Yours looks great.', NOW() - INTERVAL '6 days'),
+    (31, 4, 'Luna is such a beautiful name for her!', NOW() - INTERVAL '29 days'),
+    (31, 6, 'Those eyes! So precious.', NOW() - INTERVAL '29 days'),
+    (31, 9, 'Welcome home, Luna!', NOW() - INTERVAL '28 days'),
+    (31, 21, 'We need more photos immediately.', NOW() - INTERVAL '28 days'),
+    (31, 10, 'The "mess" in the background shows she is already comfortable lol.', NOW() - INTERVAL '27 days'),
+    (52, 9, 'Pineapple or no pineapple? The eternal debate.', NOW() - INTERVAL '8 days'),
+    (52, 2, 'No pineapple. I have standards.', NOW() - INTERVAL '7 days'),
+    (52, 13, 'Pineapple belongs on pizza and I will die on this hill.', NOW() - INTERVAL '7 days'),
+    (52, 17, 'As long as there is extra cheese, I dont care.', NOW() - INTERVAL '6 days'),
+    (52, 20, 'Pepperoni is the only real answer here.', NOW() - INTERVAL '6 days'),
+    (60, 15, 'As long as it tastes good with butter, it’s a win!', NOW() - INTERVAL '5 hours'),
+    (60, 3, 'Maybe your yeast was dead? Happened to me last week.', NOW() - INTERVAL '4 hours'),
+    (60, 12, 'Bread pudding is the solution for hard bread!', NOW() - INTERVAL '3 hours'),
+    (60, 19, 'It looks like a very artisanal rustic loaf... lets call it that.', NOW() - INTERVAL '2 hours'),
+    (60, 7, 'Still looks better than my first try.', NOW() - INTERVAL '1 hour');
 
-INSERT INTO comment_like (commentId, userId) VALUES (1, 1), (2, 1), (3, 2), (4, 1);
+INSERT INTO comment (postId, userId, content, createdAt)
+SELECT p.id, u.id, 'Great post, thanks for sharing!', NOW() - INTERVAL '15 days'
+FROM post p, users u
+WHERE p.id BETWEEN 11 AND 59 AND u.id = (p.id % 20) + 1 AND NOT EXISTS (SELECT 1 FROM comment WHERE postId = p.id AND userId = u.id);
+
+INSERT INTO comment (postId, userId, content, createdAt)
+SELECT p.id, u.id, 'I totally agree with this.', NOW() - INTERVAL '10 days'
+FROM post p, users u
+WHERE p.id BETWEEN 11 AND 59 AND u.id = ((p.id + 5) % 20) + 1 AND NOT EXISTS (SELECT 1 FROM comment WHERE postId = p.id AND userId = u.id);
+
+
+INSERT INTO comment_like (commentId, userId) VALUES (3, 2), (4, 1);
 
 -- FRIENDSHIPS
 INSERT INTO friendship (userId1, userId2) VALUES 
-    (1, 2), (1, 3), (1, 9), (1, 10), (2, 3), (2, 4), (2, 5), (2, 11), (3, 5), (3, 12), (3, 15),
+    (2, 3), (2, 4), (2, 5), (2, 11), (3, 5), (3, 12), (3, 15),
     (4, 6), (4, 11), (4, 13), (5, 17), (5, 18), (6, 15), (6, 17), (9, 10), (9, 12), (9, 16),
     (9, 18), (10, 11), (10, 16), (10, 19), (11, 13), (11, 19), (12, 14), (12, 18), (13, 14);
 
@@ -1041,66 +1126,16 @@ INSERT INTO request (notificationId, status, senderId) VALUES (1, 'accepted', 1)
 INSERT INTO group_invite_request (requestId, groupId) VALUES (1, 1);
 
 -- REPORTS (Posts and Comments)
+-- REPORTS (Only the 4 toxic/offensive posts)
 INSERT INTO report (reason, status, postId, commentId, createdAt) VALUES 
-    -- Pending Reports on Posts
-    ('Spam', 'pending', 37, NULL, NOW() - INTERVAL '1 day'),
-    ('Inappropriate content', 'pending', 42, NULL, NOW() - INTERVAL '2 days'),
-    ('Harassment', 'pending', 45, NULL, NOW() - INTERVAL '3 days'),
-    ('Misinformation', 'pending', 32, NULL, NOW() - INTERVAL '4 days'),
-    ('Spam', 'pending', 51, NULL, NOW() - INTERVAL '5 days'),
-    ('Hate speech', 'pending', 44, NULL, NOW() - INTERVAL '6 days'),
-    ('Violence', 'pending', 38, NULL, NOW() - INTERVAL '7 days'),
-    ('Inappropriate content', 'pending', 55, NULL, NOW() - INTERVAL '8 days'),
-    ('Spam', 'pending', 48, NULL, NOW() - INTERVAL '9 days'),
-    ('Copyright violation', 'pending', 56, NULL, NOW() - INTERVAL '10 days'),
+    -- Post 61: Hate speech (Toxicity)
+    ('Hate speech', 'pending', 61, NULL, NOW() - INTERVAL '5 minutes'),
     
-    -- Accepted Reports on Posts
-    ('Spam', 'accepted', 52, NULL, NOW() - INTERVAL '11 days'),
-    ('Harassment', 'accepted', 46, NULL, NOW() - INTERVAL '12 days'),
-    ('Inappropriate content', 'accepted', 58, NULL, NOW() - INTERVAL '13 days'),
-    ('Hate speech', 'accepted', 39, NULL, NOW() - INTERVAL '14 days'),
-    ('Misinformation', 'accepted', 41, NULL, NOW() - INTERVAL '15 days'),
-    ('Spam', 'accepted', 54, NULL, NOW() - INTERVAL '16 days'),
-    ('Violence', 'accepted', 34, NULL, NOW() - INTERVAL '17 days'),
-    ('Inappropriate content', 'accepted', 50, NULL, NOW() - INTERVAL '18 days'),
+    -- Post 62: Spam (Scam link)
+    ('Spam', 'pending', 62, NULL, NOW() - INTERVAL '10 minutes'),
     
-    -- Rejected Reports on Posts
-    ('Spam', 'rejected', 1, NULL, NOW() - INTERVAL '19 days'),
-    ('Inappropriate content', 'rejected', 31, NULL, NOW() - INTERVAL '20 days'),
-    ('Harassment', 'rejected', 33, NULL, NOW() - INTERVAL '21 days'),
-    ('Spam', 'rejected', 35, NULL, NOW() - INTERVAL '22 days'),
-    ('Misinformation', 'rejected', 36, NULL, NOW() - INTERVAL '23 days'),
-    ('Hate speech', 'rejected', 40, NULL, NOW() - INTERVAL '24 days'),
-    ('Inappropriate content', 'rejected', 43, NULL, NOW() - INTERVAL '25 days'),
-    ('Spam', 'rejected', 47, NULL, NOW() - INTERVAL '26 days'),
-    ('Violence', 'rejected', 49, NULL, NOW() - INTERVAL '27 days'),
-    ('Copyright violation', 'rejected', 53, NULL, NOW() - INTERVAL '28 days'),
+    -- Post 63: Inappropriate content (Spoilers)
+    ('Inappropriate content', 'pending', 63, NULL, NOW() - INTERVAL '15 minutes'),
     
-    -- Pending Reports on Comments
-    ('Spam', 'pending', NULL, 1, NOW() - INTERVAL '2 days'),
-    ('Harassment', 'pending', NULL, 2, NOW() - INTERVAL '3 days'),
-    ('Inappropriate content', 'pending', NULL, 3, NOW() - INTERVAL '5 days'),
-    ('Hate speech', 'pending', NULL, 4, NOW() - INTERVAL '7 days'),
-    ('Spam', 'pending', NULL, 5, NOW() - INTERVAL '9 days'),
-    
-    -- Accepted Reports on Comments
-    ('Harassment', 'accepted', NULL, 6, NOW() - INTERVAL '11 days'),
-    ('Inappropriate content', 'accepted', NULL, 1, NOW() - INTERVAL '13 days'),
-    ('Spam', 'accepted', NULL, 2, NOW() - INTERVAL '15 days'),
-    
-    -- Rejected Reports on Comments
-    ('Spam', 'rejected', NULL, 3, NOW() - INTERVAL '17 days'),
-    ('Harassment', 'rejected', NULL, 4, NOW() - INTERVAL '19 days'),
-    ('Inappropriate content', 'rejected', NULL, 5, NOW() - INTERVAL '21 days'),
-    
-    -- More varied reports
-    ('Self-harm content', 'pending', 59, NULL, NOW() - INTERVAL '1 hour'),
-    ('Scam or fraud', 'pending', 60, NULL, NOW() - INTERVAL '3 hours'),
-    ('Impersonation', 'pending', 11, NULL, NOW() - INTERVAL '5 hours'),
-    ('False information', 'pending', 15, NULL, NOW() - INTERVAL '7 hours'),
-    ('Bullying', 'pending', 19, NULL, NOW() - INTERVAL '9 hours'),
-    ('Adult content', 'accepted', 21, NULL, NOW() - INTERVAL '30 days'),
-    ('Graphic violence', 'accepted', 24, NULL, NOW() - INTERVAL '29 days'),
-    ('Terrorism', 'accepted', 27, NULL, NOW() - INTERVAL '28 days'),
-    ('Illegal activities', 'rejected', 29, NULL, NOW() - INTERVAL '27 days'),
-    ('Off-topic spam', 'rejected', 12, NULL, NOW() - INTERVAL '26 days');
+    -- Post 64: Harassment (Direct attack on Alice)
+    ('Harassment', 'pending', 64, NULL, NOW() - INTERVAL '20 minutes');

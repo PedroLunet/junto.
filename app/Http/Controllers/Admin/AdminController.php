@@ -503,6 +503,8 @@ class AdminController extends Controller
 
             $user = Auth::user();
 
+            $this->authorize('create', UnblockAppeal::class);
+
             if (!$user->isblocked) {
                 return response()->json([
                     'success' => false,
@@ -562,6 +564,8 @@ class AdminController extends Controller
             DB::beginTransaction();
 
             $appeal = UnblockAppeal::findOrFail($id);
+            $this->authorize('update', $appeal);
+            
             $user = $appeal->user;
 
             $user->update(['isblocked' => false]);
@@ -589,6 +593,7 @@ class AdminController extends Controller
     {
         try {
             $appeal = UnblockAppeal::findOrFail($id);
+            $this->authorize('update', $appeal);
 
             $appeal->update([
                 'status' => 'rejected',
