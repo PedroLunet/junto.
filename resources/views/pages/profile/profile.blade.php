@@ -112,24 +112,47 @@
                 </div>
             @else
                 <!-- tabs with scrollable content -->
-                <x-ui.tabs :tabs="[
-                    'posts' => [
-                        'title' => 'Posts',
-                        'content' => view('components.posts.post-list', [
-                            'posts' => $standardPosts,
-                            'showAuthor' => false,
-                            'postType' => 'standard',
-                        ])->render(),
-                    ],
-                    'reviews' => [
-                        'title' => 'Reviews',
-                        'content' => view('components.posts.post-list', [
-                            'posts' => $reviewPosts,
-                            'showAuthor' => false,
-                            'postType' => 'review',
-                        ])->render(),
-                    ],
-                ]" />
+                @php
+                    $tabs = [
+                        'posts' => [
+                            'title' => 'Posts',
+                            'content' => view('components.posts.post-list', [
+                                'posts' => $standardPosts,
+                                'showAuthor' => false,
+                                'postType' => 'standard',
+                            ])->render(),
+                        ],
+                        'reviews' => [
+                            'title' => 'Reviews',
+                            'content' => view('components.posts.post-list', [
+                                'posts' => $reviewPosts,
+                                'showAuthor' => false,
+                                'postType' => 'review',
+                            ])->render(),
+                        ],
+                    ];
+
+                    if (Auth::check() && Auth::id() === $user->id) {
+                        $tabs['group-posts'] = [
+                            'title' => 'Group Posts',
+                            'content' => view('components.posts.post-list', [
+                                'posts' => $groupStandardPosts,
+                                'showAuthor' => false,
+                                'postType' => 'standard',
+                            ])->render(),
+                        ];
+                        $tabs['group-reviews'] = [
+                            'title' => 'Group Reviews',
+                            'content' => view('components.posts.post-list', [
+                                'posts' => $groupReviewPosts,
+                                'showAuthor' => false,
+                                'postType' => 'review',
+                            ])->render(),
+                        ];
+                    }
+                @endphp
+
+                <x-ui.tabs :tabs="$tabs" />
             @endif
         </div>
 
