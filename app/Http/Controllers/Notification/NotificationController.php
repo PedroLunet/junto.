@@ -14,7 +14,7 @@ class NotificationController extends Controller
     public function index(): View
     {
         $user = Auth::user();
-        
+
         $notifications = Notification::where('receiverid', Auth::id())
             ->with(['tagNotification.tagger'])
             ->excludeSelfInteractions()
@@ -85,7 +85,7 @@ class NotificationController extends Controller
         ]);
 
         $snoozedUntil = now()->addMinutes($validated['duration']);
-        
+
         session(['notifications_snoozed_until' => $snoozedUntil]);
 
         return response()->json(['success' => true, 'snoozed_until' => $snoozedUntil]);
@@ -94,7 +94,7 @@ class NotificationController extends Controller
     public function clearSnooze()
     {
         session()->forget('notifications_snoozed_until');
-        
+
         return response()->json(['success' => true]);
     }
 

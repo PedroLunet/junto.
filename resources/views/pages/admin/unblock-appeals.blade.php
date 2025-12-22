@@ -3,6 +3,9 @@
 @section('title', 'Unblock Appeals')
 
 @section('content')
+    @if (session('alert'))
+        <x-ui.alert-card :type="session('alert.type', 'success')" :title="session('alert.title', '')" :message="session('alert.message', '')" :dismissible="true" />
+    @endif
     <div class="flex flex-col h-[calc(100vh-4rem)]">
         <!-- Fixed Header -->
         <div class="flex-none bg-[#F1EBF4]">
@@ -90,7 +93,7 @@
             applyFilterAndSort();
         }
 
-        function applyFilterAndSort() {
+        window.applyFilterAndSort = function() {
             let filteredAppeals = currentFilter === 'all' ?
                 allAppeals :
                 allAppeals.filter(a => a.status === currentFilter);
@@ -111,8 +114,9 @@
             }
 
             // Update display
-            const appealItems = document.querySelectorAll('.appeal-item');
             const container = document.querySelector('#appeals-container .grid');
+            const appealItems = container ? container.querySelectorAll('.appeal-item') : [];
+            let emptyState = container ? container.querySelector('.appeals-empty-state') : null;
 
             // Create a map of appeal IDs to their elements
             const appealMap = new Map();
@@ -137,29 +141,34 @@
                     item.style.display = 'none';
                 }
             });
+
+            // Show/hide or dynamically add/remove empty state
+            if (filteredAppeals.length === 0) {
+                if (!emptyState) {
+                    emptyState = document.createElement('div');
+                    emptyState.className = 'appeals-empty-state';
+                    emptyState.innerHTML = `
+                        <div class="flex flex-col items-center justify-center text-gray-500 min-h-[calc(100vh-16rem)]">
+                            <div class="text-center">
+                                <div class="bg-gray-200 rounded-full p-6 inline-block mb-4">
+                                    <i class="fas fa-gavel text-4xl text-gray-400"></i>
+                                </div>
+                                <h3 class="text-xl font-medium text-gray-700">No Appeals Found</h3>
+                                <p class="mt-2">There are no appeals that match this filter.</p>
+                            </div>
+                        </div>
+                    `;
+                    container.appendChild(emptyState);
+                }
+                emptyState.style.display = '';
+            } else if (emptyState) {
+                emptyState.style.display = 'none';
+            }
         }
 
-        function filterAppeals(status) {
+        window.filterAppeals = function(status) {
             currentFilter = status;
-
-            // Update slider position
-            const activeBtn = document.getElementById(`filter-${status}`);
-            const slider = document.getElementById('filter-slider');
-            const rect = activeBtn.getBoundingClientRect();
-            const container = activeBtn.parentElement.getBoundingClientRect();
-            slider.style.width = rect.width + 'px';
-            slider.style.left = (rect.left - container.left) + 'px';
-
-            // Update button styles
-            document.querySelectorAll('.filter-btn').forEach(btn => {
-                btn.classList.remove('bg-white', 'shadow-sm');
-                btn.classList.add('text-gray-700');
-            });
-
-            activeBtn.classList.add('bg-white', 'shadow-sm');
-            activeBtn.classList.remove('text-gray-700');
-
-            applyFilterAndSort();
+            window.applyFilterAndSort();
         }
 
         // Initialize on page load
@@ -188,15 +197,64 @@
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
-                        window.location.reload();
+                        // Remove the approved appeal from the UI
+                        const appealCard = document.getElementById(`appeal-${appealId}`)?.closest('.appeal-item');
+                        if (appealCard) appealCard.remove();
+                        // Optionally update counts, empty state, etc. (not shown here)
+                        showAlertCard('success', 'Appeal Approved', data.message ||
+                            'Appeal approved and user unblocked successfully');
                     } else {
-                        alertInfo(data.message || 'Failed to approve appeal', 'Error');
+                        showAlertCard('error', 'Error', data.message || 'Failed to approve appeal');
                     }
                 })
                 .catch(error => {
                     console.error('Error:', error);
-                    alertInfo('An error occurred while approving the appeal', 'Error');
+                    showAlertCard('error', 'Error', 'An error occurred while approving the appeal');
                 });
+        }
+
+        // Dynamically injects an alert card at the top right
+        function showAlertCard(type, title, message) {
+            // Remove any existing alert cards
+            document.querySelectorAll('.dynamic-alert-card').forEach(e => e.remove());
+            const alertId = 'alert-card-' + Math.random().toString(36).substr(2, 9);
+            const isSuccess = type === 'success';
+            const bg = isSuccess ? 'bg-green-50 border-green-200' : 'bg-red-50 border-red-200';
+            const iconBg = isSuccess ? 'bg-green-200' : 'bg-red-200';
+            const iconColor = isSuccess ? 'text-green-600' : 'text-red-600';
+            const icon = isSuccess ?
+                `<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke-width="2" class="stroke-green-400 fill-green-50"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4" class="stroke-green-600"/></svg>` :
+                `<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke-width="2" class="stroke-red-400 fill-red-50"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 9l-6 6m0-6l6 6" class="stroke-red-600"/></svg>`;
+            const alert = document.createElement('div');
+            alert.id = alertId;
+            alert.className =
+                `dynamic-alert-card fixed top-6 right-6 z-50 flex items-start gap-3 px-4 py-4 rounded-2xl border ${bg} shadow-sm mb-4 min-w-[280px] max-w-xs transition-all duration-300 ease-in-out opacity-0 translate-x-full`;
+            alert.innerHTML = `
+                <div class="shrink-0 flex items-center justify-center w-8 h-8 rounded-full ${iconBg}">
+                    ${icon}
+                </div>
+                <div class="flex-1">
+                    <div class="font-semibold text-base ${iconColor} mb-0.5">${title}</div>
+                    <div class="text-gray-700 text-sm">${message}</div>
+                </div>
+                <button type="button" class="absolute top-2 right-2" onclick="this.closest('div').style.display='none'">
+                    <i class="fa fa-times w-5 h-5"></i>
+                </button>
+            `;
+            document.body.appendChild(alert);
+            // Animate in
+            setTimeout(() => {
+                alert.classList.remove('opacity-0', 'translate-x-full');
+                alert.classList.add('opacity-100', 'translate-x-0');
+            }, 10);
+            // Animate out after 5s
+            setTimeout(() => {
+                alert.classList.remove('opacity-100', 'translate-x-0');
+                alert.classList.add('opacity-0', 'translate-x-full');
+                setTimeout(() => {
+                    alert.style.display = 'none';
+                }, 300);
+            }, 5000);
         }
 
         async function rejectAppeal(appealId) {

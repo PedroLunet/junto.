@@ -18,8 +18,9 @@
     </div>
 
     <div>
-        <h2 class="text-xl sm:text-2xl font-semibold text-gray-900 py-4 mb-6 border-b border-[#7a5466]">Privacy &
-            Security</h2>
+        <h2 class="text-xl sm:text-2xl font-semibold text-gray-900 py-4 mb-6 border-b border-[#7a5466]">
+            Privacy & Security
+        </h2>
 
         <!-- Make account private -->
         <div

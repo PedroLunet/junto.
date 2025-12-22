@@ -1,6 +1,10 @@
 @extends('layouts.app')
 
 @section('content')
+    @if (session('success'))
+        <x-ui.alert-card type="success" title="Success" :message="session('success')" dismissible="true" class="mb-6" />
+    @endif
+    
     <div class="flex flex-col -m-6">
         <!-- Fixed Header Section -->
         <div class="shrink-0 px-16 pt-10 pb-6">

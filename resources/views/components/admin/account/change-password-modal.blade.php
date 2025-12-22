@@ -335,6 +335,10 @@
                                 showAlert('success', 'Success', 'Password changed successfully!');
                             }
                         } else {
+                            if (typeof showAlert === 'function') {
+                                showAlert('error', 'Error', data.message ||
+                                    'Failed to change password');
+                            }
                             errorDiv.querySelector('p').textContent = data.message ||
                                 'Failed to change password';
                             errorDiv.classList.remove('hidden');
@@ -342,6 +346,10 @@
                     })
                     .catch(error => {
                         console.error('Error:', error);
+                        if (typeof showAlert === 'function') {
+                            showAlert('error', 'Error',
+                                'An error occurred while changing your password');
+                        }
                         errorDiv.querySelector('p').textContent =
                             'An error occurred while changing your password';
                         errorDiv.classList.remove('hidden');

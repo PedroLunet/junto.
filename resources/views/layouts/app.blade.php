@@ -71,19 +71,19 @@
 
 @section('sidebar-actions')
     @auth
-        <x-ui.button id="regular-button" variant="special"> + </x-ui.button>
+        <x-ui.button id="regular-button" variant="special" title="Create standard post"> + </x-ui.button>
     @else
         <x-ui.button href="{{ route('login') }}" variant="special"> + </x-ui.button>
     @endauth
     <div class="flex gap-2 w-full">
         @auth
-            <x-ui.button id="movie-button" variant="special" class="flex-1 justify-center">
+            <x-ui.button id="movie-button" variant="special" title="Create movie review" class="flex-1 justify-center">
                 <i class="fa-solid fa-clapperboard"></i>
             </x-ui.button>
-            <x-ui.button id="book-button" variant="special" class="flex-1 justify-center">
+            <x-ui.button id="book-button" variant="special" title="Create book review" class="flex-1 justify-center">
                 <i class="fa-solid fa-book"></i>
             </x-ui.button>
-            <x-ui.button id="music-button" variant="special" class="flex-1 justify-center">
+            <x-ui.button id="music-button" variant="special" title="Create music review" class="flex-1 justify-center">
                 <i class="fa-solid fa-music"></i>
             </x-ui.button>
         @else

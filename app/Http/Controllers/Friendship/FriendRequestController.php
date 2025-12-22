@@ -97,10 +97,9 @@ class FriendRequestController extends Controller
 
         try {
             $friendRequest->accept();
-
-            return back()->with('success', 'Friend request accepted!');
+            return redirect()->route('notifications.index')->with('success', 'Friend request accepted!');
         } catch (\Exception $e) {
-            return back()->with('error', 'Failed to accept friend request. Please try again.');
+            return redirect()->route('notifications.index')->with('error', 'Failed to accept friend request. Please try again.');
         }
     }
 
@@ -114,10 +113,9 @@ class FriendRequestController extends Controller
 
         try {
             $friendRequest->reject();
-
-            return back()->with('success', 'Friend request rejected.');
+            return redirect()->route('notifications.index')->with('success', 'Friend request rejected.');
         } catch (\Exception $e) {
-            return back()->with('error', 'Failed to reject friend request. Please try again.');
+            return redirect()->route('notifications.index')->with('error', 'Failed to reject friend request. Please try again.');
         }
     }
 

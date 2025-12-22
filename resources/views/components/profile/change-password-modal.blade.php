@@ -329,8 +329,8 @@
                     .then(data => {
                         if (data.success) {
                             closePasswordModal();
-                            if (typeof showAlert === 'function') {
-                                showAlert('success', 'Success', 'Password changed successfully!');
+                            if (data.redirect_url) {
+                                window.location.href = data.redirect_url;
                             }
                         } else {
                             errorDiv.querySelector('p').textContent = data.message ||

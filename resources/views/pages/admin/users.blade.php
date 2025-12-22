@@ -3,6 +3,10 @@
 @section('title', 'Users')
 
 @section('content')
+    {{-- Server-side alert (if any) --}}
+    @if (session('alert'))
+        <x-ui.alert-card :type="session('alert.type', 'success')" :title="session('alert.title', '')" :message="session('alert.message', '')" :dismissible="true" />
+    @endif
     <div class="flex flex-col h-[calc(100vh-4rem)]">
         <!-- Fixed Header -->
         <div class="flex-none bg-[#F1EBF4]">
@@ -28,8 +32,7 @@
                     </div>
 
                     <!-- Search Bar & Sort: Mobile & Tablet (card list) -->
-                    <div
-                        class="order-1 sm:order-2 w-full sm:w-auto flex flex-col md:flex-row gap-2 md:gap-4 lg:hidden">
+                    <div class="order-1 sm:order-2 w-full sm:w-auto flex flex-col md:flex-row gap-2 md:gap-4 lg:hidden">
                         <x-ui.search-bar id="searchUserList" placeholder="Search User" class="w-full sm:w-52 md:w-64" />
                         <x-ui.sort-dropdown :options="[
                             'name' => 'Name',
