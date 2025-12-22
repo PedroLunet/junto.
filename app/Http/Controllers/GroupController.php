@@ -17,6 +17,12 @@ class GroupController extends Controller
     {
         $this->authorize('update', $group);
         $userId = $request->input('user_id');
+        
+        $user = \App\Models\User\User::find($userId);
+        if ($user && $user->isadmin) {
+            return back()->with('error', 'Cannot invite this user.');
+        }
+        
         if ($group->members()->where('users.id', $userId)->exists()) {
             return back()->with('error', 'User is already a member.');
         }
