@@ -12,11 +12,13 @@
             <div class="p-8">
                 <form id="create-book-review-form" action="{{ route('reviews.store') }}" method="POST">
                     @csrf
-                    <input type="hidden" name="type" value="book">
+                    <fieldset>
+                        <legend class="sr-only">Create Book Review Form</legend>
+                        <input type="hidden" name="type" value="book">
 
                     <!-- book search section -->
                     <div class="mb-6">
-                        <label class="block font-medium text-gray-700 mb-2">What book did you read?</label>
+                        <label for="modalBookSearch" class="block font-medium text-gray-700 mb-2">What book did you read?</label>
                         <div class="relative" id="bookSearchContainer">
                             <input type="text" id="modalBookSearch" placeholder="Search for a book..."
                                 class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#38157a] focus:border-transparent"
@@ -76,6 +78,7 @@
                             variant="secondary">Cancel</x-ui.button>
                         <x-ui.button type="submit">Post</x-ui.button>
                     </div>
+                    </fieldset>
                 </form>
             </div>
         </div>

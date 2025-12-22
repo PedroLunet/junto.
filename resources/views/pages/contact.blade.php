@@ -18,8 +18,10 @@
 
                 <form id="contact-form" method="POST" action="{{ route('contact.submit') }}">
                     @csrf
+                    <fieldset>
+                        <legend class="sr-only">Contact Form</legend>
 
-                    <x-ui.input 
+                        <x-ui.input 
                         label="Name" 
                         name="name" 
                         type="text" 
@@ -55,6 +57,7 @@
                             Send Message
                         </x-ui.button>
                     </div>
+                    </fieldset>
                 </form>
             </div>
         </div>

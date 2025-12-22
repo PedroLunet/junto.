@@ -12,7 +12,9 @@
             <div class="p-8">
                 <form id="create-music-review-form" action="{{ route('reviews.store') }}" method="POST">
                     @csrf
-                    <input type="hidden" name="type" value="music">
+                    <fieldset>
+                        <legend class="sr-only">Create Music Review Form</legend>
+                        <input type="hidden" name="type" value="music">
 
                     <!-- music search section -->
                     <x-ui.media-search type="music" searchId="modalMusicSearch"
@@ -65,6 +67,7 @@
                             variant="secondary">Cancel</x-ui.button>
                         <x-ui.button type="submit">Post</x-ui.button>
                     </div>
+                    </fieldset>
                 </form>
             </div>
         </div>
