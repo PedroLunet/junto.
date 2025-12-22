@@ -15,21 +15,21 @@ class CommentController extends Controller
     }
 
     public function store(Request $request, $postId)
-{
-    $this->authorize('create', Comment::class);
+    {
+        $this->authorize('create', Comment::class);
 
-    $request->validate([
-        'content' => 'required|string|max:1000'
-    ]);
+        $request->validate([
+            'content' => 'required|string|max:1000'
+        ]);
 
-    $comment = Comment::addComment($postId, auth()->id(), $request->input('content'));
+        $comment = Comment::addComment($postId, auth()->id(), $request->input('content'));
 
-    return response()->json([
-        'success' => true,
-        'message' => 'Comment posted successfully!',
-        'comment' => $comment
-    ], 201); 
-}
+        return response()->json([
+            'success' => true,
+            'message' => 'Comment posted successfully!',
+            'comment' => $comment
+        ], 201);
+    }
 
     public function update(Request $request, $commentId)
     {
@@ -58,6 +58,17 @@ class CommentController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Comment deleted successfully!'
+        ]);
+    }
+
+    public function toggleLike($commentId)
+    {
+        $result = Comment::toggleLike($commentId, auth()->id());
+
+        return response()->json([
+            'success' => true,
+            'liked' => $result['liked'],
+            'likes_count' => $result['likes_count'],
         ]);
     }
 }

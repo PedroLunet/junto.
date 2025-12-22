@@ -116,10 +116,11 @@
         }
 
         let result = escapeHtml(text);
-        
+
         taggedUsers.forEach(user => {
             const mention = '@' + user.name;
-            const link = `<a href="/${user.username}" class="text-[#38157a] font-semibold hover:underline">${escapeHtml(user.name)}</a>`;
+            const link =
+                `<a href="/${user.username}" class="text-[#38157a] font-semibold hover:underline">${escapeHtml(user.name)}</a>`;
             result = result.replace(escapeHtml(mention), link);
         });
 

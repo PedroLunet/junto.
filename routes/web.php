@@ -90,6 +90,7 @@ Route::middleware(['auth', 'regular.user'])->group(function () {
     Route::post('/posts/{id}/comments', [CommentController::class, 'store'])->name('post.comments.add');
     Route::put('/comments/{id}', [CommentController::class, 'update'])->name('comments.update');
     Route::delete('/comments/{id}', [CommentController::class, 'destroy'])->name('comments.delete');
+    Route::post('/comments/{id}/like', [CommentController::class, 'toggleLike'])->name('comment.like');
     Route::post('/posts/{id}/like', [HomeController::class, 'toggleLike'])->name('post.like');
 
     // Messages
