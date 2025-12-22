@@ -36,26 +36,26 @@ class AdminController extends Controller
         // count different types of reviews
         $musicReviews = DB::select("
             SELECT COUNT(*) as count 
-            FROM lbaw2544.post p
-            JOIN lbaw2544.review r ON p.id = r.postId
-            JOIN lbaw2544.media m ON r.mediaId = m.id
-            WHERE EXISTS (SELECT 1 FROM lbaw2544.music mu WHERE mu.mediaId = m.id)
+            FROM post p
+            JOIN review r ON p.id = r.postId
+            JOIN media m ON r.mediaId = m.id
+            WHERE EXISTS (SELECT 1 FROM music mu WHERE mu.mediaId = m.id)
         ")[0]->count ?? 0;
 
         $movieReviews = DB::select("
             SELECT COUNT(*) as count 
-            FROM lbaw2544.post p
-            JOIN lbaw2544.review r ON p.id = r.postId
-            JOIN lbaw2544.media m ON r.mediaId = m.id
-            WHERE EXISTS (SELECT 1 FROM lbaw2544.film f WHERE f.mediaId = m.id)
+            FROM post p
+            JOIN review r ON p.id = r.postId
+            JOIN media m ON r.mediaId = m.id
+            WHERE EXISTS (SELECT 1 FROM film f WHERE f.mediaId = m.id)
         ")[0]->count ?? 0;
 
         $bookReviews = DB::select("
             SELECT COUNT(*) as count 
-            FROM lbaw2544.post p
-            JOIN lbaw2544.review r ON p.id = r.postId
-            JOIN lbaw2544.media m ON r.mediaId = m.id
-            WHERE EXISTS (SELECT 1 FROM lbaw2544.book b WHERE b.mediaId = m.id)
+            FROM post p
+            JOIN review r ON p.id = r.postId
+            JOIN media m ON r.mediaId = m.id
+            WHERE EXISTS (SELECT 1 FROM book b WHERE b.mediaId = m.id)
         ")[0]->count ?? 0;
 
         $pendingFriendRequests = FriendRequest::whereHas('request', function ($query) {
@@ -64,7 +64,7 @@ class AdminController extends Controller
         $totalFriendships = DB::table('friendship')->count();
 
         // Group stats
-        $totalGroups = DB::table('lbaw2544.groups')->count();
+        $totalGroups = DB::table('groups')->count();
 
         $stats = [
             'totalUsers' => $totalUsers,

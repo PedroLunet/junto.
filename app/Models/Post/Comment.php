@@ -47,9 +47,9 @@ class Comment extends Model
                 u.name as author_name,
                 u.username,
                 u.profilePicture as author_picture,
-                (SELECT COUNT(*) FROM lbaw2544.comment_like cl WHERE cl.commentId = c.id) as likes_count
-            FROM lbaw2544.comment c
-            JOIN lbaw2544.users u ON c.userId = u.id
+                (SELECT COUNT(*) FROM comment_like cl WHERE cl.commentId = c.id) as likes_count
+            FROM comment c
+            JOIN users u ON c.userId = u.id
             WHERE c.postId = ?
             ORDER BY c.createdAt ASC
         ", [$postId]);
@@ -57,12 +57,14 @@ class Comment extends Model
 
     public static function addComment($postId, $userId, $content)
     {
-        \Illuminate\Support\Facades\DB::insert("
-            INSERT INTO lbaw2544.comment (postId, userId, content, createdAt)
-            VALUES (?, ?, ?, CURRENT_TIMESTAMP)
-        ", [$postId, $userId, $content]);
+        $comment = self::create([
+            'postid' => $postId,
+            'userid' => $userId,
+            'content' => $content,
+            'createdat' => now(),
+        ]);
 
-        // Get the newly created comment
+        // Get the newly created comment details
         $comments = \Illuminate\Support\Facades\DB::select("
             SELECT 
                 c.id,
@@ -71,13 +73,11 @@ class Comment extends Model
                 u.name as author_name,
                 u.username,
                 u.profilePicture as author_picture,
-                (SELECT COUNT(*) FROM lbaw2544.comment_like cl WHERE cl.commentId = c.id) as likes_count
-            FROM lbaw2544.comment c
-            JOIN lbaw2544.users u ON c.userId = u.id
-            WHERE c.postId = ? AND c.userId = ?
-            ORDER BY c.createdAt DESC
-            LIMIT 1
-        ", [$postId, $userId]);
+                (SELECT COUNT(*) FROM comment_like cl WHERE cl.commentId = c.id) as likes_count
+            FROM comment c
+            JOIN users u ON c.userId = u.id
+            WHERE c.id = ?
+        ", [$comment->id]);
 
         return $comments[0] ?? null;
     }
