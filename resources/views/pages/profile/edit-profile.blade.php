@@ -89,10 +89,9 @@
         }
 
         document.addEventListener('DOMContentLoaded', function() {
-            // Show alert if redirected after password change
+            // Show alert if redirected after password or privacy change
             const params = new URLSearchParams(window.location.search);
             if (params.get('password_changed') === '1') {
-                console.log('Password changed param detected');
                 if (window.showAlert && typeof window.showAlert === 'function') {
                     window.showAlert('success', 'Success', 'Password changed successfully!');
                 } else {
@@ -102,6 +101,17 @@
                 if (window.history.replaceState) {
                     const url = new URL(window.location);
                     url.searchParams.delete('password_changed');
+                    window.history.replaceState({}, document.title, url.pathname + url.search);
+                }
+            } else if (params.get('privacy_changed') === '1') {
+                if (window.showAlert && typeof window.showAlert === 'function') {
+                    window.showAlert('success', 'Success', 'Privacy setting updated successfully!');
+                } else {
+                    alert('Privacy setting updated successfully!');
+                }
+                if (window.history.replaceState) {
+                    const url = new URL(window.location);
+                    url.searchParams.delete('privacy_changed');
                     window.history.replaceState({}, document.title, url.pathname + url.search);
                 }
             }
@@ -120,11 +130,9 @@
                         })
                         .then(response => response.json())
                         .then(data => {
-                            if (data.success) {
-                                // Toggle was successful
-                                console.log('Privacy setting updated:', data.isprivate ? 'Private' :
-                                    'Public');
-                            } else {
+                            if (data.success && data.redirect_url) {
+                                window.location.href = data.redirect_url;
+                            } else if (!data.success) {
                                 // Revert toggle on error
                                 privacyToggle.checked = !privacyToggle.checked;
                                 alert(data.message || 'Failed to update privacy setting');
