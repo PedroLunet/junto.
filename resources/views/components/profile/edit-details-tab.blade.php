@@ -197,9 +197,44 @@
                 })
                 .then(data => {
                     if (data.success) {
-                        // Set flag for alert on profile page
-                        localStorage.setItem('profileUpdateSuccess', data.message ||
-                            'Profile updated successfully');
+                        // Determine which fields were updated for specific alerts
+                        let updatedFields = data.updatedFields || [];
+                        let alertTitle = 'Profile updated';
+                        let alertMessage = '';
+                        if (updatedFields.length > 1) {
+                            alertTitle = 'Profile details updated';
+                            alertMessage = 'Your profile details were successfully updated.';
+                        } else if (updatedFields.length === 1) {
+                            switch (updatedFields[0]) {
+                                case 'username':
+                                    alertTitle = 'Username updated';
+                                    alertMessage = 'Your username was successfully updated.';
+                                    break;
+                                case 'email':
+                                    alertTitle = 'Email updated';
+                                    alertMessage = 'Your email address was successfully updated.';
+                                    break;
+                                case 'name':
+                                    alertTitle = 'Name updated';
+                                    alertMessage = 'Your name was successfully updated.';
+                                    break;
+                                case 'bio':
+                                    alertTitle = 'Bio updated';
+                                    alertMessage = 'Your bio was successfully updated.';
+                                    break;
+                                case 'profilePicture':
+                                    alertTitle = 'Profile picture updated';
+                                    alertMessage = 'Your profile picture was successfully updated.';
+                                    break;
+                                default:
+                                    alertTitle = 'Profile updated';
+                                    alertMessage = 'Your profile was successfully updated.';
+                            }
+                        } else {
+                            alertTitle = 'Profile updated';
+                            alertMessage = data.message || 'Your profile was successfully updated.';
+                        }
+                        showProfileAlert('success', alertTitle, alertMessage);
                         setTimeout(() => window.location.reload(), 1200);
                     } else {
                         showProfileAlert('error', 'Update failed', data.message ||
