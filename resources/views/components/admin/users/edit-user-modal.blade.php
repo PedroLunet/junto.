@@ -181,8 +181,8 @@
         function showError(message) {
             const errorDiv = document.createElement('div');
             errorDiv.className =
-                'error-message bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4';
-            errorDiv.textContent = message;
+                'error-message bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4 flex items-center gap-2';
+            errorDiv.innerHTML = '<i class="fas fa-exclamation-circle"></i> <span>' + message + '</span>';
 
             const firstInput = form.querySelector('input');
             firstInput.parentNode.insertBefore(errorDiv, firstInput);
