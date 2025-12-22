@@ -312,7 +312,7 @@ class ProfileController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => 'Privacy setting updated successfully',
-                'isprivate' => !$user->isprivate
+                'redirect_url' => route('profile.edit', [], false) . '?privacy_changed=1'
             ]);
         } catch (\Exception $e) {
             Log::error('Privacy toggle error: ' . $e->getMessage() . "\n" . $e->getTraceAsString());
@@ -367,7 +367,8 @@ class ProfileController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => 'Password changed successfully'
+                'message' => 'Password changed successfully',
+                'redirect_url' => route('profile.edit', [], false) . '?password_changed=1'
             ]);
         } catch (\Exception $e) {
             Log::error('Password change error: ' . $e->getMessage() . "\n" . $e->getTraceAsString());

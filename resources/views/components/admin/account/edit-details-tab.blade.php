@@ -8,8 +8,8 @@
             :error="$errors->first('name')" />
 
         <!-- username -->
-        <x-ui.input label="Username" name="username" type="text"
-            value="{{ old('username', $user->username ?? '') }}" :error="$errors->first('username')" />
+        <x-ui.input label="Username" name="username" type="text" value="{{ old('username', $user->username ?? '') }}"
+            :error="$errors->first('username')" />
 
         <!-- email -->
         <x-ui.input label="Email" name="email" type="email" value="{{ old('email', $user->email ?? '') }}"
@@ -23,22 +23,15 @@
         </x-ui.button>
     </div>
 </form>
-<div id="adminUpdateSuccess" class="hidden mt-6 text-green-600 text-3xl font-semibold"></div>
-<div id="adminUpdateError" class="hidden mt-6 text-red-600 text-3xl font-semibold"></div>
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         const form = document.getElementById('editAdminForm');
         const saveBtn = document.getElementById('saveAdminBtn');
-        const successDiv = document.getElementById('adminUpdateSuccess');
-        const errorDiv = document.getElementById('adminUpdateError');
-
         form.addEventListener('submit', function(e) {
             e.preventDefault();
             saveBtn.disabled = true;
             saveBtn.textContent = 'Saving...';
-            successDiv.classList.add('hidden');
-            errorDiv.classList.add('hidden');
 
             const formData = new FormData(form);
 
@@ -59,7 +52,9 @@
                 })
                 .then(data => {
                     if (data.success) {
-                        showAlert('success', 'Success', data.message);
+                        if (typeof showAlert === 'function') {
+                            showAlert('success', 'Success', data.message);
+                        }
                         setTimeout(() => {
                             window.location.reload();
                         }, 1500);
@@ -87,9 +82,8 @@
                                     'pr-12', '!border-red-500');
 
                                 // Add error icon
-                                const iconHtml = `<span class="absolute right-4 flex items-center justify-center pointer-events-none input-error-icon">
-                                    <i class="fas fa-exclamation-circle text-red-500 text-3xl"></i>
-                                </span>`;
+                                const iconHtml =
+                                    `<span class="absolute right-4 flex items-center justify-center pointer-events-none input-error-icon"><i class="fas fa-exclamation-circle text-red-500 text-3xl"></i></span>`;
                                 input.parentElement.insertAdjacentHTML('beforeend',
                                     iconHtml);
 
@@ -122,9 +116,13 @@
                                 });
                             }
                         });
-                        showAlert('error', 'Error', 'Please fix the errors in the form');
+                        if (typeof showAlert === 'function') {
+                            showAlert('error', 'Error', 'Please fix the errors in the form');
+                        }
                     } else {
-                        showAlert('error', 'Error', error.message || 'An error occurred');
+                        if (typeof showAlert === 'function') {
+                            showAlert('error', 'Error', error.message || 'An error occurred');
+                        }
                     }
                 })
                 .finally(() => {
