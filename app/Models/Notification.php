@@ -33,10 +33,22 @@ class Notification extends Model
         return $user;
     }
 
+    public function getMessageAttribute($value)
+    {
+        if ($this->relationLoaded('tagNotification') && $this->tagNotification) {
+            $taggerName = $this->tagNotification->getTaggerName();
+            if ($taggerName) {
+                return $taggerName . ' tagged you in a post';
+            }
+        }
+        return $value;
+    }
+
     public function getTypeAttribute()
     {
         if ($this->commentNotification) return 'comment';
         if ($this->likeNotification) return 'like';
+        if ($this->tagNotification) return 'tag';
         if ($this->activityNotification) return 'activity';
         if ($this->groupInviteRequest) return 'group_invite';
         if ($this->groupJoinRequest) return 'group_join';
@@ -51,6 +63,11 @@ class Notification extends Model
     public function likeNotification()
     {
         return $this->hasOne(LikeNotification::class, 'notificationId', 'id');
+    }
+
+    public function tagNotification()
+    {
+        return $this->hasOne(TagNotification::class, 'notificationId', 'id');
     }
 
     public function activityNotification()

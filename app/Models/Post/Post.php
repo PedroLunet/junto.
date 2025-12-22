@@ -28,6 +28,13 @@ class Post extends Model
         return $this->belongsTo(User::class, 'userid', 'id');
     }
 
+    public function tags()
+    {
+        return $this->belongsToMany(User::class, 'lbaw2544.post_tag', 'postid', 'userid')
+            ->withPivot('createdat')
+            ->orderBy('lbaw2544.post_tag.createdat', 'asc');
+    }
+
     public function getAuthorAttribute()
     {
         $user = $this->user;
@@ -78,7 +85,45 @@ class Post extends Model
 
         $params = $currentUserId ? [$currentUserId] : [];
 
-        return DB::select($sql, $params);
+        $posts = DB::select($sql, $params);
+        
+        return self::attachTagsToPostData($posts);
+    }
+
+    private static function attachTagsToPostData($posts)
+    {
+        if (empty($posts)) {
+            return $posts;
+        }
+
+        $postIds = array_map(function ($post) { return $post->id; }, $posts);
+        $tagsSql = "
+            SELECT pt.postId, u.id, u.name, u.username
+            FROM lbaw2544.post_tag pt
+            JOIN lbaw2544.users u ON pt.userId = u.id
+            WHERE pt.postId IN (" . implode(',', array_fill(0, count($postIds), '?')) . ")
+            ORDER BY pt.createdAt ASC
+        ";
+        
+        $tags = DB::select($tagsSql, $postIds);
+        
+        $tagsByPost = [];
+        foreach ($tags as $tag) {
+            if (!isset($tagsByPost[$tag->postid])) {
+                $tagsByPost[$tag->postid] = [];
+            }
+            $tagsByPost[$tag->postid][] = (object) [
+                'id' => $tag->id,
+                'name' => $tag->name,
+                'username' => $tag->username,
+            ];
+        }
+
+        foreach ($posts as $post) {
+            $post->tagged_users = $tagsByPost[$post->id] ?? [];
+        }
+
+        return $posts;
     }
 
     public static function getFriendsPostsWithDetails($currentUserId)
@@ -125,7 +170,9 @@ class Post extends Model
             ORDER BY p.id DESC
         ";
 
-        return DB::select($sql, [$currentUserId, $currentUserId, $currentUserId]);
+        $posts = DB::select($sql, [$currentUserId, $currentUserId, $currentUserId]);
+        
+        return self::attachTagsToPostData($posts);
     }
 
     public static function getMovieReviewPosts($currentUserId = null)
@@ -166,7 +213,9 @@ class Post extends Model
 
         $params = $currentUserId ? [$currentUserId] : [];
 
-        return DB::select($sql, $params);
+        $posts = DB::select($sql, $params);
+        
+        return self::attachTagsToPostData($posts);
     }
 
     public static function getBookReviewPosts($currentUserId = null)
@@ -207,7 +256,9 @@ class Post extends Model
 
         $params = $currentUserId ? [$currentUserId] : [];
 
-        return DB::select($sql, $params);
+        $posts = DB::select($sql, $params);
+        
+        return self::attachTagsToPostData($posts);
     }
 
     public static function getMusicReviewPosts($currentUserId = null)
@@ -248,7 +299,9 @@ class Post extends Model
 
         $params = $currentUserId ? [$currentUserId] : [];
 
-        return DB::select($sql, $params);
+        $posts = DB::select($sql, $params);
+        
+        return self::attachTagsToPostData($posts);
     }
 
     public static function toggleLike($postId, $userId)

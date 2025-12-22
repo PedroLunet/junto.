@@ -407,6 +407,8 @@ class GroupController extends Controller
         $validated = $request->validate([
             'content' => 'required_without:image|string|max:2000',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'tags' => 'nullable|array',
+            'tags.*' => 'integer|exists:users,id',
         ]);
 
         $post = new \App\Models\Post\Post;
@@ -427,6 +429,28 @@ class GroupController extends Controller
         $standardPost->text = $validated['content'] ?? null;
         $standardPost->imageurl = $imagePath;
         $standardPost->save();
+
+        $tags = $request->input('tags', []);
+        if (! empty($tags)) {
+            foreach ($tags as $userId) {
+                DB::insert('
+                    INSERT INTO lbaw2544.post_tag (postId, userId, createdAt)
+                    VALUES (?, ?, CURRENT_TIMESTAMP)
+                ', [$post->id, $userId]);
+
+                $notification = DB::table('lbaw2544.notification')->insertGetId([
+                    'message' => 'You were tagged in a post',
+                    'isread' => false,
+                    'receiverid' => $userId,
+                    'createdat' => now(),
+                ]);
+
+                DB::insert('
+                    INSERT INTO lbaw2544.tag_notification (notificationid, postid)
+                    VALUES (?, ?)
+                ', [$notification, $post->id]);
+            }
+        }
 
         return response()->json(['success' => true, 'message' => 'Post created!', 'post_id' => $post->id]);
     }

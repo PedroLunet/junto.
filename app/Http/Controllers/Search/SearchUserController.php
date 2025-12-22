@@ -4,10 +4,8 @@ namespace App\Http\Controllers\Search;
 
 use App\Http\Controllers\Controller;
 use App\Models\User\User;
-
 use Illuminate\Http\Request;
 use App\Services\FriendService;
-use function Laravel\Prompts\search;
 
 class SearchUserController extends Controller
 {

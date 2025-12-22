@@ -43,7 +43,7 @@
     <!-- text -->
     @if ($post->content)
         <p class="text-black">
-            {{ preg_replace('/^GROUP POST:\s*/i', '', $post->content) }}
+            {!! \App\Helpers\MentionHelper::convertMentionsToLinks(preg_replace('/^GROUP POST:\s*/i', '', $post->content), $post->tagged_users ?? []) !!}
         </p>
     @endif
 

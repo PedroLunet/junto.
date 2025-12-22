@@ -58,7 +58,7 @@
             </p>
 
             <p class="text-sm sm:text-base text-black font-light break-words">
-                {{ $post->content ?? ($post->review->content ?? '') }}
+                {!! \App\Helpers\MentionHelper::convertMentionsToLinks($post->content ?? ($post->review->content ?? ''), $post->tagged_users ?? []) !!}
             </p>
         </div>
     </div>

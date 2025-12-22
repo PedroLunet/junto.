@@ -16,6 +16,8 @@ class PostController extends Controller
         $request->validate([
             'content' => 'nullable|string|max:1000',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'tags' => 'nullable|array',
+            'tags.*' => 'integer|exists:users,id',
         ]);
 
         if (! $request->filled('content') && ! $request->hasFile('image')) {
@@ -47,6 +49,28 @@ class PostController extends Controller
                 INSERT INTO lbaw2544.standard_post (postId, text, imageUrl) 
                 VALUES (?, ?, ?)
             ', [$postId, $request->input('content'), $imagePath]);
+
+            $tags = $request->input('tags', []);
+            if (! empty($tags)) {
+                foreach ($tags as $userId) {
+                    DB::insert('
+                        INSERT INTO lbaw2544.post_tag (postId, userId, createdAt)
+                        VALUES (?, ?, CURRENT_TIMESTAMP)
+                    ', [$postId, $userId]);
+
+                    $notification = DB::table('lbaw2544.notification')->insertGetId([
+                        'message' => 'You were tagged in a post',
+                        'isread' => false,
+                        'receiverid' => $userId,
+                        'createdat' => now(),
+                    ]);
+
+                    DB::insert('
+                        INSERT INTO lbaw2544.tag_notification (notificationid, postid, taggerid)
+                        VALUES (?, ?, ?)
+                    ', [$notification, $postId, Auth::id()]);
+                }
+            }
 
             DB::commit();
 
