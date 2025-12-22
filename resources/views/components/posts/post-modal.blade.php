@@ -110,6 +110,29 @@
     let currentPostId = null;
     let commentRefreshInterval = null;
 
+    function convertMentionsToLinks(text, taggedUsers) {
+        if (!text || !taggedUsers || taggedUsers.length === 0) {
+            return escapeHtml(text);
+        }
+
+        let result = escapeHtml(text);
+        
+        taggedUsers.forEach(user => {
+            const mention = '@' + user.name;
+            const link = `<a href="/${user.username}" class="text-[#38157a] font-semibold hover:underline">${escapeHtml(user.name)}</a>`;
+            result = result.replace(escapeHtml(mention), link);
+        });
+
+        return result;
+    }
+
+    function escapeHtml(text) {
+        if (!text) return '';
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+
     window.openPostModal = function(post) {
         const modal = document.getElementById('postModal');
         const content = document.getElementById('modalContent');
@@ -156,6 +179,7 @@
             for (let i = 0; i < post.rating; i++) {
                 starsHtml += '<i class="fas fa-star text-lg"></i>';
             }
+            const reviewContent = post.content ? convertMentionsToLinks(post.content, post.tagged_users) : '';
             html = `
             <div class="flex flex-col sm:flex-row gap-6">
                 <div class="shrink-0 mx-auto sm:mx-0">
@@ -172,7 +196,7 @@
                     </div>
                     <p class="text-base text-gray-600 font-medium mb-1">${post.media_creator}</p>
                     <p class="text-sm text-gray-500 mb-4">${post.media_year}</p>
-                    <p class="text-black">${post.content}</p>
+                    ${reviewContent ? `<p class="text-black">${reviewContent}</p>` : ''}
                 </div>
             </div>
         `;
@@ -187,7 +211,10 @@
                 </div>
             `;
             }
-            html += `<p class="text-black whitespace-pre-wrap">${post.content}</p>`;
+            if (post.content) {
+                const contentWithMentions = convertMentionsToLinks(post.content, post.tagged_users);
+                html += `<p class="text-black whitespace-pre-wrap">${contentWithMentions}</p>`;
+            }
         }
         if (post.created_at) {
             const date = new Date(post.created_at);

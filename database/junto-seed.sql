@@ -173,6 +173,12 @@ CREATE TABLE like_notification (
     postId INTEGER REFERENCES post(id) ON DELETE CASCADE
 );
 
+CREATE TABLE tag_notification (
+    notificationId INTEGER PRIMARY KEY REFERENCES notification(id) ON DELETE CASCADE,
+    postId INTEGER REFERENCES post(id) ON DELETE CASCADE,
+    taggerId INTEGER REFERENCES users(id) ON DELETE CASCADE
+);
+
 -- REQUESTS
 CREATE TABLE request (
     notificationId INTEGER REFERENCES notification(id) ON DELETE CASCADE PRIMARY KEY,

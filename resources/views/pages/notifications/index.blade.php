@@ -28,12 +28,8 @@
             <div class="max-w-7xl mx-auto px-6 sm:px-8 py-8">
                 <div class="mb-6 flex justify-between items-center">
                     <div></div>
-                    @php
-                        $snoozed = $snoozed ?? false;
-                    @endphp
                     <button id="snoozeBtn" onclick="toggleSnoozeUI()"
-                        class="inline-flex items-center text-sm text-white font-semibold px-4 py-2 rounded-lg transition-colors
-                            {{ $snoozed ? 'bg-green-600 hover:bg-green-700' : 'bg-[#820263] hover:bg-[#600149]' }}">
+                        class="inline-flex items-center text-sm text-white font-semibold px-4 py-2 rounded-lg bg-[#820263] hover:bg-[#600149] transition-colors">
                         <i class="fas fa-moon mr-2"></i>
                         <span id="snoozeText">{{ $snoozed ? 'Alerts Snoozed' : 'Snooze Alerts' }}</span>
                     </button>
@@ -50,6 +46,12 @@
                         'content' => view('components.friend-requests.inbox-tab', [
                             'friendRequests' => $friendRequests,
                             'sentRequests' => $sentRequests,
+                        ])->render(),
+                    ],
+                    'group-notifications' => [
+                        'title' => 'Group Notifications',
+                        'content' => view('components.group-notifications.list', [
+                            'groupNotifications' => $groupNotifications,
                         ])->render(),
                     ],
                 ]" />

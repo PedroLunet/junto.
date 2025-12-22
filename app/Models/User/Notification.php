@@ -40,6 +40,17 @@ class Notification extends Model
         return $user;
     }
 
+    public function getMessageAttribute($value)
+    {
+        if ($this->relationLoaded('tagNotification') && $this->tagNotification) {
+            $taggerName = $this->tagNotification->getTaggerName();
+            if ($taggerName) {
+                return $taggerName . ' tagged you in a post';
+            }
+        }
+        return $value;
+    }
+
     public function request()
     {
         return $this->hasOne(Request::class, 'notificationid', 'id');
@@ -51,6 +62,29 @@ class Notification extends Model
         return $this->hasOne(ActivityNotification::class, 'notificationid', 'id');
     }
 
+    public function tagNotification()
+    {
+        return $this->hasOne(\App\Models\Notification\TagNotification::class, 'notificationid', 'id');
+    }
+
+    public function groupInviteRequest()
+    {
+        return $this->hasOne(\App\Models\GroupInviteRequest::class, 'requestid', 'id');
+    }
+
+    public function groupJoinRequest()
+    {
+        return $this->hasOne(\App\Models\GroupJoinRequest::class, 'requestid', 'id');
+    }
+
+    public function getTypeAttribute()
+    {
+        if ($this->activityNotification) return 'activity';
+        if ($this->tagNotification) return 'tag';
+        if ($this->groupInviteRequest) return 'group_invite';
+        if ($this->groupJoinRequest) return 'group_join';
+        return null;
+    }
  
     public function markAsRead()
     {

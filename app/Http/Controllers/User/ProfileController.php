@@ -50,6 +50,8 @@ class ProfileController extends Controller
         $posts = collect();
         $standardPosts = collect();
         $reviewPosts = collect();
+        $groupStandardPosts = collect();
+        $groupReviewPosts = collect();
 
         if ($canViewPosts) {
             // get all posts with relationships
@@ -89,6 +91,7 @@ class ProfileController extends Controller
                     'likes_count' => $likesCount,
                     'comments_count' => $commentsCount,
                     'is_liked' => $isLiked,
+                    'groupid' => $post->groupid,
                 ];
 
                 // standard post data
@@ -124,15 +127,43 @@ class ProfileController extends Controller
                     $transformedPost->post_type = 'review';
                 }
 
+                // get tagged users
+                $taggedUsers = \Illuminate\Support\Facades\DB::select("
+                    SELECT u.id, u.name, u.username
+                    FROM lbaw2544.post_tag pt
+                    JOIN lbaw2544.users u ON pt.userid = u.id
+                    WHERE pt.postid = ?
+                    ORDER BY pt.createdat ASC
+                ", [$post->id]);
+                $transformedPost->tagged_users = $taggedUsers;
+
                 return $transformedPost;
             });
 
-            // separate standard posts and reviews for tabs
-            $standardPosts = $posts->filter(function ($post) {
+            // separate personal posts (where groupid is null) and group posts
+            $personalPosts = $posts->filter(function ($post) {
+                return is_null($post->groupid);
+            });
+
+            $groupPosts = $posts->filter(function ($post) {
+                return !is_null($post->groupid);
+            });
+
+            // separate standard posts and reviews for personal posts
+            $standardPosts = $personalPosts->filter(function ($post) {
                 return $post->post_type === 'standard';
             });
 
-            $reviewPosts = $posts->filter(function ($post) {
+            $reviewPosts = $personalPosts->filter(function ($post) {
+                return $post->post_type === 'review';
+            });
+
+            // separate standard posts and reviews for group posts
+            $groupStandardPosts = $groupPosts->filter(function ($post) {
+                return $post->post_type === 'standard';
+            });
+
+            $groupReviewPosts = $groupPosts->filter(function ($post) {
                 return $post->post_type === 'review';
             });
         }
@@ -158,7 +189,7 @@ class ProfileController extends Controller
                 ->count();
         }
 
-        return view('pages.profile.profile', compact('user', 'posts', 'standardPosts', 'reviewPosts', 'friendsCount', 'postsCount', 'canViewPosts', 'friendButtonData', 'pendingRequestsCount'));
+        return view('pages.profile.profile', compact('user', 'posts', 'standardPosts', 'reviewPosts', 'groupStandardPosts', 'groupReviewPosts', 'friendsCount', 'postsCount', 'canViewPosts', 'friendButtonData', 'pendingRequestsCount'));
     }
 
     public function removeFavorite(Request $request)

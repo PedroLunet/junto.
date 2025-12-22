@@ -16,6 +16,7 @@ class NotificationController extends Controller
         $user = Auth::user();
 
         $notifications = Notification::where('receiverid', Auth::id())
+            ->with(['tagNotification.tagger'])
             ->excludeSelfInteractions()
             ->orderBy('createdat', 'desc')
             ->paginate(15);
@@ -39,14 +40,21 @@ class NotificationController extends Controller
             ->with(['request.notification'])
             ->get();
 
-        $snoozedUntil = session('notifications_snoozed_until');
-        $snoozed = $snoozedUntil && $snoozedUntil > now();
+        $groupNotifications = Notification::where('receiverid', Auth::id())
+            ->where(function ($query) {
+                $query->whereHas('groupInviteRequest')
+                      ->orWhereHas('groupJoinRequest');
+            })
+            ->with(['groupInviteRequest.group', 'groupInviteRequest.request', 'groupJoinRequest'])
+            ->orderBy('createdat', 'desc')
+            ->paginate(15);
+
         return view('pages.notifications.index', [
             'notifications' => $notifications,
             'friendRequests' => $friendRequests,
             'sentRequests' => $sentRequests,
-            'pageTitle' => 'Inbox',
-            'snoozed' => $snoozed,
+            'groupNotifications' => $groupNotifications,
+            'pageTitle' => 'Inbox'
         ]);
     }
 

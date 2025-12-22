@@ -19,21 +19,23 @@
                         searchResultsId="modalMusicSearchResults" inputName="spotify_id"
                         searchPlaceholder="Search for a song..." label="What song did you listen to?" />
 
-                    <!-- selected music preview -->
-                    <div id="modalSelectedMusic"
-                        class="hidden mt-4 p-4 border rounded-lg bg-gray-50 flex items-start gap-4 relative">
-                        <input type="hidden" name="spotify_id" id="selectedMusicId">
-                        <button type="button" id="removeMusicBtn"
-                            class="absolute top-2 right-2 text-gray-400 hover:text-red-500"
-                            title="Remove selected music">
-                            <i class="fa-solid fa-times"></i>
-                        </button>
-                        <img id="selectedMusicCover" src="" alt="Cover"
-                            class="h-80 object-cover rounded shadow-sm hidden">
-                        <div>
-                            <h4 id="selectedMusicTitle" class="text-4xl font-bold text-gray-800 hidden"></h4>
-                            <p id="selectedMusicArtist" class="text-gray-600 text-lg hidden"></p>
-                            <p id="selectedMusicYear" class="text-gray-500 hidden"></p>
+                        <!-- selected music preview -->
+                        <div id="modalSelectedMusic"
+                            class="hidden mt-4 p-4 border rounded-lg bg-gray-50 relative">
+                            <input type="hidden" name="spotify_id" id="selectedMusicId">
+                            <button type="button" id="removeMusicBtn"
+                                class="absolute top-2 right-2 text-gray-400 hover:text-red-500 z-10">
+                                <i class="fa-solid fa-times"></i>
+                            </button>
+                            <div class="flex flex-col sm:flex-row items-start gap-4">
+                                <img id="selectedMusicCover" src="" alt="Cover"
+                                    class="w-32 h-32 sm:w-24 sm:h-24 object-cover rounded shadow-sm mx-auto sm:mx-0 shrink-0">
+                                <div class="flex-1 min-w-0 text-center sm:text-left">
+                                    <h4 id="selectedMusicTitle" class="text-lg sm:text-xl font-bold text-gray-800 break-words mb-1"></h4>
+                                    <p id="selectedMusicArtist" class="text-sm text-gray-600 mb-0.5"></p>
+                                    <p id="selectedMusicYear" class="text-sm text-gray-600"></p>
+                                </div>
+                            </div>
                         </div>
                     </div>
 

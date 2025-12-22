@@ -8,7 +8,7 @@
             <span class="font-semibold text-gray-900 truncate">{{ $comment->author_name ?? '' }}</span>
             <div class="flex items-center gap-2">
                 <span
-                    class="text-lg text-gray-600 ml-2 shrink-0">{{ isset($comment->created_at) ? \Carbon\Carbon::parse($comment->created_at)->format('d/m/Y') : '' }}</span>
+                    class="text-xs text-gray-500 ml-2 shrink-0">{{ isset($comment->created_at) ? \Carbon\Carbon::parse($comment->created_at)->format('d/m/Y H:i') : '' }}</span>
                 @auth
                     @if (isset($comment->user_id) && $comment->user_id == auth()->id())
                         <button onclick="toggleEditComment({{ $comment->id }})"

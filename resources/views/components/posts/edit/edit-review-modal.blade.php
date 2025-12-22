@@ -1,28 +1,30 @@
 <!-- modal overlay -->
 <div id="edit-review-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50">
     <div class="flex items-center justify-center min-h-screen p-4">
-        <div class="bg-white rounded-2xl shadow-xl max-w-6xl w-full min-h-[400px]">
+        <div class="bg-white rounded-2xl shadow-xl max-w-3xl w-full min-h-[400px]">
 
             <!-- modal header -->
-            <div class="flex justify-between items-center p-8 border-b">
-                <h3 class="text-4xl font-semibold">Edit Review</h3>
+            <div class="flex justify-between items-center p-6 border-b">
+                <h3 class="text-2xl font-semibold">Edit Review</h3>
             </div>
 
             <!-- modal body -->
-            <div class="p-8">
+            <div class="p-6">
                 <form id="edit-review-form" method="POST">
                     @csrf
                     @method('PUT')
 
                     <!-- media info -->
                     <div class="mb-6">
-                        <div class="p-4 border rounded-lg bg-gray-50 flex items-start gap-4">
-                            <img id="edit-review-cover" src="" alt="Poster"
-                                class=" h-80 object-cover rounded shadow-sm hidden">
-                            <div>
-                                <h4 id="edit-review-title" class="text-4xl font-bold text-gray-800"></h4>
-                                <p id="edit-review-creator" class="text-gray-600"></p>
-                                <p id="edit-review-year" class="text-gray-600 text-xl"></p>
+                        <div class="p-4 border rounded-lg bg-gray-50 relative">
+                            <div class="flex flex-col sm:flex-row items-start gap-4">
+                                <img id="edit-review-cover" src="" alt="Poster"
+                                    class="w-32 h-48 sm:w-24 sm:h-36 object-cover rounded shadow-sm mx-auto sm:mx-0 shrink-0 hidden">
+                                <div class="flex-1 min-w-0 text-center sm:text-left">
+                                    <h4 id="edit-review-title" class="text-lg sm:text-xl font-bold text-gray-800 break-words mb-1"></h4>
+                                    <p id="edit-review-creator" class="text-sm text-gray-600 mb-0.5"></p>
+                                    <p id="edit-review-year" class="text-sm text-gray-600"></p>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -32,7 +34,7 @@
                         <div class="flex gap-2" id="edit-star-rating">
                             @for ($i = 1; $i <= 5; $i++)
                                 <button type="button"
-                                    class="edit-star-btn bg-transparent border-none p-0 h-auto leading-none shadow-none text-3xl text-gray-300 focus:text-gray-300 hover:text-yellow-400 hover:bg-transparent focus:bg-transparent transition-colors focus:outline-none"
+                                    class="edit-star-btn bg-transparent border-none p-0 h-auto leading-none shadow-none text-2xl text-gray-300 focus:text-gray-300 hover:text-yellow-400 hover:bg-transparent focus:bg-transparent transition-colors focus:outline-none"
                                     data-rating="{{ $i }}">
                                     <i class="fa-regular fa-star"></i>
                                 </button>

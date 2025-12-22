@@ -75,7 +75,7 @@
     @else
         <x-ui.button href="{{ route('login') }}" variant="special"> + </x-ui.button>
     @endauth
-    <div class="hidden lg:flex gap-2 w-full">
+    <div class="flex gap-2 w-full">
         @auth
             <x-ui.button id="movie-button" variant="special" class="flex-1 justify-center">
                 <i class="fa-solid fa-clapperboard"></i>

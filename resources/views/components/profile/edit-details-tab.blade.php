@@ -46,9 +46,6 @@
         </div>
     </div>
 
-
-
-
     <!-- bio -->
     <div class="w-full mt-2 mb-4">
         <x-ui.input label="Bio" name="bio" type="textarea" value="{{ old('bio', $user->bio ?? '') }}"
@@ -69,64 +66,9 @@
 </div>
 
 <script>
-    function openChangeEmailModal() {
-        document.getElementById('changeEmailModal').classList.remove('hidden');
-        document.getElementById('newEmailInput').value = '';
-        document.getElementById('currentPasswordInput').value = '';
-        document.getElementById('changeEmailError').classList.add('hidden');
-    }
-
-    function closeChangeEmailModal() {
-        document.getElementById('changeEmailModal').classList.add('hidden');
-        document.getElementById('newEmailInput').value = '';
-        document.getElementById('currentPasswordInput').value = '';
-        document.getElementById('changeEmailError').classList.add('hidden');
-    }
-
-    function confirmChangeEmail() {
-        const newEmail = document.getElementById('newEmailInput').value;
-        const password = document.getElementById('currentPasswordInput').value;
-        const errorDiv = document.getElementById('changeEmailError');
-        errorDiv.classList.add('hidden');
-        if (!newEmail || !password) {
-            errorDiv.textContent = 'Please enter both email and password.';
-            errorDiv.classList.remove('hidden');
-            return;
-        }
-        fetch('/profile/change-email', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-                    'Accept': 'application/json'
-                },
-                body: JSON.stringify({
-                    email: newEmail,
-                    password: password
-                })
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    document.getElementById('editEmailInput').value = newEmail;
-                    closeChangeEmailModal();
-                } else {
-                    errorDiv.textContent = data.message || 'Failed to change email.';
-                    errorDiv.classList.remove('hidden');
-                }
-            })
-            .catch(() => {
-                errorDiv.textContent = 'An error occurred. Please try again.';
-                errorDiv.classList.remove('hidden');
-            });
-    }
     document.addEventListener('DOMContentLoaded', function() {
-        // Change email button logic
-        document.getElementById('changeEmailBtn').addEventListener('click', openChangeEmailModal);
         const form = document.getElementById('editProfileForm');
         const saveBtn = document.getElementById('saveProfileBtn');
-        const successDiv = document.getElementById('profileUpdateSuccess');
-        const errorDiv = document.getElementById('profileUpdateError');
 
         // Profile image upload logic
         const editProfileImageBtn = document.getElementById('editProfileImageBtn');
@@ -167,8 +109,6 @@
             e.preventDefault();
             saveBtn.disabled = true;
             saveBtn.textContent = 'Saving...';
-            successDiv.classList.add('hidden');
-            errorDiv.classList.add('hidden');
 
             const formData = new FormData(form);
             // Remove profilePicture if no file is selected
@@ -263,9 +203,8 @@
                                     'pr-12', '!border-red-500');
 
                                 // Add error icon
-                                const iconHtml = `<span class="absolute right-4 ${input.tagName === 'TEXTAREA' ? 'top-4' : ''} flex items-center justify-center pointer-events-none input-error-icon">
-                                    <i class="fas fa-exclamation-circle text-red-500 text-3xl"></i>
-                                </span>`;
+                                const iconHtml =
+                                    `<span class="absolute right-4 ${input.tagName === 'TEXTAREA' ? 'top-4' : ''} flex items-center justify-center pointer-events-none input-error-icon"><i class="fas fa-exclamation-circle text-red-500 text-3xl"></i></span>`;
                                 input.parentElement.insertAdjacentHTML('beforeend',
                                     iconHtml);
 
@@ -309,6 +248,11 @@
                             'An error occurred while updating your profile.');
                     }
                 })
+                .finally(() => {
+                    saveBtn.disabled = false;
+                    saveBtn.textContent = 'Save Changes';
+                });
+
             // Show alert-card on top right
             function showProfileAlert(type, title, message) {
                 fetch('/profile/render-alert', {
@@ -340,10 +284,6 @@
                         }
                     });
             }
-            .finally(() => {
-                saveBtn.disabled = false;
-                saveBtn.textContent = 'Save Changes';
-            });
         });
     });
 </script>

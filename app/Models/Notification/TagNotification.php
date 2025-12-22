@@ -13,5 +13,20 @@ class TagNotification extends Model
     protected $fillable = [
         'notificationid',
         'postid',
+        'taggerid',
     ];
+
+    public function tagger()
+    {
+        return $this->belongsTo(\App\Models\User\User::class, 'taggerid', 'id');
+    }
+
+    public function getTaggerName()
+    {
+        $tagger = $this->tagger;
+        if (!$tagger || $tagger->isdeleted) {
+            return 'Deleted User';
+        }
+        return $tagger->name;
+    }
 }

@@ -1,7 +1,8 @@
 @props(['friend', 'messages'])
 
+<div class="flex flex-col h-full">
 <!-- Header -->
-<div class="p-4 border-b border-gray-200 flex items-center justify-between bg-gray-50">
+<div class="p-4 border-b border-gray-200 flex items-center justify-between bg-gray-50 flex-shrink-0">
     <div class="flex items-center">
         <a href="{{ route('messages.index') }}" class="mr-4 md:hidden text-gray-500 hover:text-gray-700">
             <i class="fa-solid fa-arrow-left"></i>
@@ -82,7 +83,7 @@
 </div>
 
 <!-- Input Area -->
-<div class="p-4 border-t border-gray-200 bg-white">
+<div class="p-4 border-t border-gray-200 bg-white flex-shrink-0">
     <form id="message-form" class="flex gap-2">
         @csrf
         <input type="text" id="message-input" name="content" 
@@ -336,3 +337,4 @@
         }
     })();
 </script>
+</div>

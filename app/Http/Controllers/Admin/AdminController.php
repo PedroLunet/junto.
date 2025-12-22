@@ -733,29 +733,13 @@ class AdminController extends Controller
                 ], 403);
             }
 
-            // find or create the Deleted User account
-            $deletedUser = User::where('username', 'deleted_user')->first();
-            if (!$deletedUser) {
-                $deletedUser = User::create([
-                    'name' => 'Deleted User',
-                    'username' => 'deleted_user',
-                    'email' => 'deleted@example.com',
-                    'passwordhash' => bcrypt(Str::random(32)),
-                    'bio' => 'This account is used to own content from deleted users.',
-                    'isadmin' => false,
-                    'isblocked' => false,
-                    'isprivate' => true,
-                    'createdat' => now(),
-                ]);
-            }
+            DB::transaction(function () use ($user) {
+                DB::table('membership')
+                    ->where('userid', $user->id)
+                    ->delete();
 
-            // reassign posts
-            Post::where('userid', $user->id)->update(['userid' => $deletedUser->id]);
-            // reassign comments
-            DB::table('comment')->where('userid', $user->id)->update(['userid' => $deletedUser->id]);
-            
-            // delete the user
-            $user->delete();
+                $user->markAsDeleted();
+            });
 
             Log::info('Admin deleted user: ' . $user->username . ' (ID: ' . $user->id . ')');
 

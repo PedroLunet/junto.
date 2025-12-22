@@ -6,7 +6,6 @@
     @endif
     
     <div class="flex flex-col -m-6">
-        <div id="profileUpdateAlertContainer" class="fixed top-6 right-6 z-50 flex flex-col gap-4 items-end"></div>
         <!-- Fixed Header Section -->
         <div class="shrink-0 px-16 pt-10 pb-6">
             <div class="flex flex-col md:flex-row items-start justify-between gap-6 md:gap-8 lg:gap-10 mb-6 md:mb-8">
@@ -117,25 +116,49 @@
                 </div>
             @else
                 <!-- tabs with scrollable content -->
-                <x-ui.tabs :tabs="[
-                    'posts' => [
-                        'title' => 'Posts',
-                        'content' => view('components.posts.post-list', [
-                            'posts' => $standardPosts,
-                            'postType' => 'standard',
-                        ])->render(),
-                    ],
-                    'reviews' => [
-                        'title' => 'Reviews',
-                        'content' => view('components.posts.post-list', [
-                            'posts' => $reviewPosts,
-                            'postType' => 'review',
-                        ])->render(),
-                    ],
-                ]" />
+                @php
+                    $tabs = [
+                        'posts' => [
+                            'title' => 'Posts',
+                            'content' => view('components.posts.post-list', [
+                                'posts' => $standardPosts,
+                                'showAuthor' => false,
+                                'postType' => 'standard',
+                            ])->render(),
+                        ],
+                        'reviews' => [
+                            'title' => 'Reviews',
+                            'content' => view('components.posts.post-list', [
+                                'posts' => $reviewPosts,
+                                'showAuthor' => false,
+                                'postType' => 'review',
+                            ])->render(),
+                        ],
+                    ];
+
+                    if (Auth::check() && Auth::id() === $user->id) {
+                        $tabs['group-posts'] = [
+                            'title' => 'Group Posts',
+                            'content' => view('components.posts.post-list', [
+                                'posts' => $groupStandardPosts,
+                                'showAuthor' => false,
+                                'postType' => 'standard',
+                            ])->render(),
+                        ];
+                        $tabs['group-reviews'] = [
+                            'title' => 'Group Reviews',
+                            'content' => view('components.posts.post-list', [
+                                'posts' => $groupReviewPosts,
+                                'showAuthor' => false,
+                                'postType' => 'review',
+                            ])->render(),
+                        ];
+                    }
+                @endphp
+
+                <x-ui.tabs :tabs="$tabs" />
             @endif
         </div>
-
 
         <x-posts.post-modal />
         <x-profile.add-fav-modal />

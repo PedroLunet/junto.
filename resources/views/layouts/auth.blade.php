@@ -10,7 +10,6 @@
         <script src="https://cdn.tailwindcss.com"></script>
 
         <!-- Styles -->
-        <link rel="stylesheet" href="{{ asset('css/milligram.css') }}">
         <link rel="stylesheet" href="{{ asset('css/app.css') }}">
         @stack('styles')
 
