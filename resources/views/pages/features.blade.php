@@ -12,7 +12,7 @@
                     <!-- Box 1 -->
                     <div
                         class="carousel-item min-w-full bg-[#e4dcf9] rounded-3xl p-6 flex flex-col items-start justify-center shadow min-h-[400px]">
-                        <h1 class="text-xl font-extrabold mb-6 text-gray-900">One Hub for All Posts & Reviews</h1>
+                        <h3 class="text-xl font-extrabold mb-6 text-gray-900">One Hub for All Posts & Reviews</h3>
                         <div class="flex gap-3 mb-6 w-full justify-center">
                             <div class="w-20 h-20">
                                 <img src="{{ asset('illustration-book.svg') }}" alt="Book illustration"
@@ -37,7 +37,7 @@
                     <!-- Box 2 -->
                     <div
                         class="carousel-item min-w-full bg-[#fcdfe9] rounded-3xl p-6 flex flex-col items-center justify-center shadow min-h-[400px]">
-                        <h1 class="text-xl font-extrabold mb-6 text-gray-900 text-center">Show Off Your Top 3 Favorites</h1>
+                        <h3 class="text-xl font-extrabold mb-6 text-gray-900 text-center">Show Off Your Top 3 Favorites</h3>
                         <div class="flex gap-3 mb-6 w-full justify-center">
                             <div class="w-20 h-20">
                                 <img src="{{ asset('illustration-3favs.svg') }}" alt="Top 3 favorites illustration"
@@ -55,7 +55,7 @@
                     <!-- Box 3 -->
                     <div
                         class="carousel-item min-w-full bg-[#fef7db] rounded-3xl p-6 flex flex-col items-center justify-center shadow min-h-[400px]">
-                        <h1 class="text-xl font-extrabold mb-6 text-gray-900 text-center">Find Exactly What Matters</h1>
+                        <h3 class="text-xl font-extrabold mb-6 text-gray-900 text-center">Find Exactly What Matters</h3>
                         <div class="flex gap-3 mb-6 w-full justify-center">
                             <div class="w-20 h-20">
                                 <img src="{{ asset('illustration-search.svg') }}" alt="Search illustration"
@@ -70,7 +70,7 @@
                     <!-- Box 4 -->
                     <div
                         class="carousel-item min-w-full bg-[#eff7e4] rounded-3xl p-6 flex flex-col items-center justify-center shadow min-h-[400px]">
-                        <h1 class="text-xl font-extrabold mb-6 text-gray-900 text-center">A Trusted Space</h1>
+                        <h3 class="text-xl font-extrabold mb-6 text-gray-900 text-center">A Trusted Space</h3>
                         <div class="flex gap-3 mb-6 w-full justify-center">
                             <div class="w-20 h-20">
                                 <img src="{{ asset('illustration-trust.svg') }}" alt="Trust illustration"
@@ -84,7 +84,7 @@
                     <!-- Box 5 -->
                     <div
                         class="carousel-item min-w-full bg-[#fde9dd] rounded-3xl p-6 flex flex-col items-center justify-center shadow min-h-[400px]">
-                        <h1 class="text-xl font-extrabold mb-6 text-gray-900 text-center">Connect & Collaborate</h1>
+                        <h3 class="text-xl font-extrabold mb-6 text-gray-900 text-center">Connect & Collaborate</h3>
                         <div class="flex gap-3 mb-6 w-full justify-center">
                             <div class="w-20 h-20">
                                 <img src="{{ asset('illustration-friends.svg') }}" alt="Connect illustration"
@@ -99,7 +99,7 @@
                     <!-- Box 6 -->
                     <div
                         class="carousel-item min-w-full bg-[#eef2f5] rounded-3xl p-6 flex flex-col items-center justify-center shadow min-h-[400px]">
-                        <h1 class="text-xl font-extrabold mb-6 text-gray-900 text-center">Your Feed, Your Way</h1>
+                        <h3 class="text-xl font-extrabold mb-6 text-gray-900 text-center">Your Feed, Your Way</h3>
                         <div class="flex gap-3 mb-6 w-full justify-center">
                             <div class="w-20 h-20">
                                 <img src="{{ asset('illustration-customize.svg') }}" alt="Customize illustration"
@@ -141,7 +141,7 @@
             <!-- Box 1: Large vertical -->
             <div
                 class="bg-[#e4dcf9] rounded-3xl p-8 row-span-2 col-span-2 flex flex-col items-start justify-center shadow transition-transform duration-300 ease-in-out hover:scale-105">
-                <h1 class="text-2xl font-extrabold mb-8 text-gray-900">One Hub for All Posts & Reviews</h1>
+                <h3 class="text-2xl font-extrabold mb-8 text-gray-900">One Hub for All Posts & Reviews</h3>
                 <div class="flex gap-4 mb-8 w-full justify-center">
                     <div class="w-32 h-32">
                         <img src="{{ asset('illustration-book.svg') }}" alt="Book illustration"
@@ -165,7 +165,7 @@
             <!-- Box 2: Top right -->
             <div
                 class="bg-[#fcdfe9] rounded-3xl p-8 col-span-2 flex flex-col items-start justify-end shadow transition-transform duration-300 ease-in-out hover:scale-105 relative overflow-hidden min-h-[250px]">
-                <h1 class="text-2xl font-extrabold mb-2 text-gray-900">Show Off Your Top 3 Favorites</h1>
+                <h3 class="text-2xl font-extrabold mb-2 text-gray-900">Show Off Your Top 3 Favorites</h3>
                 <p class="text-sm font-normal text-gray-700 pr-24">
                     Personalize your profile by selecting your favorite book, movie, and song. Your top picks are always
                     visible on your profile, making it easy for others to discover your tastes and start conversations
@@ -179,7 +179,7 @@
             <!-- Box 3: Middle right -->
             <div
                 class="bg-[#fef7db] rounded-3xl p-8 flex flex-col items-start justify-start shadow transition-transform duration-300 ease-in-out hover:scale-105 relative overflow-hidden min-h-[250px]">
-                <h1 class="text-2xl font-extrabold mb-2 text-gray-900">Find Exactly What Matters</h1>
+                <h3 class="text-2xl font-extrabold mb-2 text-gray-900">Find Exactly What Matters</h3>
                 <p class="text-sm font-normal text-gray-700 mb-20">
                     Use powerful filters to find users, posts, and groups by specific attributes with pinpoint accuracy.
                 </p>
@@ -191,7 +191,7 @@
             <!-- Box 4: Middle far right -->
             <div
                 class="bg-[#eff7e4] rounded-3xl p-8 flex flex-col items-start justify-end shadow transition-transform duration-300 ease-in-out hover:scale-105 relative overflow-hidden min-h-[250px]">
-                <h1 class="text-2xl font-extrabold mb-2 text-gray-900">A Trusted Space</h1>
+                <h3 class="text-2xl font-extrabold mb-2 text-gray-900">A Trusted Space</h3>
                 <p class="text-sm font-normal text-gray-700">
                     A platform built on respect with advanced reporting and dedicated moderation.
                 </p>
@@ -203,7 +203,7 @@
             <!-- Box 5: Bottom left -->
             <div
                 class="bg-[#fde9dd] rounded-3xl p-8 col-span-2 flex flex-col items-start justify-center shadow transition-transform duration-300 ease-in-out hover:scale-105 relative overflow-hidden min-h-[250px]">
-                <h1 class="text-2xl font-extrabold mb-2 text-gray-900">Connect & Collaborate</h1>
+                <h3 class="text-2xl font-extrabold mb-2 text-gray-900">Connect & Collaborate</h3>
                 <p class="text-sm font-normal text-gray-700 pr-48">
                     Build your network through friendships or organize around shared hobbies. Create groups, tag friends in
                     discussions, and find people who love what you love.
@@ -216,7 +216,7 @@
             <!-- Box 6: Bottom right -->
             <div
                 class="bg-[#eef2f5] rounded-3xl p-8 col-span-2 flex flex-col items-start justify-center shadow transition-transform duration-300 ease-in-out hover:scale-105 relative overflow-hidden min-h-[250px]">
-                <h1 class="text-2xl font-extrabold mb-2 text-gray-900">Your Feed, Your Way</h1>
+                <h3 class="text-2xl font-extrabold mb-2 text-gray-900">Your Feed, Your Way</h3>
                 <p class="text-sm font-normal text-gray-700 pr-48">
                     Toggle between a global public view, a personalized timeline
                     with only your friends' posts, or just your friends' feeds.

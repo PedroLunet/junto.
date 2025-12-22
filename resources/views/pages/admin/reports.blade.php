@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('page-title', 'Reports')
+@section('title', 'Reports')
 
 @section('content')
     <div class="flex flex-col h-[calc(100vh-4rem)]">
@@ -64,6 +64,50 @@
 
 @push('scripts')
     <script>
+        // === ALERT CARD: define first so it's always available ===
+        window.showAlertCard = function(type, title, message) {
+            // Remove any existing alert card
+            const existing = document.getElementById('js-dynamic-alert-card');
+            if (existing) existing.remove();
+            // Create wrapper div
+            const wrapper = document.createElement('div');
+            wrapper.id = 'js-dynamic-alert-card';
+            wrapper.innerHTML = `
+            <div class='fixed top-6 right-6 z-50 flex items-start gap-3 px-4 py-4 rounded-2xl border ${type === 'success' ? 'bg-green-50 border-green-200' : 'bg-red-50 border-red-200'} shadow-sm mb-4 min-w-[280px] max-w-xs transition-all duration-300 ease-in-out opacity-0 translate-x-full'>
+                <div class='shrink-0 flex items-center justify-center w-8 h-8 rounded-full ${type === 'success' ? 'bg-green-200' : 'bg-red-200'}'>
+                    ${type === 'success'
+                        ? `<svg class='w-5 h-5' fill='none' stroke='currentColor' viewBox='0 0 24 24'><circle cx='12' cy='12' r='10' stroke-width='2' class='stroke-green-400 fill-green-50'/><path stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M9 12l2 2 4-4' class='stroke-green-600'/></svg>`
+                        : `<svg class='w-5 h-5' fill='none' stroke='currentColor' viewBox='0 0 24 24'><circle cx='12' cy='12' r='10' stroke-width='2' class='stroke-red-400 fill-red-50'/><path stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M15 9l-6 6m0-6l6 6' class='stroke-red-600'/></svg>`}
+                </div>
+                <div class='flex-1'>
+                    <div class='font-semibold text-base ${type === 'success' ? 'text-green-600' : 'text-red-600'} mb-0.5'>${title}</div>
+                    <div class='text-gray-700 text-sm'>${message}</div>
+                </div>
+                <button type='button' class='absolute top-2 right-2' onclick='this.closest("#js-dynamic-alert-card").remove()'>
+                    <i class='fa fa-times w-5 h-5'></i>
+                </button>
+            </div>
+        `;
+            document.body.appendChild(wrapper);
+            // Animate in
+            setTimeout(() => {
+                const alert = wrapper.firstElementChild;
+                alert.classList.remove('opacity-0', 'translate-x-full');
+                alert.classList.add('opacity-100', 'translate-x-0');
+            }, 10);
+            // Animate out after 5s
+            setTimeout(() => {
+                const alert = wrapper.firstElementChild;
+                if (!alert) return;
+                alert.classList.remove('opacity-100', 'translate-x-0');
+                alert.classList.add('opacity-0', 'translate-x-full');
+                setTimeout(() => {
+                    wrapper.remove();
+                }, 300);
+            }, 5000);
+        }
+
+        // === PAGE LOGIC ===
         let currentFilter = 'all';
         let currentSort = 'created_date';
         let sortAscending = false; // false = descending (default)
@@ -199,14 +243,15 @@
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
+                        showAlertCard('success', 'Success', 'Report accepted successfully.');
                         window.location.reload();
                     } else {
-                        alertInfo(data.message || 'Failed to accept report', 'Error');
+                        showAlertCard('error', 'Error', data.message || 'Failed to accept report');
                     }
                 })
                 .catch(error => {
                     console.error('Error:', error);
-                    alertInfo('An error occurred while processing the report', 'Error');
+                    showAlertCard('error', 'Error', 'An error occurred while processing the report');
                 });
         }
 
@@ -230,14 +275,15 @@
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
-                        window.location.reload();
+                        showAlertCard('success', 'Success', 'Report rejected successfully.');
+                        setTimeout(() => window.location.reload(), 1500);
                     } else {
-                        alertInfo(data.message || 'Failed to reject report', 'Error');
+                        showAlertCard('error', 'Error', data.message || 'Failed to reject report');
                     }
                 })
                 .catch(error => {
                     console.error('Error:', error);
-                    alertInfo('An error occurred while processing the report', 'Error');
+                    showAlertCard('error', 'Error', 'An error occurred while processing the report');
                 });
         }
     </script>

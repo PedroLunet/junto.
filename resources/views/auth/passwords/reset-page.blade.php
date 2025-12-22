@@ -9,8 +9,9 @@
         <p class="text-gray-600 mb-8 text-xl">Please enter your new password below.</p>
 
         @if (session('status'))
-            <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-6" role="alert">
-                {{ session('status') }}
+            <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-6 flex items-center gap-2" role="alert">
+                <i class="fas fa-check-circle"></i>
+                <span>{{ session('status') }}</span>
             </div>
         @endif
 

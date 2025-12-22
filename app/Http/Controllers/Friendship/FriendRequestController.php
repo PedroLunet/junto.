@@ -97,10 +97,9 @@ class FriendRequestController extends Controller
 
         try {
             $friendRequest->accept();
-
-            return back()->with('success', 'Friend request accepted!');
+            return redirect()->route('notifications.index')->with('success', 'Friend request accepted!');
         } catch (\Exception $e) {
-            return back()->with('error', 'Failed to accept friend request. Please try again.');
+            return redirect()->route('notifications.index')->with('error', 'Failed to accept friend request. Please try again.');
         }
     }
 
@@ -114,10 +113,9 @@ class FriendRequestController extends Controller
 
         try {
             $friendRequest->reject();
-
-            return back()->with('success', 'Friend request rejected.');
+            return redirect()->route('notifications.index')->with('success', 'Friend request rejected.');
         } catch (\Exception $e) {
-            return back()->with('error', 'Failed to reject friend request. Please try again.');
+            return redirect()->route('notifications.index')->with('error', 'Failed to reject friend request. Please try again.');
         }
     }
 
@@ -191,11 +189,13 @@ class FriendRequestController extends Controller
         // Get friends manually since we need both directions
         $friendsAsUser1 = User::join('friendship', 'users.id', '=', 'friendship.userid2')
             ->where('friendship.userid1', $user->id)
+            ->where('users.isadmin', false)
             ->select('users.*')
             ->get();
 
         $friendsAsUser2 = User::join('friendship', 'users.id', '=', 'friendship.userid1')
             ->where('friendship.userid2', $user->id)
+            ->where('users.isadmin', false)
             ->select('users.*')
             ->get();
 

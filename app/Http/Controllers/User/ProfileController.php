@@ -39,6 +39,10 @@ class ProfileController extends Controller
             ->where('username', $username)
             ->firstOrFail();
 
+        if ($user->isadmin && (!Auth::check() || !Auth::user()->isadmin)) {
+            abort(404);
+        }
+
         // Guests can view posts if profile is public
         if (!$user->isprivate) {
             $canViewPosts = true;
@@ -50,6 +54,8 @@ class ProfileController extends Controller
         $posts = collect();
         $standardPosts = collect();
         $reviewPosts = collect();
+        $groupStandardPosts = collect();
+        $groupReviewPosts = collect();
 
         if ($canViewPosts) {
             // get all posts with relationships
@@ -89,6 +95,7 @@ class ProfileController extends Controller
                     'likes_count' => $likesCount,
                     'comments_count' => $commentsCount,
                     'is_liked' => $isLiked,
+                    'groupid' => $post->groupid,
                 ];
 
                 // standard post data
@@ -137,12 +144,30 @@ class ProfileController extends Controller
                 return $transformedPost;
             });
 
-            // separate standard posts and reviews for tabs
-            $standardPosts = $posts->filter(function ($post) {
+            // separate personal posts (where groupid is null) and group posts
+            $personalPosts = $posts->filter(function ($post) {
+                return is_null($post->groupid);
+            });
+
+            $groupPosts = $posts->filter(function ($post) {
+                return !is_null($post->groupid);
+            });
+
+            // separate standard posts and reviews for personal posts
+            $standardPosts = $personalPosts->filter(function ($post) {
                 return $post->post_type === 'standard';
             });
 
-            $reviewPosts = $posts->filter(function ($post) {
+            $reviewPosts = $personalPosts->filter(function ($post) {
+                return $post->post_type === 'review';
+            });
+
+            // separate standard posts and reviews for group posts
+            $groupStandardPosts = $groupPosts->filter(function ($post) {
+                return $post->post_type === 'standard';
+            });
+
+            $groupReviewPosts = $groupPosts->filter(function ($post) {
                 return $post->post_type === 'review';
             });
         }
@@ -168,7 +193,7 @@ class ProfileController extends Controller
                 ->count();
         }
 
-        return view('pages.profile.profile', compact('user', 'posts', 'standardPosts', 'reviewPosts', 'friendsCount', 'postsCount', 'canViewPosts', 'friendButtonData', 'pendingRequestsCount'));
+        return view('pages.profile.profile', compact('user', 'posts', 'standardPosts', 'reviewPosts', 'groupStandardPosts', 'groupReviewPosts', 'friendsCount', 'postsCount', 'canViewPosts', 'friendButtonData', 'pendingRequestsCount'));
     }
 
     public function removeFavorite(Request $request)
@@ -219,7 +244,7 @@ class ProfileController extends Controller
 
         $request->validate([
             'name' => 'required|string|max:255',
-            'username' => 'required|string|max:255|unique:users,username,' . $user->id,
+            'username' => 'required|string|min:4|max:40|unique:users,username,' . $user->id . '|regex:/^[a-zA-Z0-9._-]+$/',
             'bio' => 'nullable|string|max:1000',
             'profilePicture' => 'nullable|image|max:4096', // max 4MB
         ]);
@@ -287,7 +312,7 @@ class ProfileController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => 'Privacy setting updated successfully',
-                'isprivate' => !$user->isprivate
+                'redirect_url' => route('profile.edit', [], false) . '?privacy_changed=1'
             ]);
         } catch (\Exception $e) {
             Log::error('Privacy toggle error: ' . $e->getMessage() . "\n" . $e->getTraceAsString());
@@ -308,7 +333,7 @@ class ProfileController extends Controller
             'new_password' => [
                 'required',
                 'string',
-                'min:12',
+                'min:8',
                 'regex:/[a-z]/',      // at least one lowercase
                 'regex:/[A-Z]/',      // at least one uppercase
                 'regex:/[0-9]/',      // at least one number
@@ -342,7 +367,8 @@ class ProfileController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => 'Password changed successfully'
+                'message' => 'Password changed successfully',
+                'redirect_url' => route('profile.edit', [], false) . '?password_changed=1'
             ]);
         } catch (\Exception $e) {
             Log::error('Password change error: ' . $e->getMessage() . "\n" . $e->getTraceAsString());

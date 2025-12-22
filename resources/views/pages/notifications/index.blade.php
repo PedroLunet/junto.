@@ -3,6 +3,15 @@
 @section('title', 'Inbox')
 
 @section('content')
+    @if (session('success'))
+        <x-ui.alert-card type="success" title="Success" :message="session('success')" dismissible="true" />
+    @elseif (session('error'))
+        <x-ui.alert-card type="error" title="Error" :message="session('error')" dismissible="true" />
+    @endif
+    <!-- Hidden alert for JS-triggered messages -->
+    <div id="js-alert-wrapper" class="fixed top-6 right-6 z-50" style="display:none;">
+        <x-ui.alert-card type="success" title="Success" :message="''" dismissible="true" id="js-alert-card" />
+    </div>
     <div class="flex flex-col w-full">
         <div class="w-full bg-white border-b border-gray-200">
             <div class="max-w-7xl mx-auto px-6 sm:px-8 py-8 md:py-12">
@@ -22,7 +31,7 @@
                     <button id="snoozeBtn" onclick="toggleSnoozeUI()"
                         class="inline-flex items-center text-sm text-white font-semibold px-4 py-2 rounded-lg bg-[#820263] hover:bg-[#600149] transition-colors">
                         <i class="fas fa-moon mr-2"></i>
-                        <span id="snoozeText">Snooze Alerts</span>
+                        <span id="snoozeText">{{ $snoozed ? 'Alerts Snoozed' : 'Snooze Alerts' }}</span>
                     </button>
                 </div>
                 <x-ui.tabs :tabs="[
@@ -181,21 +190,32 @@
             else if (minutes === 240) timeText = '4 hours';
             else if (minutes === 1440) timeText = '1 day';
 
-            const confirmation = document.createElement('div');
-            confirmation.className = 'fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg';
-            confirmation.textContent = 'Alerts snoozed for ' + timeText;
-            document.body.appendChild(confirmation);
-
-            setTimeout(() => confirmation.remove(), 3000);
+            showSuccessAlert('Alerts snoozed for ' + timeText);
         }
 
         function showClearConfirmation() {
-            const confirmation = document.createElement('div');
-            confirmation.className = 'fixed top-4 right-4 bg-blue-500 text-white px-6 py-3 rounded-lg shadow-lg';
-            confirmation.textContent = 'Snooze disabled - alerts resumed';
-            document.body.appendChild(confirmation);
+            showSuccessAlert('Snooze disabled - alerts resumed');
+        }
 
-            setTimeout(() => confirmation.remove(), 3000);
+        function showSuccessAlert(message) {
+            const wrapper = document.getElementById('js-alert-wrapper');
+            const card = document.getElementById('js-alert-card');
+            if (!wrapper || !card) return;
+            // Set message
+            var msgDiv = card.querySelector('#js-alert-message');
+            if (msgDiv) msgDiv.textContent = message;
+            // Show
+            wrapper.style.display = '';
+            card.classList.remove('opacity-0', 'translate-x-full');
+            card.classList.add('opacity-100', 'translate-x-0');
+            // Hide after 3s
+            setTimeout(() => {
+                card.classList.remove('opacity-100', 'translate-x-0');
+                card.classList.add('opacity-0', 'translate-x-full');
+                setTimeout(() => {
+                    wrapper.style.display = 'none';
+                }, 300);
+            }, 3000);
         }
 
         function markAllAsRead() {

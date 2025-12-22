@@ -36,7 +36,7 @@
                         <div class="flex gap-2" id="group-movie-star-rating">
                             @for ($i = 1; $i <= 5; $i++)
                                 <button type="button"
-                                    class="group-movie-star-btn text-3xl text-gray-300 hover:text-yellow-400 focus:outline-none transition-colors transform active:scale-95"
+                                    class="group-movie-star-btn text-3xl text-gray-300 hover:text-yellow-400 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:rounded-full transition-colors transform active:scale-95"
                                     data-rating="{{ $i }}">
                                     <i class="fas fa-star"></i>
                                 </button>
@@ -164,7 +164,7 @@
 
                                     div.innerHTML = `
                                 <div class="flex items-center w-full">
-                                    ${posterUrl ? `<img src="${posterUrl}" class="w-10 h-14 object-cover rounded mr-3">` : `<div class="w-10 h-14 bg-gray-200 rounded mr-3 flex items-center justify-center text-xs text-gray-500">No Img</div>`}
+                                    ${posterUrl ? `<img src="${posterUrl}" class="w-10 h-14 object-cover rounded mr-3" alt="${movie.title.replace(/"/g, '&quot;')}">` : `<div class="w-10 h-14 bg-gray-200 rounded mr-3 flex items-center justify-center text-xs text-gray-500">No Img</div>`}
                                     <div><div class="font-medium text-gray-800">${movie.title}</div><div class="text-xs text-gray-500">${safeYear}</div></div>
                                 </div>
                             `;

@@ -5,14 +5,16 @@
         <h1 class="text-3xl font-bold mb-6">Sent Friend Requests</h1>
 
         @if (session('success'))
-            <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
-                {{ session('success') }}
+            <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4 flex items-center gap-2">
+                <i class="fas fa-check-circle"></i>
+                <span>{{ session('success') }}</span>
             </div>
         @endif
 
         @if (session('error'))
-            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-                {{ session('error') }}
+            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4 flex items-center gap-2">
+                <i class="fas fa-exclamation-circle"></i>
+                <span>{{ session('error') }}</span>
             </div>
         @endif
 

@@ -102,6 +102,7 @@ class Post extends Model
             FROM lbaw2544.post_tag pt
             JOIN lbaw2544.users u ON pt.userId = u.id
             WHERE pt.postId IN (" . implode(',', array_fill(0, count($postIds), '?')) . ")
+            AND u.isadmin = false
             ORDER BY pt.createdAt ASC
         ";
         
@@ -185,6 +186,7 @@ class Post extends Model
                 u.username,
                 u.profilePicture as author_image,
                 g.name as group_name,
+                p.groupId as groupid,
                 COALESCE(sp.text, r.content) as content,
                 CASE 
                     WHEN sp.postId IS NOT NULL THEN 'standard'
@@ -228,6 +230,7 @@ class Post extends Model
                 u.username,
                 u.profilePicture as author_image,
                 g.name as group_name,
+                p.groupId as groupid,
                 COALESCE(sp.text, r.content) as content,
                 CASE 
                     WHEN sp.postId IS NOT NULL THEN 'standard'
@@ -271,6 +274,7 @@ class Post extends Model
                 u.username,
                 u.profilePicture as author_image,
                 g.name as group_name,
+                p.groupId as groupid,
                 COALESCE(sp.text, r.content) as content,
                 CASE 
                     WHEN sp.postId IS NOT NULL THEN 'standard'

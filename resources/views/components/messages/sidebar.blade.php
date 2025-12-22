@@ -4,7 +4,7 @@
     <div class="p-4 border-b border-gray-200">
         <div class="relative">
             <input type="text" id="chat-search" placeholder="Search chats..." 
-                   class="w-full pl-10 pr-4 py-2 border rounded-lg text-sm focus:outline-none focus:border-[#624452]">
+                   class="w-full pl-10 pr-4 py-2 border rounded-lg text-sm focus:outline-none focus:border-[#624452] focus:ring-1 focus:ring-[#624452]">
             <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                 <i class="fa-solid fa-magnifying-glass text-gray-400"></i>
             </div>
@@ -34,7 +34,7 @@
                                             <img class="h-10 w-10 rounded-full object-cover" src="{{ $friend->getProfileImage() }}" alt="{{ $friend->name }}" onerror="this.onerror=null; this.src='{{ asset('profile/default.png') }}';">
                                         </div>
                                         <div class="min-w-0 flex-1 px-4">
-                                            <p class="text-sm font-medium {{ $activeFriendId == $friend->id ? 'text-[#624452]' : 'text-gray-900' }} truncate friend-name">{{ $friend->name }}</p>
+                                            <p class="text-sm font-medium {{ $activeFriendId == $friend->id ? 'text-[#624452]' : 'text-gray-900' }} truncate friend-name" title="{{ $friend->name }}">{{ $friend->name }}</p>
                                             <p class="text-xs text-gray-500 truncate friend-last-message">
                                                 @if($friend->last_message_sender_id === auth()->id())
                                                     @if($friend->last_message_is_read)

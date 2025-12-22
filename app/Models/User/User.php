@@ -118,7 +118,7 @@ class User extends Authenticatable
             'friendship',
             'userid1',
             'userid2'
-        )->get(); // fetch as collection
+        )->where('users.isadmin', false)->get();
 
         // Friends where this user is user2
         $friends2 = $this->belongsToMany(
@@ -126,7 +126,7 @@ class User extends Authenticatable
             'friendship',
             'userid2',
             'userid1'
-        )->get(); // fetch as collection
+        )->where('users.isadmin', false)->get(); 
 
         // Merge both collections
         return $friends1->merge($friends2);
@@ -216,6 +216,11 @@ class User extends Authenticatable
     public function scopeDeleted($query)
     {
         return $query->where('isdeleted', true);
+    }
+
+    public function scopeNotAdmin($query)
+    {
+        return $query->where('isadmin', false);
     }
 
     public function scopeSearchByProfile($query, $searchTerm)

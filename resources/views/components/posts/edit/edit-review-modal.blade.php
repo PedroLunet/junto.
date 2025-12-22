@@ -34,7 +34,7 @@
                         <div class="flex gap-2" id="edit-star-rating">
                             @for ($i = 1; $i <= 5; $i++)
                                 <button type="button"
-                                    class="edit-star-btn bg-transparent border-none p-0 h-auto leading-none shadow-none text-2xl text-gray-300 focus:text-gray-300 hover:text-yellow-400 hover:bg-transparent focus:bg-transparent transition-colors focus:outline-none"
+                                    class="edit-star-btn bg-transparent border-none p-0 h-auto leading-none shadow-none text-2xl text-gray-300 focus:text-gray-300 hover:text-yellow-400 hover:bg-transparent focus:bg-transparent transition-colors focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:rounded-full"
                                     data-rating="{{ $i }}">
                                     <i class="fa-regular fa-star"></i>
                                 </button>

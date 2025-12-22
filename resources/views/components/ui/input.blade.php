@@ -27,6 +27,9 @@
             <label for="{{ $inputId }}"
                 class="block text-base sm:text-lg md:text-xl lg:text-lg font-medium text-gray-700">
                 {{ $label }}
+                @if($required)
+                    <span class="text-red-500">*</span>
+                @endif
             </label>
             @if ($help)
                 <div class="group relative flex items-center ml-1" onmouseenter="positionTooltip(this)" onmouseleave="hideTooltip(this)">

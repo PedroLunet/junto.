@@ -129,7 +129,7 @@
                         <div class="relative mb-4">
                             <input type="text" id="invite-user-search" placeholder="Search name or username..."
                                 class="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#820263]/20 focus:border-[#820263] transition-all outline-none text-sm">
-                            <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                            <i class="fas fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
                         </div>
                         <div id="invite-user-results" class="flex flex-col gap-2 max-h-60 overflow-y-auto custom-scrollbar">
                         </div>
@@ -484,7 +484,7 @@
                                 class="text-gray-400 font-normal text-lg ml-2">({{ $sortedMembers->count() }})</span>
                         </h3>
                         <button type="button"
-                            class="modal-close-trigger text-gray-400 hover:text-gray-500 focus:outline-none">
+                            class="modal-close-trigger text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:rounded-md">
                             <i class="fas fa-times text-xl"></i>
                         </button>
                     </div>

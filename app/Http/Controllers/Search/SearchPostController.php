@@ -29,6 +29,7 @@ class SearchPostController extends Controller
                 u.username,
                 u.profilePicture as author_image,
                 g.name as group_name,
+                p.groupId as groupid,
                 COALESCE(sp.text, r.content) as content,
                 CASE 
                     WHEN sp.postId IS NOT NULL THEN 'standard'

@@ -4,6 +4,7 @@
         'blue' => 'text-blue-600 hover:bg-blue-50',
         'yellow' => 'text-yellow-600 hover:bg-yellow-50',
         'red' => 'text-red-600 hover:bg-red-50',
+        'green' => 'text-green-600 hover:bg-green-50',
         'gray' => 'text-gray-600 hover:bg-gray-100',
     ];
     $variant = $attributes->get('variant', 'gray');

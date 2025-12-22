@@ -29,15 +29,22 @@ class PostController extends Controller
 
         $tags = $request->input('tags', []);
         if (! empty($tags)) {
-            $friendIds = Auth::user()->friends()->pluck('id')->toArray();
-            $invalidTags = array_filter($tags, function ($userId) use ($friendIds) {
-                return !in_array($userId, $friendIds) && $userId !== Auth::id();
-            });
-            if (! empty($invalidTags)) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'You can only tag friends',
-                ], 403);
+            $tags = \App\Models\User\User::whereIn('id', $tags)
+                ->where('isadmin', false)
+                ->pluck('id')
+                ->toArray();
+            
+            if (!empty($tags)) {
+                $friendIds = Auth::user()->friends()->pluck('id')->toArray();
+                $invalidTags = array_filter($tags, function ($userId) use ($friendIds) {
+                    return !in_array($userId, $friendIds) && $userId !== Auth::id();
+                });
+                if (! empty($invalidTags)) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'You can only tag friends',
+                    ], 403);
+                }
             }
         }
 
@@ -197,6 +204,7 @@ class PostController extends Controller
                 u.username,
                 u.profilepicture as author_image,
                 g.name as group_name,
+                p.groupid as groupid,
                 COALESCE(sp.text, r.content) as content,
                 CASE 
                     WHEN sp.postid IS NOT NULL THEN 'standard'

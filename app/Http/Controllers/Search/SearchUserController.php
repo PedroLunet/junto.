@@ -24,6 +24,7 @@ class SearchUserController extends Controller
         $users = User::query()
             ->where('isdeleted', false)
             ->where('isblocked', false)
+            ->where('isadmin', false)
             ->when($search, function ($query, $search) {
                 return $query->searchByProfile($search);
             })

@@ -34,23 +34,26 @@
         </div>
     </div>
 
-    <div class="flex justify-center gap-6">
-        <x-ui.icon-button variant="blue" class="edit-user-btn py-2.5" title="Edit" data-user-id="{{ $user->id }}"
-            data-user-name="{{ $user->name }}" data-user-username="{{ $user->username }}"
-            data-user-email="{{ $user->email }}" data-user-bio="{{ $user->bio }}"
-            data-user-isadmin="{{ $user->isadmin ? 'true' : 'false' }}">
-            <i class="fas fa-edit"></i>
-        </x-ui.icon-button>
+    @php use App\Http\Controllers\Admin\AdminController; @endphp
+    @if (auth()->id() !== $user->id && !AdminController::isDeletedUser($user))
+        <div class="flex justify-center gap-6">
+            <x-ui.icon-button variant="blue" class="edit-user-btn py-2.5" title="Edit"
+                data-user-id="{{ $user->id }}" data-user-name="{{ $user->name }}"
+                data-user-username="{{ $user->username }}" data-user-email="{{ $user->email }}"
+                data-user-bio="{{ $user->bio }}" data-user-isadmin="{{ $user->isadmin ? 'true' : 'false' }}">
+                <i class="fas fa-edit"></i>
+            </x-ui.icon-button>
 
-        <x-ui.icon-button variant="yellow" class="ban-user-btn py-2.5"
-            title="{{ $user->isblocked ? 'Unblock' : 'Block' }}" data-user-id="{{ $user->id }}"
-            data-user-name="{{ $user->name }}" data-user-blocked="{{ $user->isblocked ? 'true' : 'false' }}">
-            <i class="fas fa-ban"></i>
-        </x-ui.icon-button>
+            <x-ui.icon-button variant="yellow" class="ban-user-btn py-2.5"
+                title="{{ $user->isblocked ? 'Unblock' : 'Block' }}" data-user-id="{{ $user->id }}"
+                data-user-name="{{ $user->name }}" data-user-blocked="{{ $user->isblocked ? 'true' : 'false' }}">
+                <i class="fas fa-ban"></i>
+            </x-ui.icon-button>
 
-        <x-ui.icon-button variant="red" class="delete-user-btn p-2.5" data-user-id="{{ $user->id }}"
-            title="Delete">
-            <i class="fas fa-trash"></i>
-        </x-ui.icon-button>
-    </div>
+            <x-ui.icon-button variant="red" class="delete-user-btn p-2.5" data-user-id="{{ $user->id }}"
+                title="Delete">
+                <i class="fas fa-trash"></i>
+            </x-ui.icon-button>
+        </div>
+    @endif
 </div>
