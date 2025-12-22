@@ -1,6 +1,10 @@
 @extends('layouts.app')
 
 @section('content')
+    @if (session('success'))
+        <x-ui.alert-card type="success" title="Success" :message="session('success')" dismissible="true" class="mb-6" />
+    @endif
+
     <!-- Alert Container -->
     <div id="alertContainer" class="fixed top-20 right-8 z-50 min-w-[500px]"></div>
 
@@ -52,11 +56,26 @@
                         id: alertId
                     })
                 })
-                .then(response => response.text())
+                .then(response => {
+                    console.log('showAlert fetch response status:', response.status);
+                    return response.text();
+                })
                 .then(html => {
+                    console.log('showAlert received HTML:', html);
                     alertContainer.insertAdjacentHTML('beforeend', html);
 
-                    // Auto-dismiss after 5 seconds
+                    // Execute any scripts in the inserted HTML (needed for alert animation)
+                    const tempDiv = document.createElement('div');
+                    tempDiv.innerHTML = html;
+                    tempDiv.querySelectorAll('script').forEach(script => {
+                        try {
+                            eval(script.innerText);
+                        } catch (e) {
+                            console.error('Error executing alert script:', e);
+                        }
+                    });
+
+                    // Auto-dismiss after 5 seconds (fallback)
                     setTimeout(() => {
                         const alert = document.getElementById(alertId);
                         if (alert) {
@@ -70,6 +89,22 @@
         }
 
         document.addEventListener('DOMContentLoaded', function() {
+            // Show alert if redirected after password change
+            const params = new URLSearchParams(window.location.search);
+            if (params.get('password_changed') === '1') {
+                console.log('Password changed param detected');
+                if (window.showAlert && typeof window.showAlert === 'function') {
+                    window.showAlert('success', 'Success', 'Password changed successfully!');
+                } else {
+                    alert('Password changed successfully!');
+                }
+                // Remove the param from the URL without reloading
+                if (window.history.replaceState) {
+                    const url = new URL(window.location);
+                    url.searchParams.delete('password_changed');
+                    window.history.replaceState({}, document.title, url.pathname + url.search);
+                }
+            }
             const privacyToggle = document.querySelector('#privacy-toggle');
 
             if (privacyToggle) {
