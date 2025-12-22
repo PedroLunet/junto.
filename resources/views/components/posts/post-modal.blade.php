@@ -273,7 +273,6 @@
         }
         commentRefreshInterval = setInterval(() => {
             if (currentPostId) {
-                // Don't refresh if a comment is being edited
                 const editingComment = document.querySelector('.comment-edit-form:not(.hidden)');
                 if (!editingComment) {
                     window.loadComments(currentPostId, true);
@@ -483,7 +482,7 @@
         textElement.classList.add('hidden');
         editForm.classList.remove('hidden');
         editBtn.classList.add('hidden');
-        
+
         // Stop auto-refresh while editing
         if (commentRefreshInterval) {
             clearInterval(commentRefreshInterval);
@@ -505,7 +504,7 @@
         textElement.classList.remove('hidden');
         editForm.classList.add('hidden');
         editBtn.classList.remove('hidden');
-        
+
         // Restart auto-refresh after canceling edit
         if (currentPostId && !commentRefreshInterval) {
             commentRefreshInterval = setInterval(() => {
@@ -559,12 +558,13 @@
                     textElement.classList.remove('hidden');
                     editForm.classList.add('hidden');
                     editBtn.classList.remove('hidden');
-                    
+
                     // Restart auto-refresh after saving edit
                     if (currentPostId && !commentRefreshInterval) {
                         commentRefreshInterval = setInterval(() => {
                             if (currentPostId) {
-                                const editingComment = document.querySelector('.comment-edit-form:not(.hidden)');
+                                const editingComment = document.querySelector(
+                                    '.comment-edit-form:not(.hidden)');
                                 if (!editingComment) {
                                     window.loadComments(currentPostId, true);
                                 }
