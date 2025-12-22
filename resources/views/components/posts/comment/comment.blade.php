@@ -39,5 +39,22 @@
                 </button>
             </div>
         </div>
+
+        <div class="flex items-center gap-3 mt-2">
+            @auth
+                <button onclick="event.stopPropagation(); toggleCommentLike({{ $comment->id }})"
+                    class="flex items-center gap-1 text-xs hover:text-red-500 transition-colors {{ $comment->is_liked ?? false ? 'text-red-500' : 'text-gray-500' }}"
+                    id="comment-like-btn-{{ $comment->id }}">
+                    <i class="{{ $comment->is_liked ?? false ? 'fas' : 'far' }} fa-heart"
+                        id="comment-like-icon-{{ $comment->id }}"></i>
+                    <span id="comment-like-count-{{ $comment->id }}">{{ $comment->likes_count ?? 0 }}</span>
+                </button>
+            @else
+                <div class="flex items-center gap-1 text-xs text-gray-500">
+                    <i class="far fa-heart"></i>
+                    <span>{{ $comment->likes_count ?? 0 }}</span>
+                </div>
+            @endauth
+        </div>
     </div>
 </div>

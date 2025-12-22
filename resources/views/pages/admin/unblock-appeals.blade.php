@@ -1,7 +1,5 @@
 @extends('layouts.admin')
 
-@section('title', 'Unblock Appeals')
-
 @section('content')
     @if (session('alert'))
         <x-ui.alert-card :type="session('alert.type', 'success')" :title="session('alert.title', '')" :message="session('alert.message', '')" :dismissible="true" />
