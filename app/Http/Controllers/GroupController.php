@@ -52,9 +52,14 @@ class GroupController extends Controller
                 $q->where('groupid', $group->id);
             })
             ->first();
+        
         if (!$invite || $invite->status !== 'pending') {
             return back()->with('error', 'Invite not found or already handled.');
         }
+
+        $groupInviteRequest = \App\Models\GroupInviteRequest::where('requestid', $invite->notificationid)->first();
+        $this->authorize('accept', $groupInviteRequest);
+
         $userId = auth()->id();
                 $group->members()->attach($userId, ['isowner' => false]);
         $invite->update(['status' => 'accepted']);
@@ -83,14 +88,17 @@ class GroupController extends Controller
 
     public function rejectInvite(Group $group, $requestId)
     {
-        $this->authorize('update', $group);
         $invite = \App\Models\Request::where('notificationid', $requestId)
             ->whereIn('status', ['pending', 'waiting_approval'])
             ->whereHas('groupInviteRequest', function ($q) use ($group) {
                 $q->where('groupid', $group->id);
             })
             ->first();
+        
         if ($invite) {
+            $groupInviteRequest = \App\Models\GroupInviteRequest::where('requestid', $invite->notificationid)->first();
+            $this->authorize('reject', $groupInviteRequest);
+
             $invite->update(['status' => 'rejected']);
             return back()->with('success', 'Invite rejected.');
         }
