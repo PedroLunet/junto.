@@ -273,7 +273,11 @@
         }
         commentRefreshInterval = setInterval(() => {
             if (currentPostId) {
-                window.loadComments(currentPostId, true);
+                // Don't refresh if a comment is being edited
+                const editingComment = document.querySelector('.comment-edit-form:not(.hidden)');
+                if (!editingComment) {
+                    window.loadComments(currentPostId, true);
+                }
             }
         }, 5000);
     }
@@ -479,6 +483,12 @@
         textElement.classList.add('hidden');
         editForm.classList.remove('hidden');
         editBtn.classList.add('hidden');
+        
+        // Stop auto-refresh while editing
+        if (commentRefreshInterval) {
+            clearInterval(commentRefreshInterval);
+            commentRefreshInterval = null;
+        }
     }
 
     window.cancelCommentEdit = function(commentId) {
@@ -495,6 +505,18 @@
         textElement.classList.remove('hidden');
         editForm.classList.add('hidden');
         editBtn.classList.remove('hidden');
+        
+        // Restart auto-refresh after canceling edit
+        if (currentPostId && !commentRefreshInterval) {
+            commentRefreshInterval = setInterval(() => {
+                if (currentPostId) {
+                    const editingComment = document.querySelector('.comment-edit-form:not(.hidden)');
+                    if (!editingComment) {
+                        window.loadComments(currentPostId, true);
+                    }
+                }
+            }, 5000);
+        }
     }
 
     window.saveCommentEdit = function(commentId) {
@@ -537,6 +559,18 @@
                     textElement.classList.remove('hidden');
                     editForm.classList.add('hidden');
                     editBtn.classList.remove('hidden');
+                    
+                    // Restart auto-refresh after saving edit
+                    if (currentPostId && !commentRefreshInterval) {
+                        commentRefreshInterval = setInterval(() => {
+                            if (currentPostId) {
+                                const editingComment = document.querySelector('.comment-edit-form:not(.hidden)');
+                                if (!editingComment) {
+                                    window.loadComments(currentPostId, true);
+                                }
+                            }
+                        }, 5000);
+                    }
                 } else {
                     alert(data.message || 'Failed to update comment. Please try again.');
                 }
