@@ -9,7 +9,7 @@ class Group extends Model
 {
     use HasFactory;
 
-    protected $table = 'groups';
+    protected $table = 'lbaw2544.groups';
 
     public $timestamps = false;
 

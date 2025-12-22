@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Request extends Model
 {
-    protected $table = 'request';
+    protected $table = 'lbaw2544.request';
 
     protected $primaryKey = 'notificationid';
 
