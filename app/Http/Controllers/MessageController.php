@@ -69,15 +69,9 @@ class MessageController extends Controller
     public function show($userId)
     {
         $currentUser = Auth::user();
-        $friend = User::find($userId);
+        $friend = User::findOrFail($userId);
 
-        if (!$friend) {
-            return redirect()->route('messages.index')->with('error', 'User not found.');
-        }
-
-        if (!$currentUser->isFriendsWith($userId)) {
-            return redirect()->route('messages.index')->with('error', 'You can only message friends.');
-        }
+        $this->authorize('send', [Message::class, $friend]);
 
         // fetch messages between current user and friend
         $messages = Message::where(function ($query) use ($currentUser, $userId) {
@@ -106,13 +100,9 @@ class MessageController extends Controller
     public function store(Request $request, $userId)
     {
         $currentUser = Auth::user();
+        $friend = User::findOrFail($userId);
 
-        if (!$currentUser->isFriendsWith($userId)) {
-            if ($request->ajax()) {
-                return response()->json(['error' => 'You can only message friends.'], 403);
-            }
-            return back()->with('error', 'You can only message friends.');
-        }
+        $this->authorize('send', [Message::class, $friend]);
 
         $request->validate([
             'content' => 'required|string|max:1000',
@@ -152,6 +142,9 @@ class MessageController extends Controller
     public function destroy($userId)
     {
         $currentUser = Auth::user();
+        $friend = User::findOrFail($userId);
+
+        $this->authorize('deleteConversation', [Message::class, $friend]);
 
         // where (sender = current AND receiver = other) or (sender = other AND receiver = current)
         Message::where(function ($query) use ($currentUser, $userId) {
@@ -168,14 +161,13 @@ class MessageController extends Controller
     public function fetchMessages($userId)
     {
         $currentUser = Auth::user();
+        $friend = User::findOrFail($userId);
 
         if ($currentUser->id == $userId) {
              return response()->json(['messages' => [], 'currentUserId' => $currentUser->id]);
         }
 
-        if (!$currentUser->isFriendsWith($userId)) {
-            return response()->json(['error' => 'You can only message friends.'], 403);
-        }
+        $this->authorize('send', [Message::class, $friend]);
 
         $messages = Message::where(function ($query) use ($currentUser, $userId) {
             $query->where('senderid', $currentUser->id)
