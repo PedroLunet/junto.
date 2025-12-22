@@ -54,6 +54,12 @@
                                         <i class="fas fa-globe mr-1.5"></i> Public
                                     </span>
                                 @endif
+                                
+                                @if(isset($group->is_member) && $group->is_member)
+                                    <span class="inline-flex items-center bg-purple-100 text-[#820263] text-sm px-3 py-1 rounded-full font-bold border border-purple-200">
+                                        <i class="fas fa-check mr-1.5"></i> Joined
+                                    </span>
+                                @endif
                             </div>
                         </div>
 

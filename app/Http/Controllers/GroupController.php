@@ -22,12 +22,12 @@ class GroupController extends Controller
         ]);
 
         $userId = $request->input('user_id');
-        
+
         $user = \App\Models\User\User::find($userId);
         if ($user && $user->isadmin) {
             return back()->with('error', 'Cannot invite this user.');
         }
-        
+
         if ($group->members()->where('users.id', $userId)->exists()) {
             return back()->with('error', 'User is already a member.');
         }
@@ -42,11 +42,11 @@ class GroupController extends Controller
         }
         $notification = \App\Models\Notification::create([
             'receiverid' => $userId,
-            'message' => auth()->user()->name.' invited you to join group '.$group->name,
+            'message' => auth()->user()->name . ' invited you to join group ' . $group->name,
         ]);
         $inviteRequest = \App\Models\Request::create([
             'notificationid' => $notification->id,
-            'senderid' => $userId, 
+            'senderid' => $userId,
             'status' => 'pending',
         ]);
         \App\Models\GroupInviteRequest::create([
@@ -63,7 +63,7 @@ class GroupController extends Controller
                 $q->where('groupid', $group->id);
             })
             ->first();
-        
+
         if (!$invite || $invite->status !== 'pending') {
             return back()->with('error', 'Invite not found or already handled.');
         }
@@ -72,9 +72,9 @@ class GroupController extends Controller
         $this->authorize('accept', $groupInviteRequest);
 
         $userId = auth()->id();
-                $group->members()->attach($userId, ['isowner' => false]);
+        $group->members()->attach($userId, ['isowner' => false]);
         $invite->update(['status' => 'accepted']);
-        
+
         return back()->with('success', 'You have joined the group!');
     }
 
@@ -105,7 +105,7 @@ class GroupController extends Controller
                 $q->where('groupid', $group->id);
             })
             ->first();
-        
+
         if ($invite) {
             $groupInviteRequest = \App\Models\GroupInviteRequest::where('requestid', $invite->notificationid)->first();
             $this->authorize('reject', $groupInviteRequest);
@@ -163,9 +163,20 @@ class GroupController extends Controller
 
     public function index()
     {
-        $groups = Group::withCount('members')->get();
+        $userId = Auth::id();
+        $groups = Group::withCount('members')->orderBy('createdat', 'desc')->get();
+
+        $joinedGroupIds = [];
+        if ($userId) {
+            $joinedGroupIds = DB::table('membership')
+                ->where('userid', $userId)
+                ->pluck('groupid')
+                ->toArray();
+        }
+
         foreach ($groups as $group) {
             $group->users_count = $group->members_count;
+            $group->is_member = in_array($group->id, $joinedGroupIds);
         }
 
         return view('pages.groups.list', ['groups' => $groups]);
@@ -221,7 +232,7 @@ class GroupController extends Controller
 
         $isOwner = $user && $group->members()->wherePivot('isowner', true)->where('users.id', $user->id)->exists();
 
-        if (! $group->isprivate || $isMember || $isOwner) {
+        if (!$group->isprivate || $isMember || $isOwner) {
             $posts = \App\Models\Post\Post::getPostsWithDetails(auth()->id());
             $posts = array_filter($posts, function ($post) use ($group) {
                 return isset($post->groupid) ? $post->groupid == $group->id : false;
@@ -292,7 +303,7 @@ class GroupController extends Controller
 
                 $notification = Notification::create([
                     'receiverid' => $owner->id,
-                    'message' => Auth::user()->name.' wants to join your group '.$group->name,
+                    'message' => Auth::user()->name . ' wants to join your group ' . $group->name,
                 ]);
 
                 $request = ModelsRequest::create([
@@ -315,7 +326,7 @@ class GroupController extends Controller
         $userId = Auth::id();
         $membersCount = $group->members()->count();
         $isOwner = false;
-        if (! $group->isprivate && $membersCount == 0) {
+        if (!$group->isprivate && $membersCount == 0) {
             $isOwner = true;
         }
         $group->members()->attach($userId, ['isowner' => $isOwner]);
@@ -371,7 +382,7 @@ class GroupController extends Controller
             $groupJoinRequest = GroupJoinRequest::where('requestid', $request->notificationid)->first();
             if ($groupJoinRequest) {
                 $this->authorize('cancel', $groupJoinRequest);
-                
+
                 GroupJoinRequest::where('requestid', $request->notificationid)->delete();
                 Notification::where('id', $request->notificationid)->delete();
                 $request->delete();
@@ -426,7 +437,7 @@ class GroupController extends Controller
     public function storePost(Request $request, Group $group)
     {
         $user = Auth::user();
-        if (! $user || ! $group->members->contains($user)) {
+        if (!$user || !$group->members->contains($user)) {
             return response()->json(['success' => false, 'message' => 'Only group members can post.'], 403);
         }
 
@@ -438,12 +449,12 @@ class GroupController extends Controller
         ]);
 
         $tags = $request->input('tags', []);
-        if (! empty($tags)) {
+        if (!empty($tags)) {
             $friendIds = $user->friends()->pluck('id')->toArray();
             $invalidTags = array_filter($tags, function ($userId) use ($friendIds, $user) {
                 return !in_array($userId, $friendIds) && $userId !== $user->id;
             });
-            if (! empty($invalidTags)) {
+            if (!empty($invalidTags)) {
                 return response()->json([
                     'success' => false,
                     'message' => 'You can only tag friends',
@@ -471,11 +482,11 @@ class GroupController extends Controller
         $standardPost->save();
 
         $tags = $request->input('tags', []);
-        if (! empty($tags)) {
+        if (!empty($tags)) {
             foreach ($tags as $userId) {
                 $post->tags()->attach($userId, ['createdat' => now()]);
 
-                if ((int)$userId !== $user->id) {
+                if ((int) $userId !== $user->id) {
                     $notification = \App\Models\Notification::create([
                         'message' => 'You were tagged in a post',
                         'isread' => false,
