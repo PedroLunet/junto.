@@ -17,9 +17,16 @@
                         <input type="hidden" name="type" value="music">
 
                     <!-- music search section -->
-                    <x-ui.media-search type="music" searchId="modalMusicSearch"
-                        searchResultsId="modalMusicSearchResults" inputName="spotify_id"
-                        searchPlaceholder="Search for a song..." label="What song did you listen to?" />
+                    <div class="mb-6">
+                        <label for="modalMusicSearch" class="block font-medium text-gray-700 mb-2">What song did you listen to?</label>
+                        <div class="relative" id="musicSearchContainer">
+                            <input type="text" id="modalMusicSearch" placeholder="Search for a song..."
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#38157a] focus:border-transparent"
+                                autocomplete="off">
+                            <div id="modalMusicSearchResults"
+                                class="absolute top-full left-0 w-full bg-white border rounded-lg shadow-lg hidden max-h-60 overflow-y-auto z-20 mt-1">
+                            </div>
+                        </div>
 
                         <!-- selected music preview -->
                         <div id="modalSelectedMusic"
