@@ -13,7 +13,7 @@ class StandardPost extends Model
 
     public $timestamps = false;
 
-    protected $fillable = ['text', 'imageurl'];
+    protected $fillable = ['postid', 'text', 'imageurl'];
 
     public function getImageUrl()
     {

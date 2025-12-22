@@ -12,7 +12,7 @@ class Review extends Model
     protected $primaryKey = 'postid';
     public $timestamps = false;
     
-    protected $fillable = ['content', 'rating', 'mediaid'];
+    protected $fillable = ['postid', 'content', 'rating', 'mediaid'];
     
     public function media()
     {
