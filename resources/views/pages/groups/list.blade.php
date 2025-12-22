@@ -1,7 +1,5 @@
 @extends('layouts.app')
 
-@section('title', 'Groups')
-
 @section('content')
     <div class="container mx-auto px-4 py-12">
 

@@ -1,7 +1,5 @@
 @extends('layouts.admin')
 
-@section('title', 'Groups')
-
 @section('content')
     <div class="flex flex-col h-[calc(100vh-4rem)]">
         <!-- Fixed Header -->

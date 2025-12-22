@@ -1,7 +1,5 @@
 @extends('layouts.admin')
 
-@section('title', 'Account Security')
-
 @section('content')
     @if (session('success'))
         <x-ui.alert-card type="success" title="Success" :message="session('success')" dismissible="true" class="mb-6" />
