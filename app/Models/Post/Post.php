@@ -34,6 +34,11 @@ class Post extends Model
         return $this->belongsTo(User::class, 'userid', 'id');
     }
 
+    public function group()
+    {
+        return $this->belongsTo(\App\Models\Group::class, 'groupid', 'id');
+    }
+
     public function tags()
     {
         return $this->belongsToMany(User::class, 'post_tag', 'postid', 'userid')

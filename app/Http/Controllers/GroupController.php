@@ -473,23 +473,21 @@ class GroupController extends Controller
         $tags = $request->input('tags', []);
         if (! empty($tags)) {
             foreach ($tags as $userId) {
-                DB::insert('
-                    INSERT INTO post_tag (postId, userId, createdAt)
-                    VALUES (?, ?, CURRENT_TIMESTAMP)
-                ', [$post->id, $userId]);
+                $post->tags()->attach($userId, ['createdat' => now()]);
 
                 if ((int)$userId !== $user->id) {
-                    $notification = DB::table('notification')->insertGetId([
+                    $notification = \App\Models\Notification::create([
                         'message' => 'You were tagged in a post',
                         'isread' => false,
                         'receiverid' => $userId,
                         'createdat' => now(),
                     ]);
 
-                    DB::insert('
-                        INSERT INTO tag_notification (notificationid, postid, taggerid)
-                        VALUES (?, ?, ?)
-                    ', [$notification, $post->id, $user->id]);
+                    \App\Models\Notification\TagNotification::create([
+                        'notificationid' => $notification->id,
+                        'postid' => $post->id,
+                        'taggerid' => $user->id,
+                    ]);
                 }
             }
         }
