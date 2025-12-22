@@ -1,7 +1,5 @@
 @extends('layouts.admin')
 
-@section('title', 'Users')
-
 @section('content')
     {{-- Server-side alert (if any) --}}
     @if (session('alert'))
