@@ -70,22 +70,25 @@
                         </span>
                     </td>
                     <td class="px-3 py-4 whitespace-nowrap text-base font-medium">
-                        <div class="flex justify-center space-x-1">
-                            <x-ui.icon-button variant="blue" class="edit-user-btn" data-user-id="{{ $user->id }}"
-                                data-user-name="{{ $user->name }}" data-user-username="{{ $user->username }}"
-                                data-user-email="{{ $user->email }}" data-user-bio="{{ $user->bio }}"
-                                data-user-isadmin="{{ $user->isadmin ? 'true' : 'false' }}">
-                                <i class="fas fa-edit"></i>
-                            </x-ui.icon-button>
-                            <x-ui.icon-button variant="yellow" class="ban-user-btn" data-user-id="{{ $user->id }}"
-                                data-user-name="{{ $user->name }}"
-                                data-user-blocked="{{ $user->isblocked ? 'true' : 'false' }}">
-                                <i class="fas fa-ban"></i>
-                            </x-ui.icon-button>
-                            <x-ui.icon-button variant="red" class="delete-user-btn">
-                                <i class="fas fa-trash"></i>
-                            </x-ui.icon-button>
-                        </div>
+                        @if (auth()->id() !== $user->id)
+                            <div class="flex justify-center space-x-1">
+                                <x-ui.icon-button variant="blue" class="edit-user-btn"
+                                    data-user-id="{{ $user->id }}" data-user-name="{{ $user->name }}"
+                                    data-user-username="{{ $user->username }}" data-user-email="{{ $user->email }}"
+                                    data-user-bio="{{ $user->bio }}"
+                                    data-user-isadmin="{{ $user->isadmin ? 'true' : 'false' }}">
+                                    <i class="fas fa-edit"></i>
+                                </x-ui.icon-button>
+                                <x-ui.icon-button variant="yellow" class="ban-user-btn"
+                                    data-user-id="{{ $user->id }}" data-user-name="{{ $user->name }}"
+                                    data-user-blocked="{{ $user->isblocked ? 'true' : 'false' }}">
+                                    <i class="fas fa-ban"></i>
+                                </x-ui.icon-button>
+                                <x-ui.icon-button variant="red" class="delete-user-btn">
+                                    <i class="fas fa-trash"></i>
+                                </x-ui.icon-button>
+                            </div>
+                        @endif
                     </td>
                 </tr>
             @empty
@@ -500,7 +503,7 @@
                     if (allSuccess) {
                         showAlertCard('success', 'Success',
                             `User${selectedUsers.length > 1 ? 's' : ''} ${namesList} ${selectedUsers.length > 1 ? 'have' : 'has'} been ${action}ed successfully.`
-                            );
+                        );
                         setTimeout(() => window.location.reload(), 1500);
                     } else {
                         showAlertCard('error', 'Error', errorMessages.join('\n'));
