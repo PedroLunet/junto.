@@ -80,8 +80,8 @@
                             @php
                                 $currentUserProfilePicture =
                                     Auth::check() && Auth::user()->profilePicture
-                                    ? asset('profile/' . Auth::user()->profilePicture)
-                                    : asset('profile/default.png');
+                                        ? asset('profile/' . Auth::user()->profilePicture)
+                                        : asset('profile/default.png');
                             @endphp
                             <img src="{{ $currentUserProfilePicture }}" alt="User Avatar"
                                 class="w-8 h-8 rounded-full object-cover shrink-0">
@@ -134,7 +134,7 @@
         return div.innerHTML;
     }
 
-    window.openPostModal = function (post) {
+    window.openPostModal = function(post) {
         const modal = document.getElementById('postModal');
         const content = document.getElementById('modalContent');
         const authorDiv = document.getElementById('modalAuthor');
@@ -158,7 +158,7 @@
             editBtn.style.display = 'none';
             if (window.isAuthenticated && window.currentUserUsername === post.username) {
                 editBtn.style.display = 'block';
-                editBtn.onclick = function () {
+                editBtn.onclick = function() {
                     window.closePostModal();
                     if (post.post_type === 'review') {
                         window.openEditReviewModal(
@@ -278,7 +278,7 @@
         }, 5000);
     }
 
-    window.loadComments = function (postId, silent = false) {
+    window.loadComments = function(postId, silent = false) {
         const commentsSection = document.getElementById('commentsSection');
 
         if (!silent) {
@@ -319,7 +319,7 @@
                 }
             });
     }
-    window.closePostModal = function () {
+    window.closePostModal = function() {
         const modal = document.getElementById('postModal');
         modal.classList.add('hidden');
         currentPostId = null;
@@ -330,7 +330,7 @@
             commentRefreshInterval = null;
         }
     }
-    window.likePost = function (event) {
+    window.likePost = function(event) {
         event.stopPropagation();
         if (!currentPostId) return;
         if (!window.isAuthenticated) {
@@ -341,12 +341,12 @@
         const likeIcon = document.getElementById('modalLikeIcon');
         const likesCount = document.getElementById('likesCount');
         fetch(`/posts/${currentPostId}/like`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': csrfToken
-            }
-        })
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': csrfToken
+                }
+            })
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
@@ -387,13 +387,13 @@
                 console.error('Error liking post:', error);
             });
     }
-    window.handleCommentKeyPress = function (event) {
+    window.handleCommentKeyPress = function(event) {
         if (event.key === 'Enter') {
             event.preventDefault();
             window.submitComment();
         }
     }
-    window.submitComment = function () {
+    window.submitComment = function() {
         const input = document.getElementById('commentInput');
         const commentText = input.value.trim();
         if (!commentText) {
@@ -401,15 +401,15 @@
         }
         const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
         fetch(`/posts/${currentPostId}/comments`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': csrfToken
-            },
-            body: JSON.stringify({
-                content: commentText
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': csrfToken
+                },
+                body: JSON.stringify({
+                    content: commentText
+                })
             })
-        })
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
@@ -422,16 +422,16 @@
                 alert('Failed to post comment. Please try again.');
             });
     }
-    window.openReportModal = function (event) {
+    window.openReportModal = function(event) {
         event.stopPropagation();
         if (!currentPostId) return;
         document.getElementById('reportModal').classList.remove('hidden');
         document.getElementById('reportReason').value = '';
     }
-    window.closeReportModal = function () {
+    window.closeReportModal = function() {
         document.getElementById('reportModal').classList.add('hidden');
     }
-    window.submitReport = function () {
+    window.submitReport = function() {
         const reason = document.getElementById('reportReason').value.trim();
         if (!reason) {
             alert('Please provide a reason for reporting this post.');
@@ -443,15 +443,15 @@
         }
         const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
         fetch(`/posts/${currentPostId}/report`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': csrfToken
-            },
-            body: JSON.stringify({
-                reason: reason
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': csrfToken
+                },
+                body: JSON.stringify({
+                    reason: reason
+                })
             })
-        })
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
@@ -468,7 +468,7 @@
             });
     }
 
-    window.toggleEditComment = function (commentId) {
+    window.toggleEditComment = function(commentId) {
         const commentDiv = document.querySelector(`[data-comment-id="${commentId}"]`);
         if (!commentDiv) return;
 
@@ -481,7 +481,7 @@
         editBtn.classList.add('hidden');
     }
 
-    window.cancelCommentEdit = function (commentId) {
+    window.cancelCommentEdit = function(commentId) {
         const commentDiv = document.querySelector(`[data-comment-id="${commentId}"]`);
         if (!commentDiv) return;
 
@@ -497,7 +497,7 @@
         editBtn.classList.remove('hidden');
     }
 
-    window.saveCommentEdit = function (commentId) {
+    window.saveCommentEdit = function(commentId) {
         const commentDiv = document.querySelector(`[data-comment-id="${commentId}"]`);
         if (!commentDiv) return;
 
@@ -517,15 +517,15 @@
         const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
         fetch(`/comments/${commentId}`, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': csrfToken
-            },
-            body: JSON.stringify({
-                content: newContent
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': csrfToken
+                },
+                body: JSON.stringify({
+                    content: newContent
+                })
             })
-        })
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
@@ -547,7 +547,7 @@
             });
     }
 
-    window.deleteComment = function (commentId) {
+    window.deleteComment = function(commentId) {
         if (!confirm('Are you sure you want to delete this comment? This action cannot be undone.')) {
             return;
         }
@@ -555,12 +555,12 @@
         const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
         fetch(`/comments/${commentId}`, {
-            method: 'DELETE',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': csrfToken
-            }
-        })
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': csrfToken
+                }
+            })
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
@@ -588,6 +588,54 @@
             .catch(error => {
                 console.error('Error deleting comment:', error);
                 alert('Failed to delete comment. Please try again.');
+            });
+    }
+
+    window.toggleCommentLike = function(commentId) {
+        const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+        fetch(`/comments/${commentId}/like`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': csrfToken
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    const likeBtn = document.getElementById(`comment-like-btn-${commentId}`);
+                    const likeIcon = document.getElementById(`comment-like-icon-${commentId}`);
+                    const likeCount = document.getElementById(`comment-like-count-${commentId}`);
+
+                    if (likeIcon) {
+                        if (data.liked) {
+                            likeIcon.classList.remove('far');
+                            likeIcon.classList.add('fas');
+                            if (likeBtn) {
+                                likeBtn.classList.remove('text-gray-500');
+                                likeBtn.classList.add('text-red-500');
+                            }
+                        } else {
+                            likeIcon.classList.remove('fas');
+                            likeIcon.classList.add('far');
+                            if (likeBtn) {
+                                likeBtn.classList.remove('text-red-500');
+                                likeBtn.classList.add('text-gray-500');
+                            }
+                        }
+                    }
+
+                    if (likeCount) {
+                        likeCount.textContent = data.likes_count;
+                    }
+                } else {
+                    alert(data.message || 'Failed to like comment. Please try again.');
+                }
+            })
+            .catch(error => {
+                console.error('Error liking comment:', error);
+                alert('Failed to like comment. Please try again.');
             });
     }
 </script>

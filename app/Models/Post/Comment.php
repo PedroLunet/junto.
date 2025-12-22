@@ -157,4 +157,24 @@ class Comment extends Model
             'likes_count' => $likesCount,
         ];
     }
+
+    public static function updateComment($commentId, $content)
+    {
+        $comment = self::find($commentId);
+        if ($comment) {
+            $comment->update([
+                'content' => $content,
+            ]);
+        }
+        return $comment;
+    }
+
+    public static function deleteComment($commentId)
+    {
+        $comment = self::find($commentId);
+        if ($comment) {
+            $comment->delete();
+        }
+        return true;
+    }
 }
