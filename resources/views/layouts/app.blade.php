@@ -1,7 +1,16 @@
 @extends('layouts.base')
 
-@section('header-scripts')
-    function updateNotificationBadge() {
+
+
+@section('header-actions')
+    @auth
+        <x-ui.button href="{{ route('notifications.index') }}" variant="ghost" class="p-2 relative" title="Inbox">
+            <i class="fa-solid fa-inbox"></i>
+            <span id="notification-badge"
+                class="absolute top-0 right-0 bg-red-600 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center hidden">0</span>
+        
+            <script>
+                function updateNotificationBadge() {
     if (!window.isAuthenticated) return;
 
     fetch('/notifications/unread-count', {
@@ -30,16 +39,10 @@
     }
 
     document.addEventListener('DOMContentLoaded', updateNotificationBadge);
-    setInterval(updateNotificationBadge, 30000);
-@endsection
-
-@section('header-actions')
-    @auth
-        <x-ui.button href="{{ route('notifications.index') }}" variant="ghost" class="p-2 relative" title="Inbox">
-            <i class="fa-solid fa-inbox"></i>
-            <span id="notification-badge"
-                class="absolute top-0 right-0 bg-red-600 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center hidden">0</span>
-        </x-ui.button>
+    setInterval(updateNotificationBadge, 1000);
+                </script>
+        
+            </x-ui.button>
     @endauth
     @guest
         <x-ui.button href="{{ route('friend-requests.index') }}" variant="ghost" class="p-2" title="Inbox">

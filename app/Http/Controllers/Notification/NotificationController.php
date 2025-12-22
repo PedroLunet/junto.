@@ -49,11 +49,15 @@ class NotificationController extends Controller
             ->orderBy('createdat', 'desc')
             ->paginate(15);
 
+        $snoozedUntil = session('notifications_snoozed_until');
+        $snoozed = $snoozedUntil && now()->isBefore($snoozedUntil);
+
         return view('pages.notifications.index', [
             'notifications' => $notifications,
             'friendRequests' => $friendRequests,
             'sentRequests' => $sentRequests,
             'groupNotifications' => $groupNotifications,
+            'snoozed' => $snoozed,
             'pageTitle' => 'Inbox'
         ]);
     }
