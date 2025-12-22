@@ -26,7 +26,7 @@
         </div>
 
         <!-- timestamp -->
-        <div class="text-xs text-gray-500 text-right">
+        <div class="text-xs text-gray-600 text-right">
             {{ \Carbon\Carbon::parse($post->created_at)->format('H:i') }} <br>
             {{ \Carbon\Carbon::parse($post->created_at)->format('d/m/Y') }}
         </div>

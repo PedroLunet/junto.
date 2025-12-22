@@ -84,7 +84,7 @@
                     @endif
                     <div class="flex flex-col min-w-0">
                         <span class="text-white font-semibold text-sm truncate" title="{{ Auth::user()->name }}">{{ Auth::user()->name }}</span>
-                        <span class="text-gray-400 text-xs truncate" title="@{{ Auth::user()->username }}">@<span>{{ Auth::user()->username }}</span></span>
+                        <span class="text-gray-300 text-xs truncate" title="@{{ Auth::user()->username }}">@<span>{{ Auth::user()->username }}</span></span>
                     </div>
                 </a>
                 <x-ui.button href="{{ url('/logout') }}" variant="ghost" title="Logout">
