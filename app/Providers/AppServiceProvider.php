@@ -11,6 +11,7 @@ use App\Models\Message;
 use App\Models\User\Notification;
 use App\Models\GroupJoinRequest;
 use App\Models\GroupInviteRequest;
+use App\Models\UnblockAppeal;
 use App\Policies\UserPolicy;
 use App\Policies\FriendRequestPolicy;
 use App\Policies\PostPolicy;
@@ -20,6 +21,7 @@ use App\Policies\MessagePolicy;
 use App\Policies\NotificationPolicy;
 use App\Policies\GroupJoinRequestPolicy;
 use App\Policies\GroupInviteRequestPolicy;
+use App\Policies\UnblockAppealPolicy;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -34,6 +36,7 @@ class AppServiceProvider extends ServiceProvider
         Notification::class => NotificationPolicy::class,
         GroupJoinRequest::class => GroupJoinRequestPolicy::class,
         GroupInviteRequest::class => GroupInviteRequestPolicy::class,
+        UnblockAppeal::class => UnblockAppealPolicy::class,
     ];
 
     /**
