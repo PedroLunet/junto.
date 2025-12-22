@@ -51,6 +51,23 @@ class Notification extends Model
         return $this->hasOne(ActivityNotification::class, 'notificationid', 'id');
     }
 
+    public function groupInviteRequest()
+    {
+        return $this->hasOne(\App\Models\GroupInviteRequest::class, 'requestid', 'id');
+    }
+
+    public function groupJoinRequest()
+    {
+        return $this->hasOne(\App\Models\GroupJoinRequest::class, 'requestid', 'id');
+    }
+
+    public function getTypeAttribute()
+    {
+        if ($this->activityNotification) return 'activity';
+        if ($this->groupInviteRequest) return 'group_invite';
+        if ($this->groupJoinRequest) return 'group_join';
+        return null;
+    }
  
     public function markAsRead()
     {

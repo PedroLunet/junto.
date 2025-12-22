@@ -1,9 +1,9 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="flex flex-col h-full -mx-6 -mt-6 overflow-y-auto">
-        <!-- Header Section -->
-        <div class="px-16 pt-10 pb-6">
+    <div class="flex flex-col min-h-0 h-full -m-6">
+        <!-- Fixed Header Section -->
+        <div class="shrink-0 px-16 pt-10 pb-6">
             <div class="flex items-start justify-between gap-6 md:gap-8 lg:gap-10 mb-6 md:mb-8">
                 <!-- profile header -->
                 <div class="flex items-center gap-4 md:gap-6">
@@ -14,25 +14,29 @@
                             onerror="this.onerror=null; this.src='{{ asset('profile/default.png') }}';">
                     </div>
 
-                    <div class="flex-1">
-                        <h3 class="text-2xl md:text-3xl font-bold text-gray-900 mb-1">{{ $user->name }}</h3>
-                        <p class="text-lg md:text-xl text-gray-600 mb-3">@<span>{{ $user->username }}</span>
-                        </p>
+                        <div class="flex-1 w-full">
+                            <h3 class="text-2xl md:text-3xl font-bold text-gray-900 mb-1 text-center sm:text-left">
+                                {{ $user->name }}</h3>
+                            <p class="text-lg md:text-xl text-gray-600 mb-3 text-center sm:text-left">
+                                @<span>{{ $user->username }}</span></p>
 
-                        <!-- friends and posts count -->
-                        <div class="flex gap-5 md:gap-6 mb-3 md:mb-4">
-                            <div>
-                                <a href="{{ url('/friends-' . $user->username) }}" class="hover:underline">
-                                    <span class="font-bold text-gray-900 text-lg">{{ $friendsCount }}</span>
-                                    <span class="text-gray-600 text-lg">Friends</span>
-                                </a>
-                            </div>
-                            <div>
-                                <span class="font-bold text-gray-900 text-lg">{{ $postsCount }}</span>
-                                <span class="text-gray-600 text-lg">Posts</span>
+                            <!-- friends and posts count -->
+                            <div class="flex gap-5 md:gap-6 mb-3 md:mb-4 justify-center sm:justify-start">
+                                <div>
+                                    <a href="{{ url('/friends-' . $user->username) }}" class="hover:underline">
+                                        <span class="font-bold text-gray-900 text-lg">{{ $friendsCount }}</span>
+                                        <span class="text-gray-600 text-lg">Friends</span>
+                                    </a>
+                                </div>
+                                <div>
+                                    <span class="font-bold text-gray-900 text-lg">{{ $postsCount }}</span>
+                                    <span class="text-gray-600 text-lg">Posts</span>
+                                </div>
                             </div>
                         </div>
-
+                    </div>
+                    <!-- action buttons -->
+                    <div class="w-full flex justify-center sm:justify-start mt-3 md:mt-0 md:ml-[88px] lg:ml-[180px]">
                         @auth
                             @if (Auth::id() === $user->id)
                                 <a href="{{ route('profile.edit') }}">
@@ -41,11 +45,9 @@
                                     </x-ui.button>
                                 </a>
                             @else
-                                <!-- Friend request button -->
-                                <div class="mt-3 md:mt-4 flex gap-3">
+                                <div class="flex gap-3 flex-wrap justify-center sm:justify-start">
                                     <x-profile.friend-button :user="$user" :friendButtonData="$friendButtonData" />
-
-                                    @if(Auth::user()->isFriendsWith($user->id))
+                                    @if (Auth::user()->isFriendsWith($user->id))
                                         <a href="{{ route('messages.show', $user->id) }}">
                                             <x-ui.button variant="secondary" class="px-4 py-2 inline-flex items-center">
                                                 <i class="fa-solid fa-envelope mr-2"></i>
@@ -56,42 +58,48 @@
                                 </div>
                             @endif
                         @else
-                            <!-- Befriend button for guests -->
-                            <div class="mt-3 md:mt-4">
-                                <x-ui.button variant="primary" onclick="window.location.href='/login'"
-                                    class="text-base font-medium">
-                                    Befriend
-                                </x-ui.button>
-                            </div>
+                            <x-ui.button variant="primary" onclick="window.location.href='/login'"
+                                class="text-base font-medium">
+                                Befriend
+                            </x-ui.button>
                         @endauth
                     </div>
                 </div>
-
                 <!-- 3 favorites -->
-                <div class="flex gap-4 md:gap-6 lg:gap-8 justify-end">
-                    <x-profile.fav :user="$user" :media="$user->favoriteBookMedia" type="book" />
-                    <x-profile.fav :user="$user" :media="$user->favoriteFilmMedia" type="movie" />
-                    <x-profile.fav :user="$user" :media="$user->favoriteSongMedia" type="music" />
+                <div class="w-full md:w-auto order-2 md:order-0 mt-6 md:mt-0">
+                    <div
+                        class="flex flex-col md:flex-row items-center md:items-end justify-center md:justify-end gap-0 md:gap-1 lg:gap-2">
+                        <div class="flex flex-row gap-4 justify-center md:gap-1 lg:gap-2 md:flex-row">
+                            <x-profile.fav :user="$user" :media="$user->favoriteBookMedia" type="book" />
+                            <x-profile.fav :user="$user" :media="$user->favoriteFilmMedia" type="movie" />
+                        </div>
+                        <div class="flex justify-center mt-4 md:mt-0 md:ml-1 lg:ml-1">
+                            <x-profile.fav :user="$user" :media="$user->favoriteSongMedia" type="music" />
+                        </div>
+                    </div>
                 </div>
             </div>
 
             <!-- bio -->
             <div class="mb-6 md:mb-8 px-10 py-2">
-                <h2 class="text-xl font-bold text-gray-900 mb-2">About Me</h2>
+                <h2 class="text-xl md:text-2xl font-bold text-gray-900 mb-2">About Me</h2>
                 @if ($user->bio)
-                    <p class="text-base md:text-lg text-gray-700 leading-relaxed">{{ $user->bio }}</p>
+                    <p class="text-base md:text-lg text-gray-700 leading-relaxed text-center md:text-left">
+                        {{ $user->bio }}</p>
                 @else
                     @if (Auth::id() === $user->id)
-                        <p class="text-base md:text-lg text-gray-500 italic">Add a bio to tell others about yourself</p>
+                        <p class="text-base md:text-lg text-gray-500 italic text-center md:text-left">Add a bio to tell
+                            others about yourself</p>
                     @else
-                        <p class="text-base md:text-lg text-gray-500 italic">{{ $user->name }} hasn't added a bio yet</p>
+                        <p class="text-base md:text-lg text-gray-500 italic text-center md:text-left">{{ $user->name }}
+                            hasn't added a bio yet</p>
                     @endif
                 @endif
             </div>
         </div>
 
-        <!-- Content Section -->
-        <div class="px-16 pb-6">
+        <!-- Scrollable Content Section -->
+        <div class="flex-1 overflow-hidden px-16">
             <!-- Only show private message if profile is actually private -->
             @if (!$canViewPosts)
                 <div class="flex flex-col items-center justify-center py-12">
@@ -109,7 +117,6 @@
                         'title' => 'Posts',
                         'content' => view('components.posts.post-list', [
                             'posts' => $standardPosts,
-                            'showAuthor' => false,
                             'postType' => 'standard',
                         ])->render(),
                     ],
@@ -117,7 +124,6 @@
                         'title' => 'Reviews',
                         'content' => view('components.posts.post-list', [
                             'posts' => $reviewPosts,
-                            'showAuthor' => false,
                             'postType' => 'review',
                         ])->render(),
                     ],
@@ -125,12 +131,55 @@
             @endif
         </div>
 
+
         <x-posts.post-modal />
         <x-profile.add-fav-modal />
         <x-ui.confirm />
+        <div id="profileUpdateAlertContainer" class="fixed top-6 right-6 z-50 flex flex-col gap-4 items-end"></div>
     </div>
 
     <script>
+        // Show alert-card if profile was updated
+        document.addEventListener('DOMContentLoaded', function() {
+            const msg = localStorage.getItem('profileUpdateSuccess');
+            if (msg) {
+                fetch('/profile/render-alert', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute(
+                                'content'),
+                            'Accept': 'text/html'
+                        },
+                        body: JSON.stringify({
+                            type: 'success',
+                            title: 'Profile updated',
+                            message: msg,
+                            id: 'profile-update-alert-' + Date.now()
+                        })
+                    })
+                    .then(response => response.text())
+                    .then(html => {
+                        let container = document.getElementById('profileUpdateAlertContainer');
+                        if (!container) {
+                            // fallback: create and append to body
+                            container = document.createElement('div');
+                            container.id = 'profileUpdateAlertContainer';
+                            container.className = 'fixed top-6 right-6 z-50 flex flex-col gap-4 items-end';
+                            document.body.appendChild(container);
+                        }
+                        const wrapper = document.createElement('div');
+                        wrapper.innerHTML = html;
+                        container.appendChild(wrapper);
+                        setTimeout(() => {
+                            wrapper.style.opacity = '0';
+                            setTimeout(() => wrapper.remove(), 600);
+                        }, 3000);
+                    });
+                localStorage.removeItem('profileUpdateSuccess');
+            }
+        });
+
         function removeFavorite(type) {
             window.showAlert({
                 title: 'Remove Favorite',

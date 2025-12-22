@@ -1,57 +1,29 @@
 <div class="bg-white rounded-2xl shadow-md border border-gray-200 p-6 {{ $isViewOnly ?? false ? '' : 'cursor-pointer' }}"
     @if (!($isViewOnly ?? false)) onclick="openPostModal({{ json_encode($post) }})" @endif>
 
-    @if ($showAuthor ?? true)
-        <!-- profile + name -->
-        <div class="flex items-center justify-between mb-4">
-            <div class="flex items-center gap-3">
-                <!-- user avatar -->
-                <img src="{{ asset('profile/default.png') }}" alt="User Avatar"
-                    class="w-10 h-10 rounded-full object-cover bg-gray-200">
+    <!-- profile + name -->
+    <div class="flex items-center justify-between mb-4">
+        <div class="flex items-center gap-3">
+            <!-- user avatar -->
+            <img src="{{ asset('profile/default.png') }}" alt="User Avatar"
+                class="w-10 h-10 rounded-full object-cover bg-gray-200">
 
-                <div class="flex flex-col">
-                    <div class="flex items-center gap-2">
-                        <span class="font-semibold text-gray-900 text-sm">
-                            {{ $post->author_name ?? ($post->user->name ?? 'Unknown User') }}
-                        </span>
-                        @if (!empty($post->group_name))
-                            <span class="text-gray-600 text-xs">
-                                in <span class="font-medium text-[#38157a]">{{ $post->group_name }}</span>
-                            </span>
-                        @endif
-                    </div>
-                    <span class="text-gray-500 text-xs">
-                        @<span>{{ $post->username ?? ($post->user->username ?? 'unknown') }}</span>
-                    </span>
-                </div>
-            </div>
-
-            <div class="flex items-center gap-2">
-                <div class="text-xs text-gray-500 text-right">
-                    {{ \Carbon\Carbon::parse($post->created_at ?? $post->createdat)->format('H:i') }} <br>
-                    {{ \Carbon\Carbon::parse($post->created_at ?? $post->createdat)->format('d/m/Y') }}
-                </div>
-
-                @php
-                    $canDelete = false;
-                    $isOwnPost = false;
-                    if (auth()->check()) {
-                        $postModel = \App\Models\Post\Post::find($post->id);
-                        $canDelete = auth()->user()->can('delete', $postModel);
-                        $isOwnPost = auth()->id() === $postModel->userid;
-                    }
-                @endphp
-
-                @if ($canDelete && !empty($post->groupid ?? ($post->groupId ?? null)) && !$isOwnPost)
-                    <button onclick="event.stopPropagation(); deletePost({{ $post->id }})"
-                        class="text-red-600 hover:text-red-700 hover:bg-red-50 p-2 rounded-lg transition-colors"
-                        title="Delete post">
-                        <i class="fas fa-trash text-sm"></i>
-                    </button>
-                @endif
+            <div class="flex flex-col">
+                <span class="font-semibold text-gray-900 text-sm">
+                    {{ $post->author_name ?? ($post->user->name ?? 'Unknown User') }}
+                </span>
+                <span class="text-gray-500 text-xs">
+                    @<span>{{ $post->username ?? ($post->user->username ?? 'unknown') }}</span>
+                </span>
             </div>
         </div>
-    @endif
+
+        <!-- timestamp -->
+        <div class="text-xs text-gray-500 text-right">
+            {{ \Carbon\Carbon::parse($post->created_at ?? $post->createdat)->format('H:i') }} <br>
+            {{ \Carbon\Carbon::parse($post->created_at ?? $post->createdat)->format('d/m/Y') }}
+        </div>
+    </div>
 
     <!-- REVIEWS -->
     <div class="flex flex-col sm:flex-row gap-4 mb-4">
@@ -112,8 +84,7 @@
         <!-- comments -->
         <div class="flex items-center gap-1">
             <i class="far fa-comment text-lg"></i>
-            <span class="text-lg comments-count"
-                id="comment-count-{{ $post->id }}">{{ $post->comments_count ?? 0 }}</span>
+            <span class="text-lg">{{ $post->comments_count ?? 0 }}</span>
         </div>
     </div>
 </div>

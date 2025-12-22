@@ -39,10 +39,20 @@ class NotificationController extends Controller
             ->with(['request.notification'])
             ->get();
 
+        $groupNotifications = Notification::where('receiverid', Auth::id())
+            ->where(function ($query) {
+                $query->whereHas('groupInviteRequest')
+                      ->orWhereHas('groupJoinRequest');
+            })
+            ->with(['groupInviteRequest.group', 'groupInviteRequest.request', 'groupJoinRequest'])
+            ->orderBy('createdat', 'desc')
+            ->paginate(15);
+
         return view('pages.notifications.index', [
             'notifications' => $notifications,
             'friendRequests' => $friendRequests,
             'sentRequests' => $sentRequests,
+            'groupNotifications' => $groupNotifications,
             'pageTitle' => 'Inbox'
         ]);
     }

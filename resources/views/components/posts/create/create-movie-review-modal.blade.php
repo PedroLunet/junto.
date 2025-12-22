@@ -44,6 +44,10 @@
                                 </div>
                             </div>
                         </div>
+                        <button type="button" id="removeMovieBtn"
+                            class="absolute top-2 right-2 text-gray-400 hover:text-red-500">
+                            <i class="fa-solid fa-times"></i>
+                        </button>
                     </div>
 
                     <div class="mb-6">
@@ -90,7 +94,8 @@
         const searchInput = document.getElementById('modalMovieSearch');
         const resultsDiv = document.getElementById('modalSearchResults');
         const selectedMovieDiv = document.getElementById('modalSelectedMovie');
-        const searchContainer = document.getElementById('searchContainer');
+        // Fix: use correct container ID from media-search-preview
+        const searchContainer = document.getElementById('modalMovieSearchContainer');
         const removeMovieBtn = document.getElementById('removeMovieBtn');
 
         // Selected movie inputs

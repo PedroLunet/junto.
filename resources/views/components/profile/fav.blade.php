@@ -1,6 +1,6 @@
 @php
     $sizeClasses = match ($type) {
-        'music' => 'w-36 h-36 md:w-36 md:h-36 lg:w-40 lg:h-40',
+        'music' => 'w-36 h-36 md:w-42 md:h-42 lg:w-48 lg:h-48',
         default => 'w-24 h-36 md:w-28 md:h-42 lg:w-32 lg:h-48',
     };
 @endphp
@@ -12,10 +12,11 @@
         @if ($media)
             <!-- Remove button  -->
             @if (Auth::id() === $user->id)
-                <x-ui.button onclick="removeFavorite('{{ $type }}')" variant="danger"
-                    class="absolute -top-3 -right-3 w-7 h-7 rounded-full flex items-center justify-center text-xl font-bold z-10 px-0 py-0">
-                    -
-                </x-ui.button>
+                <x-ui.icon-button onclick="removeFavorite('{{ $type }}')" variant="red"
+                    title="Remove favorite {{ ucfirst($type) }}"
+                    class="bg-white absolute -top-3 -right-3 w-7 h-7 flex items-center justify-center z-10 px-0 py-0">
+                    <i class="fa fa-trash w-4 h-4"></i>
+                </x-ui.icon-button>
             @endif
 
             <!-- Media image or title -->
@@ -30,6 +31,7 @@
         @else
             <!-- Add button (only for own profile) -->
             <x-ui.button onclick="openAddFavModal('{{ $type }}')" variant="ghost"
+                title="Add your favorite {{ ucfirst($type) }}"
                 class="w-full h-full text-gray-600 text-3xl md:text-4xl font-light hover:text-gray-800 hover:bg-gray-400 cursor-pointer px-0 py-0">
                 +
             </x-ui.button>
