@@ -1212,6 +1212,13 @@ JOIN users u1 ON u1.username = pairs.un1
 JOIN users u2 ON u2.username = pairs.un2
 ON CONFLICT DO NOTHING;
 
+-- Establish friendship between Alice and Sofia
+INSERT INTO friendship (userId1, userId2)
+VALUES (
+    LEAST((SELECT id FROM users WHERE username = 'alice'), (SELECT id FROM users WHERE username = 'sofia_a')),
+    GREATEST((SELECT id FROM users WHERE username = 'alice'), (SELECT id FROM users WHERE username = 'sofia_a'))
+) ON CONFLICT DO NOTHING;
+
 -- Conversation 1: Alice and Bruno discussing Inception (IDs based on interests)
 INSERT INTO messages (senderId, receiverId, content, isRead, sentAt) VALUES 
     ((SELECT id FROM users WHERE username = 'alice'), 
@@ -1294,5 +1301,52 @@ INSERT INTO messages (senderId, receiverId, content, isRead, sentAt) VALUES
      (SELECT id FROM users WHERE username = 'ana_f'), 
      'Perfect, adding Oltrarno to my itinerary now. Thanks!', TRUE, NOW() - INTERVAL '12 hours');
 
--- RESET SEQUENCES
-SELECT setval(pg_get_serial_sequence('messages', 'id'), (SELECT MAX(id) FROM messages));
+-- Conversation: Alice and Sofia (Planning a meetup)
+INSERT INTO messages (senderId, receiverId, content, isRead, sentAt) VALUES 
+    ((SELECT id FROM users WHERE username = 'sofia_a'), 
+     (SELECT id FROM users WHERE username = 'alice'), 
+     'Hey Alice! Are you going to the community fair this Saturday? I heard they have some great local food stalls this year.', TRUE, NOW() - INTERVAL '1 day'),
+    
+    ((SELECT id FROM users WHERE username = 'alice'), 
+     (SELECT id FROM users WHERE username = 'sofia_a'), 
+     'I was thinking about it! I really need a break from my editing desk. What time were you planning on going?', TRUE, NOW() - INTERVAL '22 hours'),
+    
+    ((SELECT id FROM users WHERE username = 'sofia_a'), 
+     (SELECT id FROM users WHERE username = 'alice'), 
+     'Probably around 1 PM. We could grab lunch there! Apparently, there is a new wood-fired pizza truck everyone is talking about.', TRUE, NOW() - INTERVAL '20 hours'),
+    
+    ((SELECT id FROM users WHERE username = 'alice'), 
+     (SELECT id FROM users WHERE username = 'sofia_a'), 
+     'Pizza sounds perfect. Let''s meet by the main entrance. I''ll text you when I''m parking!', FALSE, NOW() - INTERVAL '18 hours');
+
+-- ADD NEW MEDIA ENTRIES
+INSERT INTO media (title, creator, releaseYear, coverImage) VALUES 
+    ('Bags', 'Clairo', 2019, 'https://i.scdn.co/image/ab67616d0000b27376044719878201b54c860a4f'),
+    ('Sally, When The Wine Runs Out', 'Role Model', 2019, 'https://i.scdn.co/image/ab67616d0000b273d63d0191d84e49392f447f52'),
+    ('Lover, You Should''ve Come Over', 'Jeff Buckley', 1994, 'https://i.scdn.co/image/ab67616d0000b273188540416954a796e6a11186'),
+    ('Silver Springs', 'Fleetwood Mac', 1977, 'https://i.scdn.co/image/ab67616d0000b27391999863260905307335607b');
+
+-- LINK TO MUSIC SUB-TABLE (IDs 41-44 assuming previous total was 40)
+INSERT INTO music (mediaId) VALUES (41), (42), (43), (44);
+
+-- CREATE POST ENTRIES (Base table)
+-- CREATE POST ENTRIES (Base table for reviews)
+INSERT INTO post (userId, groupId, createdAt) VALUES 
+    ((SELECT id FROM users WHERE username = 'ana_f'), NULL, NOW() - INTERVAL '2 hours'),
+    ((SELECT id FROM users WHERE username = 'filipe'), NULL, NOW() - INTERVAL '5 hours'),
+    ((SELECT id FROM users WHERE username = 'pedro_o'), NULL, NOW() - INTERVAL '10 hours'),
+    ((SELECT id FROM users WHERE username = 'carla'), NULL, NOW() - INTERVAL '1 day');
+
+-- ADD REVIEW DETAILS
+INSERT INTO review (postId, rating, mediaId, content) VALUES 
+    -- Ana Ferreira reviewing Clairo
+    ((SELECT MAX(id) - 3 FROM post), 5, 41, 'Bags is the ultimate bedroom pop anthem. The lyrics about overthinking a new relationship are so relatable.'),
+    
+    -- Filipe Moreira reviewing Role Model (Fixed Artist)
+    ((SELECT MAX(id) - 2 FROM post), 5, 42, 'Role Model has such a unique way of capturing vulnerability. "Sally" is short, but it hits so hard every time.'),
+    
+    -- Pedro Oliveira reviewing Jeff Buckley
+    ((SELECT MAX(id) - 1 FROM post), 5, 43, 'Buckley’s vocals on this are haunting. "Too young to hold on and too old to just break free and run"—absolute poetry.'),
+    
+    -- Carla Dias reviewing Fleetwood Mac
+    ((SELECT MAX(id) FROM post), 5, 44, 'The raw emotion Stevie Nicks puts into Silver Springs is unmatched. How this was originally a B-side, I will never understand.');
