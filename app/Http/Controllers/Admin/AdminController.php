@@ -200,7 +200,8 @@ class AdminController extends Controller
                 ], 403);
             }
 
-            $user->update(['isblocked' => true]);
+            $user->isblocked = true;
+            $user->save();
 
             Log::info('User blocked successfully: ' . $user->username . ' (ID: ' . $user->id . ')');
 
@@ -231,7 +232,8 @@ class AdminController extends Controller
         try {
             $user = User::findOrFail($id);
 
-            $user->update(['isblocked' => false]);
+            $user->isblocked = false;
+            $user->save();
 
             // auto approve any pending appeals if user is unblocked directly
             UnblockAppeal::where('userid', $user->id)
@@ -574,7 +576,8 @@ class AdminController extends Controller
 
             $user = $appeal->user;
 
-            $user->update(['isblocked' => false]);
+            $user->isblocked = false;
+            $user->save();
             $appeal->update(['status' => 'approved']);
 
             DB::commit();

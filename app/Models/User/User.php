@@ -36,12 +36,9 @@ class User extends Authenticatable
         'bio',
         'email',
         'passwordhash',
-        'isadmin',
-        'isblocked',
         'isprivate',
         'createdat',
         'google_id',
-        'isdeleted',
     ];
 
     /**
