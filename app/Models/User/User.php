@@ -26,7 +26,6 @@ class User extends Authenticatable
      * The attributes that are mass assignable.
      *
      * Only these fields may be filled using methods like create() or update().
-     * This protects against mass-assignment vulnerabilities.
      *
      * @var list<string>
      */
@@ -43,7 +42,6 @@ class User extends Authenticatable
 
     /**
      * The attributes that should be hidden when serializing the model
-     * (e.g., to arrays or JSON).
      *
      * @var list<string>
      */
