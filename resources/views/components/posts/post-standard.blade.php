@@ -57,7 +57,7 @@
             </div>
         @else
             <button onclick="event.stopPropagation(); toggleLike({{ $post->id }})"
-                class="bg-transparent border-0 shadow-none p-0 h-auto leading-none flex items-center gap-1 hover:text-red-500 hover:bg-transparent focus:bg-transparent focus:outline-none transition-colors {{ $post->is_liked ?? false ? 'text-red-500 focus:text-red-500' : 'text-gray-600 focus:text-gray-600' }}"
+                class="bg-transparent border-0 shadow-none p-0 h-auto leading-none flex items-center gap-1 hover:text-red-500 hover:bg-transparent focus:bg-transparent focus:outline-none focus:ring-2 focus:ring-red-500 focus:rounded-sm transition-colors {{ $post->is_liked ?? false ? 'text-red-500 focus:text-red-500' : 'text-gray-600 focus:text-gray-600' }}"
                 id="like-btn-{{ $post->id }}">
                 <i class="{{ $post->is_liked ?? false ? 'fas' : 'far' }} fa-heart text-lg"
                     id="like-icon-{{ $post->id }}"></i>

@@ -36,7 +36,7 @@
                         <div class="flex gap-2" id="group-movie-star-rating">
                             @for ($i = 1; $i <= 5; $i++)
                                 <button type="button"
-                                    class="group-movie-star-btn text-3xl text-gray-300 hover:text-yellow-400 focus:outline-none transition-colors transform active:scale-95"
+                                    class="group-movie-star-btn text-3xl text-gray-300 hover:text-yellow-400 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:rounded-full transition-colors transform active:scale-95"
                                     data-rating="{{ $i }}">
                                     <i class="fas fa-star"></i>
                                 </button>

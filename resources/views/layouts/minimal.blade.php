@@ -13,6 +13,8 @@
     <link rel="stylesheet" href="{{ asset('css/app.css') }}">
     @stack('styles')
 
+    <title>@yield('title', 'Junto')</title>
+
     <!-- Scripts -->
     <script>
         window.isAuthenticated = {{ auth()->check() ? 'true' : 'false' }};
@@ -23,7 +25,10 @@
 </head>
 
 <body class="bg-[#F1EBF4] min-h-screen">
-    <main class="container mx-auto px-4 py-8">
+    <a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-white focus:text-black focus:rounded-md focus:shadow-lg">
+        Skip to content
+    </a>
+    <main id="main-content" class="container mx-auto px-4 py-8">
         @yield('content')
     </main>
 </body>

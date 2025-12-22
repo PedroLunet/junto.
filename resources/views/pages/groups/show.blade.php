@@ -484,7 +484,7 @@
                                 class="text-gray-400 font-normal text-lg ml-2">({{ $sortedMembers->count() }})</span>
                         </h3>
                         <button type="button"
-                            class="modal-close-trigger text-gray-400 hover:text-gray-500 focus:outline-none">
+                            class="modal-close-trigger text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:rounded-md">
                             <i class="fas fa-times text-xl"></i>
                         </button>
                     </div>

@@ -18,7 +18,7 @@
     
     <!-- Options Menu -->
     <div class="relative">
-        <button id="chat-options-btn" class="text-gray-500 hover:text-gray-700 p-2 rounded-full hover:bg-gray-200 focus:outline-none transition duration-150">
+        <button id="chat-options-btn" class="text-gray-500 hover:text-gray-700 p-2 rounded-full hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-400 transition duration-150">
             <i class="fa-solid fa-ellipsis-vertical text-xl"></i>
         </button>
         <!-- Dropdown -->

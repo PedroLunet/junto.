@@ -13,6 +13,8 @@
     <link rel="stylesheet" href="{{ asset('css/app.css') }}">
     @stack('styles')
 
+    <title>@yield('title', 'Junto')</title>
+
     <!-- Scripts -->
     <script>
         window.isAuthenticated = {{ auth()->check() ? 'true' : 'false' }};
@@ -37,6 +39,9 @@
 </head>
 
 <body class="flex h-screen bg-[#F1EBF4] overflow-hidden">
+    <a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-white focus:text-black focus:rounded-md focus:shadow-lg">
+        Skip to content
+    </a>
 
     <x-ui.button id="mobile-menu-button" variant="ghost" onclick="toggleMobileMenu()"
         class="lg:hidden fixed top-4 left-4 z-50">
@@ -116,7 +121,7 @@
     </aside>
 
     <!-- main content -->
-    <main class="flex-1 flex flex-col overflow-hidden w-full lg:w-auto">
+    <main id="main-content" class="flex-1 flex flex-col overflow-hidden w-full lg:w-auto">
         @hasSection('title')
             <header class="bg-transparent shadow-sm p-4 sticky top-0 z-10 mb-0 flex justify-between items-center">
                 <h2 class="text-[#624452] font-semibold ml-16 lg:ml-0">@yield('title')</h2>
