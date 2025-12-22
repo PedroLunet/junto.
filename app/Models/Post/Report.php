@@ -10,6 +10,33 @@ class Report extends Model
   protected $table = 'report';
   public $timestamps = false;
 
+  protected $fillable = [
+    'reason',
+    'status',
+    'createdat',
+    'postid',
+    'commentid'
+  ];
+
+  public function post()
+  {
+    return $this->belongsTo(Post::class, 'postid', 'id');
+  }
+
+  public function comment()
+  {
+    return $this->belongsTo(Comment::class, 'commentid', 'id');
+  }
+  public function getPostIdAttribute()
+  {
+    return $this->attributes['postid'] ?? null;
+  }
+
+  public function getCommentIdAttribute()
+  {
+    return $this->attributes['commentid'] ?? null;
+  }
+
   /**
    * Create a new report for a post
    */

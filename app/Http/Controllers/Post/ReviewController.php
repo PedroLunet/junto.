@@ -51,7 +51,7 @@ class ReviewController extends Controller
 
                 $googleBook = $this->bookService->getBook($request->google_book_id);
 
-                if (! $googleBook || isset($googleBook['error'])) {
+                if (!$googleBook || isset($googleBook['error'])) {
                     return response()->json(['success' => false, 'message' => 'Book not found on Google Books'], 404);
                 }
 
@@ -75,7 +75,7 @@ class ReviewController extends Controller
                 // 1. get movie details from tmdb
                 $tmdbMovie = $this->movieService->getMovie($request->tmdb_id);
 
-                if (! $tmdbMovie || (isset($tmdbMovie['success']) && $tmdbMovie['success'] === false)) {
+                if (!$tmdbMovie || (isset($tmdbMovie['success']) && $tmdbMovie['success'] === false)) {
                     return response()->json(['success' => false, 'message' => 'Movie not found on TMDB'], 404);
                 }
 
@@ -103,7 +103,7 @@ class ReviewController extends Controller
 
                 $track = $this->musicService->getTrack($request->spotify_id);
 
-                if (! $track || isset($track['error'])) {
+                if (!$track || isset($track['error'])) {
                     return response()->json(['success' => false, 'message' => 'Track not found on Spotify'], 404);
                 }
 
@@ -117,51 +117,41 @@ class ReviewController extends Controller
                 return response()->json(['success' => false, 'message' => 'Media type not supported yet'], 400);
             }
 
-            // 2. check if media exists in the db or create it
-            $existingMedia = DB::selectOne('
-                SELECT id FROM media 
-                WHERE title = ? AND releaseyear = ? AND creator = ?
-            ', [$title, $releaseYear, $creator]);
-
-            $mediaId = null;
-
-            if ($existingMedia) {
-                $mediaId = $existingMedia->id;
-            } else {
-                // create media
-
-                $mediaId = DB::table('media')->insertGetId([
+            // 2. check if media exists in the db or firstOrCreate it
+            $media = \App\Models\Media\Media::firstOrCreate(
+                [
                     'title' => $title,
-                    'creator' => $creator,
                     'releaseyear' => $releaseYear,
+                    'creator' => $creator,
+                ],
+                [
                     'coverimage' => $coverImage,
-                ]);
+                ]
+            );
 
-                // create specific media entry
+            // create specific media entry if it was newly created or just to be safe (Eloquent relations would be better here but simple check works)
+            if ($media->wasRecentlyCreated) {
                 if ($mediaType === 'book') {
-                    DB::table('book')->insert(['mediaid' => $mediaId]);
+                    DB::table('book')->insert(['mediaid' => $media->id]);
                 } elseif ($mediaType === 'film') {
-                    DB::table('film')->insert(['mediaid' => $mediaId]);
+                    DB::table('film')->insert(['mediaid' => $media->id]);
                 } elseif ($mediaType === 'music') {
-                    DB::table('music')->insert(['mediaid' => $mediaId]);
+                    DB::table('music')->insert(['mediaid' => $media->id]);
                 }
             }
 
             // 3. create post
-            $postData = [
+            $post = Post::create([
                 'userid' => Auth::id(),
+                'groupid' => $groupId,
                 'createdat' => now(),
-            ];
-            if ($groupId) {
-                $postData['groupid'] = $groupId;
-            }
-            $postId = DB::table('post')->insertGetId($postData);
+            ]);
 
             // 4. create review
-            DB::table('review')->insert([
-                'postid' => $postId,
+            \App\Models\Post\Review::create([
+                'postid' => $post->id,
                 'rating' => $request->rating,
-                'mediaid' => $mediaId,
+                'mediaid' => $media->id,
                 'content' => $request->input('content'),
             ]);
 
@@ -170,12 +160,12 @@ class ReviewController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => 'Review posted successfully',
-                'post_id' => $postId,
+                'post_id' => $post->id,
             ]);
         } catch (\Exception $e) {
             DB::rollback();
 
-            return response()->json(['success' => false, 'message' => 'Server Error: '.$e->getMessage()], 500);
+            return response()->json(['success' => false, 'message' => 'Server Error: ' . $e->getMessage()], 500);
         }
     }
 
@@ -193,12 +183,10 @@ class ReviewController extends Controller
             $this->authorize('update', $post);
 
             // Update Review
-            DB::table('review')
-                ->where('postid', $id)
-                ->update([
-                    'rating' => $request->rating,
-                    'content' => $request->input('content'),
-                ]);
+            $post->review->update([
+                'rating' => $request->rating,
+                'content' => $request->input('content'),
+            ]);
 
             DB::commit();
 
@@ -206,7 +194,7 @@ class ReviewController extends Controller
         } catch (\Exception $e) {
             DB::rollback();
 
-            return response()->json(['success' => false, 'message' => 'Server Error: '.$e->getMessage()], 500);
+            return response()->json(['success' => false, 'message' => 'Server Error: ' . $e->getMessage()], 500);
         }
     }
 }

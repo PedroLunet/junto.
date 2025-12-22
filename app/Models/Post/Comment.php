@@ -28,6 +28,11 @@ class Comment extends Model
         return $this->belongsTo(Post::class, 'postid', 'id');
     }
 
+    public function likes()
+    {
+        return $this->belongsToMany(User::class, 'comment_like', 'commentid', 'userid');
+    }
+
     public function getAuthorAttribute()
     {
         $user = $this->user;
@@ -39,20 +44,38 @@ class Comment extends Model
 
     public static function getCommentsForPost($postId)
     {
-        return \Illuminate\Support\Facades\DB::select("
-            SELECT 
-                c.id,
-                c.content,
-                c.createdAt as created_at,
-                u.name as author_name,
-                u.username,
-                u.profilePicture as author_picture,
-                (SELECT COUNT(*) FROM comment_like cl WHERE cl.commentId = c.id) as likes_count
-            FROM comment c
-            JOIN users u ON c.userId = u.id
-            WHERE c.postId = ?
-            ORDER BY c.createdAt ASC
-        ", [$postId]);
+        return self::where('postid', $postId)
+            ->with('user')
+            ->withCount(['likes as likes_count'])
+            ->orderBy('createdat', 'asc')
+            ->get();
+    }
+
+    public function getAuthorNameAttribute()
+    {
+        $author = $this->author;
+        return $author ? $author->name : 'Unknown';
+    }
+
+    public function getUsernameAttribute()
+    {
+        $author = $this->author;
+        return $author ? $author->username : 'unknown';
+    }
+
+    public function getPostAuthorNameAttribute()
+    {
+        // Try to get post author safely
+        if ($this->post && $this->post->user) {
+            return $this->post->user->name;
+        }
+        return 'Unknown';
+    }
+
+    public function getAuthorPictureAttribute()
+    {
+        $author = $this->author;
+        return $author ? $author->profilepicture : null;
     }
 
     public static function addComment($postId, $userId, $content)
@@ -64,21 +87,20 @@ class Comment extends Model
             'createdat' => now(),
         ]);
 
-        // Get the newly created comment details
-        $comments = \Illuminate\Support\Facades\DB::select("
-            SELECT 
-                c.id,
-                c.content,
-                c.createdAt as created_at,
-                u.name as author_name,
-                u.username,
-                u.profilePicture as author_picture,
-                (SELECT COUNT(*) FROM comment_like cl WHERE cl.commentId = c.id) as likes_count
-            FROM comment c
-            JOIN users u ON c.userId = u.id
-            WHERE c.id = ?
-        ", [$comment->id]);
+        // Return the fresh comment with relations and counts to match expected output
+        $commentModel = self::where('id', $comment->id)
+            ->with('user')
+            ->withCount(['likes as likes_count'])
+            ->first();
 
-        return $comments[0] ?? null;
+        if ($commentModel) {
+            $commentModel->author_name = $commentModel->user->name;
+            $commentModel->username = $commentModel->user->username;
+            $commentModel->author_picture = $commentModel->user->profilepicture;
+        }
+
+        return $commentModel;
+
+
     }
 }

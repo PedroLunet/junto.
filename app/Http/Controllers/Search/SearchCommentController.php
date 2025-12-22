@@ -20,55 +20,41 @@ class SearchCommentController extends Controller
         $search = $request->input('query', '') ?? "";
         $sort = $request->input('sort', 'date_desc');
 
-        $sql = "
-            SELECT 
-                c.id,
-                c.content,
-                c.createdat as created_at,
-                c.postid,
-                u.name as author_name,
-                u.username,
-                u.profilepicture as author_image,
-                p.userid as post_author_id,
-                pu.name as post_author_name,
-                pu.username as post_author_username,
-                (SELECT COUNT(*) FROM friendship f WHERE (f.userid1 = u.id OR f.userid2 = u.id)) as user_followers_count
-            FROM comment c
-            JOIN users u ON c.userid = u.id
-            JOIN post p ON c.postid = p.id
-            JOIN users pu ON p.userid = pu.id
-            WHERE u.isdeleted = false AND u.isblocked = false
-            AND pu.isdeleted = false AND pu.isblocked = false
-        ";
-
-        $params = [];
+        $queryBuilder = Comment::query()
+            ->select('comment.*')
+            ->join('users', 'comment.userid', '=', 'users.id')
+            ->join('post', 'comment.postid', '=', 'post.id')
+            ->join('users as pu', 'post.userid', '=', 'pu.id')
+            ->where('users.isdeleted', false)
+            ->where('users.isblocked', false)
+            ->where('pu.isdeleted', false)
+            ->where('pu.isblocked', false);
 
         if (!empty($search)) {
-            $sql .= " AND c.content ILIKE ?";
-            $searchTerm = "%{$search}%";
-            $params[] = $searchTerm;
+            $queryBuilder->whereRaw('comment.content ILIKE ?', ["%{$search}%"]);
         }
 
         if ($sort === 'date_asc') {
-            $sql .= " ORDER BY c.createdat ASC";
+            $queryBuilder->orderBy('comment.createdat', 'asc');
         } else {
-            $sql .= " ORDER BY c.createdat DESC";
+            $queryBuilder->orderBy('comment.createdat', 'desc');
         }
 
-        $comments = DB::select($sql, $params);
+        $comments = $queryBuilder->with(['user', 'post.user'])->get();
 
         if ($request->expectsJson() || $request->header('Accept') === 'application/json') {
             return response()->json([
-                'comments' => array_map(function ($comment) {
+                'comments' => $comments->map(function ($comment) {
                     return [
                         'id' => $comment->id,
                         'content' => $comment->content,
                         'author_name' => $comment->author_name,
                         'username' => $comment->username,
                     ];
-                }, $comments)
+                })
             ]);
         }
+
 
         return view("pages.search.index", [
             'comments' => $comments,

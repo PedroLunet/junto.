@@ -65,6 +65,82 @@ class Post extends Model
         return $user;
     }
 
+    public function getAuthorNameAttribute()
+    {
+        $user = $this->getAuthorAttribute();
+        return $user ? $user->name : 'Unknown';
+    }
+
+    public function getUsernameAttribute()
+    {
+        $user = $this->getAuthorAttribute();
+        return $user ? $user->username : 'unknown';
+    }
+
+    public function getIsReviewAttribute()
+    {
+        return $this->review !== null;
+    }
+
+    public function getContentAttribute()
+    {
+        if ($this->standardPost)
+            return $this->standardPost->text;
+        if ($this->review)
+            return $this->review->content;
+        return null;
+    }
+
+    public function getImageUrlAttribute()
+    {
+        if ($this->standardPost)
+            return $this->standardPost->imageurl;
+        if ($this->review && $this->review->media)
+            return $this->review->media->coverimage;
+        return null;
+    }
+
+    public function getRatingAttribute()
+    {
+        return $this->review ? $this->review->rating : null;
+    }
+
+    public function getMediaTitleAttribute()
+    {
+        return $this->review && $this->review->media ? $this->review->media->title : null;
+    }
+
+    public function getMediaPosterAttribute()
+    {
+        return $this->review && $this->review->media ? $this->review->media->coverimage : null;
+    }
+
+    public function getMediaCreatorAttribute()
+    {
+        return $this->review && $this->review->media ? $this->review->media->creator : null;
+    }
+
+    public function getMediaYearAttribute()
+    {
+        return $this->review && $this->review->media ? $this->review->media->releaseyear : null;
+    }
+
+    public function getMediaTypeAttribute()
+    {
+        if (!$this->review || !$this->review->media)
+            return 'unknown';
+
+        $media = $this->review->media;
+        if ($media->book)
+            return 'book';
+        if ($media->film)
+            return 'movie';
+        if ($media->music)
+            return 'music';
+
+        return 'unknown';
+    }
+
     public static function getPostDetails($id, $currentUserId = null)
     {
         $sql = "
@@ -177,7 +253,7 @@ class Post extends Model
         ';
 
         $posts = DB::select($sql, $params);
-        
+
         return self::attachTagsToPostData($posts);
     }
 
@@ -187,7 +263,9 @@ class Post extends Model
             return $posts;
         }
 
-        $postIds = array_map(function ($post) { return $post->id; }, $posts);
+        $postIds = array_map(function ($post) {
+            return $post->id;
+        }, $posts);
         $tagsSql = "
             SELECT pt.postId, u.id, u.name, u.username
             FROM post_tag pt
@@ -196,9 +274,9 @@ class Post extends Model
             AND u.isadmin = false
             ORDER BY pt.createdAt ASC
         ";
-        
+
         $tags = DB::select($tagsSql, $postIds);
-        
+
         $tagsByPost = [];
         foreach ($tags as $tag) {
             if (!isset($tagsByPost[$tag->postid])) {
@@ -263,7 +341,7 @@ class Post extends Model
         ";
 
         $posts = DB::select($sql, [$currentUserId, $currentUserId, $currentUserId]);
-        
+
         return self::attachTagsToPostData($posts);
     }
 
@@ -319,7 +397,7 @@ class Post extends Model
         ';
 
         $posts = DB::select($sql, $params);
-        
+
         return self::attachTagsToPostData($posts);
     }
 
@@ -375,7 +453,7 @@ class Post extends Model
         ';
 
         $posts = DB::select($sql, $params);
-        
+
         return self::attachTagsToPostData($posts);
     }
 
@@ -431,7 +509,7 @@ class Post extends Model
         ';
 
         $posts = DB::select($sql, $params);
-        
+
         return self::attachTagsToPostData($posts);
     }
 
@@ -439,7 +517,7 @@ class Post extends Model
     {
         $post = self::find($postId);
         $user = User::find($userId);
-        
+
         $existing = DB::table('post_like')
             ->where('postid', $postId)
             ->where('userid', $userId)
