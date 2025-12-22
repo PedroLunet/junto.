@@ -13,27 +13,25 @@
         <x-ui.alert-card type="success" title="Success" :message="''" dismissible="true" id="js-alert-card" />
     </div>
     <div class="flex flex-col w-full">
-        <div class="w-full bg-white border-b border-gray-200">
-            <div class="max-w-7xl mx-auto px-6 sm:px-8 py-8 md:py-12">
-                <div class="flex justify-between items-end gap-6">
+        <div class="w-full">
+            <div class="max-w-7xl mx-auto md:mx-20 px-6 sm:px-8 pt-6 pb-2 md:pt-8 md:pb-3">
+                <div class="flex flex-col md:flex-row justify-between items-end mb-4 gap-6">
                     <div>
-                        <h1 class="text-5xl md:text-6xl font-black text-gray-900 tracking-tight">Inbox</h1>
-                        <p class="text-gray-500 mt-3 text-lg">Stay updated with notifications and requests</p>
+                        <h1 class="text-3xl font-black text-gray-900 tracking-tight">Inbox</h1>
+                        <p class="text-gray-500 mt-2 text-base font-normal">Stay updated with notifications and requests</p>
                     </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="w-full flex-1 bg-gray-50">
-            <div class="max-w-7xl mx-auto px-6 sm:px-8 py-8">
-                <div class="mb-6 flex justify-between items-center">
-                    <div></div>
                     <button id="snoozeBtn" onclick="toggleSnoozeUI()"
                         class="inline-flex items-center text-sm text-white font-semibold px-4 py-2 rounded-lg bg-[#820263] hover:bg-[#600149] transition-colors">
                         <i class="fas fa-moon mr-2"></i>
                         <span id="snoozeText">{{ $snoozed ? 'Alerts Snoozed' : 'Snooze Alerts' }}</span>
                     </button>
                 </div>
+            </div>
+        </div>
+
+        <div class="w-full flex-1">
+            <div class="max-w-7xl mx-auto px-6 sm:px-8 py-8">
+                <!-- Removed duplicate snooze button row, now in header -->
                 <x-ui.tabs :tabs="[
                     'notifications' => [
                         'title' => 'Notifications',

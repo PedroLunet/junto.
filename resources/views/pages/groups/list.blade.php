@@ -25,7 +25,7 @@
             @forelse ($groups as $group)
                 <a href="{{ route('groups.show', $group) }}" class="flex flex-col bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-xl hover:-translate-y-2 transition-all duration-300 group cursor-pointer block">
 
-                    <div class="h-24 bg-gradient-to-br from-gray-100 via-gray-200 to-gray-300 relative">
+                    <div class="h-24 bg-linear-to-br from-gray-100 via-gray-200 to-gray-300 relative">
                         <div class="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]"></div>
                     </div>
 
