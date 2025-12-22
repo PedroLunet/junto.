@@ -35,11 +35,6 @@
                                 'count' => $counts['pending'],
                                 'onclick' => 'filterReports(\'pending\')',
                             ],
-                            'accepted' => [
-                                'label' => 'Accepted',
-                                'count' => $counts['accepted'],
-                                'onclick' => 'filterReports(\'accepted\')',
-                            ],
                             'rejected' => [
                                 'label' => 'Rejected',
                                 'count' => $counts['rejected'],
