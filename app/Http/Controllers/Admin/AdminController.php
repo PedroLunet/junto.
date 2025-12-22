@@ -155,26 +155,29 @@ class AdminController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => 'User updated successfully',
-                'user' => $user
+                'redirect_url' => route('admin.users', [], false)
             ]);
         } catch (ModelNotFoundException $e) {
             Log::error('User not found for update: ID ' . $id);
             return response()->json([
                 'success' => false,
-                'message' => 'User not found'
+                'message' => 'User not found',
+                'redirect_url' => route('admin.users', [], false)
             ], 404);
         } catch (ValidationException $e) {
             Log::error('Validation failed: ', $e->errors());
             return response()->json([
                 'success' => false,
-                'errors' => $e->errors()
+                'message' => implode(' ', $e->validator->errors()->all()),
+                'redirect_url' => route('admin.users', [], false)
             ], 422);
         } catch (\Exception $e) {
             Log::error('Exception updating user: ' . $e->getMessage());
             Log::error('Exception trace: ' . $e->getTraceAsString());
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to update user: ' . $e->getMessage()
+                'message' => 'Failed to update user: ' . $e->getMessage(),
+                'redirect_url' => route('admin.users', [], false)
             ], 500);
         }
     }
@@ -187,7 +190,8 @@ class AdminController extends Controller
             if ($user->isadmin) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Cannot block an admin user'
+                    'message' => 'Cannot block an admin user.',
+                    'redirect_url' => route('admin.users', [], false)
                 ], 403);
             }
 
@@ -197,19 +201,22 @@ class AdminController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => 'User blocked successfully'
+                'message' => 'User blocked successfully',
+                'redirect_url' => route('admin.users', [], false)
             ]);
         } catch (ModelNotFoundException $e) {
             Log::error('User not found for blocking: ID ' . $id);
             return response()->json([
                 'success' => false,
-                'message' => 'User not found'
+                'message' => 'User not found',
+                'redirect_url' => route('admin.users', [], false)
             ], 404);
         } catch (\Exception $e) {
             Log::error('Exception blocking user: ' . $e->getMessage());
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to block user: ' . $e->getMessage()
+                'message' => 'Failed to block user: ' . $e->getMessage(),
+                'redirect_url' => route('admin.users', [], false)
             ], 500);
         }
     }
@@ -227,23 +234,25 @@ class AdminController extends Controller
                 ->update(['status' => 'approved']);
 
             Log::info('User unblocked successfully: ' . $user->username . ' (ID: ' . $user->id . ')');
-
             return response()->json([
                 'success' => true,
-                'message' => 'User unblocked successfully'
+                'message' => 'User unblocked successfully',
+                'redirect_url' => route('admin.users', [], false)
             ]);
         } catch (ModelNotFoundException $e) {
             Log::error('User not found for unblocking: ID ' . $id);
             return response()->json([
                 'success' => false,
-                'message' => 'User not found'
-            ], 404);
+                'message' => 'User not found',
+                'redirect_url' => route('admin.users', [], false)
+            ]);
         } catch (\Exception $e) {
             Log::error('Exception unblocking user: ' . $e->getMessage());
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to unblock user: ' . $e->getMessage()
-            ], 500);
+                'message' => 'Failed to unblock user',
+                'redirect_url' => route('admin.users', [], false)
+            ]);
         }
     }
 
@@ -707,10 +716,11 @@ class AdminController extends Controller
             $admin = Auth::user();
             // only allow admins
             if (!$admin->isadmin) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Unauthorized.'
-                ], 403);
+                return redirect()->route('admin.users')->with('alert', [
+                    'type' => 'error',
+                    'title' => 'Unauthorized',
+                    'message' => 'You are not authorized to delete users.'
+                ]);
             }
 
             $request->validate([
@@ -719,18 +729,20 @@ class AdminController extends Controller
 
             // verify admin password
             if (!password_verify($request->password, $admin->passwordhash)) {
-                return response()->json([
-                    'success' => false,
+                return redirect()->route('admin.users')->with('alert', [
+                    'type' => 'error',
+                    'title' => 'Incorrect Password',
                     'message' => 'Incorrect password.'
-                ], 422);
+                ]);
             }
 
             $user = User::findOrFail($id);
             if ($user->isadmin) {
-                return response()->json([
-                    'success' => false,
+                return redirect()->route('admin.users')->with('alert', [
+                    'type' => 'error',
+                    'title' => 'Delete Failed',
                     'message' => 'Cannot delete another admin.'
-                ], 403);
+                ]);
             }
 
             DB::transaction(function () use ($user) {
@@ -743,26 +755,30 @@ class AdminController extends Controller
 
             Log::info('Admin deleted user: ' . $user->username . ' (ID: ' . $user->id . ')');
 
-            return response()->json([
-                'success' => true,
+            return redirect()->route('admin.users')->with('alert', [
+                'type' => 'success',
+                'title' => 'User Deleted',
                 'message' => 'User deleted successfully.'
             ]);
         } catch (ModelNotFoundException $e) {
-            return response()->json([
-                'success' => false,
+            return redirect()->route('admin.users')->with('alert', [
+                'type' => 'error',
+                'title' => 'User Not Found',
                 'message' => 'User not found.'
-            ], 404);
+            ]);
         } catch (ValidationException $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Validation failed: ' . implode(', ', $e->validator->errors()->all())
-            ], 422);
+            return redirect()->route('admin.users')->with('alert', [
+                'type' => 'error',
+                'title' => 'Validation Error',
+                'message' => 'Validation failed: ' . implode(' ', $e->validator->errors()->all())
+            ]);
         } catch (\Exception $e) {
             Log::error('Admin delete user error: ' . $e->getMessage());
-            return response()->json([
-                'success' => false,
+            return redirect()->route('admin.users')->with('alert', [
+                'type' => 'error',
+                'title' => 'Delete Failed',
                 'message' => 'Failed to delete user: ' . $e->getMessage()
-            ], 500);
+            ]);
         }
     }
 }
