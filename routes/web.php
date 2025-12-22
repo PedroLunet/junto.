@@ -29,7 +29,9 @@ use App\Http\Controllers\User\ProfileController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 
-// === Authentication ===
+
+// === AUTH ===
+
 Route::controller(LoginController::class)->group(function () {
     Route::get('/login', 'showLoginForm')->name('login');
     Route::post('/login', 'authenticate');
@@ -58,7 +60,7 @@ Route::controller(GoogleController::class)->group(function () {
 Route::post('/send', [MailController::class, 'send']);
 
 
-// === Blocked ===
+// === BLOCKED ===
 
 Route::middleware('auth')->get('/blocked', function () {
     $hasRejectedAppeal = \App\Models\UnblockAppeal::where('userid', Auth::id())
@@ -76,7 +78,7 @@ Route::middleware('auth')->get('/blocked/status', function () {
 });
 
 
-// === Home and Feed ===
+// === HOME/FEED ===
 
 Route::middleware('regular.user')->group(function () {
     Route::get('/', [HomeController::class, 'index'])->name('home');
@@ -99,7 +101,7 @@ Route::middleware(['auth', 'regular.user'])->group(function () {
 });
 
 
-// === Posts ===
+// === POSTS ===
 
 Route::middleware(['auth', 'regular.user'])->group(function () {
     Route::post('/posts', [PostController::class, 'store'])->name('posts.store');
@@ -112,7 +114,7 @@ Route::middleware(['auth', 'regular.user'])->group(function () {
 Route::get('/posts/{id}/view', [PostController::class, 'show'])->middleware('regular.user')->name('posts.show');
 
 
-// === Search ===
+// === SEARCH ===
 
 Route::middleware(['auth', 'regular.user'])->group(function () {
     Route::get('/search-users', [SearchUserController::class, 'index'])->name('search.users');
@@ -121,7 +123,7 @@ Route::middleware(['auth', 'regular.user'])->group(function () {
     Route::get('/search-groups', [SearchGroupController::class, 'index'])->name('search.groups');
 });
 
-// === Friends ===
+// === FRIENDS ===
 
 Route::middleware(['auth', 'regular.user'])->controller(FriendRequestController::class)->group(function () {
     Route::post('/friend-requests', 'store')->name('friend-requests.store');
@@ -138,28 +140,22 @@ Route::middleware('regular.user')->controller(FriendRequestController::class)->g
 });
 
 
-// === temporary media routes ===
+// === MEDIA ===
 
 Route::middleware(['auth', 'regular.user'])->controller(MovieController::class)->group(function () {
     Route::get('/movies', 'index')->name('movies');
-    Route::get('/movies/search', 'search')->name('movies.search');
-    Route::get('/movies/{id}', 'show')->name('movies.show');
 });
 
 Route::middleware(['auth', 'regular.user'])->controller(MusicController::class)->group(function () {
     Route::get('/music', 'index')->name('music');
-    Route::get('/music/search', 'search')->name('music.search');
-    Route::post('/music', 'store')->name('music.store');
 });
 
 Route::middleware(['auth', 'regular.user'])->controller(BookController::class)->group(function () {
     Route::get('/books', 'index')->name('books');
-    Route::get('/books/search', 'search')->name('books.search');
-    Route::post('/books', 'store')->name('books.store');
 });
 
 
-// === File Upload ===
+// === FILE UPLOAD ===
 
 Route::middleware('auth')->controller(FileController::class)->group(function () {
     Route::post('/file/upload', 'upload')->name('file.upload');
@@ -167,7 +163,7 @@ Route::middleware('auth')->controller(FileController::class)->group(function () 
 });
 
 
-// === Reports ===
+// === REPORTS ===
 
 Route::middleware(['auth', 'regular.user'])->controller(ReportController::class)->group(function () {
     Route::post('/posts/{id}/report', 'reportPost')->name('post.report');
@@ -180,7 +176,7 @@ Route::middleware(['auth', 'admin'])->controller(ReportController::class)->group
 });
 
 
-// === Admin ===
+// === ADMIN ===
 
 Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/admin', [AdminController::class, 'dashboard'])->name('admin.dashboard');
@@ -204,7 +200,7 @@ Route::middleware(['auth', 'admin'])->group(function () {
 });
 
 
-// === Groups ===
+// === GROUPS ===
 
 Route::middleware(['auth'])->group(function () {
     Route::delete('/groups/{group}/remove-member/{user}', [GroupController::class, 'removeMember'])->name('groups.removeMember');
@@ -229,7 +225,7 @@ Route::middleware(['auth'])->group(function () {
 });
 
 
-// === Notifications ===
+// === NOTIFICATIONS ===
 
 Route::middleware(['auth', 'regular.user'])->controller(NotificationController::class)->group(function () {
     Route::get('/notifications', 'index')->name('notifications.index');
@@ -243,7 +239,7 @@ Route::middleware(['auth', 'regular.user'])->controller(NotificationController::
 });
 
 
-// === Static pages ===
+// === STATIC PAGES ===
 
 Route::group([], function () {
     Route::get('/about', function () {
@@ -261,7 +257,7 @@ Route::group([], function () {
 });
 
 
-// === Profile ===
+// === PROFILE ===
 
 Route::middleware(['auth', 'regular.user'])->controller(ProfileController::class)->group(function () {
     Route::get('/profile', 'index')->name('profile');
