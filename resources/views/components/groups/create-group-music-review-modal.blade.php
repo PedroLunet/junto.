@@ -104,7 +104,7 @@
 
         const searchInput = document.getElementById('groupModalMusicSearch');
         const resultsDiv = document.getElementById('groupModalMusicSearchResults');
-        const searchContainer = document.getElementById('groupMusicSearchContainer');
+        const searchContainer = document.getElementById('musicSearchContainer');
         const selectedDiv = document.getElementById('groupModalSelectedMusic');
         const selectedId = document.getElementById('groupSelectedMusicId');
         const selectedTitle = document.getElementById('groupSelectedMusicTitle');
