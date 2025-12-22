@@ -1,69 +1,62 @@
-<form id="editProfileForm" class="space-y-6" method="POST" action="{{ route('profile.update') }}"
+<form id="editProfileForm" class="space-y-8" method="POST" action="{{ route('profile.update') }}"
     enctype="multipart/form-data">
     @csrf
     @method('PUT')
 
-
-    <div class="flex flex-col gap-6 md:flex-row md:items-center md:gap-8">
-        <!-- profile picture -->
-        <div class="flex flex-col items-center mb-4 md:mb-0 md:mr-6 w-full md:w-auto">
-            <div class="shrink-0 w-32 h-32 sm:w-36 sm:h-36 md:w-44 md:h-44 lg:w-48 lg:h-48 relative mb-3">
-                <div class="w-full h-full rounded-full overflow-hidden relative">
-                    <img id="profileImagePreview"
-                        src="{{ $user->profilepicture ? asset('profile/' . $user->profilepicture) : asset('profile/default.png') }}"
-                        alt="Profile Picture" class="absolute inset-0 w-full h-full object-cover"
-                        onerror="this.onerror=null; this.src='{{ asset('profile/default.png') }}';">
-                </div>
-                <!-- Profile image upload button and hidden file input -->
-                <input type="file" id="profileImageInput" name="profilePicture" accept="image/*" class="hidden" />
-                <x-ui.icon-button type="button" id="editProfileImageBtn" variant="blue" title="Upload photo"
-                    class="absolute -top-0.5 -right-0.5 rounded-full flex items-center justify-center text-base md:text-lg font-bold z-10 p-3 shadow-lg">
-                    <i class="fas fa-pencil"></i>
-                </x-ui.icon-button>
-                <x-ui.icon-button type="button" id="resetProfileImageBtn" variant="red" title="Reset to Default"
-                    class="absolute -top-0.5 -left-0.5 rounded-full flex items-center justify-center text-base md:text-lg font-bold z-10 p-3 shadow-lg">
-                    <i class="fas fa-trash"></i>
-                </x-ui.icon-button>
+    <!-- Profile Picture Section -->
+    <div class="flex flex-col items-center justify-center pb-6 border-b border-gray-200">
+        <div class="shrink-0 w-32 h-32 sm:w-40 sm:h-40 md:w-48 md:h-48 relative mb-6">
+            <div class="w-full h-full rounded-full overflow-hidden relative shadow-md">
+                <img id="profileImagePreview"
+                    src="{{ $user->profilepicture ? asset('profile/' . $user->profilepicture) : asset('profile/default.png') }}"
+                    alt="Profile Picture" class="absolute inset-0 w-full h-full object-cover"
+                    onerror="this.onerror=null; this.src='{{ asset('profile/default.png') }}';">
             </div>
-            <p class="text-xs sm:text-sm text-gray-500 text-center max-w-[180px] sm:max-w-[200px]">
-                Supported formats: JPG, JPEG, PNG<br>
-                Max size: 2MB
-            </p>
+            <input type="file" id="profileImageInput" name="profilePicture" accept="image/*" class="hidden" />
+            <x-ui.icon-button type="button" id="editProfileImageBtn" variant="blue" title="Upload photo"
+                class="absolute -bottom-1 right-0 rounded-full flex items-center justify-center text-base font-bold z-10 p-3 shadow-lg">
+                <i class="fas fa-pencil"></i>
+            </x-ui.icon-button>
+            <x-ui.icon-button type="button" id="resetProfileImageBtn" variant="red" title="Reset to Default"
+                class="absolute -bottom-1 left-0 rounded-full flex items-center justify-center text-base font-bold z-10 p-3 shadow-lg">
+                <i class="fas fa-trash"></i>
+            </x-ui.icon-button>
         </div>
+        <p class="text-sm text-gray-600 text-center">
+            <span class="block font-medium mb-1">{{ $user->name }}</span>
+            <span class="text-gray-500">@{{ $user->username }}</span>
+        </p>
+        <p class="text-xs text-gray-400 text-center mt-3 max-w-xs">
+            Supported formats: JPG, JPEG, PNG • Max size: 2MB
+        </p>
+    </div>
 
-        <div class="flex-1 w-full space-y-4 sm:space-y-6">
-            <!-- name -->
+    <!-- Profile Information Section -->
+    <div class="space-y-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <x-ui.input label="Name" name="name" type="text" value="{{ old('name', $user->name ?? '') }}"
                 :error="$errors->first('name')" class="w-full" />
 
-            <!-- username -->
             <x-ui.input label="Username" name="username" type="text"
                 value="{{ old('username', $user->username ?? '') }}" :error="$errors->first('username')" class="w-full" />
-
-            <!-- email -->
-            <x-ui.input label="Email" name="email" type="email" value="{{ old('email', $user->email ?? '') }}"
-                :error="$errors->first('email')" id="editEmailInput" class="w-full" />
         </div>
-    </div>
 
+        <x-ui.input label="Email" name="email" type="email" value="{{ old('email', $user->email ?? '') }}"
+            :error="$errors->first('email')" id="editEmailInput" class="w-full" />
 
-
-
-    <!-- bio -->
-    <div class="w-full mt-2 mb-4">
         <x-ui.input label="Bio" name="bio" type="textarea" value="{{ old('bio', $user->bio ?? '') }}"
-            placeholder="Tell others about yourself..." rows="4" :error="$errors->first('bio')"
+            placeholder="Tell others about yourself..." rows="5" :error="$errors->first('bio')"
             help="Write a short description about yourself that will be visible on your profile." class="w-full" />
     </div>
 
     <!-- Save Button -->
-    <div class="flex justify-end w-full mt-2">
-        <x-ui.button type="submit" variant="primary" class="text-base w-full sm:w-auto" id="saveProfileBtn">
+    <div class="flex justify-end pt-4 border-t border-gray-200">
+        <x-ui.button type="submit" variant="primary" class="text-base px-8" id="saveProfileBtn">
             Save Changes
         </x-ui.button>
     </div>
-
 </form>
+
 <div id="profileUpdateAlertContainer"
     class="fixed top-4 right-2 sm:top-6 sm:right-6 z-50 flex flex-col gap-2 sm:gap-4 items-end w-[90vw] max-w-xs sm:max-w-sm md:max-w-md">
 </div>
