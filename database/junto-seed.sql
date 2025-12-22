@@ -858,26 +858,26 @@ INSERT INTO music (mediaId) VALUES (3), (7), (26), (27), (28), (29), (30), (31),
 -- USERS
 INSERT INTO users (name, username, email, passwordHash, bio, profilePicture, isPrivate, isAdmin, favoriteFilm, favoriteBook, favoriteSong) VALUES 
     ('Admin', 'admin', 'admin@example.org', '$2y$10$HfzIhGCCaxqyaIdGgjARSuOKAcm1Uy82YfLuNaajn6JrjLWy9Sj/W', NULL, NULL, FALSE, TRUE, NULL, NULL, NULL),
-    ('Alice Martins', 'alice', 'alice@example.org', '$2y$10$HfzIhGCCaxqyaIdGgjARSuOKAcm1Uy82YfLuNaajn6JrjLWy9Sj/W', 'Movie lover and aspiring filmmaker 🎬', 'alice.jpg', FALSE, FALSE, 1, 2, 3),
-    ('Bruno Silva', 'bruno', 'bruno@example.org', '$2y$10$HfzIhGCCaxqyaIdGgjARSuOKAcm1Uy82YfLuNaajn6JrjLWy9Sj/W', 'Reader & gamer. Tech enthusiast 💻', 'bruno.jpg', FALSE, FALSE, 4, 5, 3),
-    ('Carla Dias', 'carla', 'carla@example.org', '$2y$10$HfzIhGCCaxqyaIdGgjARSuOKAcm1Uy82YfLuNaajn6JrjLWy9Sj/W', 'Music addict 🎵 Concerts are life!', 'carla.jpg', TRUE, FALSE, 1, 2, 7),
-    ('David Costa', 'david', 'david@example.org', '$2y$10$HfzIhGCCaxqyaIdGgjARSuOKAcm1Uy82YfLuNaajn6JrjLWy9Sj/W', 'Cinephile. Nolan fanboy.', 'david.jpg', FALSE, FALSE, 6, NULL, NULL),
-    ('Eva Rocha', 'eva', 'eva@example.org', '$2y$10$HfzIhGCCaxqyaIdGgjARSuOKAcm1Uy82YfLuNaajn6JrjLWy9Sj/W', 'Book enthusiast 📚 Coffee lover ☕', 'eva.jpg', TRUE, FALSE, 4, 8, 7),
-    ('Filipe Moreira', 'filipe', 'filipe@example.org', '$2y$10$HfzIhGCCaxqyaIdGgjARSuOKAcm1Uy82YfLuNaajn6JrjLWy9Sj/W', 'Vinyl collector. Old school music only 🎸', 'filipe.jpg', FALSE, FALSE, 1, NULL, 3),
-    ('John Doe', 'john_doe', 'john@example.org', '$2y$10$HfzIhGCCaxqyaIdGgjARSuOKAcm1Uy82YfLuNaajn6JrjLWy9Sj/W', 'Private person', 'john.jpg', TRUE, FALSE, 1, 2, 3),
-    ('Jane Smith', 'jane_doe', 'jane@example.org', '$2y$10$HfzIhGCCaxqyaIdGgjARSuOKAcm1Uy82YfLuNaajn6JrjLWy9Sj/W', 'Keep it secret', 'jane.jpg', TRUE, FALSE, 4, 5, 7),
-    ('Miguel Santos', 'miguelito', 'miguel@example.org', '$2y$10$HfzIhGCCaxqyaIdGgjARSuOKAcm1Uy82YfLuNaajn6JrjLWy9Sj/W', 'Part-time photographer 📸 Full-time dreamer', 'miguel.jpg', FALSE, FALSE, 9, 17, 26),
-    ('Sofia Almeida', 'sofia_a', 'sofia@example.org', '$2y$10$HfzIhGCCaxqyaIdGgjARSuOKAcm1Uy82YfLuNaajn6JrjLWy9Sj/W', 'Travel blogger ✈️ Always exploring', 'sofia.jpg', FALSE, FALSE, 16, 22, 34),
-    ('Ricardo Pereira', 'ricky', 'ricardo@example.org', '$2y$10$HfzIhGCCaxqyaIdGgjARSuOKAcm1Uy82YfLuNaajn6JrjLWy9Sj/W', 'Gym rat 💪 Science fiction nerd', 'ricardo.jpg', FALSE, FALSE, 4, 21, 28),
-    ('Ana Ferreira', 'ana_f', 'ana@example.org', '$2y$10$HfzIhGCCaxqyaIdGgjARSuOKAcm1Uy82YfLuNaajn6JrjLWy9Sj/W', 'Art student 🎨 Indie music lover', 'ana.jpg', FALSE, FALSE, 10, 19, 29),
-    ('Pedro Oliveira', 'pedro_o', 'pedro@example.org', '$2y$10$HfzIhGCCaxqyaIdGgjARSuOKAcm1Uy82YfLuNaajn6JrjLWy9Sj/W', 'Software engineer by day, musician by night 🎹', 'pedro.jpg', FALSE, FALSE, 11, 23, 32),
-    ('Inês Costa', 'ines_c', 'ines@example.org', '$2y$10$HfzIhGCCaxqyaIdGgjARSuOKAcm1Uy82YfLuNaajn6JrjLWy9Sj/W', 'Psychology student 🧠 Love discussing films', 'ines.jpg', TRUE, FALSE, 12, 24, 30),
-    ('Tiago Ribeiro', 'tiago_r', 'tiago@example.org', '$2y$10$HfzIhGCCaxqyaIdGgjARSuOKAcm1Uy82YfLuNaajn6JrjLWy9Sj/W', 'Foodie 🍕 Podcast enthusiast', 'tiago.jpg', FALSE, FALSE, 13, NULL, 31),
-    ('Mariana Sousa', 'mari_s', 'mariana@example.org', '$2y$10$HfzIhGCCaxqyaIdGgjARSuOKAcm1Uy82YfLuNaajn6JrjLWy9Sj/W', 'Dancing through life 💃 Musical theatre fan', 'mariana.jpg', FALSE, FALSE, 14, 25, 27),
-    ('João Rodrigues', 'joao_rod', 'joao@example.org', '$2y$10$HfzIhGCCaxqyaIdGgjARSuOKAcm1Uy82YfLuNaajn6JrjLWy9Sj/W', 'History buff 📜 Documentary lover', 'joao.jpg', FALSE, FALSE, 15, 20, NULL),
-    ('Beatriz Lima', 'bia_lima', 'beatriz@example.org', '$2y$10$HfzIhGCCaxqyaIdGgjARSuOKAcm1Uy82YfLuNaajn6JrjLWy9Sj/W', 'Cat mom 🐱 Fantasy books enthusiast', 'beatriz.jpg', TRUE, FALSE, 16, 18, 33),
-    ('Gonçalo Martins', 'goncalo_m', 'goncalo@example.org', '$2y$10$HfzIhGCCaxqyaIdGgjARSuOKAcm1Uy82YfLuNaajn6JrjLWy9Sj/W', 'Startup founder 🚀 Productivity nerd', 'goncalo.jpg', FALSE, FALSE, 1, 23, 35),
-    ('Catarina Neves', 'cat_neves', 'catarina@example.org', '$2y$10$HfzIhGCCaxqyaIdGgjARSuOKAcm1Uy82YfLuNaajn6JrjLWy9Sj/W', 'Medical student ⚕️ Anime watcher', 'catarina.jpg', FALSE, FALSE, 16, 8, 7);
+    ('Alice Martins', 'alice', 'alice@example.org', '$2y$10$HfzIhGCCaxqyaIdGgjARSuOKAcm1Uy82YfLuNaajn6JrjLWy9Sj/W', 'Movie lover and aspiring filmmaker 🎬', 'woman1.jpg', FALSE, FALSE, 1, 2, 3),
+    ('Bruno Silva', 'bruno', 'bruno@example.org', '$2y$10$HfzIhGCCaxqyaIdGgjARSuOKAcm1Uy82YfLuNaajn6JrjLWy9Sj/W', 'Reader & gamer. Tech enthusiast 💻', 'man1.jpg', FALSE, FALSE, 4, 5, 3),
+    ('Carla Dias', 'carla', 'carla@example.org', '$2y$10$HfzIhGCCaxqyaIdGgjARSuOKAcm1Uy82YfLuNaajn6JrjLWy9Sj/W', 'Music addict 🎵 Concerts are life!', 'woman2.jpg', TRUE, FALSE, 1, 2, 7),
+    ('David Costa', 'david', 'david@example.org', '$2y$10$HfzIhGCCaxqyaIdGgjARSuOKAcm1Uy82YfLuNaajn6JrjLWy9Sj/W', 'Cinephile. Nolan fanboy.', 'man2.jpg', FALSE, FALSE, 6, NULL, NULL),
+    ('Eva Rocha', 'eva', 'eva@example.org', '$2y$10$HfzIhGCCaxqyaIdGgjARSuOKAcm1Uy82YfLuNaajn6JrjLWy9Sj/W', 'Book enthusiast 📚 Coffee lover ☕', 'woman3.jpg', TRUE, FALSE, 4, 8, 7),
+    ('Filipe Moreira', 'filipe', 'filipe@example.org', '$2y$10$HfzIhGCCaxqyaIdGgjARSuOKAcm1Uy82YfLuNaajn6JrjLWy9Sj/W', 'Vinyl collector. Old school music only 🎸', 'man3.jpg', FALSE, FALSE, 1, NULL, 3),
+    ('John Doe', 'john_doe', 'john@example.org', '$2y$10$HfzIhGCCaxqyaIdGgjARSuOKAcm1Uy82YfLuNaajn6JrjLWy9Sj/W', 'Private person', 'man4.jpg', TRUE, FALSE, 1, 2, 3),
+    ('Jane Smith', 'jane_doe', 'jane@example.org', '$2y$10$HfzIhGCCaxqyaIdGgjARSuOKAcm1Uy82YfLuNaajn6JrjLWy9Sj/W', 'Keep it secret', 'woman4.jpg', TRUE, FALSE, 4, 5, 7),
+    ('Miguel Santos', 'miguelito', 'miguel@example.org', '$2y$10$HfzIhGCCaxqyaIdGgjARSuOKAcm1Uy82YfLuNaajn6JrjLWy9Sj/W', 'Part-time photographer 📸 Full-time dreamer', 'man5.jpg', FALSE, FALSE, 9, 17, 26),
+    ('Sofia Almeida', 'sofia_a', 'sofia@example.org', '$2y$10$HfzIhGCCaxqyaIdGgjARSuOKAcm1Uy82YfLuNaajn6JrjLWy9Sj/W', 'Travel blogger ✈️ Always exploring', 'woman4.jpg', FALSE, FALSE, 16, 22, 34),
+    ('Ricardo Pereira', 'ricky', 'ricardo@example.org', '$2y$10$HfzIhGCCaxqyaIdGgjARSuOKAcm1Uy82YfLuNaajn6JrjLWy9Sj/W', 'Gym rat 💪 Science fiction nerd', 'man5.jpg', FALSE, FALSE, 4, 21, 28),
+    ('Ana Ferreira', 'ana_f', 'ana@example.org', '$2y$10$HfzIhGCCaxqyaIdGgjARSuOKAcm1Uy82YfLuNaajn6JrjLWy9Sj/W', 'Art student 🎨 Indie music lover', 'woman5.jpg', FALSE, FALSE, 10, 19, 29),
+    ('Pedro Oliveira', 'pedro_o', 'pedro@example.org', '$2y$10$HfzIhGCCaxqyaIdGgjARSuOKAcm1Uy82YfLuNaajn6JrjLWy9Sj/W', 'Software engineer by day, musician by night 🎹', 'man6.jpg', FALSE, FALSE, 11, 23, 32),
+    ('Inês Costa', 'ines_c', 'ines@example.org', '$2y$10$HfzIhGCCaxqyaIdGgjARSuOKAcm1Uy82YfLuNaajn6JrjLWy9Sj/W', 'Psychology student 🧠 Love discussing films', 'woman6.jpg', TRUE, FALSE, 12, 24, 30),
+    ('Tiago Ribeiro', 'tiago_r', 'tiago@example.org', '$2y$10$HfzIhGCCaxqyaIdGgjARSuOKAcm1Uy82YfLuNaajn6JrjLWy9Sj/W', 'Foodie 🍕 Podcast enthusiast', 'man7.jpg', FALSE, FALSE, 13, NULL, 31),
+    ('Mariana Sousa', 'mari_s', 'mariana@example.org', '$2y$10$HfzIhGCCaxqyaIdGgjARSuOKAcm1Uy82YfLuNaajn6JrjLWy9Sj/W', 'Dancing through life 💃 Musical theatre fan', 'woman7.jpg', FALSE, FALSE, 14, 25, 27),
+    ('João Rodrigues', 'joao_rod', 'joao@example.org', '$2y$10$HfzIhGCCaxqyaIdGgjARSuOKAcm1Uy82YfLuNaajn6JrjLWy9Sj/W', 'History buff 📜 Documentary lover', 'man8.jpg', FALSE, FALSE, 15, 20, NULL),
+    ('Beatriz Lima', 'bia_lima', 'beatriz@example.org', '$2y$10$HfzIhGCCaxqyaIdGgjARSuOKAcm1Uy82YfLuNaajn6JrjLWy9Sj/W', 'Cat mom 🐱 Fantasy books enthusiast', 'woman8.jpg', TRUE, FALSE, 16, 18, 33),
+    ('Gonçalo Martins', 'goncalo_m', 'goncalo@example.org', '$2y$10$HfzIhGCCaxqyaIdGgjARSuOKAcm1Uy82YfLuNaajn6JrjLWy9Sj/W', 'Startup founder 🚀 Productivity nerd', 'man9.jpg', FALSE, FALSE, 1, 23, 35),
+    ('Catarina Neves', 'cat_neves', 'catarina@example.org', '$2y$10$HfzIhGCCaxqyaIdGgjARSuOKAcm1Uy82YfLuNaajn6JrjLWy9Sj/W', 'Medical student ⚕️ Anime watcher', 'woman9.jpg', FALSE, FALSE, 16, 8, 7);
 
 -- GROUPS
 INSERT INTO groups (name, description, isPrivate, icon) VALUES 
@@ -1163,10 +1163,10 @@ INSERT INTO report (reason, status, postId, commentId, createdAt) VALUES
     ('Harassment', 'pending', 64, NULL, NOW() - INTERVAL '20 minutes');
 
 -- INSERT USERS WITH SPECIFIC BLOCK STATUSES
-INSERT INTO users (name, username, email, passwordHash, bio, isBlocked) VALUES 
-    ('Robert Rogers', 'rob_rog', 'robert@example.org', '$2y$10$HfzIhGCCaxqyaIdGgjARSuOKAcm1Uy82YfLuNaajn6JrjLWy9Sj/W', 'Photography enthusiast. Occasionally too loud.', TRUE),
-    ('Vitor Moreira', 'vit_mor', 'vitor@example.org', '$2y$10$HfzIhGCCaxqyaIdGgjARSuOKAcm1Uy82YfLuNaajn6JrjLWy9Sj/W', 'Music producer and tech explorer.', TRUE),
-    ('Fernando Augusto', 'fernando_aug', 'fernando@example.org', '$2y$10$HfzIhGCCaxqyaIdGgjARSuOKAcm1Uy82YfLuNaajn6JrjLWy9Sj/W', 'Avid reader and collector of rare books.', FALSE); -- Unblocked because appeal was approved
+INSERT INTO users (name, username, email, passwordHash, bio, profilePicture, isBlocked) VALUES 
+    ('Robert Rogers', 'rob_rog', 'robert@example.org', '$2y$10$HfzIhGCCaxqyaIdGgjARSuOKAcm1Uy82YfLuNaajn6JrjLWy9Sj/W', 'Photography enthusiast. Occasionally too loud.', 'man10',TRUE),
+    ('Vitor Moreira', 'vit_mor', 'vitor@example.org', '$2y$10$HfzIhGCCaxqyaIdGgjARSuOKAcm1Uy82YfLuNaajn6JrjLWy9Sj/W', 'Music producer and tech explorer.', 'woman10' , TRUE),
+    ('Fernando Augusto', 'fernando_aug', 'fernando@example.org', '$2y$10$HfzIhGCCaxqyaIdGgjARSuOKAcm1Uy82YfLuNaajn6JrjLWy9Sj/W', 'Avid reader and collector of rare books.', 'man11', FALSE); -- Unblocked because appeal was approved
 
 -- UNBLOCK APPEALS 
 INSERT INTO unblock_appeal (userId, reason, status, adminNotes, createdAt, updatedAt) VALUES
