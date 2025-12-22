@@ -817,4 +817,20 @@ class AdminController extends Controller
             ]);
         }
     }
+
+
+    public static function isDeletedUser($user)
+    {
+        if (!$user) return false;
+        // Check by isdeleted flag if available
+        if (isset($user->isdeleted) && $user->isdeleted) return true;
+        // Fallback: check by name or username pattern
+        if (
+            (isset($user->name) && $user->name === 'Deleted User') ||
+            (isset($user->username) && preg_match('/^deleted_\\d+$/', $user->username))
+        ) {
+            return true;
+        }
+        return false;
+    }
 }

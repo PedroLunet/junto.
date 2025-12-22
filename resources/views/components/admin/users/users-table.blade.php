@@ -1,3 +1,7 @@
+@php
+    use App\Http\Controllers\Admin\AdminController;
+@endphp
+
 <div class="bg-white overflow-hidden rounded-xl">
     <table class="min-w-full border-collapse">
         <thead class="bg-gray-50">
@@ -70,7 +74,7 @@
                         </span>
                     </td>
                     <td class="px-3 py-4 whitespace-nowrap text-base font-medium">
-                        @if (auth()->id() !== $user->id)
+                        @if (auth()->id() !== $user->id && !AdminController::isDeletedUser($user))
                             <div class="flex justify-center space-x-1">
                                 <x-ui.icon-button variant="blue" class="edit-user-btn"
                                     data-user-id="{{ $user->id }}" data-user-name="{{ $user->name }}"

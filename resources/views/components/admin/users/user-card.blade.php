@@ -34,7 +34,8 @@
         </div>
     </div>
 
-    @if (auth()->id() !== $user->id)
+    @php use App\Http\Controllers\Admin\AdminController; @endphp
+    @if (auth()->id() !== $user->id && !AdminController::isDeletedUser($user))
         <div class="flex justify-center gap-6">
             <x-ui.icon-button variant="blue" class="edit-user-btn py-2.5" title="Edit"
                 data-user-id="{{ $user->id }}" data-user-name="{{ $user->name }}"
