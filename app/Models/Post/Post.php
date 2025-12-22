@@ -90,7 +90,7 @@ class Post extends Model
         return self::attachTagsToPostData($posts);
     }
 
-    private static function attachTagsToPostData($posts)
+    public static function attachTagsToPostData($posts)
     {
         if (empty($posts)) {
             return $posts;

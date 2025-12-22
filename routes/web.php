@@ -22,6 +22,7 @@ use App\Http\Controllers\Post\ReportController;
 use App\Http\Controllers\Post\ReviewController;
 use App\Http\Controllers\Notification\NotificationController;
 use App\Http\Controllers\Search\SearchUserController;
+use App\Http\Controllers\Search\SearchPostController;
 use App\Http\Controllers\User\ProfileController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
@@ -106,6 +107,10 @@ Route::post('/send', [MailController::class, 'send']);
 
 Route::middleware('regular.user')->controller(SearchUserController::class)->group(function () {
     Route::get('/search-users', 'index')->name('search.users');
+});
+
+Route::middleware('regular.user')->controller(SearchPostController::class)->group(function () {
+    Route::get('/search-posts', 'index')->name('search.posts');
 });
 
 // Friend Requests (authentication required)
