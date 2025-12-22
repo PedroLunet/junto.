@@ -442,8 +442,8 @@ class GroupController extends Controller
         }
 
         $validated = $request->validate([
-            'content' => 'required_without:image|string|max:2000',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'content' => 'required_without:image|nullable|string|max:2000',
+            'image' => 'required_without:content|nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'tags' => 'nullable|array',
             'tags.*' => 'integer|exists:users,id',
         ]);
