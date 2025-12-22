@@ -15,6 +15,14 @@
 
     <title>@yield('title', 'Junto')</title>
 
+    <!-- Open Graph Tags -->
+    <meta property="og:title" content="@yield('title', 'Junto')" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="{{ url()->current() }}" />
+    <meta property="og:description" content="@yield('description', 'Junto - Connect with friends and share your interests.')" />
+    <meta property="og:site_name" content="Junto" />
+    <meta property="og:image" content="@yield('og:image', asset('illustration-friends.svg'))" />
+
     <!-- Scripts -->
     <script>
         window.isAuthenticated = {{ auth()->check() ? 'true' : 'false' }};

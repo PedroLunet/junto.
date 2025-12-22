@@ -7,6 +7,14 @@
 
         <title>@yield('title', config('app.name', 'Laravel'))</title>
 
+        <!-- Open Graph Tags -->
+        <meta property="og:title" content="@yield('title', config('app.name', 'Laravel'))" />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="{{ url()->current() }}" />
+        <meta property="og:description" content="@yield('description', 'Join Junto to connect with friends and share your moments.')" />
+        <meta property="og:site_name" content="{{ config('app.name', 'Laravel') }}" />
+        <meta property="og:image" content="@yield('og:image', asset('illustration-friends.svg'))" />
+
         <script src="https://cdn.tailwindcss.com"></script>
 
         <!-- Styles -->
