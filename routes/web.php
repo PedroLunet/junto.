@@ -125,8 +125,6 @@ Route::middleware('regular.user')->controller(SearchGroupController::class)->gro
 
 // Friend Requests (authentication required)
 Route::middleware(['auth', 'regular.user'])->controller(FriendRequestController::class)->group(function () {
-    Route::get('/friend-requests', 'index')->name('friend-requests.index');
-    Route::get('/friend-requests/sent', 'sent')->name('friend-requests.sent');
     Route::post('/friend-requests', 'store')->name('friend-requests.store');
     Route::post('/friend-requests/{requestId}/accept', 'accept')->name('friend-requests.accept');
     Route::post('/friend-requests/{requestId}/reject', 'reject')->name('friend-requests.reject');
