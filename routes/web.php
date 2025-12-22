@@ -29,57 +29,9 @@ use App\Http\Controllers\User\ProfileController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 
-// Home
-// Route::redirect('/', '/login');
 
-// Blocked user page
-Route::middleware('auth')->get('/blocked', function () {
-    $hasRejectedAppeal = \App\Models\UnblockAppeal::where('userid', Auth::id())
-        ->where('status', 'rejected')
-        ->exists();
+// === AUTH ===
 
-    return view('pages.blocked', ['hasRejectedAppeal' => $hasRejectedAppeal]);
-})->name('blocked');
-
-// Appeal submission route (for blocked users) - must be before regular.user middleware
-Route::middleware('auth')->post('/appeal/submit', [AdminController::class, 'submitAppeal'])->name('appeal.submit');
-
-Route::middleware('regular.user')->group(function () {
-    Route::get('/', [HomeController::class, 'index'])->name('home');
-    Route::get('/posts/{id}/comments', [CommentController::class, 'index'])->name('post.comments');
-});
-
-// Home page (authentication required)
-Route::middleware(['auth', 'regular.user'])->group(function () {
-    Route::get('/friends-feed', [HomeController::class, 'friendsFeed'])->name('friends-feed');
-    Route::post('/posts/{id}/comments', [CommentController::class, 'store'])->name('post.comments.add');
-    Route::put('/comments/{id}', [CommentController::class, 'update'])->name('comments.update');
-    Route::delete('/comments/{id}', [CommentController::class, 'destroy'])->name('comments.delete');
-    Route::post('/posts/{id}/like', [HomeController::class, 'toggleLike'])->name('post.like');
-
-    // Messages
-    Route::get('/messages', [MessageController::class, 'index'])->name('messages.index');
-    Route::get('/messages/{userId}', [MessageController::class, 'show'])->name('messages.show');
-    Route::get('/messages/{userId}/fetch', [MessageController::class, 'fetchMessages'])->name('messages.fetch');
-    Route::post('/messages/{userId}', [MessageController::class, 'store'])->name('messages.store');
-    Route::delete('/messages/{userId}', [MessageController::class, 'destroy'])->name('messages.destroy');
-});
-
-
-Route::middleware(['auth', 'regular.user'])->controller(ProfileController::class)->group(function () {
-    Route::get('/profile', 'index')->name('profile');
-    Route::get('/profile/edit', 'edit')->name('profile.edit');
-    Route::put('/profile/update', 'update')->name('profile.update');
-    Route::post('/profile/remove-favorite', 'removeFavorite')->name('profile.remove-favorite');
-    Route::post('/profile/add-favorite', 'addFavorite')->name('profile.add-favorite');
-    Route::post('/profile/toggle-privacy', 'togglePrivacy')->name('profile.toggle-privacy');
-    Route::post('/profile/change-password', 'changePassword')->name('profile.change-password');
-    Route::post('/profile/validate-password', 'validatePassword')->name('profile.validate-password');
-    Route::post('/profile/render-alert', 'renderAlert')->name('profile.render-alert');
-    Route::post('/profile/delete-account', 'deleteAccount')->name('profile.delete-account');
-});
-
-// Authentication
 Route::controller(LoginController::class)->group(function () {
     Route::get('/login', 'showLoginForm')->name('login');
     Route::post('/login', 'authenticate');
@@ -107,59 +59,50 @@ Route::controller(GoogleController::class)->group(function () {
 
 Route::post('/send', [MailController::class, 'send']);
 
-Route::middleware('regular.user')->controller(SearchUserController::class)->group(function () {
-    Route::get('/search-users', 'index')->name('search.users');
+
+// === BLOCKED ===
+
+Route::middleware('auth')->get('/blocked', function () {
+    $hasRejectedAppeal = \App\Models\UnblockAppeal::where('userid', Auth::id())
+        ->where('status', 'rejected')
+        ->exists();
+
+    return view('pages.blocked', ['hasRejectedAppeal' => $hasRejectedAppeal]);
+})->name('blocked');
+
+Route::middleware('auth')->post('/appeal/submit', [AdminController::class, 'submitAppeal'])->name('appeal.submit');
+
+// blocked status check for AJAX polling
+Route::middleware('auth')->get('/blocked/status', function () {
+    return response()->json(['isblocked' => Auth::user()->isblocked]);
 });
 
-Route::middleware('regular.user')->controller(SearchPostController::class)->group(function () {
-    Route::get('/search-posts', 'index')->name('search.posts');
+
+// === HOME/FEED ===
+
+Route::middleware('regular.user')->group(function () {
+    Route::get('/', [HomeController::class, 'index'])->name('home');
+    Route::get('/posts/{id}/comments', [CommentController::class, 'index'])->name('post.comments');
 });
 
-Route::middleware('regular.user')->controller(SearchCommentController::class)->group(function () {
-    Route::get('/search-comments', 'index')->name('search.comments');
+Route::middleware(['auth', 'regular.user'])->group(function () {
+    Route::get('/friends-feed', [HomeController::class, 'friendsFeed'])->name('friends-feed');
+    Route::post('/posts/{id}/comments', [CommentController::class, 'store'])->name('post.comments.add');
+    Route::put('/comments/{id}', [CommentController::class, 'update'])->name('comments.update');
+    Route::delete('/comments/{id}', [CommentController::class, 'destroy'])->name('comments.delete');
+    Route::post('/posts/{id}/like', [HomeController::class, 'toggleLike'])->name('post.like');
+
+    // Messages
+    Route::get('/messages', [MessageController::class, 'index'])->name('messages.index');
+    Route::get('/messages/{userId}', [MessageController::class, 'show'])->name('messages.show');
+    Route::get('/messages/{userId}/fetch', [MessageController::class, 'fetchMessages'])->name('messages.fetch');
+    Route::post('/messages/{userId}', [MessageController::class, 'store'])->name('messages.store');
+    Route::delete('/messages/{userId}', [MessageController::class, 'destroy'])->name('messages.destroy');
 });
 
-Route::middleware('regular.user')->controller(SearchGroupController::class)->group(function () {
-    Route::get('/search-groups', 'index')->name('search.groups');
-});
 
-// Friend Requests (authentication required)
-Route::middleware(['auth', 'regular.user'])->controller(FriendRequestController::class)->group(function () {
-    Route::post('/friend-requests', 'store')->name('friend-requests.store');
-    Route::post('/friend-requests/{requestId}/accept', 'accept')->name('friend-requests.accept');
-    Route::post('/friend-requests/{requestId}/reject', 'reject')->name('friend-requests.reject');
-    Route::delete('/friend-requests/{requestId}/cancel', 'cancel')->name('friend-requests.cancel');
-    Route::get('/friends', 'friends')->name('friends.index');
-    Route::delete('/friends/{userId}', 'unfriend')->name('friends.unfriend');
-});
+// === POSTS ===
 
-// Friends route with username
-Route::middleware('regular.user')->controller(FriendRequestController::class)->group(function () {
-    Route::get('/friends-{username}', 'friendsByUsername')->name('friends.by-username');
-});
-
-// movie routes
-Route::middleware(['auth', 'regular.user'])->controller(MovieController::class)->group(function () {
-    Route::get('/movies', 'index')->name('movies');
-    Route::get('/movies/search', 'search')->name('movies.search');
-    Route::get('/movies/{id}', 'show')->name('movies.show');
-});
-
-// temporary music routes
-Route::middleware(['auth', 'regular.user'])->controller(MusicController::class)->group(function () {
-    Route::get('/music', 'index')->name('music');
-    Route::get('/music/search', 'search')->name('music.search');
-    Route::post('/music', 'store')->name('music.store');
-});
-
-// books routes
-Route::middleware(['auth', 'regular.user'])->controller(BookController::class)->group(function () {
-    Route::get('/books', 'index')->name('books');
-    Route::get('/books/search', 'search')->name('books.search');
-    Route::post('/books', 'store')->name('books.store');
-});
-
-// posts routes
 Route::middleware(['auth', 'regular.user'])->group(function () {
     Route::post('/posts', [PostController::class, 'store'])->name('posts.store');
     Route::post('/reviews', [ReviewController::class, 'store'])->name('reviews.store');
@@ -170,13 +113,58 @@ Route::middleware(['auth', 'regular.user'])->group(function () {
 
 Route::get('/posts/{id}/view', [PostController::class, 'show'])->middleware('regular.user')->name('posts.show');
 
-// file upload routes
+
+// === SEARCH ===
+
+Route::middleware(['auth', 'regular.user'])->group(function () {
+    Route::get('/search-users', [SearchUserController::class, 'index'])->name('search.users');
+    Route::get('/search-posts', [SearchPostController::class, 'index'])->name('search.posts');
+    Route::get('/search-comments', [SearchCommentController::class, 'index'])->name('search.comments');
+    Route::get('/search-groups', [SearchGroupController::class, 'index'])->name('search.groups');
+});
+
+// === FRIENDS ===
+
+Route::middleware(['auth', 'regular.user'])->controller(FriendRequestController::class)->group(function () {
+    Route::post('/friend-requests', 'store')->name('friend-requests.store');
+    Route::post('/friend-requests/{requestId}/accept', 'accept')->name('friend-requests.accept');
+    Route::post('/friend-requests/{requestId}/reject', 'reject')->name('friend-requests.reject');
+    Route::delete('/friend-requests/{requestId}/cancel', 'cancel')->name('friend-requests.cancel');
+    Route::get('/friends', 'friends')->name('friends.index');
+    Route::delete('/friends/{userId}', 'unfriend')->name('friends.unfriend');
+});
+
+// Friends route w/ username
+Route::middleware('regular.user')->controller(FriendRequestController::class)->group(function () {
+    Route::get('/friends-{username}', 'friendsByUsername')->name('friends.by-username');
+});
+
+
+// === MEDIA ===
+
+Route::middleware(['auth', 'regular.user'])->controller(MovieController::class)->group(function () {
+    Route::get('/movies', 'index')->name('movies');
+});
+
+Route::middleware(['auth', 'regular.user'])->controller(MusicController::class)->group(function () {
+    Route::get('/music', 'index')->name('music');
+});
+
+Route::middleware(['auth', 'regular.user'])->controller(BookController::class)->group(function () {
+    Route::get('/books', 'index')->name('books');
+});
+
+
+// === FILE UPLOAD ===
+
 Route::middleware('auth')->controller(FileController::class)->group(function () {
     Route::post('/file/upload', 'upload')->name('file.upload');
     Route::post('/file/delete', 'delete')->name('file.delete');
 });
 
-// reports routes
+
+// === REPORTS ===
+
 Route::middleware(['auth', 'regular.user'])->controller(ReportController::class)->group(function () {
     Route::post('/posts/{id}/report', 'reportPost')->name('post.report');
 });
@@ -187,7 +175,9 @@ Route::middleware(['auth', 'admin'])->controller(ReportController::class)->group
     Route::post('/reports/{id}/status', 'updateStatus')->name('reports.update');
 });
 
-// admin routes
+
+// === ADMIN ===
+
 Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/admin', [AdminController::class, 'dashboard'])->name('admin.dashboard');
     Route::get('/admin/users', [AdminController::class, 'users'])->name('admin.users');
@@ -206,14 +196,12 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::put('/admin/account-security/update', [AdminController::class, 'updateAccountSecurity'])->name('admin.account-security.update');
     Route::post('/admin/account-security/change-password', [AdminController::class, 'changeAdminPassword'])->name('admin.account-security.change-password');
     Route::post('/admin/account-security/validate-password', [AdminController::class, 'validatePassword'])->name('admin.validate-password');
+    Route::post('/admin/users/{id}/delete', [AdminController::class, 'deleteUser'])->name('admin.users.delete');
 });
 
-// Admin: Delete user (with password confirmation)
-Route::post('/admin/users/{id}/delete', [\App\Http\Controllers\Admin\AdminController::class, 'deleteUser'])
-    ->middleware(['auth', 'admin'])
-    ->name('admin.users.delete');
 
-// GROUPS ROUTES
+// === GROUPS ===
+
 Route::middleware(['auth'])->group(function () {
     Route::delete('/groups/{group}/remove-member/{user}', [GroupController::class, 'removeMember'])->name('groups.removeMember');
     Route::get('/groups', [GroupController::class, 'index'])->name('groups.index');
@@ -236,7 +224,9 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/groups/{group}/reject-invite/{requestId}', [GroupController::class, 'rejectInvite'])->name('groups.rejectInvite');
 });
 
-// Notifications
+
+// === NOTIFICATIONS ===
+
 Route::middleware(['auth'])->controller(NotificationController::class)->group(function () {
     Route::get('/notifications', 'index')->name('notifications.index');
     Route::post('/notifications/{id}/read', 'markAsRead')->name('notifications.mark-read');
@@ -248,11 +238,17 @@ Route::middleware(['auth'])->controller(NotificationController::class)->group(fu
     Route::get('/notifications/latest-unread', 'getLatestUnread')->name('notifications.latest-unread');
 });
 
-// Static pages
+
+// === STATIC PAGES ===
+
 Route::group([], function () {
     Route::get('/about', function () {
         return view('pages.about');
     })->name('about');
+
+    Route::get('/features', function () {
+        return view('pages.features');
+    })->name('features');
 
     Route::controller(ContactController::class)->group(function () {
         Route::get('/contact', 'show')->name('contact.show');
@@ -260,15 +256,22 @@ Route::group([], function () {
     });
 });
 
-Route::get('/features', function () {
-    return view('pages.features');
-})->name('features');
+
+// === PROFILE ===
+
+Route::middleware(['auth', 'regular.user'])->controller(ProfileController::class)->group(function () {
+    Route::get('/profile', 'index')->name('profile');
+    Route::get('/profile/edit', 'edit')->name('profile.edit');
+    Route::put('/profile/update', 'update')->name('profile.update');
+    Route::post('/profile/remove-favorite', 'removeFavorite')->name('profile.remove-favorite');
+    Route::post('/profile/add-favorite', 'addFavorite')->name('profile.add-favorite');
+    Route::post('/profile/toggle-privacy', 'togglePrivacy')->name('profile.toggle-privacy');
+    Route::post('/profile/change-password', 'changePassword')->name('profile.change-password');
+    Route::post('/profile/validate-password', 'validatePassword')->name('profile.validate-password');
+    Route::post('/profile/render-alert', 'renderAlert')->name('profile.render-alert');
+    Route::post('/profile/delete-account', 'deleteAccount')->name('profile.delete-account');
+});
 
 Route::middleware('regular.user')->controller(ProfileController::class)->group(function () {
     Route::get('/{username}', 'show')->name('profile.show');
-});
-
-// blocked status check for AJAX polling
-Route::middleware('auth')->get('/blocked/status', function () {
-    return response()->json(['isblocked' => Auth::user()->isblocked]);
 });

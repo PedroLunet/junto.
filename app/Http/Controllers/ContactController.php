@@ -23,7 +23,7 @@ class ContactController extends Controller
             'message' => 'required|string',
         ]);
 
-        Mail::to('junto.develop@gmail.com')->send(new MailModel($validated, 'New Contact Message from ' . $validated['name'], 'emails.contact'));
+        Mail::to('junto.develop@gmail.com')->send(new MailModel($validated, 'New Contact Message from ' . $validated['name'], 'pages.emails.contact'));
 
         return redirect()->route('contact.show')->with('success', 'Thank you for contacting us! We will get back to you soon.');
     }

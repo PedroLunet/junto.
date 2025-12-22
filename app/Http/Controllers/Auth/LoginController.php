@@ -27,7 +27,7 @@ class LoginController extends Controller
                 : redirect()->route('home');
         } else {
             $posts = Post::getPostsWithDetails();
-            return view('auth.login', compact('posts'));
+            return view('pages.auth.login', compact('posts'));
         }
     }
 
