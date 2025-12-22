@@ -34,7 +34,7 @@ class ResetPasswordController extends Controller
              return redirect()->route('login')->withErrors(['email' => 'Invalid or expired password reset link.']);
         }
 
-        return view('auth.passwords.reset-page')->with(
+        return view('pages.auth.passwords.reset-page')->with(
             ['token' => $token, 'email' => $email]
         );
     }

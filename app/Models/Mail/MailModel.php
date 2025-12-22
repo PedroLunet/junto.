@@ -20,7 +20,7 @@ class MailModel extends Mailable
     /**
      * Create a new message instance.
      */
-    public function __construct($mailData, $subject = 'Reset Password', $view = 'emails.reset')
+    public function __construct($mailData, $subject = 'Reset Password', $view = 'pages.emails.reset')
     {
         $this->mailData = $mailData;
         $this->subject = $subject;
