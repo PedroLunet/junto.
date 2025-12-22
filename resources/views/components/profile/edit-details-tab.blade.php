@@ -126,7 +126,6 @@
             // If reset to default, send a flag
             if (form.getAttribute('data-reset-profile-picture') === 'true') {
                 // Already handled by input
-            }
             form.submit();
 
             // Show alert-card on top right
