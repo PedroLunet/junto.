@@ -844,11 +844,16 @@ INSERT INTO media (title, creator, releaseYear, coverImage) VALUES
     ('Sweet Child O'' Mine', 'Guns N'' Roses', 1987, 'https://i.scdn.co/image/ab67616d0000b273b3c0e0973db8f325c4732d79'),
     ('Stairway to Heaven', 'Led Zeppelin', 1971, 'https://i.scdn.co/image/ab67616d0000b2739c0084d10a0e2ea1fd5e3e5e'),
     ('Blinding Lights', 'The Weeknd', 2019, 'https://i.scdn.co/image/ab67616d0000b2738863bc11d2aa12b54f5aeb36'),
-    ('Shape of You', 'Ed Sheeran', 2017, 'https://i.scdn.co/image/ab67616d0000b273ba5db46f4b838ef6027e6f96');
+    ('Shape of You', 'Ed Sheeran', 2017, 'https://i.scdn.co/image/ab67616d0000b273ba5db46f4b838ef6027e6f96'),
+    ('The Shining', 'Stephen King', 1977, 'http://books.google.com/books/content?id=ofKOAAAAQBAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api'),
+    ('Atomic Habits', 'James Clear', 2018, 'http://books.google.com/books/content?id=XfFvDwAAQBAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api'),
+    ('The Dark Side of the Moon', 'Pink Floyd', 1973, 'https://i.scdn.co/image/ab67616d0000b273ea7caaff71dea1051d49b2fe'),
+    ('Abbey Road', 'The Beatles', 1969, 'https://i.scdn.co/image/ab67616d0000b273dc30583ba717007b00cceb25'),
+    ('To Pimp a Butterfly', 'Kendrick Lamar', 2015, 'https://i.scdn.co/image/ab67616d0000b273cdb645498cd3d8a2db4d05e1');
 
 INSERT INTO film (mediaId) VALUES (1), (4), (6), (9), (10), (11), (12), (13), (14), (15), (16);
-INSERT INTO book (mediaId) VALUES (2), (5), (8), (17), (18), (19), (20), (21), (22), (23), (24), (25);
-INSERT INTO music (mediaId) VALUES (3), (7), (26), (27), (28), (29), (30), (31), (32), (33), (34), (35);
+INSERT INTO book (mediaId) VALUES (2), (5), (8), (17), (18), (19), (20), (21), (22), (23), (24), (25), (36), (37);
+INSERT INTO music (mediaId) VALUES (3), (7), (26), (27), (28), (29), (30), (31), (32), (33), (34), (35), (38), (39), (40);
 
 -- USERS
 INSERT INTO users (name, username, email, passwordHash, bio, profilePicture, isPrivate, isAdmin, favoriteFilm, favoriteBook, favoriteSong) VALUES 
@@ -940,7 +945,16 @@ INSERT INTO post (userId, groupId, createdAt) VALUES
     (2, NULL, NOW() - INTERVAL '1 hours'),
     (3, NULL, NOW() - INTERVAL '2 hours'),
     (4, NULL, NOW() - INTERVAL '3 hours'),
-    (5, NULL, NOW() - INTERVAL '4 hours');
+    (5, NULL, NOW() - INTERVAL '4 hours'),
+    -- [NEW REVIEWS 65-74]
+    (6, NULL, NOW() - INTERVAL '1 day'),
+    (20, NULL, NOW() - INTERVAL '2 days'),
+    (7, NULL, NOW() - INTERVAL '4 days'),
+    (7, NULL, NOW() - INTERVAL '5 days'),
+    (13, NULL, NOW() - INTERVAL '7 days'),
+    (19, NULL, NOW() - INTERVAL '8 days'),
+    (6, NULL, NOW() - INTERVAL '9 days'),
+    (3, NULL, NOW() - INTERVAL '10 days');
 
 INSERT INTO standard_post (postId, text, imageUrl) VALUES 
     -- GROUP POSTS (Must have "GROUP POST:")
@@ -1020,7 +1034,15 @@ INSERT INTO review (postId, rating, mediaId, content) VALUES
     (53, 3, 21, 'Dune is great but the pacing is a bit slow.'),
     (57, 5, 6, 'Interstellar soundtrack is a masterpiece.'),
     (59, 4, 14, 'Parasite is a brilliant social commentary. Highly recommend.'),
-    (60, 5, 4, 'The Matrix changed sci-fi forever. A must-watch.');
+    (60, 5, 4, 'The Matrix changed sci-fi forever. A must-watch.'),
+    (65, 5, 36, 'The Shining kept me up all night. King is the master of horror.'),
+    (66, 5, 37, 'Atomic Habits is life-changing. Small changes really do add up.'),
+    (67, 5, 38, 'The Dark Side of the Moon is an experience, not just an album.'),
+    (68, 5, 39, 'Abbey Road is the perfect goodbye from The Beatles.'),
+    (69, 5, 40, 'To Pimp a Butterfly is a lyrical masterpiece. Kendrick is a genius.'),
+    (70, 5, 18, 'The Hobbit is a charming adventure. Bilbo is the best.'),
+    (71, 5, 19, 'Mr. Darcy is the ultimate romantic hero. Love this book.'),
+    (72, 3, 20, 'Holden Caulfield is annoying, but I get why this is a classic.');
 
 -- POST INTERACTIONS
 INSERT INTO post_like (postId, userId) VALUES 
