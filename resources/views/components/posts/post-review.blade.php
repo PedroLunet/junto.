@@ -5,8 +5,15 @@
     <div class="flex items-center justify-between mb-4">
         <div class="flex items-center gap-3">
             <!-- user avatar -->
-            <img src="{{ asset('profile/default.png') }}" alt="User Avatar"
-                class="w-10 h-10 rounded-full object-cover bg-gray-200">
+            <!-- user avatar -->
+            @if ($post->author_image ?? false)
+                <img src="{{ asset('profile/' . $post->author_image) }}" alt="User Avatar"
+                    class="w-10 h-10 rounded-full object-cover bg-gray-200"
+                    onerror="this.onerror=null; this.src='{{ asset('profile/default.png') }}';">
+            @else
+                <img src="{{ asset('profile/default.png') }}" alt="User Avatar"
+                    class="w-10 h-10 rounded-full object-cover bg-gray-200">
+            @endif
 
             <div class="flex flex-col">
                 <span class="font-semibold text-gray-900 text-sm">
@@ -45,7 +52,8 @@
         <div class="flex-1 min-w-0">
             <div class="flex justify-between items-start gap-2 mb-1">
                 <h3 class="text-lg sm:text-xl font-bold text-gray-900 break-words">
-                    {{ $post->media_title ?? ($post->review->media->title ?? 'Untitled') }}</h3>
+                    {{ $post->media_title ?? ($post->review->media->title ?? 'Untitled') }}
+                </h3>
                 <div class="flex gap-0.5 text-yellow-400 text-sm sm:text-base shrink-0 pt-1">
                     @for ($i = 0; $i < ($post->rating ?? ($post->review->rating ?? 0)); $i++)
                         <i class="fas fa-star"></i>
@@ -53,8 +61,10 @@
                 </div>
             </div>
             <p class="text-sm sm:text-base text-gray-700 font-medium mb-0.5">
-                {{ $post->media_creator ?? ($post->review->media->creator ?? '') }}</p>
-            <p class="text-xs sm:text-sm text-gray-700 mb-3">{{ $post->media_year ?? ($post->review->media->releaseyear ?? '') }}
+                {{ $post->media_creator ?? ($post->review->media->creator ?? '') }}
+            </p>
+            <p class="text-xs sm:text-sm text-gray-700 mb-3">
+                {{ $post->media_year ?? ($post->review->media->releaseyear ?? '') }}
             </p>
 
             <p class="text-sm sm:text-base text-black font-light break-words">
