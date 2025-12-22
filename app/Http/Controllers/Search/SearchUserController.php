@@ -26,6 +26,16 @@ class SearchUserController extends Controller
                 return $query->searchByProfile($search);
             });
 
+        if ($request->expectsJson() || $request->header('Accept') === 'application/json') {
+            $currentUser = auth()->user();
+            if ($currentUser) {
+                $friendIds = $currentUser->friends()->pluck('id')->toArray();
+                $users = $users->whereIn('id', $friendIds);
+            } else {
+                $users = $users->where('id', '<', 0);
+            }
+        }
+
         switch ($sort) {
             case 'name_desc':
                 $users = $users->orderByNameDesc();

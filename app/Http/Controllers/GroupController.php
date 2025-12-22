@@ -411,6 +411,20 @@ class GroupController extends Controller
             'tags.*' => 'integer|exists:users,id',
         ]);
 
+        $tags = $request->input('tags', []);
+        if (! empty($tags)) {
+            $friendIds = $user->friends()->pluck('id')->toArray();
+            $invalidTags = array_filter($tags, function ($userId) use ($friendIds, $user) {
+                return !in_array($userId, $friendIds) && $userId !== $user->id;
+            });
+            if (! empty($invalidTags)) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'You can only tag friends',
+                ], 403);
+            }
+        }
+
         $post = new \App\Models\Post\Post;
         $post->userid = $user->id;
         $post->groupid = $group->id;
