@@ -35,8 +35,6 @@ class ReviewController extends Controller
         ]);
 
         try {
-            DB::beginTransaction();
-
             $title = null;
             $creator = null;
             $releaseYear = null;
@@ -116,6 +114,8 @@ class ReviewController extends Controller
             } else {
                 return response()->json(['success' => false, 'message' => 'Media type not supported yet'], 400);
             }
+
+            DB::beginTransaction();
 
             // 2. check if media exists in the db or firstOrCreate it
             $media = \App\Models\Media\Media::firstOrCreate(
