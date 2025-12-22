@@ -186,11 +186,8 @@ class Post extends Model
                 u.username,
                 u.profilePicture as author_image,
                 g.name as group_name,
-                COALESCE(sp.text, r.content) as content,
-                CASE 
-                    WHEN sp.postId IS NOT NULL THEN 'standard'
-                    WHEN r.postId IS NOT NULL THEN 'review'
-                END as post_type,
+                r.content as content,
+                'review' as post_type,
                 r.rating,
                 m.title as media_title,
                 m.coverImage as media_poster,
@@ -200,11 +197,10 @@ class Post extends Model
                 (SELECT COUNT(*) FROM lbaw2544.post_like pl WHERE pl.postId = p.id) as likes_count,
                 " . ($currentUserId ? '(SELECT COUNT(*) > 0 FROM lbaw2544.post_like pl WHERE pl.postId = p.id AND pl.userId = ?) as is_liked,' : 'FALSE as is_liked,') . '
                 (SELECT COUNT(*) FROM lbaw2544.comment c WHERE c.postId = p.id) as comments_count,
-                sp.imageUrl as image_url
+                NULL as image_url
             FROM lbaw2544.post p
             JOIN lbaw2544.users u ON p.userId = u.id
             LEFT JOIN lbaw2544.groups g ON p.groupId = g.id
-            LEFT JOIN lbaw2544.standard_post sp ON p.id = sp.postId
             JOIN lbaw2544.review r ON p.id = r.postId
             JOIN lbaw2544.media m ON r.mediaId = m.id
             WHERE EXISTS (SELECT 1 FROM lbaw2544.film f WHERE f.mediaId = m.id)
@@ -229,11 +225,8 @@ class Post extends Model
                 u.username,
                 u.profilePicture as author_image,
                 g.name as group_name,
-                COALESCE(sp.text, r.content) as content,
-                CASE 
-                    WHEN sp.postId IS NOT NULL THEN 'standard'
-                    WHEN r.postId IS NOT NULL THEN 'review'
-                END as post_type,
+                r.content as content,
+                'review' as post_type,
                 r.rating,
                 m.title as media_title,
                 m.coverImage as media_poster,
@@ -243,11 +236,10 @@ class Post extends Model
                 (SELECT COUNT(*) FROM lbaw2544.post_like pl WHERE pl.postId = p.id) as likes_count,
                 " . ($currentUserId ? '(SELECT COUNT(*) > 0 FROM lbaw2544.post_like pl WHERE pl.postId = p.id AND pl.userId = ?) as is_liked,' : 'FALSE as is_liked,') . '
                 (SELECT COUNT(*) FROM lbaw2544.comment c WHERE c.postId = p.id) as comments_count,
-                sp.imageUrl as image_url
+                NULL as image_url
             FROM lbaw2544.post p
             JOIN lbaw2544.users u ON p.userId = u.id
             LEFT JOIN lbaw2544.groups g ON p.groupId = g.id
-            LEFT JOIN lbaw2544.standard_post sp ON p.id = sp.postId
             JOIN lbaw2544.review r ON p.id = r.postId
             JOIN lbaw2544.media m ON r.mediaId = m.id
             WHERE EXISTS (SELECT 1 FROM lbaw2544.book b WHERE b.mediaId = m.id)
@@ -272,11 +264,8 @@ class Post extends Model
                 u.username,
                 u.profilePicture as author_image,
                 g.name as group_name,
-                COALESCE(sp.text, r.content) as content,
-                CASE 
-                    WHEN sp.postId IS NOT NULL THEN 'standard'
-                    WHEN r.postId IS NOT NULL THEN 'review'
-                END as post_type,
+                r.content as content,
+                'review' as post_type,
                 r.rating,
                 m.title as media_title,
                 m.coverImage as media_poster,
@@ -286,11 +275,10 @@ class Post extends Model
                 (SELECT COUNT(*) FROM lbaw2544.post_like pl WHERE pl.postId = p.id) as likes_count,
                 " . ($currentUserId ? '(SELECT COUNT(*) > 0 FROM lbaw2544.post_like pl WHERE pl.postId = p.id AND pl.userId = ?) as is_liked,' : 'FALSE as is_liked,') . '
                 (SELECT COUNT(*) FROM lbaw2544.comment c WHERE c.postId = p.id) as comments_count,
-                sp.imageUrl as image_url
+                NULL as image_url
             FROM lbaw2544.post p
             JOIN lbaw2544.users u ON p.userId = u.id
             LEFT JOIN lbaw2544.groups g ON p.groupId = g.id
-            LEFT JOIN lbaw2544.standard_post sp ON p.id = sp.postId
             JOIN lbaw2544.review r ON p.id = r.postId
             JOIN lbaw2544.media m ON r.mediaId = m.id
             WHERE EXISTS (SELECT 1 FROM lbaw2544.music mu WHERE mu.mediaId = m.id)
