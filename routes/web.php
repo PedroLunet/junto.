@@ -144,14 +144,17 @@ Route::middleware('regular.user')->controller(FriendRequestController::class)->g
 
 Route::middleware(['auth', 'regular.user'])->controller(MovieController::class)->group(function () {
     Route::get('/movies', 'index')->name('movies');
+    Route::get('/movies/search', 'search')->name('movies.search');
 });
 
 Route::middleware(['auth', 'regular.user'])->controller(MusicController::class)->group(function () {
     Route::get('/music', 'index')->name('music');
+    Route::get('/music/search', 'search')->name('music.search');
 });
 
 Route::middleware(['auth', 'regular.user'])->controller(BookController::class)->group(function () {
     Route::get('/books', 'index')->name('books');
+    Route::get('/books/search', 'search')->name('books.search');
 });
 
 
