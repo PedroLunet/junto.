@@ -14,7 +14,7 @@
 @endphp
 
 @if ($hasRelevantPosts)
-    <div class="max-w-4xl mx-auto space-y-6">
+    <div class="max-w-2xl mx-auto space-y-6">
         @foreach ($posts as $post)
             @php
                 $isReview = isset($post->rating) && $post->rating;
@@ -44,5 +44,6 @@
             default => 'No posts yet',
         };
     @endphp
-    <x-ui.empty-state :title="$emptyMessage" icon="fa-camera" description="Try changing your filters or create a new post!" />
+    <x-ui.empty-state :title="$emptyMessage" icon="fa-camera"
+        description="Try changing your filters or create a new post!" />
 @endif
