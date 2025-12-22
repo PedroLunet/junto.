@@ -65,9 +65,11 @@ class ProfileController extends Controller
                 ->orderBy('createdat', 'desc');
 
             if (Auth::check()) {
-                $query->withExists(['likes as is_liked' => function ($q) {
-                    $q->where('userid', Auth::id());
-                }]);
+                $query->withExists([
+                    'likes as is_liked' => function ($q) {
+                        $q->where('userid', Auth::id());
+                    }
+                ]);
             }
 
             $allPosts = $query->get();
@@ -119,7 +121,7 @@ class ProfileController extends Controller
                 }
 
                 // get tagged users
-                $transformedPost->tagged_users = $post->tags->map(function($user) {
+                $transformedPost->tagged_users = $post->tags->map(function ($user) {
                     return (object) [
                         'id' => $user->id,
                         'name' => $user->name,
@@ -231,6 +233,7 @@ class ProfileController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'username' => 'required|string|min:4|max:40|unique:users,username,' . $user->id . '|regex:/^[a-zA-Z0-9._-]+$/',
+            'email' => 'required|email|max:255|unique:users,email,' . $user->id,
             'bio' => 'nullable|string|max:1000',
             'profilePicture' => 'nullable|image|max:4096', // max 4MB
         ]);
@@ -239,6 +242,7 @@ class ProfileController extends Controller
             $updateData = [
                 'name' => $request->input('name'),
                 'username' => $request->input('username'),
+                'email' => $request->input('email'),
                 'bio' => $request->input('bio'),
             ];
 

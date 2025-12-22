@@ -3,6 +3,7 @@
     @csrf
     @method('PUT')
 
+    <input type="hidden" name="reset_profile_picture" id="resetProfilePictureFlag" value="0">
 
     <div class="flex flex-col gap-6 md:flex-row md:items-center md:gap-8">
         <!-- profile picture -->
@@ -17,31 +18,22 @@
                 <!-- Profile image upload button and hidden file input -->
                 <input type="file" id="profileImageInput" name="profilePicture" accept="image/*" class="hidden" />
                 <x-ui.icon-button type="button" id="editProfileImageBtn" variant="blue" title="Upload photo"
-                    class="absolute -top-0.5 -right-0.5 rounded-full flex items-center justify-center text-base md:text-lg font-bold z-10 p-3 shadow-lg">
+                    class="absolute -bottom-1 right-0 rounded-full flex items-center justify-center text-base md:text-lg font-bold z-10 p-3 shadow-lg">
                     <i class="fas fa-edit"></i>
                 </x-ui.icon-button>
                 <x-ui.icon-button type="button" id="resetProfileImageBtn" variant="red" title="Reset to Default"
-                    class="absolute -top-0.5 -left-0.5 rounded-full flex items-center justify-center text-base md:text-lg font-bold z-10 p-3 shadow-lg">
+                    class="absolute -bottom-1 left-0 rounded-full flex items-center justify-center text-base md:text-lg font-bold z-10 p-3 shadow-lg">
                     <i class="fas fa-trash"></i>
                 </x-ui.icon-button>
             </div>
-            <input type="file" id="profileImageInput" name="profilePicture" accept="image/*" class="hidden" />
-            <x-ui.icon-button type="button" id="editProfileImageBtn" variant="blue" title="Upload photo"
-                class="absolute -bottom-1 right-0 rounded-full flex items-center justify-center text-base font-bold z-10 p-3 shadow-lg">
-                <i class="fas fa-pencil"></i>
-            </x-ui.icon-button>
-            <x-ui.icon-button type="button" id="resetProfileImageBtn" variant="red" title="Reset to Default"
-                class="absolute -bottom-1 left-0 rounded-full flex items-center justify-center text-base font-bold z-10 p-3 shadow-lg">
-                <i class="fas fa-trash"></i>
-            </x-ui.icon-button>
+            <p class="text-sm text-gray-600 text-center">
+                <span class="block font-medium mb-1">{{ $user->name }}</span>
+                <span class="text-gray-500">{{ '@' . $user->username }}</span>
+            </p>
+            <p class="text-xs text-gray-400 text-center mt-3 max-w-xs">
+                Supported formats: JPG, JPEG, PNG • Max size: 2MB
+            </p>
         </div>
-        <p class="text-sm text-gray-600 text-center">
-            <span class="block font-medium mb-1">{{ $user->name }}</span>
-            <span class="text-gray-500">@{{ $user->username }}</span>
-        </p>
-        <p class="text-xs text-gray-400 text-center mt-3 max-w-xs">
-            Supported formats: JPG, JPEG, PNG • Max size: 2MB
-        </p>
     </div>
 
     <!-- Profile Information Section -->
@@ -51,19 +43,20 @@
                 :error="$errors->first('name')" class="w-full" required />
 
             <x-ui.input label="Username" name="username" type="text"
-                value="{{ old('username', $user->username ?? '') }}" :error="$errors->first('username')" class="w-full"
-                required minlength="4" pattern="[a-zA-Z0-9._-]+" />
+                value="{{ old('username', $user->username ?? '') }}" :error="$errors->first('username')" class="w-full" required
+                minlength="4" pattern="[a-zA-Z0-9._-]+" />
 
             <!-- email -->
             <x-ui.input label="Email" name="email" type="email" value="{{ old('email', $user->email ?? '') }}"
                 :error="$errors->first('email')" id="editEmailInput" class="w-full" required />
         </div>
 
-    <!-- bio -->
-    <div class="w-full mt-2 mb-4">
-        <x-ui.input label="Bio" name="bio" type="textarea" value="{{ old('bio', $user->bio ?? '') }}"
-            placeholder="Tell others about yourself..." rows="5" :error="$errors->first('bio')"
-            help="Write a short description about yourself that will be visible on your profile." class="w-full" />
+        <!-- bio -->
+        <div class="w-full mt-2 mb-4">
+            <x-ui.input label="Bio" name="bio" type="textarea" value="{{ old('bio', $user->bio ?? '') }}"
+                placeholder="Tell others about yourself..." rows="5" :error="$errors->first('bio')"
+                help="Write a short description about yourself that will be visible on your profile." class="w-full" />
+        </div>
     </div>
 
     <!-- Save Button -->
@@ -88,16 +81,18 @@
         const profileImageInput = document.getElementById('profileImageInput');
         const profileImagePreview = document.getElementById('profileImagePreview');
         const resetProfileImageBtn = document.getElementById('resetProfileImageBtn');
+        const resetFlag = document.getElementById('resetProfilePictureFlag');
 
         // Default image path
         const defaultImagePath = "{{ asset('profile/default.png') }}";
+
         // Reset profile image to default on trash button click
         resetProfileImageBtn.addEventListener('click', function(e) {
             e.preventDefault();
             profileImagePreview.src = defaultImagePath;
             profileImageInput.value = '';
             // Mark that the image should be reset to default
-            form.setAttribute('data-reset-profile-picture', 'true');
+            resetFlag.value = '1';
         });
 
         editProfileImageBtn.addEventListener('click', function(e) {
@@ -114,51 +109,43 @@
                 };
                 reader.readAsDataURL(file);
                 // Unset reset flag if a new image is chosen
-                form.removeAttribute('data-reset-profile-picture');
+                resetFlag.value = '0';
             }
         });
 
         form.addEventListener('submit', function(e) {
-            // Remove profilePicture if no file is selected
-            if (!profileImageInput.files[0]) {
-                form.querySelector('input[name="profilePicture"]').remove();
-            }
-            // If reset to default, send a flag
-            if (form.getAttribute('data-reset-profile-picture') === 'true') {
-                // Already handled by input
-            form.submit();
-
-            // Show alert-card on top right
-            function showProfileAlert(type, title, message) {
-                fetch('/profile/render-alert', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')
-                                .getAttribute('content'),
-                            'Accept': 'text/html'
-                        },
-                        body: JSON.stringify({
-                            type,
-                            title,
-                            message,
-                            id: 'profile-update-alert-' + Date.now()
-                        })
-                    })
-                    .then(response => response.text())
-                    .then(html => {
-                        const container = document.getElementById('profileUpdateAlertContainer');
-                        if (container) {
-                            const wrapper = document.createElement('div');
-                            wrapper.innerHTML = html;
-                            container.appendChild(wrapper);
-                            setTimeout(() => {
-                                wrapper.style.opacity = '0';
-                                setTimeout(() => wrapper.remove(), 600);
-                            }, 3000);
-                        }
-                    });
-            }
         });
+
+        // Show alert-card on top right
+        function showProfileAlert(type, title, message) {
+            fetch('/profile/render-alert', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')
+                            .getAttribute('content'),
+                        'Accept': 'text/html'
+                    },
+                    body: JSON.stringify({
+                        type,
+                        title,
+                        message,
+                        id: 'profile-update-alert-' + Date.now()
+                    })
+                })
+                .then(response => response.text())
+                .then(html => {
+                    const container = document.getElementById('profileUpdateAlertContainer');
+                    if (container) {
+                        const wrapper = document.createElement('div');
+                        wrapper.innerHTML = html;
+                        container.appendChild(wrapper);
+                        setTimeout(() => {
+                            wrapper.style.opacity = '0';
+                            setTimeout(() => wrapper.remove(), 600);
+                        }, 3000);
+                    }
+                });
+        }
     });
 </script>
