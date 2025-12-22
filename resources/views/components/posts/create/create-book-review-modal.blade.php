@@ -184,7 +184,7 @@
                 <div class="p-3 hover:bg-gray-100 cursor-pointer border-b flex items-center transition-colors" 
                      onclick="selectModalBook('${book.id}', '${book.title.replace(/'/g, "\\'")}', '${book.creator.replace(/'/g, "\\'")}', '${book.coverimage || ''}', '${book.releaseyear || ''}')">
                     ${book.coverimage ? 
-                        `<img src="${book.coverimage}" class="w-10 h-14 object-cover rounded mr-3" onerror="this.style.display='none'">` 
+                        `<img src="${book.coverimage}" class="w-10 h-14 object-cover rounded mr-3" alt="${book.title.replace(/"/g, '&quot;')}" onerror="this.style.display='none'">` 
                         : 
                         `<div class="w-10 h-14 bg-gray-200 rounded mr-3 flex items-center justify-center text-xs text-gray-500">No Image</div>`
                     }

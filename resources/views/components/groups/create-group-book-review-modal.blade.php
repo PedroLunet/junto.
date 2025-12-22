@@ -162,7 +162,7 @@
 
                                     div.innerHTML = `
                                 <div class="flex items-center w-full">
-                                    ${book.coverimage ? `<img src="${book.coverimage}" class="w-10 h-14 object-cover rounded mr-3">` : `<div class="w-10 h-14 bg-gray-200 rounded mr-3 flex items-center justify-center text-xs text-gray-500">No Img</div>`}
+                                    ${book.coverimage ? `<img src="${book.coverimage}" class="w-10 h-14 object-cover rounded mr-3" alt="${book.title.replace(/"/g, '&quot;')}">` : `<div class="w-10 h-14 bg-gray-200 rounded mr-3 flex items-center justify-center text-xs text-gray-500">No Img</div>`}
                                     <div><div class="font-medium text-gray-800">${book.title}</div><div class="text-xs text-gray-500">${book.creator || 'Unknown'}</div></div>
                                 </div>
                             `;

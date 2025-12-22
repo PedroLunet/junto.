@@ -172,7 +172,7 @@
                 <div class="p-3 hover:bg-gray-100 cursor-pointer border-b flex items-center transition-colors" 
                      onclick="selectModalMusic('${song.id}', '${song.title.replace(/'/g, "\\'")}', '${song.creator.replace(/'/g, "\\'")}', '${song.coverimage || ''}', '${song.releaseyear || ''}')">
                     ${song.coverimage ? 
-                        `<img src="${song.coverimage}" class="w-10 h-14 object-cover rounded mr-3" onerror="this.style.display='none'">` 
+                        `<img src="${song.coverimage}" class="w-10 h-14 object-cover rounded mr-3" alt="${song.title.replace(/"/g, '&quot;')}" onerror="this.style.display='none'">` 
                         : 
                         `<div class="w-10 h-14 bg-gray-200 rounded mr-3 flex items-center justify-center text-xs text-gray-500">No Image</div>`
                     }

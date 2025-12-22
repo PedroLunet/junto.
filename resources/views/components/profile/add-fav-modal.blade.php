@@ -118,7 +118,7 @@
                 return `
                     <div class="search-result-item p-4 hover:bg-gray-100 cursor-pointer border-b flex items-center" onclick="${selectFunction}" data-index="${index}">
                         ${imageUrl ? 
-                            `<img src="${imageUrl}" class="w-12 h-18 object-cover rounded mr-3" onerror="this.style.display='none'">` 
+                            `<img src="${imageUrl}" class="w-12 h-18 object-cover rounded mr-3" alt="${title.replace(/"/g, '&quot;')}" onerror="this.style.display='none'">` 
                             : 
                             `<div class="w-12 h-18 bg-gray-200 rounded mr-3 flex items-center justify-center text-xs text-gray-500">No Image</div>`
                         }

@@ -164,7 +164,7 @@
 
                                     div.innerHTML = `
                                 <div class="flex items-center w-full">
-                                    ${posterUrl ? `<img src="${posterUrl}" class="w-10 h-14 object-cover rounded mr-3">` : `<div class="w-10 h-14 bg-gray-200 rounded mr-3 flex items-center justify-center text-xs text-gray-500">No Img</div>`}
+                                    ${posterUrl ? `<img src="${posterUrl}" class="w-10 h-14 object-cover rounded mr-3" alt="${movie.title.replace(/"/g, '&quot;')}">` : `<div class="w-10 h-14 bg-gray-200 rounded mr-3 flex items-center justify-center text-xs text-gray-500">No Img</div>`}
                                     <div><div class="font-medium text-gray-800">${movie.title}</div><div class="text-xs text-gray-500">${safeYear}</div></div>
                                 </div>
                             `;

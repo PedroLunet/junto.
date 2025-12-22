@@ -36,7 +36,7 @@
     @if ($post->image_url)
         <div class="w-full bg-gray-200 rounded-xl overflow-hidden mb-4">
             <img src="{{ asset('post/' . $post->image_url) }}" onerror="this.src='{{ asset('post/default.jpg') }}'"
-                class="w-full max-h-96 object-cover">
+                class="w-full max-h-96 object-cover" alt="Post Image">
         </div>
     @endif
 

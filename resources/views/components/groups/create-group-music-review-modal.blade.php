@@ -157,7 +157,7 @@
 
                                     div.innerHTML = `
                                 <div class="flex items-center w-full">
-                                    ${song.coverimage ? `<img src="${song.coverimage}" class="w-10 h-10 object-cover rounded mr-3">` : `<div class="w-10 h-10 bg-gray-200 rounded mr-3"></div>`}
+                                    ${song.coverimage ? `<img src="${song.coverimage}" class="w-10 h-10 object-cover rounded mr-3" alt="${song.title.replace(/"/g, '&quot;')}">` : `<div class="w-10 h-10 bg-gray-200 rounded mr-3"></div>`}
                                     <div><div class="font-medium">${song.title}</div><div class="text-xs text-gray-500">${song.creator}</div></div>
                                 </div>`;
 
