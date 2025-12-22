@@ -53,6 +53,8 @@
                         class="text-xl mb-6" 
                     />
 
+                    <p class="text-sm text-gray-600 mb-4 text-center"><span class="text-red-500">*</span> Mandatory fields</p>
+
                     <div class="flex justify-center">
                         <x-ui.button id="submit-button" type="submit" variant="primary" class="w-full md:w-auto px-8 py-3 text-lg">
                             Send Message

@@ -34,6 +34,8 @@
                             <a href="#" id="forgot-password-link" class="text-sm text-violet-800 hover:text-violet-700 font-medium">Forgot Password?</a>
                         </div>
 
+                        <p class="text-sm text-gray-600 mb-4 w-full text-center"><span class="text-red-500">*</span> Mandatory fields</p>
+
                         <div class="flex flex-col gap-4 items-center">
                             <x-ui.button type="submit" variant="primary" class="w-full py-3 rounded-full shadow-sm hover:shadow-md">Login</x-ui.button>
 

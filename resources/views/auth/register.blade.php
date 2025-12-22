@@ -57,6 +57,8 @@
 
                         <x-ui.input label="Confirm Password" name="password_confirmation" type="password" required />
 
+                        <p class="text-sm text-gray-600 mb-4 w-full text-center"><span class="text-red-500">*</span> Mandatory fields</p>
+
                         <div class="flex flex-col gap-4 items-center">
                             <x-ui.button type="submit" variant="primary" class="w-full py-3 rounded-full shadow-sm hover:shadow-md">Register</x-ui.button>
                             <a href="{{ route('google-auth') }}"
