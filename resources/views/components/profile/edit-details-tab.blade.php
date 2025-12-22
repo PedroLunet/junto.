@@ -18,7 +18,7 @@
                 <input type="file" id="profileImageInput" name="profilePicture" accept="image/*" class="hidden" />
                 <x-ui.icon-button type="button" id="editProfileImageBtn" variant="blue" title="Upload photo"
                     class="absolute -top-0.5 -right-0.5 rounded-full flex items-center justify-center text-base md:text-lg font-bold z-10 p-3 shadow-lg">
-                    <i class="fas fa-pencil"></i>
+                    <i class="fas fa-edit"></i>
                 </x-ui.icon-button>
                 <x-ui.icon-button type="button" id="resetProfileImageBtn" variant="red" title="Reset to Default"
                     class="absolute -top-0.5 -left-0.5 rounded-full flex items-center justify-center text-base md:text-lg font-bold z-10 p-3 shadow-lg">

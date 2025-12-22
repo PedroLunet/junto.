@@ -9,3 +9,37 @@
     --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
         'Segoe UI Symbol', 'Noto Color Emoji';
 }
+
+@media print {
+    /* Hide sidebar, header actions, and other non-essential elements */
+    aside, 
+    nav, 
+    header, 
+    footer, 
+    .no-print,
+    button,
+    .fixed,
+    #mobile-menu-button,
+    #mobile-overlay {
+        display: none !important;
+    }
+
+    /* Ensure main content takes full width */
+    main {
+        width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        overflow: visible !important;
+    }
+
+    /* Improve text readability */
+    body {
+        background-color: white !important;
+        color: black !important;
+    }
+
+    /* Show links hrefs */
+    a[href]:after {
+        content: " (" attr(href) ")";
+    }
+}
