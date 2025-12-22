@@ -102,6 +102,7 @@ class Post extends Model
             FROM lbaw2544.post_tag pt
             JOIN lbaw2544.users u ON pt.userId = u.id
             WHERE pt.postId IN (" . implode(',', array_fill(0, count($postIds), '?')) . ")
+            AND u.isadmin = false
             ORDER BY pt.createdAt ASC
         ";
         

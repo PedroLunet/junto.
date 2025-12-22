@@ -26,7 +26,9 @@ class Group extends Model
 
     public function members()
     {
-        return $this->belongsToMany(\App\Models\User\User::class, 'membership', 'groupid', 'userid')->withPivot('isowner');
+        return $this->belongsToMany(\App\Models\User\User::class, 'membership', 'groupid', 'userid')
+            ->where('users.isadmin', false)
+            ->withPivot('isowner');
     }
 
     public function owner()

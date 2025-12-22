@@ -191,11 +191,13 @@ class FriendRequestController extends Controller
         // Get friends manually since we need both directions
         $friendsAsUser1 = User::join('friendship', 'users.id', '=', 'friendship.userid2')
             ->where('friendship.userid1', $user->id)
+            ->where('users.isadmin', false)
             ->select('users.*')
             ->get();
 
         $friendsAsUser2 = User::join('friendship', 'users.id', '=', 'friendship.userid1')
             ->where('friendship.userid2', $user->id)
+            ->where('users.isadmin', false)
             ->select('users.*')
             ->get();
 
