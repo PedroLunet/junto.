@@ -161,7 +161,7 @@ class AdminController extends Controller
             Log::error('Validation failed: ', $e->errors());
             return response()->json([
                 'success' => false,
-                'message' => implode(' ', $e->validator->errors()->all()),
+                'message' => collect($e->errors())->flatten()->implode(' '),
                 'redirect_url' => route('admin.users', [], false)
             ], 422);
         } catch (\Exception $e) {
@@ -435,7 +435,7 @@ class AdminController extends Controller
         } catch (ValidationException $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Validation failed: ' . implode(', ', $e->validator->errors()->all())
+                'message' => 'Validation failed: ' . collect($e->errors())->flatten()->implode(', ')
             ], 422);
         } catch (\Exception $e) {
             Log::error('Submit appeal error: ' . $e->getMessage());
@@ -689,13 +689,13 @@ class AdminController extends Controller
             if ($request->expectsJson()) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Validation failed: ' . implode(' ', $e->validator->errors()->all())
+                    'message' => 'Validation failed: ' . collect($e->errors())->flatten()->implode(' ')
                 ], 422);
             }
             return redirect()->route('admin.users')->with('alert', [
                 'type' => 'error',
                 'title' => 'Validation Error',
-                'message' => 'Validation failed: ' . implode(' ', $e->validator->errors()->all())
+                'message' => 'Validation failed: ' . collect($e->errors())->flatten()->implode(' ')
             ]);
         } catch (\Exception $e) {
             Log::error('Admin delete user error: ' . $e->getMessage());
