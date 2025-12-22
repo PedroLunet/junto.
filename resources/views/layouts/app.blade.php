@@ -8,44 +8,44 @@
             <i class="fa-solid fa-inbox"></i>
             <span id="notification-badge"
                 class="absolute top-0 right-0 bg-red-600 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center hidden">0</span>
-        
+
             <script>
                 function updateNotificationBadge() {
-    if (!window.isAuthenticated) return;
+                    if (!window.isAuthenticated) return;
 
-    fetch('/notifications/unread-count', {
-    headers: {
-    'Accept': 'application/json'
-    }
-    })
-    .then(response => {
-    if (!response.ok) {
-    throw new Error(`HTTP error! status: ${response.status}`);
-    }
-    return response.json();
-    })
-    .then(data => {
-    const badge = document.getElementById('notification-badge');
-    if (badge) {
-    if (data.count > 0) {
-    badge.textContent = data.count;
-    badge.classList.remove('hidden');
-    } else {
-    badge.classList.add('hidden');
-    }
-    }
-    })
-    .catch(error => console.error('Error fetching notifications:', error));
-    }
+                    fetch('/notifications/unread-count', {
+                            headers: {
+                                'Accept': 'application/json'
+                            }
+                        })
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error(`HTTP error! status: ${response.status}`);
+                            }
+                            return response.json();
+                        })
+                        .then(data => {
+                            const badge = document.getElementById('notification-badge');
+                            if (badge) {
+                                if (data.count > 0) {
+                                    badge.textContent = data.count;
+                                    badge.classList.remove('hidden');
+                                } else {
+                                    badge.classList.add('hidden');
+                                }
+                            }
+                        })
+                        .catch(error => console.error('Error fetching notifications:', error));
+                }
 
-    document.addEventListener('DOMContentLoaded', updateNotificationBadge);
-    setInterval(updateNotificationBadge, 1000);
-                </script>
-        
-            </x-ui.button>
+                document.addEventListener('DOMContentLoaded', updateNotificationBadge);
+                setInterval(updateNotificationBadge, 1000);
+            </script>
+
+        </x-ui.button>
     @endauth
     @guest
-        <x-ui.button href="{{ route('friend-requests.index') }}" variant="ghost" class="p-2" title="Inbox">
+        <x-ui.button  variant="ghost" class="p-2" title="Inbox">
             <i class="fa-solid fa-inbox"></i>
         </x-ui.button>
     @endguest
@@ -57,18 +57,27 @@
 @section('navigation')
     <ul class="space-y-2">
         <li><a href="{{ route('friends-feed') }}"
-                class="block py-2 px-4 rounded hover:bg-[#7a5466] hover:text-white {{ request()->routeIs('friends-feed') ? 'bg-[#a17f8f] text-white' : '' }}"><i class="fa-solid fa-user-group fa-fw mr-2"></i>Friends Feed</a></li>
-        <li><a href="{{ route('movies') }}" class="block py-2 px-4 rounded hover:bg-[#7a5466] hover:text-white {{ request()->routeIs('movies') ? 'bg-[#a17f8f] text-white' : '' }}"><i class="fa-solid fa-clapperboard fa-fw mr-2"></i>Movies</a>
+                class="block py-2 px-4 rounded hover:bg-[#7a5466] hover:text-white {{ request()->routeIs('friends-feed') ? 'bg-[#a17f8f] text-white' : '' }}"><i
+                    class="fa-solid fa-user-group fa-fw mr-2"></i>Friends Feed</a></li>
+        <li><a href="{{ route('movies') }}"
+                class="block py-2 px-4 rounded hover:bg-[#7a5466] hover:text-white {{ request()->routeIs('movies') ? 'bg-[#a17f8f] text-white' : '' }}"><i
+                    class="fa-solid fa-clapperboard fa-fw mr-2"></i>Movies</a>
         </li>
-        <li><a href="{{ route('books') }}" class="block py-2 px-4 rounded hover:bg-[#7a5466] hover:text-white {{ request()->routeIs('books') ? 'bg-[#a17f8f] text-white' : '' }}"><i class="fa-solid fa-book fa-fw mr-2"></i>Books</a>
+        <li><a href="{{ route('books') }}"
+                class="block py-2 px-4 rounded hover:bg-[#7a5466] hover:text-white {{ request()->routeIs('books') ? 'bg-[#a17f8f] text-white' : '' }}"><i
+                    class="fa-solid fa-book fa-fw mr-2"></i>Books</a>
         </li>
-        <li><a href="{{ route('music') }}" class="block py-2 px-4 rounded hover:bg-[#7a5466] hover:text-white {{ request()->routeIs('music') ? 'bg-[#a17f8f] text-white' : '' }}"><i class="fa-solid fa-music fa-fw mr-2"></i>Music</a>
+        <li><a href="{{ route('music') }}"
+                class="block py-2 px-4 rounded hover:bg-[#7a5466] hover:text-white {{ request()->routeIs('music') ? 'bg-[#a17f8f] text-white' : '' }}"><i
+                    class="fa-solid fa-music fa-fw mr-2"></i>Music</a>
         </li>
         <li><a href="{{ route('groups.index') }}"
-                class="block py-2 px-4 rounded hover:bg-[#7a5466] hover:text-white {{ request()->routeIs('groups.*') ? 'bg-[#a17f8f] text-white' : '' }}"><i class="fa-solid fa-people-group fa-fw mr-2"></i>Groups</a></li>
+                class="block py-2 px-4 rounded hover:bg-[#7a5466] hover:text-white {{ request()->routeIs('groups.*') ? 'bg-[#a17f8f] text-white' : '' }}"><i
+                    class="fa-solid fa-people-group fa-fw mr-2"></i>Groups</a></li>
         <li><a href="{{ route('messages.index') }}"
-                class="block py-2 px-4 rounded hover:bg-[#7a5466] hover:text-white {{ request()->routeIs('messages.*') ? 'bg-[#a17f8f] text-white' : '' }}"><i class="fa-solid fa-envelope fa-fw mr-2"></i>Messages</a></li>
-        
+                class="block py-2 px-4 rounded hover:bg-[#7a5466] hover:text-white {{ request()->routeIs('messages.*') ? 'bg-[#a17f8f] text-white' : '' }}"><i
+                    class="fa-solid fa-envelope fa-fw mr-2"></i>Messages</a></li>
+
     </ul>
 @endsection
 
