@@ -31,7 +31,7 @@ class GroupController extends Controller
         if ($group->members()->where('users.id', $userId)->exists()) {
             return back()->with('error', 'User is already a member.');
         }
-        $existingInvite = \App\Models\Request::where('senderid', auth()->id())
+        $existingInvite = \App\Models\Request::where('senderid', $userId)
             ->where('status', 'pending')
             ->whereHas('groupInviteRequest', function ($q) use ($group, $userId) {
                 $q->where('groupid', $group->id);
@@ -338,10 +338,10 @@ class GroupController extends Controller
                     ->orderBy('membership.joinedat', 'asc')
                     ->first();
                 if ($oldestMember) {
-                    DB::table('membership')
+                    DB::table('lbaw2544.membership')
                         ->where('groupid', $group->id)
                         ->update(['isowner' => false]);
-                    DB::table('membership')
+                    DB::table('lbaw2544.membership')
                         ->where('groupid', $group->id)
                         ->where('userid', $oldestMember->id)
                         ->update(['isowner' => true]);
