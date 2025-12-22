@@ -84,14 +84,6 @@
                             <option value="date_asc" {{ request('sort') === 'date_asc' ? 'selected' : '' }}>Oldest first</option>
                         </select>
                     </div>
-                    <div class="flex flex-col sm:flex-row gap-2 sm:gap-4 items-start sm:items-center">
-                        <label for="post_type" class="text-xs sm:text-sm font-medium text-gray-600 whitespace-nowrap">POST TYPE</label>
-                        <select name="post_type" id="post_type" class="w-full sm:w-auto bg-white border border-gray-300 rounded-lg px-4 py-2 text-sm font-medium text-gray-700 hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent cursor-pointer transition-colors" onchange="this.form.submit()">
-                            <option value="all" {{ request('post_type') === 'all' || !request('post_type') ? 'selected' : '' }}>All</option>
-                            <option value="standard" {{ request('post_type') === 'standard' ? 'selected' : '' }}>Standard</option>
-                            <option value="review" {{ request('post_type') === 'review' ? 'selected' : '' }}>Review</option>
-                        </select>
-                    </div>
                 </div>
             @elseif (request()->route()->getName() === 'search.comments')
                 <div class="flex flex-col gap-2 w-full">
@@ -100,15 +92,6 @@
                         <select name="sort" id="sort" class="w-full sm:w-auto bg-white border border-gray-300 rounded-lg px-4 py-2 text-sm font-medium text-gray-700 hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent cursor-pointer transition-colors" onchange="this.form.submit()">
                             <option value="date_desc" {{ request('sort') === 'date_desc' || !request('sort') ? 'selected' : '' }}>Newest first</option>
                             <option value="date_asc" {{ request('sort') === 'date_asc' ? 'selected' : '' }}>Oldest first</option>
-                        </select>
-                    </div>
-                    <div class="flex flex-col sm:flex-row gap-2 sm:gap-4 items-start sm:items-center">
-                        <label for="time_period" class="text-xs sm:text-sm font-medium text-gray-600 whitespace-nowrap">TIME PERIOD</label>
-                        <select name="time_period" id="time_period" class="w-full sm:w-auto bg-white border border-gray-300 rounded-lg px-4 py-2 text-sm font-medium text-gray-700 hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent cursor-pointer transition-colors" onchange="this.form.submit()">
-                            <option value="all" {{ request('time_period') === 'all' || !request('time_period') ? 'selected' : '' }}>All time</option>
-                            <option value="last_24h" {{ request('time_period') === 'last_24h' ? 'selected' : '' }}>Last 24h</option>
-                            <option value="last_week" {{ request('time_period') === 'last_week' ? 'selected' : '' }}>Last week</option>
-                            <option value="last_month" {{ request('time_period') === 'last_month' ? 'selected' : '' }}>Last month</option>
                         </select>
                     </div>
                 </div>

@@ -15,12 +15,10 @@ class SearchCommentController extends Controller
         $request->validate([
             'query' => ['nullable', 'string', 'max:255'],
             'sort' => ['nullable', 'string', 'in:date_asc,date_desc'],
-            'time_period' => ['nullable', 'string', 'in:all,last_24h,last_week,last_month'],
         ]);
 
         $search = $request->input('query', '') ?? "";
         $sort = $request->input('sort', 'date_desc');
-        $timePeriod = $request->input('time_period', 'all');
 
         $sql = "
             SELECT 
@@ -49,14 +47,6 @@ class SearchCommentController extends Controller
             $sql .= " AND c.content ILIKE ?";
             $searchTerm = "%{$search}%";
             $params[] = $searchTerm;
-        }
-
-        if ($timePeriod === 'last_24h') {
-            $sql .= " AND c.createdat >= NOW() - INTERVAL '1 day'";
-        } elseif ($timePeriod === 'last_week') {
-            $sql .= " AND c.createdat >= NOW() - INTERVAL '7 days'";
-        } elseif ($timePeriod === 'last_month') {
-            $sql .= " AND c.createdat >= NOW() - INTERVAL '1 month'";
         }
 
         if ($sort === 'date_asc') {

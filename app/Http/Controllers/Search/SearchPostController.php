@@ -15,12 +15,10 @@ class SearchPostController extends Controller
         $request->validate([
             'query' => ['nullable', 'string', 'max:255'],
             'sort' => ['nullable', 'string', 'in:date_asc,date_desc'],
-            'post_type' => ['nullable', 'string', 'in:all,standard,review'],
         ]);
 
         $search = $request->input('query', '') ?? "";
         $sort = $request->input('sort', 'date_desc');
-        $postType = $request->input('post_type', 'all');
         $currentUserId = Auth::id();
 
         $sql = "
@@ -71,12 +69,6 @@ class SearchPostController extends Controller
             $params[] = $searchTerm;
             $params[] = $searchTerm;
             $params[] = $searchTerm;
-        }
-
-        if ($postType === 'standard') {
-            $sql .= " AND sp.postId IS NOT NULL";
-        } elseif ($postType === 'review') {
-            $sql .= " AND r.postId IS NOT NULL";
         }
 
         if ($sort === 'date_asc') {
