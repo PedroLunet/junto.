@@ -44,11 +44,30 @@ class Comment extends Model
 
     public static function getCommentsForPost($postId)
     {
-        return self::where('postid', $postId)
+        $currentUserId = auth()->id();
+
+        $comments = self::where('postid', $postId)
             ->with('user')
             ->withCount(['likes as likes_count'])
             ->orderBy('createdat', 'asc')
             ->get();
+
+        if ($currentUserId) {
+            foreach ($comments as $comment) {
+                $comment->is_liked = \Illuminate\Support\Facades\DB::table('comment_like')
+                    ->where('commentid', $comment->id)
+                    ->where('userid', $currentUserId)
+                    ->exists();
+                $comment->user_id = $comment->userid;
+            }
+        } else {
+            foreach ($comments as $comment) {
+                $comment->is_liked = false;
+                $comment->user_id = $comment->userid;
+            }
+        }
+
+        return $comments;
     }
 
     public function getAuthorNameAttribute()
@@ -102,5 +121,40 @@ class Comment extends Model
         return $commentModel;
 
 
+    }
+
+    public static function toggleLike($commentId, $userId)
+    {
+        $comment = self::find($commentId);
+        $user = User::find($userId);
+
+        $existing = \Illuminate\Support\Facades\DB::table('comment_like')
+            ->where('commentid', $commentId)
+            ->where('userid', $userId)
+            ->first();
+
+        if ($existing) {
+            \Illuminate\Support\Facades\DB::table('comment_like')
+                ->where('commentid', $commentId)
+                ->where('userid', $userId)
+                ->delete();
+            $liked = false;
+        } else {
+            \Illuminate\Support\Facades\DB::table('comment_like')->insert([
+                'commentid' => $commentId,
+                'userid' => $userId,
+                'createdat' => now(),
+            ]);
+            $liked = true;
+        }
+
+        $likesCount = \Illuminate\Support\Facades\DB::table('comment_like')
+            ->where('commentid', $commentId)
+            ->count();
+
+        return [
+            'liked' => $liked,
+            'likes_count' => $likesCount,
+        ];
     }
 }
