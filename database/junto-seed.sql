@@ -1033,7 +1033,7 @@ INSERT INTO review (postId, rating, mediaId, content) VALUES
     (47, 5, 16, 'Spirited Away is pure magic. I cried.'),
     (53, 3, 21, 'Dune is great but the pacing is a bit slow.'),
     (57, 5, 6, 'Interstellar soundtrack is a masterpiece.'),
-    (59, 4, 14, 'Parasite is a brilliant social commentary. Highly recommend.'),
+    (59, 4, 14, 'Lorde of the Rings is a brilliant social commentary. Highly recommend.'),
     (60, 5, 4, 'The Matrix changed sci-fi forever. A must-watch.'),
     (65, 5, 36, 'The Seven Husbands of Evelyn Hugo is a masterpiece. I couldn''t put it down.'),
     (66, 5, 37, 'Atomic Habits is life-changing. Small changes really do add up.'),
@@ -1161,3 +1161,36 @@ INSERT INTO report (reason, status, postId, commentId, createdAt) VALUES
     
     -- Post 64: Harassment (Direct attack on Alice)
     ('Harassment', 'pending', 64, NULL, NOW() - INTERVAL '20 minutes');
+
+-- INSERT USERS WITH SPECIFIC BLOCK STATUSES
+INSERT INTO users (name, username, email, passwordHash, bio, isBlocked) VALUES 
+    ('Robert Rogers', 'rob_rog', 'robert@example.org', '$2y$10$HfzIhGCCaxqyaIdGgjARSuOKAcm1Uy82YfLuNaajn6JrjLWy9Sj/W', 'Photography enthusiast. Occasionally too loud.', TRUE),
+    ('Vitor Moreira', 'vit_mor', 'vitor@example.org', '$2y$10$HfzIhGCCaxqyaIdGgjARSuOKAcm1Uy82YfLuNaajn6JrjLWy9Sj/W', 'Music producer and tech explorer.', TRUE),
+    ('Fernando Augusto', 'fernando_aug', 'fernando@example.org', '$2y$10$HfzIhGCCaxqyaIdGgjARSuOKAcm1Uy82YfLuNaajn6JrjLWy9Sj/W', 'Avid reader and collector of rare books.', FALSE); -- Unblocked because appeal was approved
+
+-- UNBLOCK APPEALS 
+INSERT INTO unblock_appeal (userId, reason, status, adminNotes, createdAt, updatedAt) VALUES
+    (
+        (SELECT id FROM users WHERE username = 'rob_rog'), 
+        'I believe my account was flagged by mistake during the last community discussion. I was just debating a film technique.', 
+        'pending', 
+        NULL, 
+        NOW() - INTERVAL '1 day', 
+        NOW()
+    ),
+    (
+        (SELECT id FROM users WHERE username = 'vit_mor'), 
+        'I apologize for the spammy comments. I didn''t realize that posting my Soundcloud link in every thread was against the rules.', 
+        'rejected', 
+        'User has a history of repeated promotional spam after multiple warnings.', 
+        NOW() - INTERVAL '3 days', 
+        NOW() - INTERVAL '1 day'
+    ),
+    (
+        (SELECT id FROM users WHERE username = 'fernando_aug'), 
+        'My account was compromised last week. I have now enabled 2FA and changed my password. Please restore my access.', 
+        'approved', 
+        'Verified account recovery. Security breach confirmed and resolved.', 
+        NOW() - INTERVAL '5 days', 
+        NOW() - INTERVAL '4 days'
+    );
