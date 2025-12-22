@@ -23,8 +23,13 @@ class AdminController extends Controller
     {
         // get stats
         $totalUsers = User::count();
-        $activeUsers = User::where('isblocked', false)->count();
-
+        $activeUsers = User::where('isblocked', false)
+            ->get()
+            ->reject(function ($user) {
+                return self::isDeletedUser($user);
+            })
+            ->count();
+            
         $totalPosts = Post::count();
         $standardPosts = Post::whereDoesntHave('review')->count();
 
@@ -566,7 +571,7 @@ class AdminController extends Controller
 
             $appeal = UnblockAppeal::findOrFail($id);
             $this->authorize('update', $appeal);
-            
+
             $user = $appeal->user;
 
             $user->update(['isblocked' => false]);
