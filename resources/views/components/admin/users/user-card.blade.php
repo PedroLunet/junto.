@@ -1,5 +1,9 @@
 @props(['user'])
 
+@php
+    use App\Http\Controllers\Admin\AdminController;
+@endphp
+
 <div
     {{ $attributes->merge(['class' => 'user-card bg-white rounded-xl shadow-sm border border-gray-100 p-4 md:p-6 w-full']) }}>
     <div class="flex justify-between items-start mb-6">
@@ -8,8 +12,8 @@
         </div>
 
         <span
-            class="inline-flex items-center px-3 py-1 rounded-lg text-xs font-bold uppercase tracking-wide {{ $user->isblocked ? 'bg-red-100 text-red-800' : ($user->isadmin ? 'bg-purple-100 text-purple-800' : 'bg-green-100 text-green-800') }}">
-            {{ $user->isblocked ? 'Blocked' : ($user->isadmin ? 'Admin' : 'Active') }}
+            class="inline-flex items-center px-3 py-1 rounded-lg text-xs font-bold uppercase tracking-wide {{ $user->isblocked ? 'bg-red-100 text-red-800' : ($user->isadmin ? 'bg-purple-100 text-purple-800' : ( AdminController::isDeletedUser($user) ? 'bg-gray-100 text-gray-800' : 'bg-green-100 text-green-800')) }}">
+            {{ $user->isblocked ? 'Blocked' : ($user->isadmin ? 'Admin' : (AdminController::isDeletedUser($user) ? 'Deleted' : 'Active')) }}
         </span>
     </div>
 
@@ -34,7 +38,6 @@
         </div>
     </div>
 
-    @php use App\Http\Controllers\Admin\AdminController; @endphp
     @if (auth()->id() !== $user->id && !AdminController::isDeletedUser($user))
         <div class="flex justify-center gap-6">
             <x-ui.icon-button variant="blue" class="edit-user-btn py-2.5" title="Edit"

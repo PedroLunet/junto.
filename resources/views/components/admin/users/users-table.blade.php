@@ -69,8 +69,8 @@
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap">
                         <span
-                            class="inline-flex items-center px-2.5 py-0.5 rounded-full text-base font-medium {{ $user->isblocked ? 'bg-red-100 text-red-800' : ($user->isadmin ? 'bg-purple-100 text-purple-800' : 'bg-green-100 text-green-800') }}">
-                            {{ $user->isblocked ? 'Blocked' : ($user->isadmin ? 'Admin' : 'Active') }}
+                            class="inline-flex items-center px-2.5 py-0.5 rounded-full text-base font-medium {{ $user->isblocked ? 'bg-red-100 text-red-800' : ($user->isadmin ? 'bg-purple-100 text-purple-800' : ( AdminController::isDeletedUser($user) ? 'bg-gray-100 text-gray-800' : 'bg-green-100 text-green-800')) }}">
+                            {{ $user->isblocked ? 'Blocked' : ($user->isadmin ? 'Admin' : (AdminController::isDeletedUser($user) ? 'Deleted' : 'Active')) }}
                         </span>
                     </td>
                     <td class="px-3 py-4 whitespace-nowrap text-base font-medium">
