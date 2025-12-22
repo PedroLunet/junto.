@@ -147,52 +147,9 @@
         }
 
         function applyFilterAndSort() {
-            let filteredReports = currentFilter === 'all' ?
-                allReports :
-                allReports.filter(r => r.status === currentFilter);
-
-            // Sort reports
-            if (currentSort === 'created_date') {
-                filteredReports.sort((a, b) => {
-                    const diff = new Date(b.createdat) - new Date(a.createdat);
-                    return sortAscending ? -diff : diff;
-                });
-            } else if (currentSort === 'popularity') {
-                filteredReports.sort((a, b) => {
-                    const aLikes = (a.post?.likes_count || 0);
-                    const bLikes = (b.post?.likes_count || 0);
-                    const diff = bLikes - aLikes;
-                    return sortAscending ? -diff : diff;
-                });
+            if (typeof window.applyReportFilterAndSort === 'function') {
+                window.applyReportFilterAndSort();
             }
-
-            // Update display
-            const reportItems = document.querySelectorAll('.report-item');
-            const container = document.querySelector('#reports-container .space-y-6');
-
-            // Create a map of report IDs to their elements
-            const reportMap = new Map();
-            reportItems.forEach(item => {
-                const reportId = item.querySelector('[data-report-id]')?.dataset.reportId;
-                if (reportId) reportMap.set(parseInt(reportId), item);
-            });
-
-            // Reorder based on sorted array
-            filteredReports.forEach(report => {
-                const element = reportMap.get(report.id);
-                if (element) {
-                    container.appendChild(element);
-                    element.style.display = 'block';
-                }
-            });
-
-            // Hide reports not in filtered list
-            reportItems.forEach(item => {
-                const reportId = item.querySelector('[data-report-id]')?.dataset.reportId;
-                if (!filteredReports.find(r => r.id === parseInt(reportId))) {
-                    item.style.display = 'none';
-                }
-            });
         }
 
         function filterReports(status) {

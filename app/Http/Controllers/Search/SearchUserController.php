@@ -14,10 +14,12 @@ class SearchUserController extends Controller
         $request->validate([
             'query' => ['nullable', 'string', 'max:255'],
             'sort' => ['nullable', 'string', 'in:name_asc,name_desc,date_asc,date_desc'],
+            'join_date_range' => ['nullable', 'string', 'in:all,last_month,last_three_months,last_year'],
         ]);
 
         $search = $request->input('query', '') ?? "";
         $sort = $request->input('sort', 'name_asc');
+        $joinDateRange = $request->input('join_date_range', 'all');
 
         $users = User::query()
             ->where('isdeleted', false)
@@ -25,6 +27,15 @@ class SearchUserController extends Controller
             ->where('isadmin', false)
             ->when($search, function ($query, $search) {
                 return $query->searchByProfile($search);
+            })
+            ->when($joinDateRange !== 'all', function ($query, $joinDateRange) {
+                $now = now();
+                return match($joinDateRange) {
+                    'last_month' => $query->where('createdat', '>=', $now->subMonth()),
+                    'last_three_months' => $query->where('createdat', '>=', $now->subMonths(3)),
+                    'last_year' => $query->where('createdat', '>=', $now->subYear()),
+                    default => $query,
+                };
             });
 
         if ($request->expectsJson() || $request->header('Accept') === 'application/json') {

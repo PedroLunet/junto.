@@ -83,7 +83,7 @@
 
     document.addEventListener('DOMContentLoaded', () => {
         fetchLatestNotification();
-        setInterval(fetchLatestNotification, 15000);
+        setInterval(fetchLatestNotification, 1000);
     });
 </script>
 

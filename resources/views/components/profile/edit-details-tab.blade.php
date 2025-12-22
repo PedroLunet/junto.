@@ -1,4 +1,4 @@
-<form id="editProfileForm" class="space-y-6" method="POST" action="{{ route('profile.update') }}"
+<form id="editProfileForm" class="space-y-8" method="POST" action="{{ route('profile.update') }}"
     enctype="multipart/form-data">
     @csrf
     @method('PUT')
@@ -25,18 +25,31 @@
                     <i class="fas fa-trash"></i>
                 </x-ui.icon-button>
             </div>
-            <p class="text-xs sm:text-sm text-gray-500 text-center max-w-[180px] sm:max-w-[200px]">
-                Supported formats: JPG, JPEG, PNG<br>
-                Max size: 2MB
-            </p>
+            <input type="file" id="profileImageInput" name="profilePicture" accept="image/*" class="hidden" />
+            <x-ui.icon-button type="button" id="editProfileImageBtn" variant="blue" title="Upload photo"
+                class="absolute -bottom-1 right-0 rounded-full flex items-center justify-center text-base font-bold z-10 p-3 shadow-lg">
+                <i class="fas fa-pencil"></i>
+            </x-ui.icon-button>
+            <x-ui.icon-button type="button" id="resetProfileImageBtn" variant="red" title="Reset to Default"
+                class="absolute -bottom-1 left-0 rounded-full flex items-center justify-center text-base font-bold z-10 p-3 shadow-lg">
+                <i class="fas fa-trash"></i>
+            </x-ui.icon-button>
         </div>
+        <p class="text-sm text-gray-600 text-center">
+            <span class="block font-medium mb-1">{{ $user->name }}</span>
+            <span class="text-gray-500">@{{ $user->username }}</span>
+        </p>
+        <p class="text-xs text-gray-400 text-center mt-3 max-w-xs">
+            Supported formats: JPG, JPEG, PNG • Max size: 2MB
+        </p>
+    </div>
 
-        <div class="flex-1 w-full space-y-4 sm:space-y-6">
-            <!-- name -->
+    <!-- Profile Information Section -->
+    <div class="space-y-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <x-ui.input label="Name" name="name" type="text" value="{{ old('name', $user->name ?? '') }}"
                 :error="$errors->first('name')" class="w-full" required />
 
-            <!-- username -->
             <x-ui.input label="Username" name="username" type="text"
                 value="{{ old('username', $user->username ?? '') }}" :error="$errors->first('username')" class="w-full"
                 required minlength="4" pattern="[a-zA-Z0-9._-]+" />
@@ -45,23 +58,22 @@
             <x-ui.input label="Email" name="email" type="email" value="{{ old('email', $user->email ?? '') }}"
                 :error="$errors->first('email')" id="editEmailInput" class="w-full" required />
         </div>
-    </div>
 
     <!-- bio -->
     <div class="w-full mt-2 mb-4">
         <x-ui.input label="Bio" name="bio" type="textarea" value="{{ old('bio', $user->bio ?? '') }}"
-            placeholder="Tell others about yourself..." rows="4" :error="$errors->first('bio')"
+            placeholder="Tell others about yourself..." rows="5" :error="$errors->first('bio')"
             help="Write a short description about yourself that will be visible on your profile." class="w-full" />
     </div>
 
     <!-- Save Button -->
-    <div class="flex justify-end w-full mt-2">
-        <x-ui.button type="submit" variant="primary" class="text-base w-full sm:w-auto" id="saveProfileBtn">
+    <div class="flex justify-end pt-4 border-t border-gray-200">
+        <x-ui.button type="submit" variant="primary" class="text-base px-8" id="saveProfileBtn">
             Save Changes
         </x-ui.button>
     </div>
-
 </form>
+
 <div id="profileUpdateAlertContainer"
     class="fixed top-4 right-2 sm:top-6 sm:right-6 z-50 flex flex-col gap-2 sm:gap-4 items-end w-[90vw] max-w-xs sm:max-w-sm md:max-w-md">
 </div>
@@ -114,7 +126,6 @@
             // If reset to default, send a flag
             if (form.getAttribute('data-reset-profile-picture') === 'true') {
                 // Already handled by input
-            }
             form.submit();
 
             // Show alert-card on top right
