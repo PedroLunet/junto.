@@ -106,152 +106,15 @@
         });
 
         form.addEventListener('submit', function(e) {
-            e.preventDefault();
-            saveBtn.disabled = true;
-            saveBtn.textContent = 'Saving...';
-
-            const formData = new FormData(form);
             // Remove profilePicture if no file is selected
             if (!profileImageInput.files[0]) {
-                formData.delete('profilePicture');
+                form.querySelector('input[name="profilePicture"]').remove();
             }
             // If reset to default, send a flag
             if (form.getAttribute('data-reset-profile-picture') === 'true') {
-                formData.append('reset_profile_picture', '1');
+                // Already handled by input
             }
-
-            fetch(form.action, {
-                    method: 'POST',
-                    headers: {
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')
-                            .getAttribute('content'),
-                        'Accept': 'application/json'
-                    },
-                    body: formData
-                })
-                .then(response => {
-                    if (!response.ok) {
-                        return response.json().then(err => Promise.reject(err));
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    if (data.success) {
-                        // Determine which fields were updated for specific alerts
-                        let updatedFields = data.updatedFields || [];
-                        let alertTitle = 'Profile updated';
-                        let alertMessage = '';
-                        if (updatedFields.length > 1) {
-                            alertTitle = 'Profile details updated';
-                            alertMessage = 'Your profile details were successfully updated.';
-                        } else if (updatedFields.length === 1) {
-                            switch (updatedFields[0]) {
-                                case 'username':
-                                    alertTitle = 'Username updated';
-                                    alertMessage = 'Your username was successfully updated.';
-                                    break;
-                                case 'email':
-                                    alertTitle = 'Email updated';
-                                    alertMessage = 'Your email address was successfully updated.';
-                                    break;
-                                case 'name':
-                                    alertTitle = 'Name updated';
-                                    alertMessage = 'Your name was successfully updated.';
-                                    break;
-                                case 'bio':
-                                    alertTitle = 'Bio updated';
-                                    alertMessage = 'Your bio was successfully updated.';
-                                    break;
-                                case 'profilePicture':
-                                    alertTitle = 'Profile picture updated';
-                                    alertMessage = 'Your profile picture was successfully updated.';
-                                    break;
-                                default:
-                                    alertTitle = 'Profile updated';
-                                    alertMessage = 'Your profile was successfully updated.';
-                            }
-                        } else {
-                            alertTitle = 'Profile updated';
-                            alertMessage = data.message || 'Your profile was successfully updated.';
-                        }
-                        showProfileAlert('success', alertTitle, alertMessage);
-                        setTimeout(() => window.location.reload(), 1200);
-                    } else {
-                        showProfileAlert('error', 'Update failed', data.message ||
-                            'An error occurred while updating your profile');
-                    }
-                })
-                .catch((error) => {
-                    // Clear previous errors
-                    document.querySelectorAll('.input-error-message').forEach(el => el.remove());
-                    document.querySelectorAll('.border-red-500').forEach(el => {
-                        el.classList.remove('border-red-500', 'focus:border-red-500',
-                            'focus:ring-red-100');
-                        el.classList.add('border-gray-300');
-                    });
-                    document.querySelectorAll('.input-error-icon').forEach(el => el.remove());
-
-                    // Handle validation errors
-                    if (error.errors) {
-                        Object.keys(error.errors).forEach(field => {
-                            const input = form.querySelector(`[name="${field}"]`);
-                            if (input) {
-                                // Add error border
-                                input.classList.remove('border-gray-300');
-                                input.classList.add('border-red-500',
-                                    'focus:border-red-500', 'focus:ring-red-100',
-                                    'pr-12', '!border-red-500');
-
-                                // Add error icon
-                                const iconHtml =
-                                    `<span class="absolute right-4 ${input.tagName === 'TEXTAREA' ? 'top-4' : ''} flex items-center justify-center pointer-events-none input-error-icon"><i class="fas fa-exclamation-circle text-red-500 text-3xl"></i></span>`;
-                                input.parentElement.insertAdjacentHTML('beforeend',
-                                    iconHtml);
-
-                                // Add error message
-                                const errorMsg =
-                                    `<p class="mt-2 text-xl text-red-500 font-medium input-error-message">${error.errors[field][0]}</p>`;
-                                input.parentElement.parentElement.insertAdjacentHTML(
-                                    'beforeend', errorMsg);
-
-                                // Add input event listener to clear error on typing
-                                input.addEventListener('input', function clearError() {
-                                    // Remove error styling
-                                    input.classList.remove('border-red-500',
-                                        'focus:border-red-500',
-                                        'focus:ring-red-100', 'pr-12',
-                                        '!border-red-500');
-                                    input.classList.add('border-gray-300');
-
-                                    // Remove error icon
-                                    const errorIcon = input.parentElement
-                                        .querySelector('.input-error-icon');
-                                    if (errorIcon) errorIcon.remove();
-
-                                    // Remove error message
-                                    const errorMessage = input.parentElement
-                                        .parentElement.querySelector(
-                                            '.input-error-message');
-                                    if (errorMessage) errorMessage.remove();
-
-                                    // Remove this event listener after first use
-                                    input.removeEventListener('input', clearError);
-                                }, {
-                                    once: false
-                                });
-                            }
-                        });
-                        showProfileAlert('error', 'Validation error',
-                            'Please fix the highlighted fields.');
-                    } else {
-                        showProfileAlert('error', 'Update failed', error.message ||
-                            'An error occurred while updating your profile.');
-                    }
-                })
-                .finally(() => {
-                    saveBtn.disabled = false;
-                    saveBtn.textContent = 'Save Changes';
-                });
+            form.submit();
 
             // Show alert-card on top right
             function showProfileAlert(type, title, message) {
