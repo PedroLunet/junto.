@@ -58,17 +58,19 @@ class PostController extends Controller
                         VALUES (?, ?, CURRENT_TIMESTAMP)
                     ', [$postId, $userId]);
 
-                    $notification = DB::table('lbaw2544.notification')->insertGetId([
-                        'message' => 'You were tagged in a post',
-                        'isread' => false,
-                        'receiverid' => $userId,
-                        'createdat' => now(),
-                    ]);
+                    if ((int)$userId !== Auth::id()) {
+                        $notification = DB::table('lbaw2544.notification')->insertGetId([
+                            'message' => 'You were tagged in a post',
+                            'isread' => false,
+                            'receiverid' => $userId,
+                            'createdat' => now(),
+                        ]);
 
-                    DB::insert('
-                        INSERT INTO lbaw2544.tag_notification (notificationid, postid, taggerid)
-                        VALUES (?, ?, ?)
-                    ', [$notification, $postId, Auth::id()]);
+                        DB::insert('
+                            INSERT INTO lbaw2544.tag_notification (notificationid, postid, taggerid)
+                            VALUES (?, ?, ?)
+                        ', [$notification, $postId, Auth::id()]);
+                    }
                 }
             }
 

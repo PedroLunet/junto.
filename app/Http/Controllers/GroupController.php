@@ -438,17 +438,19 @@ class GroupController extends Controller
                     VALUES (?, ?, CURRENT_TIMESTAMP)
                 ', [$post->id, $userId]);
 
-                $notification = DB::table('lbaw2544.notification')->insertGetId([
-                    'message' => 'You were tagged in a post',
-                    'isread' => false,
-                    'receiverid' => $userId,
-                    'createdat' => now(),
-                ]);
+                if ((int)$userId !== $user->id) {
+                    $notification = DB::table('lbaw2544.notification')->insertGetId([
+                        'message' => 'You were tagged in a post',
+                        'isread' => false,
+                        'receiverid' => $userId,
+                        'createdat' => now(),
+                    ]);
 
-                DB::insert('
-                    INSERT INTO lbaw2544.tag_notification (notificationid, postid)
-                    VALUES (?, ?)
-                ', [$notification, $post->id]);
+                    DB::insert('
+                        INSERT INTO lbaw2544.tag_notification (notificationid, postid, taggerid)
+                        VALUES (?, ?, ?)
+                    ', [$notification, $post->id, $user->id]);
+                }
             }
         }
 
