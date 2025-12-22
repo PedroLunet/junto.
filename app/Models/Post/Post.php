@@ -46,6 +46,25 @@ class Post extends Model
 
     public static function getPostsWithDetails($currentUserId = null)
     {
+        $whereClause = "WHERE (p.groupId IS NOT NULL OR u.isPrivate = FALSE)";
+        $params = [];
+
+        if ($currentUserId) {
+            $whereClause = "
+                WHERE (
+                    p.groupId IS NOT NULL
+                    OR u.isPrivate = FALSE 
+                    OR p.userId = ? 
+                    OR EXISTS (
+                        SELECT 1 FROM lbaw2544.friendship f 
+                        WHERE f.userId1 = LEAST(p.userId, ?) 
+                        AND f.userId2 = GREATEST(p.userId, ?)
+                    )
+                )
+            ";
+            $params = [$currentUserId, $currentUserId, $currentUserId, $currentUserId];
+        }
+
         $sql = "
             SELECT 
                 p.id,
@@ -80,10 +99,9 @@ class Post extends Model
             LEFT JOIN lbaw2544.standard_post sp ON p.id = sp.postId
             LEFT JOIN lbaw2544.review r ON p.id = r.postId
             LEFT JOIN lbaw2544.media m ON r.mediaId = m.id
+            ' . $whereClause . '
             ORDER BY p.createdAt DESC
         ';
-
-        $params = $currentUserId ? [$currentUserId] : [];
 
         $posts = DB::select($sql, $params);
         
@@ -178,6 +196,26 @@ class Post extends Model
 
     public static function getMovieReviewPosts($currentUserId = null)
     {
+        $whereClause = "WHERE EXISTS (SELECT 1 FROM lbaw2544.film f WHERE f.mediaId = m.id) AND p.groupId IS NULL AND u.isPrivate = FALSE";
+        $params = [];
+
+        if ($currentUserId) {
+            $whereClause = "
+                WHERE EXISTS (SELECT 1 FROM lbaw2544.film f WHERE f.mediaId = m.id) 
+                AND p.groupId IS NULL
+                AND (
+                    u.isPrivate = FALSE 
+                    OR p.userId = ? 
+                    OR EXISTS (
+                        SELECT 1 FROM lbaw2544.friendship f 
+                        WHERE f.userId1 = LEAST(p.userId, ?) 
+                        AND f.userId2 = GREATEST(p.userId, ?)
+                    )
+                )
+            ";
+            $params = [$currentUserId, $currentUserId, $currentUserId, $currentUserId];
+        }
+
         $sql = "
             SELECT 
                 p.id,
@@ -203,12 +241,9 @@ class Post extends Model
             LEFT JOIN lbaw2544.groups g ON p.groupId = g.id
             JOIN lbaw2544.review r ON p.id = r.postId
             JOIN lbaw2544.media m ON r.mediaId = m.id
-            WHERE EXISTS (SELECT 1 FROM lbaw2544.film f WHERE f.mediaId = m.id)
-            AND p.groupId IS NULL
+            ' . $whereClause . '
             ORDER BY p.createdAt DESC
         ';
-
-        $params = $currentUserId ? [$currentUserId] : [];
 
         $posts = DB::select($sql, $params);
         
@@ -217,6 +252,26 @@ class Post extends Model
 
     public static function getBookReviewPosts($currentUserId = null)
     {
+        $whereClause = "WHERE EXISTS (SELECT 1 FROM lbaw2544.book b WHERE b.mediaId = m.id) AND p.groupId IS NULL AND u.isPrivate = FALSE";
+        $params = [];
+
+        if ($currentUserId) {
+            $whereClause = "
+                WHERE EXISTS (SELECT 1 FROM lbaw2544.book b WHERE b.mediaId = m.id) 
+                AND p.groupId IS NULL
+                AND (
+                    u.isPrivate = FALSE 
+                    OR p.userId = ? 
+                    OR EXISTS (
+                        SELECT 1 FROM lbaw2544.friendship f 
+                        WHERE f.userId1 = LEAST(p.userId, ?) 
+                        AND f.userId2 = GREATEST(p.userId, ?)
+                    )
+                )
+            ";
+            $params = [$currentUserId, $currentUserId, $currentUserId, $currentUserId];
+        }
+
         $sql = "
             SELECT 
                 p.id,
@@ -242,12 +297,9 @@ class Post extends Model
             LEFT JOIN lbaw2544.groups g ON p.groupId = g.id
             JOIN lbaw2544.review r ON p.id = r.postId
             JOIN lbaw2544.media m ON r.mediaId = m.id
-            WHERE EXISTS (SELECT 1 FROM lbaw2544.book b WHERE b.mediaId = m.id)
-            AND p.groupId IS NULL
+            ' . $whereClause . '
             ORDER BY p.createdAt DESC
         ';
-
-        $params = $currentUserId ? [$currentUserId] : [];
 
         $posts = DB::select($sql, $params);
         
@@ -256,6 +308,26 @@ class Post extends Model
 
     public static function getMusicReviewPosts($currentUserId = null)
     {
+        $whereClause = "WHERE EXISTS (SELECT 1 FROM lbaw2544.music mu WHERE mu.mediaId = m.id) AND p.groupId IS NULL AND u.isPrivate = FALSE";
+        $params = [];
+
+        if ($currentUserId) {
+            $whereClause = "
+                WHERE EXISTS (SELECT 1 FROM lbaw2544.music mu WHERE mu.mediaId = m.id) 
+                AND p.groupId IS NULL
+                AND (
+                    u.isPrivate = FALSE 
+                    OR p.userId = ? 
+                    OR EXISTS (
+                        SELECT 1 FROM lbaw2544.friendship f 
+                        WHERE f.userId1 = LEAST(p.userId, ?) 
+                        AND f.userId2 = GREATEST(p.userId, ?)
+                    )
+                )
+            ";
+            $params = [$currentUserId, $currentUserId, $currentUserId, $currentUserId];
+        }
+
         $sql = "
             SELECT 
                 p.id,
@@ -281,12 +353,9 @@ class Post extends Model
             LEFT JOIN lbaw2544.groups g ON p.groupId = g.id
             JOIN lbaw2544.review r ON p.id = r.postId
             JOIN lbaw2544.media m ON r.mediaId = m.id
-            WHERE EXISTS (SELECT 1 FROM lbaw2544.music mu WHERE mu.mediaId = m.id)
-            AND p.groupId IS NULL
+            ' . $whereClause . '
             ORDER BY p.createdAt DESC
         ';
-
-        $params = $currentUserId ? [$currentUserId] : [];
 
         $posts = DB::select($sql, $params);
         
