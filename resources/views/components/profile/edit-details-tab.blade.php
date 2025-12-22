@@ -69,8 +69,6 @@
     document.addEventListener('DOMContentLoaded', function() {
         const form = document.getElementById('editProfileForm');
         const saveBtn = document.getElementById('saveProfileBtn');
-        const successDiv = document.getElementById('profileUpdateSuccess');
-        const errorDiv = document.getElementById('profileUpdateError');
 
         // Profile image upload logic
         const editProfileImageBtn = document.getElementById('editProfileImageBtn');
@@ -111,8 +109,6 @@
             e.preventDefault();
             saveBtn.disabled = true;
             saveBtn.textContent = 'Saving...';
-            successDiv.classList.add('hidden');
-            errorDiv.classList.add('hidden');
 
             const formData = new FormData(form);
             // Remove profilePicture if no file is selected
