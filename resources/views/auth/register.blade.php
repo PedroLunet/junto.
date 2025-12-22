@@ -22,13 +22,15 @@
                         required autofocus />
 
                     <x-ui.input label="Username" name="username" type="text" value="{{ old('username') }}"
-                        :error="$errors->first('username')" required
+                        :error="$errors->first('username')" required minlength="4" pattern="[a-zA-Z0-9._-]+"
                         help="Username can only contain letters, numbers, dots (.), dashes (-) and underscores (_), and must be at least 4 characters long." />
 
                     <x-ui.input label="E-mail Address" name="email" type="email" value="{{ old('email') }}"
                         :error="$errors->first('email')" required />
 
-                    <x-ui.input label="Password" name="password" type="password" :error="$errors->first('password')" required />
+                    <x-ui.input label="Password" name="password" type="password" :error="$errors->first('password')" required 
+                        pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9]).{8,}"
+                        title="Must contain at least one number, one uppercase and lowercase letter, one special character, and at least 8 or more characters" />
 
                     <div id="password_requirements" class="mb-6 space-y-1 text-sm hidden transition-all duration-300 ease-in-out">
                         <p class="text-gray-600 font-medium mb-2 text-xs">
