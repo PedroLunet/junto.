@@ -16,6 +16,11 @@ class GroupController extends Controller
     public function inviteMember(Request $request, Group $group)
     {
         $this->authorize('update', $group);
+
+        $request->validate([
+            'user_id' => 'required|integer|exists:users,id',
+        ]);
+
         $userId = $request->input('user_id');
         
         $user = \App\Models\User\User::find($userId);
