@@ -9,7 +9,7 @@ class FriendRequest extends Model
 {
   public $timestamps = false;
 
-  protected $table = 'lbaw2544.friend_request';
+  protected $table = 'friend_request';
   protected $primaryKey = 'requestid';
 
   protected $fillable = [

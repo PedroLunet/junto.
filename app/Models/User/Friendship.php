@@ -8,7 +8,7 @@ class Friendship extends Model
 {
   public $timestamps = false;
 
-  protected $table = 'lbaw2544.friendship';
+  protected $table = 'friendship';
 
   // Composite primary key
   protected $primaryKey = null;

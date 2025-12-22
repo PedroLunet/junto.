@@ -17,7 +17,7 @@ class User extends Authenticatable
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;
 
-    protected $table = 'lbaw2544.users';
+    protected $table = 'users';
 
     // Disable default created_at and updated_at timestamps for this model.
     public $timestamps = false;

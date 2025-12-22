@@ -119,7 +119,7 @@ class ReviewController extends Controller
 
             // 2. check if media exists in the db or create it
             $existingMedia = DB::selectOne('
-                SELECT id FROM lbaw2544.media 
+                SELECT id FROM media 
                 WHERE title = ? AND releaseyear = ? AND creator = ?
             ', [$title, $releaseYear, $creator]);
 
@@ -130,7 +130,7 @@ class ReviewController extends Controller
             } else {
                 // create media
 
-                $mediaId = DB::table('lbaw2544.media')->insertGetId([
+                $mediaId = DB::table('media')->insertGetId([
                     'title' => $title,
                     'creator' => $creator,
                     'releaseyear' => $releaseYear,
@@ -139,11 +139,11 @@ class ReviewController extends Controller
 
                 // create specific media entry
                 if ($mediaType === 'book') {
-                    DB::table('lbaw2544.book')->insert(['mediaid' => $mediaId]);
+                    DB::table('book')->insert(['mediaid' => $mediaId]);
                 } elseif ($mediaType === 'film') {
-                    DB::table('lbaw2544.film')->insert(['mediaid' => $mediaId]);
+                    DB::table('film')->insert(['mediaid' => $mediaId]);
                 } elseif ($mediaType === 'music') {
-                    DB::table('lbaw2544.music')->insert(['mediaid' => $mediaId]);
+                    DB::table('music')->insert(['mediaid' => $mediaId]);
                 }
             }
 
@@ -155,10 +155,10 @@ class ReviewController extends Controller
             if ($groupId) {
                 $postData['groupid'] = $groupId;
             }
-            $postId = DB::table('lbaw2544.post')->insertGetId($postData);
+            $postId = DB::table('post')->insertGetId($postData);
 
             // 4. create review
-            DB::table('lbaw2544.review')->insert([
+            DB::table('review')->insert([
                 'postid' => $postId,
                 'rating' => $request->rating,
                 'mediaid' => $mediaId,
@@ -193,7 +193,7 @@ class ReviewController extends Controller
             $this->authorize('update', $post);
 
             // Update Review
-            DB::table('lbaw2544.review')
+            DB::table('review')
                 ->where('postid', $id)
                 ->update([
                     'rating' => $request->rating,

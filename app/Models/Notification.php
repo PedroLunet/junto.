@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Notification extends Model
 {
-    protected $table = 'lbaw2544.notification';
+    protected $table = 'notification';
 
     public $timestamps = false;
 

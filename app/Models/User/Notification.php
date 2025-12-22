@@ -11,7 +11,7 @@ class Notification extends Model
 {
     public $timestamps = false;
 
-    protected $table = 'lbaw2544.notification';
+    protected $table = 'notification';
 
     protected $fillable = [
         'message',

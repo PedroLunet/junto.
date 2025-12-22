@@ -16,7 +16,7 @@ class Group extends Model
 {
     use HasFactory;
 
-    protected $table = 'lbaw2544.groups';
+    protected $table = 'groups';
 
     public $timestamps = false;
 

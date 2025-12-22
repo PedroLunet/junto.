@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class StandardPost extends Model
 {
-    protected $table = 'lbaw2544.standard_post';
+    protected $table = 'standard_post';
 
     protected $primaryKey = 'postid';
 

@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class LikeNotification extends Model
 {
-    protected $table = 'lbaw2544.like_notification';
+    protected $table = 'like_notification';
     public $timestamps = false;
     protected $primaryKey = 'notificationid';
 

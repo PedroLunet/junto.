@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Review extends Model
 {
-    protected $table = 'lbaw2544.review';
+    protected $table = 'review';
     protected $primaryKey = 'postid';
     public $timestamps = false;
     

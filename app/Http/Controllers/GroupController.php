@@ -338,10 +338,10 @@ class GroupController extends Controller
                     ->orderBy('membership.joinedat', 'asc')
                     ->first();
                 if ($oldestMember) {
-                    DB::table('lbaw2544.membership')
+                    DB::table('membership')
                         ->where('groupid', $group->id)
                         ->update(['isowner' => false]);
-                    DB::table('lbaw2544.membership')
+                    DB::table('membership')
                         ->where('groupid', $group->id)
                         ->where('userid', $oldestMember->id)
                         ->update(['isowner' => true]);
@@ -474,12 +474,12 @@ class GroupController extends Controller
         if (! empty($tags)) {
             foreach ($tags as $userId) {
                 DB::insert('
-                    INSERT INTO lbaw2544.post_tag (postId, userId, createdAt)
+                    INSERT INTO post_tag (postId, userId, createdAt)
                     VALUES (?, ?, CURRENT_TIMESTAMP)
                 ', [$post->id, $userId]);
 
                 if ((int)$userId !== $user->id) {
-                    $notification = DB::table('lbaw2544.notification')->insertGetId([
+                    $notification = DB::table('notification')->insertGetId([
                         'message' => 'You were tagged in a post',
                         'isread' => false,
                         'receiverid' => $userId,
@@ -487,7 +487,7 @@ class GroupController extends Controller
                     ]);
 
                     DB::insert('
-                        INSERT INTO lbaw2544.tag_notification (notificationid, postid, taggerid)
+                        INSERT INTO tag_notification (notificationid, postid, taggerid)
                         VALUES (?, ?, ?)
                     ', [$notification, $post->id, $user->id]);
                 }

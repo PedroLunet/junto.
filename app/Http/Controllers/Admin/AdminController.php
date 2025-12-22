@@ -271,7 +271,7 @@ class AdminController extends Controller
                 r.status,
                 r.postid as post_id,
                 r.commentid as comment_id
-            FROM lbaw2544.report r
+            FROM report r
             ORDER BY r.createdat DESC
         ");
 
@@ -290,12 +290,12 @@ class AdminController extends Controller
                         u.username,
                         g.name as group_name,
                         p.groupid as groupid,
-                        (SELECT COUNT(*) FROM lbaw2544.post_like pl WHERE pl.postid = p.id) as likes_count,
-                        (SELECT COUNT(*) FROM lbaw2544.comment c WHERE c.postid = p.id) as comments_count
-                    FROM lbaw2544.post p
-                    JOIN lbaw2544.users u ON p.userid = u.id
-                    LEFT JOIN lbaw2544.groups g ON p.groupid = g.id
-                    LEFT JOIN lbaw2544.standard_post sp ON p.id = sp.postid
+                        (SELECT COUNT(*) FROM post_like pl WHERE pl.postid = p.id) as likes_count,
+                        (SELECT COUNT(*) FROM comment c WHERE c.postid = p.id) as comments_count
+                    FROM post p
+                    JOIN users u ON p.userid = u.id
+                    LEFT JOIN groups g ON p.groupid = g.id
+                    LEFT JOIN standard_post sp ON p.id = sp.postid
                     WHERE p.id = ?
                 ", [$report->post_id]);
 
@@ -311,13 +311,13 @@ class AdminController extends Controller
                             m.creator,
                             m.releaseyear,
                             CASE 
-                                WHEN EXISTS (SELECT 1 FROM lbaw2544.music mu WHERE mu.mediaid = m.id) THEN 'music'
-                                WHEN EXISTS (SELECT 1 FROM lbaw2544.film f WHERE f.mediaid = m.id) THEN 'movie'
-                                WHEN EXISTS (SELECT 1 FROM lbaw2544.book b WHERE b.mediaid = m.id) THEN 'book'
+                                WHEN EXISTS (SELECT 1 FROM music mu WHERE mu.mediaid = m.id) THEN 'music'
+                                WHEN EXISTS (SELECT 1 FROM film f WHERE f.mediaid = m.id) THEN 'movie'
+                                WHEN EXISTS (SELECT 1 FROM book b WHERE b.mediaid = m.id) THEN 'book'
                                 ELSE 'unknown'
                             END as media_type
-                        FROM lbaw2544.review r
-                        JOIN lbaw2544.media m ON r.mediaid = m.id
+                        FROM review r
+                        JOIN media m ON r.mediaid = m.id
                         WHERE r.postid = ?
                     ", [$report->post_id]);
 
@@ -347,8 +347,8 @@ class AdminController extends Controller
                         u.name as author_name,
                         u.username,
                         u.profilepicture as author_picture
-                    FROM lbaw2544.comment c
-                    JOIN lbaw2544.users u ON c.userid = u.id
+                    FROM comment c
+                    JOIN users u ON c.userid = u.id
                     WHERE c.id = ?
                 ", [$report->comment_id]);
 
@@ -376,28 +376,28 @@ class AdminController extends Controller
             // Get the report details
             $report = DB::selectOne("
                 SELECT postid, commentid 
-                FROM lbaw2544.report 
+                FROM report 
                 WHERE id = ?
             ", [$id]);
 
             if ($report) {
                 // Delete the reported post if it exists
                 if ($report->postid) {
-                    DB::table('lbaw2544.post')
+                    DB::table('post')
                         ->where('id', $report->postid)
                         ->delete();
                 }
 
                 // Delete the reported comment if it exists
                 if ($report->commentid) {
-                    DB::table('lbaw2544.comment')
+                    DB::table('comment')
                         ->where('id', $report->commentid)
                         ->delete();
                 }
             }
 
             // Update report status
-            DB::table('lbaw2544.report')
+            DB::table('report')
                 ->where('id', $id)
                 ->update(['status' => 'accepted']);
 
@@ -421,7 +421,7 @@ class AdminController extends Controller
     {
         try {
             // Update report status
-            DB::table('lbaw2544.report')
+            DB::table('report')
                 ->where('id', $id)
                 ->update(['status' => 'rejected']);
 
@@ -450,15 +450,15 @@ class AdminController extends Controller
                 g.createdat,
                 COUNT(DISTINCT m.userid) as members_count,
                 COUNT(DISTINCT p.id) as posts_count,
-                (SELECT u.name FROM lbaw2544.users u 
-                 JOIN lbaw2544.membership mem ON u.id = mem.userid 
+                (SELECT u.name FROM users u 
+                 JOIN membership mem ON u.id = mem.userid 
                  WHERE mem.groupid = g.id AND mem.isowner = true LIMIT 1) as owner_name,
-                (SELECT u.username FROM lbaw2544.users u 
-                 JOIN lbaw2544.membership mem ON u.id = mem.userid 
+                (SELECT u.username FROM users u 
+                 JOIN membership mem ON u.id = mem.userid 
                  WHERE mem.groupid = g.id AND mem.isowner = true LIMIT 1) as owner_username
-            FROM lbaw2544.groups g
-            LEFT JOIN lbaw2544.membership m ON g.id = m.groupid
-            LEFT JOIN lbaw2544.post p ON g.id = p.groupid
+            FROM groups g
+            LEFT JOIN membership m ON g.id = m.groupid
+            LEFT JOIN post p ON g.id = p.groupid
             GROUP BY g.id, g.name, g.description, g.isprivate, g.icon, g.createdat
             ORDER BY g.createdat DESC
         ");
@@ -469,7 +469,7 @@ class AdminController extends Controller
     public function deleteGroup($id)
     {
         try {
-            DB::delete("DELETE FROM lbaw2544.groups WHERE id = ?", [$id]);
+            DB::delete("DELETE FROM groups WHERE id = ?", [$id]);
 
             return response()->json([
                 'success' => true,

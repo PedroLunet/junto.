@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Media extends Model
 {
-    protected $table = 'lbaw2544.media';
+    protected $table = 'media';
     
     protected $fillable = [
         'title',

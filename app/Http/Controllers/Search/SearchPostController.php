@@ -41,20 +41,20 @@ class SearchPostController extends Controller
                 m.releaseYear as media_year,
                 m.creator as media_creator,
                 CASE
-                    WHEN EXISTS (SELECT 1 FROM lbaw2544.book b WHERE b.mediaId = m.id) THEN 'book'
-                    WHEN EXISTS (SELECT 1 FROM lbaw2544.film f WHERE f.mediaId = m.id) THEN 'movie'
-                    WHEN EXISTS (SELECT 1 FROM lbaw2544.music mu WHERE mu.mediaId = m.id) THEN 'music'
+                    WHEN EXISTS (SELECT 1 FROM book b WHERE b.mediaId = m.id) THEN 'book'
+                    WHEN EXISTS (SELECT 1 FROM film f WHERE f.mediaId = m.id) THEN 'movie'
+                    WHEN EXISTS (SELECT 1 FROM music mu WHERE mu.mediaId = m.id) THEN 'music'
                 END as media_type,
-                (SELECT COUNT(*) FROM lbaw2544.post_like pl WHERE pl.postId = p.id) as likes_count,
-                (SELECT COUNT(*) > 0 FROM lbaw2544.post_like pl WHERE pl.postId = p.id AND pl.userId = ?) as is_liked,
-                (SELECT COUNT(*) FROM lbaw2544.comment c WHERE c.postId = p.id) as comments_count,
+                (SELECT COUNT(*) FROM post_like pl WHERE pl.postId = p.id) as likes_count,
+                (SELECT COUNT(*) > 0 FROM post_like pl WHERE pl.postId = p.id AND pl.userId = ?) as is_liked,
+                (SELECT COUNT(*) FROM comment c WHERE c.postId = p.id) as comments_count,
                 sp.imageUrl as image_url
-            FROM lbaw2544.post p
-            JOIN lbaw2544.users u ON p.userId = u.id
-            LEFT JOIN lbaw2544.groups g ON p.groupId = g.id
-            LEFT JOIN lbaw2544.standard_post sp ON p.id = sp.postId
-            LEFT JOIN lbaw2544.review r ON p.id = r.postId
-            LEFT JOIN lbaw2544.media m ON r.mediaId = m.id
+            FROM post p
+            JOIN users u ON p.userId = u.id
+            LEFT JOIN groups g ON p.groupId = g.id
+            LEFT JOIN standard_post sp ON p.id = sp.postId
+            LEFT JOIN review r ON p.id = r.postId
+            LEFT JOIN media m ON r.mediaId = m.id
             WHERE u.isdeleted = false AND u.isblocked = false
         ";
 

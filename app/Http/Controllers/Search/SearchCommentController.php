@@ -32,11 +32,11 @@ class SearchCommentController extends Controller
                 p.userid as post_author_id,
                 pu.name as post_author_name,
                 pu.username as post_author_username,
-                (SELECT COUNT(*) FROM lbaw2544.friendship f WHERE (f.userid1 = u.id OR f.userid2 = u.id)) as user_followers_count
-            FROM lbaw2544.comment c
-            JOIN lbaw2544.users u ON c.userid = u.id
-            JOIN lbaw2544.post p ON c.postid = p.id
-            JOIN lbaw2544.users pu ON p.userid = pu.id
+                (SELECT COUNT(*) FROM friendship f WHERE (f.userid1 = u.id OR f.userid2 = u.id)) as user_followers_count
+            FROM comment c
+            JOIN users u ON c.userid = u.id
+            JOIN post p ON c.postid = p.id
+            JOIN users pu ON p.userid = pu.id
             WHERE u.isdeleted = false AND u.isblocked = false
             AND pu.isdeleted = false AND pu.isblocked = false
         ";
