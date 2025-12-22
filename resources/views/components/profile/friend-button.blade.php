@@ -30,7 +30,7 @@
         </x-ui.badge>
     @elseif($friendButtonData['status'] === 'request_received')
         <!-- Has received request from this user -->
-        <a href="{{ route('friend-requests.index') }}" class="inline-block hover:opacity-80 transition-opacity">
+        <a href="{{ route('friends.index') }}" class="inline-block hover:opacity-80 transition-opacity">
             <x-ui.badge variant="pending" size="lg" icon="fas fa-user-plus">
                 Requested to be your friend!
             </x-ui.badge>
