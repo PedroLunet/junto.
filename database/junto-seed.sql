@@ -1194,3 +1194,105 @@ INSERT INTO unblock_appeal (userId, reason, status, adminNotes, createdAt, updat
         NOW() - INTERVAL '5 days', 
         NOW() - INTERVAL '4 days'
     );
+
+-- ====================================================
+-- MESSAGES POPULATION
+-- ====================================================
+INSERT INTO friendship (userId1, userId2)
+SELECT LEAST(u1.id, u2.id), GREATEST(u1.id, u2.id)
+FROM (
+    VALUES 
+        ('alice', 'miguelito'), -- Conversation 3
+        ('eva', 'alice'),       -- Conversation 4
+        ('ricky', 'david'),     -- Conversation 5
+        ('sofia_a', 'ana_f'),   -- Conversation 6
+        ('ricky', 'pedro_o')    -- Conversation 2
+) AS pairs(un1, un2)
+JOIN users u1 ON u1.username = pairs.un1
+JOIN users u2 ON u2.username = pairs.un2
+ON CONFLICT DO NOTHING;
+
+-- Conversation 1: Alice and Bruno discussing Inception (IDs based on interests)
+INSERT INTO messages (senderId, receiverId, content, isRead, sentAt) VALUES 
+    ((SELECT id FROM users WHERE username = 'alice'), 
+     (SELECT id FROM users WHERE username = 'bruno'), 
+     'Hey Bruno! Did you see my latest review on Inception? I know you love Nolan too.', TRUE, NOW() - INTERVAL '5 days'),
+    
+    ((SELECT id FROM users WHERE username = 'bruno'), 
+     (SELECT id FROM users WHERE username = 'alice'), 
+     'I just read it! Totally agree about the sound design. We should catch the re-release in IMAX next month.', TRUE, NOW() - INTERVAL '5 days'),
+    
+    ((SELECT id FROM users WHERE username = 'alice'), 
+     (SELECT id FROM users WHERE username = 'bruno'), 
+     'Count me in! I''ll check the ticket availability tonight.', FALSE, NOW() - INTERVAL '4 days');
+
+-- Conversation 2: Personal Social Interaction
+INSERT INTO messages (senderId, receiverId, content, isRead, sentAt) VALUES 
+    ((SELECT id FROM users WHERE username = 'ricky'), 
+     (SELECT id FROM users WHERE username = 'pedro_o'), 
+     'Yo! Are you bringing your keyboard to the jam session this weekend?', TRUE, NOW() - INTERVAL '12 hours'),
+    
+    ((SELECT id FROM users WHERE username = 'pedro_o'), 
+     (SELECT id FROM users WHERE username = 'ricky'), 
+     'For sure. I''ve been practicing that synth lead from the new Weeknd track.', FALSE, NOW() - INTERVAL '2 hours');
+
+-- Conversation 3: Alice and Miguel discussing Photography
+-- (Alice is a 'Film lover' and Miguel is a 'Part-time photographer')
+INSERT INTO messages (senderId, receiverId, content, isRead, sentAt) VALUES 
+    ((SELECT id FROM users WHERE username = 'alice'), 
+     (SELECT id FROM users WHERE username = 'miguelito'), 
+     'Hey Miguel! I saw your shot in the Photography Club. The composition reminded me of a Wes Anderson frame.', TRUE, NOW() - INTERVAL '3 days'),
+    
+    ((SELECT id FROM users WHERE username = 'miguelito'), 
+     (SELECT id FROM users WHERE username = 'alice'), 
+     'That is such a huge compliment, thank you Alice! I was actually trying to go for that symmetrical look.', TRUE, NOW() - INTERVAL '2 days'),
+    
+    ((SELECT id FROM users WHERE username = 'alice'), 
+     (SELECT id FROM users WHERE username = 'miguelito'), 
+     'It definitely worked. What focal length were you using?', FALSE, NOW() - INTERVAL '2 days');
+
+-- Conversation 4: Alice and Eva regarding the Bookworms Group
+-- (Eva is the 'Bookworms' owner, Alice is a member)
+INSERT INTO messages (senderId, receiverId, content, isRead, sentAt) VALUES 
+    ((SELECT id FROM users WHERE username = 'eva'), 
+     (SELECT id FROM users WHERE username = 'alice'), 
+     'Hi Alice! I noticed you recently joined the Bookworms. Are you planning to join our reading of "The Great Gatsby" this month?', TRUE, NOW() - INTERVAL '4 days'),
+    
+    ((SELECT id FROM users WHERE username = 'alice'), 
+     (SELECT id FROM users WHERE username = 'eva'), 
+     'I would love to! I have actually never read the book, only seen the film versions.', TRUE, NOW() - INTERVAL '3 days'),
+    
+    ((SELECT id FROM users WHERE username = 'eva'), 
+     (SELECT id FROM users WHERE username = 'alice'), 
+     'The book is a totally different experience. I think you will love the prose!', TRUE, NOW() - INTERVAL '3 days');
+
+-- Conversation 5: David and Ricardo (Fitness and Sci-Fi interests)
+INSERT INTO messages (senderId, receiverId, content, isRead, sentAt) VALUES 
+    ((SELECT id FROM users WHERE username = 'ricky'), 
+     (SELECT id FROM users WHERE username = 'david'), 
+     'David, did you see the new trailer for Interstellar 2? (Just kidding, I wish!)', TRUE, NOW() - INTERVAL '1 day'),
+    
+    ((SELECT id FROM users WHERE username = 'david'), 
+     (SELECT id FROM users WHERE username = 'ricky'), 
+     'You almost gave me a heart attack, Ricardo! Don''t play with my emotions like that lol.', TRUE, NOW() - INTERVAL '20 hours'),
+    
+    ((SELECT id FROM users WHERE username = 'ricky'), 
+     (SELECT id FROM users WHERE username = 'david'), 
+     'Haha! Anyway, see you at the gym later? I''m hitting shoulders.', FALSE, NOW() - INTERVAL '5 hours');
+
+-- Conversation 6: Ana and Sofia (Art and Travel)
+INSERT INTO messages (senderId, receiverId, content, isRead, sentAt) VALUES 
+    ((SELECT id FROM users WHERE username = 'sofia_a'), 
+     (SELECT id FROM users WHERE username = 'ana_f'), 
+     'Ana, I''m visiting Florence next week. Any specific art galleries I absolutely cannot miss?', TRUE, NOW() - INTERVAL '2 days'),
+    
+    ((SELECT id FROM users WHERE username = 'ana_f'), 
+     (SELECT id FROM users WHERE username = 'sofia_a'), 
+     'Oh you have to go to the Uffizi! But honestly, even the street art in the Oltrarno district is incredible.', TRUE, NOW() - INTERVAL '1 day'),
+    
+    ((SELECT id FROM users WHERE username = 'sofia_a'), 
+     (SELECT id FROM users WHERE username = 'ana_f'), 
+     'Perfect, adding Oltrarno to my itinerary now. Thanks!', TRUE, NOW() - INTERVAL '12 hours');
+
+-- RESET SEQUENCES
+SELECT setval(pg_get_serial_sequence('messages', 'id'), (SELECT MAX(id) FROM messages));
