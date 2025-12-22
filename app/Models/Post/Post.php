@@ -80,7 +80,7 @@ class Post extends Model
             LEFT JOIN lbaw2544.standard_post sp ON p.id = sp.postId
             LEFT JOIN lbaw2544.review r ON p.id = r.postId
             LEFT JOIN lbaw2544.media m ON r.mediaId = m.id
-            ORDER BY p.id DESC
+            ORDER BY p.createdAt DESC
         ';
 
         $params = $currentUserId ? [$currentUserId] : [];
@@ -168,7 +168,7 @@ class Post extends Model
                 UNION
                 SELECT userId1 FROM lbaw2544.friendship WHERE userId2 = ?
             )
-            ORDER BY p.id DESC
+            ORDER BY p.createdAt DESC
         ";
 
         $posts = DB::select($sql, [$currentUserId, $currentUserId, $currentUserId]);
@@ -205,7 +205,7 @@ class Post extends Model
             JOIN lbaw2544.media m ON r.mediaId = m.id
             WHERE EXISTS (SELECT 1 FROM lbaw2544.film f WHERE f.mediaId = m.id)
             AND p.groupId IS NULL
-            ORDER BY p.id DESC
+            ORDER BY p.createdAt DESC
         ';
 
         $params = $currentUserId ? [$currentUserId] : [];
@@ -244,7 +244,7 @@ class Post extends Model
             JOIN lbaw2544.media m ON r.mediaId = m.id
             WHERE EXISTS (SELECT 1 FROM lbaw2544.book b WHERE b.mediaId = m.id)
             AND p.groupId IS NULL
-            ORDER BY p.id DESC
+            ORDER BY p.createdAt DESC
         ';
 
         $params = $currentUserId ? [$currentUserId] : [];
@@ -283,7 +283,7 @@ class Post extends Model
             JOIN lbaw2544.media m ON r.mediaId = m.id
             WHERE EXISTS (SELECT 1 FROM lbaw2544.music mu WHERE mu.mediaId = m.id)
             AND p.groupId IS NULL
-            ORDER BY p.id DESC
+            ORDER BY p.createdAt DESC
         ';
 
         $params = $currentUserId ? [$currentUserId] : [];
