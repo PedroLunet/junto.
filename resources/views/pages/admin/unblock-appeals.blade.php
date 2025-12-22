@@ -90,7 +90,7 @@
             applyFilterAndSort();
         }
 
-        function applyFilterAndSort() {
+        window.applyFilterAndSort = function() {
             let filteredAppeals = currentFilter === 'all' ?
                 allAppeals :
                 allAppeals.filter(a => a.status === currentFilter);
@@ -111,8 +111,9 @@
             }
 
             // Update display
-            const appealItems = document.querySelectorAll('.appeal-item');
             const container = document.querySelector('#appeals-container .grid');
+            const appealItems = container ? container.querySelectorAll('.appeal-item') : [];
+            let emptyState = container ? container.querySelector('.appeals-empty-state') : null;
 
             // Create a map of appeal IDs to their elements
             const appealMap = new Map();
@@ -137,29 +138,34 @@
                     item.style.display = 'none';
                 }
             });
+
+            // Show/hide or dynamically add/remove empty state
+            if (filteredAppeals.length === 0) {
+                if (!emptyState) {
+                    emptyState = document.createElement('div');
+                    emptyState.className = 'appeals-empty-state';
+                    emptyState.innerHTML = `
+                        <div class="flex flex-col items-center justify-center text-gray-500 min-h-[calc(100vh-16rem)]">
+                            <div class="text-center">
+                                <div class="bg-gray-200 rounded-full p-6 inline-block mb-4">
+                                    <i class="fas fa-gavel text-4xl text-gray-400"></i>
+                                </div>
+                                <h3 class="text-xl font-medium text-gray-700">No Appeals Found</h3>
+                                <p class="mt-2">There are no appeals to review.</p>
+                            </div>
+                        </div>
+                    `;
+                    container.appendChild(emptyState);
+                }
+                emptyState.style.display = '';
+            } else if (emptyState) {
+                emptyState.style.display = 'none';
+            }
         }
 
-        function filterAppeals(status) {
+        window.filterAppeals = function(status) {
             currentFilter = status;
-
-            // Update slider position
-            const activeBtn = document.getElementById(`filter-${status}`);
-            const slider = document.getElementById('filter-slider');
-            const rect = activeBtn.getBoundingClientRect();
-            const container = activeBtn.parentElement.getBoundingClientRect();
-            slider.style.width = rect.width + 'px';
-            slider.style.left = (rect.left - container.left) + 'px';
-
-            // Update button styles
-            document.querySelectorAll('.filter-btn').forEach(btn => {
-                btn.classList.remove('bg-white', 'shadow-sm');
-                btn.classList.add('text-gray-700');
-            });
-
-            activeBtn.classList.add('bg-white', 'shadow-sm');
-            activeBtn.classList.remove('text-gray-700');
-
-            applyFilterAndSort();
+            window.applyFilterAndSort();
         }
 
         // Initialize on page load
