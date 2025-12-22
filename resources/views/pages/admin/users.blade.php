@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('page-title', 'Users')
+@section('title', 'Users')
 
 @section('content')
     <div class="flex flex-col h-[calc(100vh-4rem)]">

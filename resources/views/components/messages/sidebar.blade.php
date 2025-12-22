@@ -34,7 +34,7 @@
                                             <img class="h-10 w-10 rounded-full object-cover" src="{{ $friend->getProfileImage() }}" alt="{{ $friend->name }}" onerror="this.onerror=null; this.src='{{ asset('profile/default.png') }}';">
                                         </div>
                                         <div class="min-w-0 flex-1 px-4">
-                                            <p class="text-sm font-medium {{ $activeFriendId == $friend->id ? 'text-[#624452]' : 'text-gray-900' }} truncate friend-name">{{ $friend->name }}</p>
+                                            <p class="text-sm font-medium {{ $activeFriendId == $friend->id ? 'text-[#624452]' : 'text-gray-900' }} truncate friend-name" title="{{ $friend->name }}">{{ $friend->name }}</p>
                                             <p class="text-xs text-gray-500 truncate friend-last-message">
                                                 @if($friend->last_message_sender_id === auth()->id())
                                                     @if($friend->last_message_is_read)
