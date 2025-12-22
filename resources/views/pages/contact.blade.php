@@ -17,9 +17,18 @@
 
                 <form id="contact-form" method="POST" action="{{ route('contact.submit') }}">
                     @csrf
+                    <fieldset>
+                        <legend class="sr-only">Contact Form</legend>
 
-                    <x-ui.input label="Name" name="name" type="text" value="{{ old('name') }}" :error="$errors->first('name')"
-                        required class="text-xl mb-4" />
+                        <x-ui.input 
+                        label="Name" 
+                        name="name" 
+                        type="text" 
+                        value="{{ old('name') }}" 
+                        :error="$errors->first('name')"
+                        required 
+                        class="text-xl mb-4" 
+                    />
 
                     <x-ui.input label="Email (Optional)" name="email" type="email" value="{{ old('email') }}"
                         :error="$errors->first('email')" class="text-xl mb-4" help="We will use this email to reply to your inquiry." />
@@ -27,12 +36,15 @@
                     <x-ui.input label="Message" name="message" type="textarea" value="{{ old('message') }}"
                         :error="$errors->first('message')" required rows="6" class="text-xl mb-6" />
 
+                    <p class="text-sm text-gray-600 mb-4 text-center"><span class="text-red-500">*</span> Mandatory fields</p>
+
                     <div class="flex justify-center">
                         <x-ui.button id="submit-button" type="submit" variant="primary"
                             class="w-full md:w-auto px-8 py-3 text-lg">
                             Send Message
                         </x-ui.button>
                     </div>
+                    </fieldset>
                 </form>
             </div>
         </div>

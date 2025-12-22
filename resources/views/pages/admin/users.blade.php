@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('page-title', 'Users')
+@section('title', 'Users')
 
 @section('content')
     {{-- Server-side alert (if any) --}}

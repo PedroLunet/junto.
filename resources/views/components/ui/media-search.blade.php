@@ -15,7 +15,7 @@
 ])
 
 <div class="mb-6">
-    <label class="block font-medium text-gray-700 mb-2">{{ $label }}</label>
+    <label for="{{ $searchId }}" class="block font-medium text-gray-700 mb-2">{{ $label }}</label>
     <div class="relative" id="{{ $type === 'music' ? 'musicSearchContainer' : $searchId . 'Container' }}">
         <input type="text" id="{{ $searchId }}" placeholder="{{ $searchPlaceholder }}"
             class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#38157a] focus:border-transparent"

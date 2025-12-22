@@ -62,7 +62,7 @@
                         </p>
 
                         <div class="pt-4 border-t border-gray-100 flex items-center justify-between">
-                            <div class="flex items-center text-gray-500 text-sm font-medium">
+                            <div class="flex items-center text-gray-600 text-sm font-medium">
                                 <i class="fas fa-users mr-2 text-gray-400"></i>
                                 {{ $group->users_count ?? 0 }} Members
                             </div>

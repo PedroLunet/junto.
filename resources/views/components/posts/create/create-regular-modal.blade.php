@@ -13,40 +13,43 @@
                 <form id="create-post-form" action="{{ route('posts.store') }}" method="POST"
                     enctype="multipart/form-data">
                     @csrf
-                    <div class="mb-4">
-                        <label class="block font-medium text-gray-700 mb-2">What would you like to share?</label>
-                        <div class="relative">
-                            <textarea
-                                name="content" id="post-content" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#38157a]"
-                                rows="4" placeholder="Share your thoughts... (type @ to mention users)"></textarea>
-                            <div id="tag-dropdown" class="hidden absolute top-full left-0 right-0 mt-1 bg-white border border-gray-300 rounded-md shadow-lg max-h-48 overflow-y-auto z-50">
+                    <fieldset>
+                        <legend class="sr-only">Create Post Form</legend>
+                        <div class="mb-4">
+                            <label for="post-content" class="block font-medium text-gray-700 mb-2">What would you like to share?</label>
+                            <div class="relative">
+                                <textarea
+                                    name="content" id="post-content" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#38157a]"
+                                    rows="4" placeholder="Share your thoughts... (type @ to mention users)"></textarea>
+                                <div id="tag-dropdown" class="hidden absolute top-full left-0 right-0 mt-1 bg-white border border-gray-300 rounded-md shadow-lg max-h-48 overflow-y-auto z-50">
+                                </div>
                             </div>
                         </div>
-                    </div>
 
-                    <div id="image-preview-container" class="mb-4 hidden relative">
-                        <img id="image-preview" src="#" alt="Preview"
-                            class="max-h-64 rounded-lg object-cover border border-gray-200">
-                        <x-ui.button type="button" id="remove-image-btn" variant="ghost">X</x-ui.button>
-                    </div>
-
-                    <div class="mb-4">
-                        <input type="file" name="image" id="image-input" accept=".jpg,.jpeg,.png,.gif"
-                            class="hidden">
-                        <div class="flex items-center">
-                            <x-ui.button type="button" id="add-image-button" variant="secondary">Add
-                                Photo</x-ui.button>
-                            <span class="ml-3 text-sm text-gray-500">Supported: JPG, JPEG, PNG, GIF</span>
+                        <div id="image-preview-container" class="mb-4 hidden relative">
+                            <img id="image-preview" src="#" alt="Preview"
+                                class="max-h-64 rounded-lg object-cover border border-gray-200">
+                            <x-ui.button type="button" id="remove-image-btn" variant="ghost">X</x-ui.button>
                         </div>
-                        <span id="file-name" class="block mt-1 text-sm text-gray-600"></span>
-                        <span id="file-size-error" class="block mt-1 text-sm text-red-600 hidden">File is too large.
-                            Maximum size is 2MB.</span>
-                    </div>
 
-                    <div class="flex justify-end space-x-3">
-                        <x-ui.button type="button" id="cancel-button" variant="secondary">Cancel</x-ui.button>
-                        <x-ui.button type="submit">Post</x-ui.button>
-                    </div>
+                        <div class="mb-4">
+                            <input type="file" name="image" id="image-input" accept=".jpg,.jpeg,.png,.gif"
+                                class="hidden">
+                            <div class="flex items-center">
+                                <x-ui.button type="button" id="add-image-button" variant="secondary">Add
+                                    Photo</x-ui.button>
+                                <span class="ml-3 text-sm text-gray-500">Supported: JPG, JPEG, PNG, GIF</span>
+                            </div>
+                            <span id="file-name" class="block mt-1 text-sm text-gray-600"></span>
+                            <span id="file-size-error" class="block mt-1 text-sm text-red-600 hidden">File is too large.
+                                Maximum size is 2MB.</span>
+                        </div>
+
+                        <div class="flex justify-end space-x-3">
+                            <x-ui.button type="button" id="cancel-button" variant="secondary">Cancel</x-ui.button>
+                            <x-ui.button type="submit">Post</x-ui.button>
+                        </div>
+                    </fieldset>
                 </form>
             </div>
         </div>

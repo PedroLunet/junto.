@@ -18,7 +18,7 @@
                 <input type="file" id="profileImageInput" name="profilePicture" accept="image/*" class="hidden" />
                 <x-ui.icon-button type="button" id="editProfileImageBtn" variant="blue" title="Upload photo"
                     class="absolute -top-0.5 -right-0.5 rounded-full flex items-center justify-center text-base md:text-lg font-bold z-10 p-3 shadow-lg">
-                    <i class="fas fa-pencil"></i>
+                    <i class="fas fa-edit"></i>
                 </x-ui.icon-button>
                 <x-ui.icon-button type="button" id="resetProfileImageBtn" variant="red" title="Reset to Default"
                     class="absolute -top-0.5 -left-0.5 rounded-full flex items-center justify-center text-base md:text-lg font-bold z-10 p-3 shadow-lg">
@@ -34,15 +34,16 @@
         <div class="flex-1 w-full space-y-4 sm:space-y-6">
             <!-- name -->
             <x-ui.input label="Name" name="name" type="text" value="{{ old('name', $user->name ?? '') }}"
-                :error="$errors->first('name')" class="w-full" />
+                :error="$errors->first('name')" class="w-full" required />
 
             <!-- username -->
             <x-ui.input label="Username" name="username" type="text"
-                value="{{ old('username', $user->username ?? '') }}" :error="$errors->first('username')" class="w-full" />
+                value="{{ old('username', $user->username ?? '') }}" :error="$errors->first('username')" class="w-full"
+                required minlength="4" pattern="[a-zA-Z0-9._-]+" />
 
             <!-- email -->
             <x-ui.input label="Email" name="email" type="email" value="{{ old('email', $user->email ?? '') }}"
-                :error="$errors->first('email')" id="editEmailInput" class="w-full" />
+                :error="$errors->first('email')" id="editEmailInput" class="w-full" required />
         </div>
     </div>
 

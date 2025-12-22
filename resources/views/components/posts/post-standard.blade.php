@@ -15,7 +15,7 @@
                     </span>
                     @if (!empty($post->group_name))
                         <span class="text-gray-600 text-xs">
-                            in <span class="font-medium text-[#38157a]">{{ $post->group_name }}</span>
+                            in <a href="{{ route('groups.show', $post->groupid) }}" onclick="event.stopPropagation()" class="font-medium text-[#38157a] hover:underline">{{ $post->group_name }}</a>
                         </span>
                     @endif
                 </div>
@@ -26,7 +26,7 @@
         </div>
 
         <!-- timestamp -->
-        <div class="text-xs text-gray-500 text-right">
+        <div class="text-xs text-gray-600 text-right">
             {{ \Carbon\Carbon::parse($post->created_at)->format('H:i') }} <br>
             {{ \Carbon\Carbon::parse($post->created_at)->format('d/m/Y') }}
         </div>
@@ -36,7 +36,7 @@
     @if ($post->image_url)
         <div class="w-full bg-gray-200 rounded-xl overflow-hidden mb-4">
             <img src="{{ asset('post/' . $post->image_url) }}" onerror="this.src='{{ asset('post/default.jpg') }}'"
-                class="w-full max-h-96 object-cover">
+                class="w-full max-h-96 object-cover" alt="Post Image">
         </div>
     @endif
 
@@ -57,7 +57,7 @@
             </div>
         @else
             <button onclick="event.stopPropagation(); toggleLike({{ $post->id }})"
-                class="bg-transparent border-0 shadow-none p-0 h-auto leading-none flex items-center gap-1 hover:text-red-500 hover:bg-transparent focus:bg-transparent focus:outline-none transition-colors {{ $post->is_liked ?? false ? 'text-red-500 focus:text-red-500' : 'text-gray-600 focus:text-gray-600' }}"
+                class="bg-transparent border-0 shadow-none p-0 h-auto leading-none flex items-center gap-1 hover:text-red-500 hover:bg-transparent focus:bg-transparent focus:outline-none focus:ring-2 focus:ring-red-500 focus:rounded-sm transition-colors {{ $post->is_liked ?? false ? 'text-red-500 focus:text-red-500' : 'text-gray-600 focus:text-gray-600' }}"
                 id="like-btn-{{ $post->id }}">
                 <i class="{{ $post->is_liked ?? false ? 'fas' : 'far' }} fa-heart text-lg"
                     id="like-icon-{{ $post->id }}"></i>

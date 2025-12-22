@@ -12,11 +12,13 @@
             <div class="p-8">
                 <form id="create-movie-review-form" action="{{ route('reviews.store') }}" method="POST">
                     @csrf
-                    <input type="hidden" name="type" value="movie">
+                    <fieldset>
+                        <legend class="sr-only">Create Movie Review Form</legend>
+                        <input type="hidden" name="type" value="movie">
 
                     <!-- Movie Search Section -->
                     <div class="mb-6">
-                        <label class="block font-medium text-gray-700 mb-2">What movie did you watch?</label>
+                        <label for="modalMovieSearch" class="block font-medium text-gray-700 mb-2">What movie did you watch?</label>
                         <div class="relative" id="searchContainer">
                             <input type="text" id="modalMovieSearch" placeholder="Search for a movie..."
                                 class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#38157a] focus:border-transparent"
@@ -55,7 +57,7 @@
                         <div class="flex gap-2" id="star-rating">
                             @for ($i = 1; $i <= 5; $i++)
                                 <button type="button"
-                                    class="star-btn bg-transparent border-none p-0 h-auto leading-none shadow-none text-3xl text-gray-300 focus:text-gray-300 hover:text-yellow-400 hover:bg-transparent focus:bg-transparent transition-colors focus:outline-none"
+                                    class="star-btn bg-transparent border-none p-0 h-auto leading-none shadow-none text-3xl text-gray-300 focus:text-gray-300 hover:text-yellow-400 hover:bg-transparent focus:bg-transparent transition-colors focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:rounded-full"
                                     data-rating="{{ $i }}">
                                     <i class="fa-regular fa-star"></i>
                                 </button>
@@ -76,6 +78,7 @@
                             variant="secondary">Cancel</x-ui.button>
                         <x-ui.button type="submit">Post</x-ui.button>
                     </div>
+                    </fieldset>
                 </form>
             </div>
         </div>
@@ -179,7 +182,7 @@
                 <div class="p-3 hover:bg-gray-100 cursor-pointer border-b flex items-center transition-colors" 
                      onclick="selectModalMovie(${movie.id}, '${movie.title.replace(/'/g, "\\'")}', '${movie.poster_path || ''}', '${movie.release_date || ''}')">
                     ${movie.poster_path ? 
-                        `<img src="https://image.tmdb.org/t/p/w92${movie.poster_path}" class="w-10 h-14 object-cover rounded mr-3" onerror="this.style.display='none'">` 
+                        `<img src="https://image.tmdb.org/t/p/w92${movie.poster_path}" class="w-10 h-14 object-cover rounded mr-3" alt="${movie.title.replace(/"/g, '&quot;')}" onerror="this.style.display='none'">` 
                         : 
                         `<div class="w-10 h-14 bg-gray-200 rounded mr-3 flex items-center justify-center text-xs text-gray-500">No Image</div>`
                     }

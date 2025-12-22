@@ -13,6 +13,16 @@
     <link rel="stylesheet" href="{{ asset('css/app.css') }}">
     @stack('styles')
 
+    <title>@yield('title', 'Junto')</title>
+
+    <!-- Open Graph Tags -->
+    <meta property="og:title" content="@yield('title', 'Junto')" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="{{ url()->current() }}" />
+    <meta property="og:description" content="@yield('description', 'Junto - Connect with friends and share your interests.')" />
+    <meta property="og:site_name" content="Junto" />
+    <meta property="og:image" content="@yield('og:image', asset('illustration-friends.svg'))" />
+
     <!-- Scripts -->
     <script>
         window.isAuthenticated = {{ auth()->check() ? 'true' : 'false' }};
@@ -37,6 +47,9 @@
 </head>
 
 <body class="flex h-screen bg-[#F1EBF4] overflow-hidden">
+    <a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-white focus:text-black focus:rounded-md focus:shadow-lg">
+        Skip to content
+    </a>
 
     <x-ui.button id="mobile-menu-button" variant="ghost" onclick="toggleMobileMenu()"
         class="lg:hidden fixed top-4 left-4 z-50">
@@ -78,8 +91,8 @@
                             class="w-10 h-10 rounded-full object-cover shrink-0">
                     @endif
                     <div class="flex flex-col min-w-0">
-                        <span class="text-white font-semibold text-sm truncate">{{ Auth::user()->name }}</span>
-                        <span class="text-gray-400 text-xs truncate">@<span>{{ Auth::user()->username }}</span></span>
+                        <span class="text-white font-semibold text-sm truncate" title="{{ Auth::user()->name }}">{{ Auth::user()->name }}</span>
+                        <span class="text-gray-300 text-xs truncate" title="@{{ Auth::user()->username }}">@<span>{{ Auth::user()->username }}</span></span>
                     </div>
                 </a>
                 <x-ui.button href="{{ url('/logout') }}" variant="ghost" title="Logout">
@@ -116,7 +129,7 @@
     </aside>
 
     <!-- main content -->
-    <main class="flex-1 flex flex-col overflow-hidden w-full lg:w-auto">
+    <main id="main-content" class="flex-1 flex flex-col overflow-hidden w-full lg:w-auto">
         @hasSection('title')
             <header class="bg-transparent shadow-sm p-4 sticky top-0 z-10 mb-0 flex justify-between items-center">
                 <h2 class="text-[#624452] font-semibold ml-16 lg:ml-0">@yield('title')</h2>
@@ -133,6 +146,32 @@
     @endif
 
     <x-ui.notification-alert />
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const forms = document.querySelectorAll('form');
+            forms.forEach(form => {
+                form.addEventListener('submit', function() {
+                    const submitBtn = form.querySelector('button[type="submit"]');
+                    if (submitBtn && !submitBtn.disabled) {
+                        submitBtn.disabled = true;
+                        submitBtn.classList.add('opacity-50', 'cursor-wait');
+                        const originalText = submitBtn.innerHTML;
+                        // Optional: Add a spinner icon if FontAwesome is available
+                        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Processing...';
+                        
+                        // Restore after a timeout in case of validation errors (handled by backend redirect usually, but good for safety)
+                        // Or if the page doesn't reload.
+                        setTimeout(() => {
+                            submitBtn.disabled = false;
+                            submitBtn.classList.remove('opacity-50', 'cursor-wait');
+                            submitBtn.innerHTML = originalText;
+                        }, 5000);
+                    }
+                });
+            });
+        });
+    </script>
 </body>
 
 </html>

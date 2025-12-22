@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('page-title', 'Unblock Appeals')
+@section('title', 'Unblock Appeals')
 
 @section('content')
     @if (session('alert'))

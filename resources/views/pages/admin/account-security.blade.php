@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('page-title', 'Account Security')
+@section('title', 'Account Security')
 
 @section('content')
     @if (session('success'))

@@ -46,6 +46,8 @@
                             @enderror
                         </div>
 
+                        <p class="text-sm text-gray-600 mb-4 text-right"><span class="text-red-500">*</span> Mandatory fields</p>
+
                         <div class="flex justify-end items-center gap-4">
                             <a href="{{ route('groups.show', $group->id) }}"
                                 class="text-gray-600 hover:text-gray-800 font-medium">Cancel</a>

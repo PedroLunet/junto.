@@ -58,7 +58,7 @@ document.addEventListener('DOMContentLoaded', function() {
         resultsDiv.innerHTML = movies.map(movie => `
             <div class="p-4 hover:bg-gray-100 cursor-pointer border-b flex items-center" onclick="selectMovie(${movie.id}, '${movie.title.replace(/'/g, "\\'")}', '${movie.poster_path || ''}', '${movie.release_date || ''}')">
                 ${movie.poster_path ? 
-                    `<img src="https://image.tmdb.org/t/p/w92${movie.poster_path}" class="w-12 h-18 object-cover rounded mr-3" onerror="this.style.display='none'">` 
+                    `<img src="https://image.tmdb.org/t/p/w92${movie.poster_path}" class="w-12 h-18 object-cover rounded mr-3" alt="${movie.title.replace(/"/g, '&quot;')}" onerror="this.style.display='none'">` 
                     : 
                     `<div class="w-12 h-18 bg-gray-200 rounded mr-3 flex items-center justify-center text-xs text-gray-500">No Image</div>`
                 }
@@ -81,7 +81,7 @@ document.addEventListener('DOMContentLoaded', function() {
         movieCard.className = 'bg-white rounded-lg shadow-md overflow-hidden';
         movieCard.innerHTML = `
             ${posterPath ? 
-                `<img src="https://image.tmdb.org/t/p/w300${posterPath}" class="w-full h-92 object-cover" onerror="this.style.display='none'">` 
+                `<img src="https://image.tmdb.org/t/p/w300${posterPath}" class="w-full h-92 object-cover" alt="${title.replace(/"/g, '&quot;')}" onerror="this.style.display='none'">` 
                 : 
                 `<div class="w-full h-64 bg-gray-200 flex items-center justify-center text-gray-500">No Image Available</div>`
             }
