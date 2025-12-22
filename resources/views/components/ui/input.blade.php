@@ -21,7 +21,7 @@
     $emailPattern = $isEmail ? '[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}' : null;
 @endphp
 
-<div class="mb-4">
+<div class="mb-4 {{ $help ? 'overflow-visible' : '' }}">
     @if ($label)
         <div class="flex items-center gap-2 mb-2">
             <label for="{{ $inputId }}"
@@ -29,16 +29,38 @@
                 {{ $label }}
             </label>
             @if ($help)
-                <div class="group relative flex items-center ml-1">
+                <div class="group relative flex items-center ml-1" onmouseenter="positionTooltip(this)" onmouseleave="hideTooltip(this)">
                     <i class="fas fa-question-circle text-gray-400 hover:text-[#820263] cursor-help text-sm transition-colors"></i>
                     <div
-                        class="absolute bottom-full left-1/2 -translate-x-1/2 mb-3 invisible group-hover:visible opacity-0 group-hover:opacity-100 transition-all duration-200 w-64 p-3 bg-[#291720] text-white text-xs font-medium rounded-xl shadow-xl z-20 text-center pointer-events-none transform translate-y-1 group-hover:translate-y-0">
+                        class="tooltip-content fixed invisible opacity-0 transition-opacity duration-200 w-80 max-w-[calc(100vw-2rem)] p-4 bg-[#291720] text-white text-sm leading-relaxed font-normal rounded-xl shadow-2xl z-[9999] text-left pointer-events-none whitespace-normal">
                         {{ $help }}
                         <div
                             class="absolute top-full left-1/2 -translate-x-1/2 border-8 border-transparent border-t-[#291720]">
                         </div>
                     </div>
                 </div>
+                @once
+                <script>
+                    function positionTooltip(element) {
+                        const tooltip = element.querySelector('.tooltip-content');
+                        const icon = element.querySelector('i');
+                        const rect = icon.getBoundingClientRect();
+                        
+                        tooltip.style.left = rect.left + rect.width / 2 + 'px';
+                        tooltip.style.top = rect.top - 12 + 'px';
+                        tooltip.style.transform = 'translate(-50%, -100%)';
+                        
+                        tooltip.classList.remove('invisible');
+                        tooltip.classList.add('opacity-100');
+                    }
+                    
+                    function hideTooltip(element) {
+                        const tooltip = element.querySelector('.tooltip-content');
+                        tooltip.classList.add('invisible');
+                        tooltip.classList.remove('opacity-100');
+                    }
+                </script>
+                @endonce
             @endif
         </div>
     @endif

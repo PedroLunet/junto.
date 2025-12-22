@@ -14,20 +14,35 @@
                     @csrf
                     <input type="hidden" name="type" value="movie">
 
-                    <!-- Movie Search Section using media-search-preview -->
-                    <x-ui.media-search type="movie" searchId="modalMovieSearch" searchResultsId="modalSearchResults"
-                        selectedId="modalSelectedMovie" inputName="tmdb_id" removeBtnId="removeMovieBtn"
-                        searchPlaceholder="Search for a movie..." label="What movie did you watch?" />
-                    <!-- Selected Movie Preview -->
-                    <div id="modalSelectedMovie"
-                        class="hidden mt-4 p-4 border rounded-lg bg-gray-50 flex items-start gap-4 relative">
-                        <input type="hidden" name="tmdb_id" id="selectedMovieId">
-                        <img id="selectedMoviePoster" src="" alt="Poster"
-                            class="h-80 object-cover rounded shadow-sm">
-                        <div>
-                            <h4 id="selectedMovieTitle" class="text-4xl font-bold text-gray-800"></h4>
-                            <p id="selectedMovieDirector" class="text-gray-600"></p>
-                            <p id="selectedMovieYear" class="text-gray-600 text-xl"></p>
+                    <!-- Movie Search Section -->
+                    <div class="mb-6">
+                        <label class="block font-medium text-gray-700 mb-2">What movie did you watch?</label>
+                        <div class="relative" id="searchContainer">
+                            <input type="text" id="modalMovieSearch" placeholder="Search for a movie..."
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#38157a] focus:border-transparent"
+                                autocomplete="off">
+                            <div id="modalSearchResults"
+                                class="absolute top-full left-0 w-full bg-white border rounded-lg shadow-lg hidden max-h-60 overflow-y-auto z-20 mt-1">
+                            </div>
+                        </div>
+
+                        <!-- Selected Movie Preview -->
+                        <div id="modalSelectedMovie"
+                            class="hidden mt-4 p-4 border rounded-lg bg-gray-50 relative">
+                            <input type="hidden" name="tmdb_id" id="selectedMovieId">
+                            <button type="button" id="removeMovieBtn"
+                                class="absolute top-2 right-2 text-gray-400 hover:text-red-500 z-10">
+                                <i class="fa-solid fa-times"></i>
+                            </button>
+                            <div class="flex flex-col sm:flex-row items-start gap-4">
+                                <img id="selectedMoviePoster" src="" alt="Poster"
+                                    class="w-32 h-48 sm:w-24 sm:h-36 object-cover rounded shadow-sm mx-auto sm:mx-0 shrink-0">
+                                <div class="flex-1 min-w-0 text-center sm:text-left">
+                                    <h4 id="selectedMovieTitle" class="text-lg sm:text-xl font-bold text-gray-800 break-words mb-1"></h4>
+                                    <p id="selectedMovieDirector" class="text-sm text-gray-600 mb-0.5"></p>
+                                    <p id="selectedMovieYear" class="text-sm text-gray-600"></p>
+                                </div>
+                            </div>
                         </div>
                         <button type="button" id="removeMovieBtn"
                             class="absolute top-2 right-2 text-gray-400 hover:text-red-500">
@@ -186,7 +201,7 @@
             // Update preview
             selectedMovieTitle.textContent = title;
             selectedMovieYear.textContent = releaseDate ? new Date(releaseDate).getFullYear() : 'N/A';
-            selectedMovieDirector.textContent = 'Loading...';
+            selectedMovieDirector.innerHTML = '<i class="fas fa-spinner fa-spin mr-1"></i>Loading...';
 
             if (posterPath) {
                 selectedMoviePoster.src = `https://image.tmdb.org/t/p/w500${posterPath}`;
@@ -199,7 +214,7 @@
             fetch(`/movies/${id}`)
                 .then(response => response.json())
                 .then(data => {
-                    let director = '';
+                    let director = 'Unknown Director';
                     if (data.credits && data.credits.crew) {
                         const directorObj = data.credits.crew.find(person => person.job === 'Director');
                         if (directorObj) {

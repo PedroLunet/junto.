@@ -1,20 +1,18 @@
 @extends('layouts.app')
 
 @section('content')
-    <div id="profileUpdateAlertContainer" class="fixed top-6 right-6 z-50 flex flex-col gap-4 items-end"></div>
-    <div class="flex flex-col -m-6">
-        <div id="profileUpdateAlertContainer" class="fixed top-6 right-6 z-50 flex flex-col gap-4 items-end"></div>
+    <div class="flex flex-col min-h-0 h-full -m-6">
         <!-- Fixed Header Section -->
         <div class="shrink-0 px-16 pt-10 pb-6">
-            <div class="flex flex-col md:flex-row items-start justify-between gap-6 md:gap-8 lg:gap-10 mb-6 md:mb-8">
-                <div class="flex-1 w-full">
-                    <div class="flex flex-col sm:flex-row items-center gap-4 md:gap-6 w-full">
-                        <div
-                            class="w-32 h-32 md:w-36 md:h-36 lg:w-40 lg:h-40 rounded-full shrink-0 overflow-hidden relative bg-gray-300 border-2 border-gray-200 flex items-center justify-center">
-                            <img src="{{ $user->profilepicture ? asset('profile/' . $user->profilepicture) : asset('profile/default.png') }}"
-                                alt="Profile Picture" class="absolute inset-0 w-full h-full object-cover"
-                                onerror="this.onerror=null; this.src='{{ asset('profile/default.png') }}';">
-                        </div>
+            <div class="flex items-start justify-between gap-6 md:gap-8 lg:gap-10 mb-6 md:mb-8">
+                <!-- profile header -->
+                <div class="flex items-center gap-4 md:gap-6">
+                    <div
+                        class="w-32 h-32 md:w-36 md:h-36 lg:w-40 lg:h-40 rounded-full shrink-0 overflow-hidden relative bg-gray-300 border-2 border-gray-200 flex items-center justify-center">
+                        <img src="{{ $user->profilepicture ? asset('profile/' . $user->profilepicture) : asset('profile/default.png') }}"
+                            alt="Profile Picture" class="absolute inset-0 w-full h-full object-cover"
+                            onerror="this.onerror=null; this.src='{{ asset('profile/default.png') }}';">
+                    </div>
 
                         <div class="flex-1 w-full">
                             <h3 class="text-2xl md:text-3xl font-bold text-gray-900 mb-1 text-center sm:text-left">
@@ -84,7 +82,7 @@
 
             <!-- bio -->
             <div class="mb-6 md:mb-8 px-10 py-2">
-                <h2 class="text-xl md:text-2xl font-bold text-gray-900 mb-2 text-center md:text-left">About Me</h2>
+                <h2 class="text-xl md:text-2xl font-bold text-gray-900 mb-2">About Me</h2>
                 @if ($user->bio)
                     <p class="text-base md:text-lg text-gray-700 leading-relaxed text-center md:text-left">
                         {{ $user->bio }}</p>
@@ -101,7 +99,7 @@
         </div>
 
         <!-- Scrollable Content Section -->
-        <div class="flex-1 px-4 sm:px-8 md:px-16">
+        <div class="flex-1 overflow-hidden px-16">
             <!-- Only show private message if profile is actually private -->
             @if (!$canViewPosts)
                 <div class="flex flex-col items-center justify-center py-12">

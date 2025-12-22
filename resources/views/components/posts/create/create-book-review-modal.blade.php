@@ -14,21 +14,35 @@
                     @csrf
                     <input type="hidden" name="type" value="book">
 
-                    <!-- book search section using media-search-preview -->
-                    <x-ui.media-search type="book" searchId="modalBookSearch"
-                        searchResultsId="modalBookSearchResults" selectedId="modalSelectedBook"
-                        inputName="google_book_id" removeBtnId="removeBookBtn" searchPlaceholder="Search for a book..."
-                        label="What book did you read?" />
-                    <!-- selected book preview -->
-                    <div id="modalSelectedBook"
-                        class="hidden mt-4 p-4 border rounded-lg bg-gray-50 flex items-start gap-4 relative">
-                        <input type="hidden" name="google_book_id" id="selectedBookId">
-                        <img id="selectedBookCover" src="" alt="Cover"
-                            class="h-80 object-cover rounded shadow-sm">
-                        <div>
-                            <h4 id="selectedBookTitle" class="text-4xl font-bold text-gray-800"></h4>
-                            <p id="selectedBookAuthor" class="text-gray-600"></p>
-                            <p id="selectedBookYear" class="text-gray-600 text-xl"></p>
+                    <!-- book search section -->
+                    <div class="mb-6">
+                        <label class="block font-medium text-gray-700 mb-2">What book did you read?</label>
+                        <div class="relative" id="bookSearchContainer">
+                            <input type="text" id="modalBookSearch" placeholder="Search for a book..."
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#38157a] focus:border-transparent"
+                                autocomplete="off">
+                            <div id="modalBookSearchResults"
+                                class="absolute top-full left-0 w-full bg-white border rounded-lg shadow-lg hidden max-h-60 overflow-y-auto z-20 mt-1">
+                            </div>
+                        </div>
+
+                        <!-- selected book preview -->
+                        <div id="modalSelectedBook"
+                            class="hidden mt-4 p-4 border rounded-lg bg-gray-50 relative">
+                            <input type="hidden" name="google_book_id" id="selectedBookId">
+                            <button type="button" id="removeBookBtn"
+                                class="absolute top-2 right-2 text-gray-400 hover:text-red-500 z-10">
+                                <i class="fa-solid fa-times"></i>
+                            </button>
+                            <div class="flex flex-col sm:flex-row items-start gap-4">
+                                <img id="selectedBookCover" src="" alt="Cover"
+                                    class="w-32 h-48 sm:w-24 sm:h-36 object-cover rounded shadow-sm mx-auto sm:mx-0 shrink-0">
+                                <div class="flex-1 min-w-0 text-center sm:text-left">
+                                    <h4 id="selectedBookTitle" class="text-lg sm:text-xl font-bold text-gray-800 break-words mb-1"></h4>
+                                    <p id="selectedBookAuthor" class="text-sm text-gray-600 mb-0.5"></p>
+                                    <p id="selectedBookYear" class="text-sm text-gray-600"></p>
+                                </div>
+                            </div>
                         </div>
                         <button type="button" id="removeBookBtn"
                             class="absolute top-2 right-2 text-gray-400 hover:text-red-500">
