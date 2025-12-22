@@ -5,8 +5,15 @@
     <div class="flex items-center justify-between mb-4">
         <div class="flex items-center gap-3">
             <!-- user avatar -->
-            <img src="{{ asset('profile/default.png') }}" alt="User Avatar"
-                class="w-10 h-10 rounded-full object-cover bg-gray-200">
+            <!-- user avatar -->
+            @if ($post->author_image ?? false)
+                <img src="{{ asset('profile/' . $post->author_image) }}" alt="User Avatar"
+                    class="w-10 h-10 rounded-full object-cover bg-gray-200"
+                    onerror="this.onerror=null; this.src='{{ asset('profile/default.png') }}';">
+            @else
+                <img src="{{ asset('profile/default.png') }}" alt="User Avatar"
+                    class="w-10 h-10 rounded-full object-cover bg-gray-200">
+            @endif
 
             <div class="flex flex-col">
                 <div class="flex items-center gap-2">
@@ -15,7 +22,8 @@
                     </span>
                     @if (!empty($post->group_name))
                         <span class="text-gray-600 text-xs">
-                            in <a href="{{ route('groups.show', $post->groupid) }}" onclick="event.stopPropagation()" class="font-medium text-[#38157a] hover:underline">{{ $post->group_name }}</a>
+                            in <a href="{{ route('groups.show', $post->groupid) }}" onclick="event.stopPropagation()"
+                                class="font-medium text-[#38157a] hover:underline">{{ $post->group_name }}</a>
                         </span>
                     @endif
                 </div>
