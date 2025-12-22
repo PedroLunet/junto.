@@ -1001,7 +1001,7 @@ INSERT INTO standard_post (postId, text, imageUrl) VALUES
     (61, 'Honestly, if you like Christopher Nolan movies, you clearly lack any real intelligence. Go watch a real movie for once.', NULL),
     (62, '🔥 MAKE $5000 A DAY FROM HOME! Visit www.totally-not-a-scam.biz/easy-money NOW! 🔥', 'money-glitch.jpg'),
     (63, 'SPOILER ALERT: In the new movie, the main character was actually a ghost the whole time and the dog dies at the end! LOL.', NULL),
-    (64, 'Hey @alice, your latest film review was pathetic. You should probably just delete your account and stop embarrassing yourself.', NULL);
+    (64, 'Hey alice, your latest film review was pathetic. You should probably just delete your account and stop embarrassing yourself.', NULL);
 
 INSERT INTO review (postId, rating, mediaId, content) VALUES 
     -- GROUP REVIEWS (Must have "GROUP POST:")
