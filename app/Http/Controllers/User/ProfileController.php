@@ -244,7 +244,7 @@ class ProfileController extends Controller
 
         $request->validate([
             'name' => 'required|string|max:255',
-            'username' => 'required|string|max:255|unique:users,username,' . $user->id,
+            'username' => 'required|string|min:4|max:40|unique:users,username,' . $user->id . '|regex:/^[a-zA-Z0-9._-]+$/',
             'bio' => 'nullable|string|max:1000',
             'profilePicture' => 'nullable|image|max:4096', // max 4MB
         ]);
@@ -333,7 +333,7 @@ class ProfileController extends Controller
             'new_password' => [
                 'required',
                 'string',
-                'min:12',
+                'min:8',
                 'regex:/[a-z]/',      // at least one lowercase
                 'regex:/[A-Z]/',      // at least one uppercase
                 'regex:/[0-9]/',      // at least one number
