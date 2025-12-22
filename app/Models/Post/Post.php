@@ -41,6 +41,16 @@ class Post extends Model
             ->orderBy('lbaw2544.post_tag.createdat', 'asc');
     }
 
+    public function likes()
+    {
+        return $this->belongsToMany(User::class, 'lbaw2544.post_like', 'postid', 'userid');
+    }
+
+    public function comments()
+    {
+        return $this->hasMany(Comment::class, 'postid', 'id');
+    }
+
     public function getAuthorAttribute()
     {
         $user = $this->user;
