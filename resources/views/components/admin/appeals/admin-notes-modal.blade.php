@@ -13,7 +13,7 @@
                 </div>
 
                 <p class="text-gray-600 mb-4 sm:mb-6 text-sm sm:text-lg">
-                    Add a note explaining why this appeal was rejected. 
+                    Add a note explaining why this appeal was rejected.
                     This note will be stored for administrative records.
                 </p>
 
@@ -74,14 +74,14 @@
     }
 
     // Character counter
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
         const textarea = document.getElementById('adminNotesTextarea');
         if (textarea) {
             textarea.addEventListener('input', updateCharCount);
         }
 
         // Close modal on Escape key
-        document.addEventListener('keydown', function(e) {
+        document.addEventListener('keydown', function (e) {
             if (e.key === 'Escape') {
                 const modal = document.getElementById('adminNotesModal');
                 if (!modal.classList.contains('hidden')) {
@@ -100,18 +100,41 @@
         const adminNotes = document.getElementById('adminNotesTextarea').value.trim();
 
         fetch(`/admin/appeals/${currentAppealId}/reject`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-                    'Accept': 'application/json'
-                },
-                body: JSON.stringify({
-                    adminNotes: adminNotes || ''
-                })
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                'Accept': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            credentials: 'same-origin',
+            body: JSON.stringify({
+                adminNotes: adminNotes || ''
             })
-            .then(response => response.json())
+        })
+            .then(async response => {
+                if (response.status === 419 || response.status === 401) {
+                    // Use a simple alert since alertInfo might not be globally available or safe here, 
+                    // or assume console log + reload. 
+                    // But typically alertInfo is defined in layout or similar. 
+                    // To be safe, just reload.
+                    console.error('Session expired. Reloading...');
+                    window.location.reload();
+                    return null;
+                }
+                if (!response.ok) {
+                    // try to parse error message
+                    return response.json().then(data => {
+                        throw new Error(data.message || `HTTP error! status: ${response.status}`);
+                    }).catch(e => {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    });
+                }
+                return response.json();
+            })
             .then(data => {
+                if (!data) return; // Handled above
+
                 if (data.success) {
                     closeAdminNotesModal();
                     window.location.reload();

@@ -123,7 +123,7 @@ class User extends Authenticatable
             'friendship',
             'userid2',
             'userid1'
-        )->where('users.isadmin', false)->get(); 
+        )->where('users.isadmin', false)->get();
 
         // Merge both collections
         return $friends1->merge($friends2);
@@ -228,8 +228,8 @@ class User extends Authenticatable
 
         return $query->where(function ($q) use ($searchTerm) {
             $q->where('name', 'ilike', "%{$searchTerm}%")
-              ->orWhere('username', 'ilike', "%{$searchTerm}%")
-              ->orWhere('bio', 'ilike', "%{$searchTerm}%");
+                ->orWhere('username', 'ilike', "%{$searchTerm}%")
+                ->orWhere('bio', 'ilike', "%{$searchTerm}%");
         });
     }
 
@@ -256,7 +256,7 @@ class User extends Authenticatable
     public function markAsDeleted()
     {
         $oldName = $this->name;
-        
+
         $this->name = 'Deleted User';
         $this->username = 'deleted_' . $this->id;
         $this->email = 'deleted_' . $this->id . '@anon.com';
@@ -266,27 +266,22 @@ class User extends Authenticatable
         $this->passwordhash = 'deleted';
         $this->isdeleted = true;
         $this->save();
-        
-    
-        $notifications = \DB::table('notification')
-            ->where('message', 'like', '%from ' . $oldName . '%')
-            ->get();
-        
-        foreach ($notifications as $notification) {
-            $newMessage = str_replace('from ' . $oldName, 'from Deleted User', $notification->message);
-            \DB::table('notification')
-                ->where('id', $notification->id)
-                ->update(['message' => $newMessage]);
-        }
-        
+
+
+        // Optimized bulk update to prevent connection timeouts on large datasets
+        \DB::statement(
+            "UPDATE notification SET message = REPLACE(message, 'from ' || ?, 'from Deleted User') WHERE message LIKE '%' || ? || '%'",
+            [$oldName, $oldName]
+        );
+
         \DB::table('request')
             ->where('senderid', $this->id)
             ->delete();
-        
+
         $notificationIdsToDelete = \DB::table('notification')
             ->where('receiverid', $this->id)
             ->pluck('id');
-        
+
         if ($notificationIdsToDelete->count() > 0) {
             \DB::table('request')
                 ->whereIn('notificationid', $notificationIdsToDelete)

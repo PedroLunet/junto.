@@ -2,7 +2,8 @@
 
 @section('content')
     @if (session('alert'))
-        <x-ui.alert-card :type="session('alert.type', 'success')" :title="session('alert.title', '')" :message="session('alert.message', '')" :dismissible="true" />
+        <x-ui.alert-card :type="session('alert.type', 'success')" :title="session('alert.title', '')"
+            :message="session('alert.message', '')" :dismissible="true" />
     @endif
     <div class="flex flex-col h-[calc(100vh-4rem)]">
         <!-- Fixed Header -->
@@ -11,7 +12,8 @@
                 <div><!-- Title -->
                     <h1 class="text-2xl sm:text-3xl font-bold text-gray-900">Unblock Appeals</h1>
                     <!-- Description -->
-                    <p class="text-gray-600 mt-1 sm:mt-2 text-sm sm:text-base lg:mt-0">Review and manage user appeal requests
+                    <p class="text-gray-600 mt-1 sm:mt-2 text-sm sm:text-base lg:mt-0">Review and manage user appeal
+                        requests
                     </p>
                 </div>
 
@@ -19,33 +21,33 @@
                 <div class="flex flex-col lg:flex-row w-full lg:w-auto gap-4 items-center justify-center">
                     <div class="flex justify-start w-full">
                         <x-ui.sort-dropdown :options="[
-                            'created_date' => 'Created Date',
-                            'user_name' => 'User Name',
-                        ]" defaultValue="created_date" />
+            'created_date' => 'Created Date',
+            'user_name' => 'User Name',
+        ]" defaultValue="created_date" />
                     </div>
                     <div class="w-full flex justify-center lg:justify-end mt-2 lg:mt-0">
                         <x-ui.filter-tabs :filters="[
-                            'all' => [
-                                'label' => 'All',
-                                'count' => $counts['all'],
-                                'onclick' => 'filterAppeals(\'all\')',
-                            ],
-                            'pending' => [
-                                'label' => 'Pending',
-                                'count' => $counts['pending'],
-                                'onclick' => 'filterAppeals(\'pending\')',
-                            ],
-                            'approved' => [
-                                'label' => 'Approved',
-                                'count' => $counts['approved'],
-                                'onclick' => 'filterAppeals(\'approved\')',
-                            ],
-                            'rejected' => [
-                                'label' => 'Rejected',
-                                'count' => $counts['rejected'],
-                                'onclick' => 'filterAppeals(\'rejected\')',
-                            ],
-                        ]" activeFilter="all" :hideCountsOnMobile="true" />
+            'all' => [
+                'label' => 'All',
+                'count' => $counts['all'],
+                'onclick' => 'filterAppeals(\'all\')',
+            ],
+            'pending' => [
+                'label' => 'Pending',
+                'count' => $counts['pending'],
+                'onclick' => 'filterAppeals(\'pending\')',
+            ],
+            'approved' => [
+                'label' => 'Approved',
+                'count' => $counts['approved'],
+                'onclick' => 'filterAppeals(\'approved\')',
+            ],
+            'rejected' => [
+                'label' => 'Rejected',
+                'count' => $counts['rejected'],
+                'onclick' => 'filterAppeals(\'rejected\')',
+            ],
+        ]" activeFilter="all" :hideCountsOnMobile="true" />
                     </div>
                 </div>
             </div>
@@ -91,7 +93,7 @@
             applyFilterAndSort();
         }
 
-        window.applyFilterAndSort = function() {
+        window.applyFilterAndSort = function () {
             let filteredAppeals = currentFilter === 'all' ?
                 allAppeals :
                 allAppeals.filter(a => a.status === currentFilter);
@@ -146,16 +148,16 @@
                     emptyState = document.createElement('div');
                     emptyState.className = 'appeals-empty-state';
                     emptyState.innerHTML = `
-                        <div class="flex flex-col items-center justify-center text-gray-500 min-h-[calc(100vh-16rem)]">
-                            <div class="text-center">
-                                <div class="bg-gray-200 rounded-full p-6 inline-block mb-4">
-                                    <i class="fas fa-gavel text-4xl text-gray-400"></i>
+                            <div class="flex flex-col items-center justify-center text-gray-500 min-h-[calc(100vh-16rem)]">
+                                <div class="text-center">
+                                    <div class="bg-gray-200 rounded-full p-6 inline-block mb-4">
+                                        <i class="fas fa-gavel text-4xl text-gray-400"></i>
+                                    </div>
+                                    <h3 class="text-xl font-medium text-gray-700">No Appeals Found</h3>
+                                    <p class="mt-2">There are no appeals that match this filter.</p>
                                 </div>
-                                <h3 class="text-xl font-medium text-gray-700">No Appeals Found</h3>
-                                <p class="mt-2">There are no appeals that match this filter.</p>
                             </div>
-                        </div>
-                    `;
+                        `;
                     container.appendChild(emptyState);
                 }
                 emptyState.style.display = '';
@@ -164,7 +166,7 @@
             }
         }
 
-        window.filterAppeals = function(status) {
+        window.filterAppeals = function (status) {
             currentFilter = status;
             window.applyFilterAndSort();
         }
@@ -185,15 +187,29 @@
             }
 
             fetch(`/admin/appeals/${appealId}/approve`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-                        'Accept': 'application/json'
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                    'Accept': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                credentials: 'same-origin'
+            })
+                .then(async response => {
+                    if (response.status === 419 || response.status === 401) {
+                        showAlertCard('error', 'Session Expired', 'Your session has expired. Reloading the page...');
+                        setTimeout(() => window.location.reload(), 2000);
+                        return null;
                     }
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
                 })
-                .then(response => response.json())
                 .then(data => {
+                    if (!data) return; // Handled above (e.g. reload)
+
                     if (data.success) {
                         // Remove the approved appeal from the UI
                         const appealCard = document.getElementById(`appeal-${appealId}`)?.closest('.appeal-item');
@@ -228,17 +244,17 @@
             alert.className =
                 `dynamic-alert-card fixed top-6 right-6 z-50 flex items-start gap-3 px-4 py-4 rounded-2xl border ${bg} shadow-sm mb-4 min-w-[280px] max-w-xs transition-all duration-300 ease-in-out opacity-0 translate-x-full`;
             alert.innerHTML = `
-                <div class="shrink-0 flex items-center justify-center w-8 h-8 rounded-full ${iconBg}">
-                    ${icon}
-                </div>
-                <div class="flex-1">
-                    <div class="font-semibold text-base ${iconColor} mb-0.5">${title}</div>
-                    <div class="text-gray-700 text-sm">${message}</div>
-                </div>
-                <button type="button" class="absolute top-2 right-2" onclick="this.closest('div').style.display='none'">
-                    <i class="fa fa-times w-5 h-5"></i>
-                </button>
-            `;
+                    <div class="shrink-0 flex items-center justify-center w-8 h-8 rounded-full ${iconBg}">
+                        ${icon}
+                    </div>
+                    <div class="flex-1">
+                        <div class="font-semibold text-base ${iconColor} mb-0.5">${title}</div>
+                        <div class="text-gray-700 text-sm">${message}</div>
+                    </div>
+                    <button type="button" class="absolute top-2 right-2" onclick="this.closest('div').style.display='none'">
+                        <i class="fa fa-times w-5 h-5"></i>
+                    </button>
+                `;
             document.body.appendChild(alert);
             // Animate in
             setTimeout(() => {
