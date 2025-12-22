@@ -9,6 +9,7 @@ use App\Models\Post\Report;
 use App\Models\Post\Comment;
 use App\Models\Message;
 use App\Models\User\Notification;
+use App\Models\GroupJoinRequest;
 use App\Policies\UserPolicy;
 use App\Policies\FriendRequestPolicy;
 use App\Policies\PostPolicy;
@@ -16,6 +17,7 @@ use App\Policies\ReportPolicy;
 use App\Policies\CommentPolicy;
 use App\Policies\MessagePolicy;
 use App\Policies\NotificationPolicy;
+use App\Policies\GroupJoinRequestPolicy;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -28,6 +30,7 @@ class AppServiceProvider extends ServiceProvider
         Comment::class => CommentPolicy::class,
         Message::class => MessagePolicy::class,
         Notification::class => NotificationPolicy::class,
+        GroupJoinRequest::class => GroupJoinRequestPolicy::class,
     ];
 
     /**

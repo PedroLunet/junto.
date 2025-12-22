@@ -349,11 +349,16 @@ class GroupController extends Controller
             ->first();
 
         if ($request) {
-            GroupJoinRequest::where('requestid', $request->notificationid)->delete();
-            Notification::where('id', $request->notificationid)->delete();
-            $request->delete();
+            $groupJoinRequest = GroupJoinRequest::where('requestid', $request->notificationid)->first();
+            if ($groupJoinRequest) {
+                $this->authorize('cancel', $groupJoinRequest);
+                
+                GroupJoinRequest::where('requestid', $request->notificationid)->delete();
+                Notification::where('id', $request->notificationid)->delete();
+                $request->delete();
 
-            return back()->with('success', 'Your request has been cancelled.');
+                return back()->with('success', 'Your request has been cancelled.');
+            }
         }
 
         return back()->with('error', 'No pending request found.');
@@ -361,8 +366,6 @@ class GroupController extends Controller
 
     public function acceptRequest(Group $group, $requestId)
     {
-        $this->authorize('update', $group);
-
         $request = ModelsRequest::where('notificationid', $requestId)
             ->whereHas('groupJoinRequest', function ($query) use ($group) {
                 $query->where('groupid', $group->id);
@@ -370,6 +373,9 @@ class GroupController extends Controller
             ->first();
 
         if ($request && $request->status === 'pending') {
+            $groupJoinRequest = GroupJoinRequest::where('requestid', $request->notificationid)->first();
+            $this->authorize('accept', $groupJoinRequest);
+
             $group->members()->attach($request->senderid, ['isowner' => false]);
             $request->update(['status' => 'accepted']);
 
@@ -381,8 +387,6 @@ class GroupController extends Controller
 
     public function rejectRequest(Group $group, $requestId)
     {
-        $this->authorize('update', $group);
-
         $request = ModelsRequest::where('notificationid', $requestId)
             ->whereHas('groupJoinRequest', function ($query) use ($group) {
                 $query->where('groupid', $group->id);
@@ -390,6 +394,9 @@ class GroupController extends Controller
             ->first();
 
         if ($request && $request->status === 'pending') {
+            $groupJoinRequest = GroupJoinRequest::where('requestid', $request->notificationid)->first();
+            $this->authorize('reject', $groupJoinRequest);
+
             $request->update(['status' => 'rejected']);
             return back()->with('success', 'Request rejected.');
         }
