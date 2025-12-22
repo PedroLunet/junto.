@@ -5,7 +5,7 @@
         </div>
     @empty
         <div class="appeals-empty-state">
-            <x-ui.empty-state icon="fa-gavel" title="No Appeals Found" description="There are no appeals to review."
+            <x-ui.empty-state icon="fa-gavel" title="No Appeals Found" description="There are no appeals that match this filter."
                 height="min-h-[calc(100vh-16rem)]" />
         </div>
     @endforelse
