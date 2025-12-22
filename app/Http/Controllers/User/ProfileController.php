@@ -103,10 +103,8 @@ class ProfileController extends Controller
                     $transformedPost->content = $post->standardPost->text;
                     $transformedPost->image_url = $post->standardPost->imageurl;
                     $transformedPost->post_type = 'standard';
-                }
-
-                // review data
-                if ($post->review) {
+                } elseif ($post->review) {
+                    // review data
                     $transformedPost->content = $post->review->content;
                     $transformedPost->rating = $post->review->rating;
                     $transformedPost->media_title = $post->review->media ? $post->review->media->title : 'Unknown Media';

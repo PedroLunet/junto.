@@ -9,7 +9,7 @@ class Membership extends Model
 {
     use HasFactory;
 
-    protected $table = 'membership';
+    protected $table = 'lbaw2544.membership';
 
     protected $primaryKey = ['userId', 'groupId'];
 

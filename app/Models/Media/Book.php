@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Book extends Model
 {
-  protected $table = 'book';
+  protected $table = 'lbaw2544.book';
 
   protected $primaryKey = 'mediaId';
   public $incrementing = false; // we provide it manually from the Media creation
