@@ -858,26 +858,26 @@ INSERT INTO music (mediaId) VALUES (3), (7), (26), (27), (28), (29), (30), (31),
 -- USERS
 INSERT INTO users (name, username, email, passwordHash, bio, profilePicture, isPrivate, isAdmin, favoriteFilm, favoriteBook, favoriteSong) VALUES 
     ('Admin', 'admin', 'admin@example.org', '$2y$10$HfzIhGCCaxqyaIdGgjARSuOKAcm1Uy82YfLuNaajn6JrjLWy9Sj/W', NULL, NULL, FALSE, TRUE, NULL, NULL, NULL),
-    ('Alice Martins', 'alice', 'alice@example.org', '$2y$10$HfzIhGCCaxqyaIdGgjARSuOKAcm1Uy82YfLuNaajn6JrjLWy9Sj/W', 'Movie lover and aspiring filmmaker 🎬', 'alice.jpg', FALSE, FALSE, 1, 2, 3),
-    ('Bruno Silva', 'bruno', 'bruno@example.org', '$2y$10$HfzIhGCCaxqyaIdGgjARSuOKAcm1Uy82YfLuNaajn6JrjLWy9Sj/W', 'Reader & gamer. Tech enthusiast 💻', 'bruno.jpg', FALSE, FALSE, 4, 5, 3),
-    ('Carla Dias', 'carla', 'carla@example.org', '$2y$10$HfzIhGCCaxqyaIdGgjARSuOKAcm1Uy82YfLuNaajn6JrjLWy9Sj/W', 'Music addict 🎵 Concerts are life!', 'carla.jpg', TRUE, FALSE, 1, 2, 7),
-    ('David Costa', 'david', 'david@example.org', '$2y$10$HfzIhGCCaxqyaIdGgjARSuOKAcm1Uy82YfLuNaajn6JrjLWy9Sj/W', 'Cinephile. Nolan fanboy.', 'david.jpg', FALSE, FALSE, 6, NULL, NULL),
-    ('Eva Rocha', 'eva', 'eva@example.org', '$2y$10$HfzIhGCCaxqyaIdGgjARSuOKAcm1Uy82YfLuNaajn6JrjLWy9Sj/W', 'Book enthusiast 📚 Coffee lover ☕', 'eva.jpg', TRUE, FALSE, 4, 8, 7),
-    ('Filipe Moreira', 'filipe', 'filipe@example.org', '$2y$10$HfzIhGCCaxqyaIdGgjARSuOKAcm1Uy82YfLuNaajn6JrjLWy9Sj/W', 'Vinyl collector. Old school music only 🎸', 'filipe.jpg', FALSE, FALSE, 1, NULL, 3),
-    ('John Doe', 'john_doe', 'john@example.org', '$2y$10$HfzIhGCCaxqyaIdGgjARSuOKAcm1Uy82YfLuNaajn6JrjLWy9Sj/W', 'Private person', 'john.jpg', TRUE, FALSE, 1, 2, 3),
-    ('Jane Smith', 'jane_doe', 'jane@example.org', '$2y$10$HfzIhGCCaxqyaIdGgjARSuOKAcm1Uy82YfLuNaajn6JrjLWy9Sj/W', 'Keep it secret', 'jane.jpg', TRUE, FALSE, 4, 5, 7),
-    ('Miguel Santos', 'miguelito', 'miguel@example.org', '$2y$10$HfzIhGCCaxqyaIdGgjARSuOKAcm1Uy82YfLuNaajn6JrjLWy9Sj/W', 'Part-time photographer 📸 Full-time dreamer', 'miguel.jpg', FALSE, FALSE, 9, 17, 26),
-    ('Sofia Almeida', 'sofia_a', 'sofia@example.org', '$2y$10$HfzIhGCCaxqyaIdGgjARSuOKAcm1Uy82YfLuNaajn6JrjLWy9Sj/W', 'Travel blogger ✈️ Always exploring', 'sofia.jpg', FALSE, FALSE, 16, 22, 34),
-    ('Ricardo Pereira', 'ricky', 'ricardo@example.org', '$2y$10$HfzIhGCCaxqyaIdGgjARSuOKAcm1Uy82YfLuNaajn6JrjLWy9Sj/W', 'Gym rat 💪 Science fiction nerd', 'ricardo.jpg', FALSE, FALSE, 4, 21, 28),
-    ('Ana Ferreira', 'ana_f', 'ana@example.org', '$2y$10$HfzIhGCCaxqyaIdGgjARSuOKAcm1Uy82YfLuNaajn6JrjLWy9Sj/W', 'Art student 🎨 Indie music lover', 'ana.jpg', FALSE, FALSE, 10, 19, 29),
-    ('Pedro Oliveira', 'pedro_o', 'pedro@example.org', '$2y$10$HfzIhGCCaxqyaIdGgjARSuOKAcm1Uy82YfLuNaajn6JrjLWy9Sj/W', 'Software engineer by day, musician by night 🎹', 'pedro.jpg', FALSE, FALSE, 11, 23, 32),
-    ('Inês Costa', 'ines_c', 'ines@example.org', '$2y$10$HfzIhGCCaxqyaIdGgjARSuOKAcm1Uy82YfLuNaajn6JrjLWy9Sj/W', 'Psychology student 🧠 Love discussing films', 'ines.jpg', TRUE, FALSE, 12, 24, 30),
-    ('Tiago Ribeiro', 'tiago_r', 'tiago@example.org', '$2y$10$HfzIhGCCaxqyaIdGgjARSuOKAcm1Uy82YfLuNaajn6JrjLWy9Sj/W', 'Foodie 🍕 Podcast enthusiast', 'tiago.jpg', FALSE, FALSE, 13, NULL, 31),
-    ('Mariana Sousa', 'mari_s', 'mariana@example.org', '$2y$10$HfzIhGCCaxqyaIdGgjARSuOKAcm1Uy82YfLuNaajn6JrjLWy9Sj/W', 'Dancing through life 💃 Musical theatre fan', 'mariana.jpg', FALSE, FALSE, 14, 25, 27),
-    ('João Rodrigues', 'joao_rod', 'joao@example.org', '$2y$10$HfzIhGCCaxqyaIdGgjARSuOKAcm1Uy82YfLuNaajn6JrjLWy9Sj/W', 'History buff 📜 Documentary lover', 'joao.jpg', FALSE, FALSE, 15, 20, NULL),
-    ('Beatriz Lima', 'bia_lima', 'beatriz@example.org', '$2y$10$HfzIhGCCaxqyaIdGgjARSuOKAcm1Uy82YfLuNaajn6JrjLWy9Sj/W', 'Cat mom 🐱 Fantasy books enthusiast', 'beatriz.jpg', TRUE, FALSE, 16, 18, 33),
-    ('Gonçalo Martins', 'goncalo_m', 'goncalo@example.org', '$2y$10$HfzIhGCCaxqyaIdGgjARSuOKAcm1Uy82YfLuNaajn6JrjLWy9Sj/W', 'Startup founder 🚀 Productivity nerd', 'goncalo.jpg', FALSE, FALSE, 1, 23, 35),
-    ('Catarina Neves', 'cat_neves', 'catarina@example.org', '$2y$10$HfzIhGCCaxqyaIdGgjARSuOKAcm1Uy82YfLuNaajn6JrjLWy9Sj/W', 'Medical student ⚕️ Anime watcher', 'catarina.jpg', FALSE, FALSE, 16, 8, 7);
+    ('Alice Martins', 'alice', 'alice@example.org', '$2y$10$HfzIhGCCaxqyaIdGgjARSuOKAcm1Uy82YfLuNaajn6JrjLWy9Sj/W', 'Movie lover and aspiring filmmaker 🎬', 'woman1.jpg', FALSE, FALSE, 1, 2, 3),
+    ('Bruno Silva', 'bruno', 'bruno@example.org', '$2y$10$HfzIhGCCaxqyaIdGgjARSuOKAcm1Uy82YfLuNaajn6JrjLWy9Sj/W', 'Reader & gamer. Tech enthusiast 💻', 'man1.jpg', FALSE, FALSE, 4, 5, 3),
+    ('Carla Dias', 'carla', 'carla@example.org', '$2y$10$HfzIhGCCaxqyaIdGgjARSuOKAcm1Uy82YfLuNaajn6JrjLWy9Sj/W', 'Music addict 🎵 Concerts are life!', 'woman2.jpg', TRUE, FALSE, 1, 2, 7),
+    ('David Costa', 'david', 'david@example.org', '$2y$10$HfzIhGCCaxqyaIdGgjARSuOKAcm1Uy82YfLuNaajn6JrjLWy9Sj/W', 'Cinephile. Nolan fanboy.', 'man2.jpg', FALSE, FALSE, 6, NULL, NULL),
+    ('Eva Rocha', 'eva', 'eva@example.org', '$2y$10$HfzIhGCCaxqyaIdGgjARSuOKAcm1Uy82YfLuNaajn6JrjLWy9Sj/W', 'Book enthusiast 📚 Coffee lover ☕', 'woman3.jpg', TRUE, FALSE, 4, 8, 7),
+    ('Filipe Moreira', 'filipe', 'filipe@example.org', '$2y$10$HfzIhGCCaxqyaIdGgjARSuOKAcm1Uy82YfLuNaajn6JrjLWy9Sj/W', 'Vinyl collector. Old school music only 🎸', 'man3.jpg', FALSE, FALSE, 1, NULL, 3),
+    ('John Doe', 'john_doe', 'john@example.org', '$2y$10$HfzIhGCCaxqyaIdGgjARSuOKAcm1Uy82YfLuNaajn6JrjLWy9Sj/W', 'Private person', 'man4.jpg', TRUE, FALSE, 1, 2, 3),
+    ('Jane Smith', 'jane_doe', 'jane@example.org', '$2y$10$HfzIhGCCaxqyaIdGgjARSuOKAcm1Uy82YfLuNaajn6JrjLWy9Sj/W', 'Keep it secret', 'woman4.jpg', TRUE, FALSE, 4, 5, 7),
+    ('Miguel Santos', 'miguelito', 'miguel@example.org', '$2y$10$HfzIhGCCaxqyaIdGgjARSuOKAcm1Uy82YfLuNaajn6JrjLWy9Sj/W', 'Part-time photographer 📸 Full-time dreamer', 'man5.jpg', FALSE, FALSE, 9, 17, 26),
+    ('Sofia Almeida', 'sofia_a', 'sofia@example.org', '$2y$10$HfzIhGCCaxqyaIdGgjARSuOKAcm1Uy82YfLuNaajn6JrjLWy9Sj/W', 'Travel blogger ✈️ Always exploring', 'woman4.jpg', FALSE, FALSE, 16, 22, 34),
+    ('Ricardo Pereira', 'ricky', 'ricardo@example.org', '$2y$10$HfzIhGCCaxqyaIdGgjARSuOKAcm1Uy82YfLuNaajn6JrjLWy9Sj/W', 'Gym rat 💪 Science fiction nerd', 'man5.jpg', FALSE, FALSE, 4, 21, 28),
+    ('Ana Ferreira', 'ana_f', 'ana@example.org', '$2y$10$HfzIhGCCaxqyaIdGgjARSuOKAcm1Uy82YfLuNaajn6JrjLWy9Sj/W', 'Art student 🎨 Indie music lover', 'woman5.jpg', FALSE, FALSE, 10, 19, 29),
+    ('Pedro Oliveira', 'pedro_o', 'pedro@example.org', '$2y$10$HfzIhGCCaxqyaIdGgjARSuOKAcm1Uy82YfLuNaajn6JrjLWy9Sj/W', 'Software engineer by day, musician by night 🎹', 'man6.jpg', FALSE, FALSE, 11, 23, 32),
+    ('Inês Costa', 'ines_c', 'ines@example.org', '$2y$10$HfzIhGCCaxqyaIdGgjARSuOKAcm1Uy82YfLuNaajn6JrjLWy9Sj/W', 'Psychology student 🧠 Love discussing films', 'woman6.jpg', TRUE, FALSE, 12, 24, 30),
+    ('Tiago Ribeiro', 'tiago_r', 'tiago@example.org', '$2y$10$HfzIhGCCaxqyaIdGgjARSuOKAcm1Uy82YfLuNaajn6JrjLWy9Sj/W', 'Foodie 🍕 Podcast enthusiast', 'man7.jpg', FALSE, FALSE, 13, NULL, 31),
+    ('Mariana Sousa', 'mari_s', 'mariana@example.org', '$2y$10$HfzIhGCCaxqyaIdGgjARSuOKAcm1Uy82YfLuNaajn6JrjLWy9Sj/W', 'Dancing through life 💃 Musical theatre fan', 'woman7.jpg', FALSE, FALSE, 14, 25, 27),
+    ('João Rodrigues', 'joao_rod', 'joao@example.org', '$2y$10$HfzIhGCCaxqyaIdGgjARSuOKAcm1Uy82YfLuNaajn6JrjLWy9Sj/W', 'History buff 📜 Documentary lover', 'man8.jpg', FALSE, FALSE, 15, 20, NULL),
+    ('Beatriz Lima', 'bia_lima', 'beatriz@example.org', '$2y$10$HfzIhGCCaxqyaIdGgjARSuOKAcm1Uy82YfLuNaajn6JrjLWy9Sj/W', 'Cat mom 🐱 Fantasy books enthusiast', 'woman8.jpg', TRUE, FALSE, 16, 18, 33),
+    ('Gonçalo Martins', 'goncalo_m', 'goncalo@example.org', '$2y$10$HfzIhGCCaxqyaIdGgjARSuOKAcm1Uy82YfLuNaajn6JrjLWy9Sj/W', 'Startup founder 🚀 Productivity nerd', 'man9.jpg', FALSE, FALSE, 1, 23, 35),
+    ('Catarina Neves', 'cat_neves', 'catarina@example.org', '$2y$10$HfzIhGCCaxqyaIdGgjARSuOKAcm1Uy82YfLuNaajn6JrjLWy9Sj/W', 'Medical student ⚕️ Anime watcher', 'woman9.jpg', FALSE, FALSE, 16, 8, 7);
 
 -- GROUPS
 INSERT INTO groups (name, description, isPrivate, icon) VALUES 
@@ -1033,7 +1033,7 @@ INSERT INTO review (postId, rating, mediaId, content) VALUES
     (47, 5, 16, 'Spirited Away is pure magic. I cried.'),
     (53, 3, 21, 'Dune is great but the pacing is a bit slow.'),
     (57, 5, 6, 'Interstellar soundtrack is a masterpiece.'),
-    (59, 4, 14, 'Parasite is a brilliant social commentary. Highly recommend.'),
+    (59, 4, 14, 'Lorde of the Rings is a brilliant social commentary. Highly recommend.'),
     (60, 5, 4, 'The Matrix changed sci-fi forever. A must-watch.'),
     (65, 5, 36, 'The Seven Husbands of Evelyn Hugo is a masterpiece. I couldn''t put it down.'),
     (66, 5, 37, 'Atomic Habits is life-changing. Small changes really do add up.'),
@@ -1161,3 +1161,413 @@ INSERT INTO report (reason, status, postId, commentId, createdAt) VALUES
     
     -- Post 64: Harassment (Direct attack on Alice)
     ('Harassment', 'pending', 64, NULL, NOW() - INTERVAL '20 minutes');
+
+-- INSERT USERS WITH SPECIFIC BLOCK STATUSES
+INSERT INTO users (name, username, email, passwordHash, bio, profilePicture, isBlocked) VALUES 
+    ('Robert Rogers', 'rob_rog', 'robert@example.org', '$2y$10$HfzIhGCCaxqyaIdGgjARSuOKAcm1Uy82YfLuNaajn6JrjLWy9Sj/W', 'Photography enthusiast. Occasionally too loud.', 'man10',TRUE),
+    ('Vitor Moreira', 'vit_mor', 'vitor@example.org', '$2y$10$HfzIhGCCaxqyaIdGgjARSuOKAcm1Uy82YfLuNaajn6JrjLWy9Sj/W', 'Music producer and tech explorer.', 'woman10' , TRUE),
+    ('Fernando Augusto', 'fernando_aug', 'fernando@example.org', '$2y$10$HfzIhGCCaxqyaIdGgjARSuOKAcm1Uy82YfLuNaajn6JrjLWy9Sj/W', 'Avid reader and collector of rare books.', 'man11', FALSE); -- Unblocked because appeal was approved
+
+-- UNBLOCK APPEALS 
+INSERT INTO unblock_appeal (userId, reason, status, adminNotes, createdAt, updatedAt) VALUES
+    (
+        (SELECT id FROM users WHERE username = 'rob_rog'), 
+        'I believe my account was flagged by mistake during the last community discussion. I was just debating a film technique.', 
+        'pending', 
+        NULL, 
+        NOW() - INTERVAL '1 day', 
+        NOW()
+    ),
+    (
+        (SELECT id FROM users WHERE username = 'vit_mor'), 
+        'I apologize for the spammy comments. I didn''t realize that posting my Soundcloud link in every thread was against the rules.', 
+        'rejected', 
+        'User has a history of repeated promotional spam after multiple warnings.', 
+        NOW() - INTERVAL '3 days', 
+        NOW() - INTERVAL '1 day'
+    ),
+    (
+        (SELECT id FROM users WHERE username = 'fernando_aug'), 
+        'My account was compromised last week. I have now enabled 2FA and changed my password. Please restore my access.', 
+        'approved', 
+        'Verified account recovery. Security breach confirmed and resolved.', 
+        NOW() - INTERVAL '5 days', 
+        NOW() - INTERVAL '4 days'
+    );
+
+-- ====================================================
+-- MESSAGES POPULATION
+-- ====================================================
+INSERT INTO friendship (userId1, userId2)
+SELECT LEAST(u1.id, u2.id), GREATEST(u1.id, u2.id)
+FROM (
+    VALUES 
+        ('alice', 'miguelito'), -- Conversation 3
+        ('eva', 'alice'),       -- Conversation 4
+        ('ricky', 'david'),     -- Conversation 5
+        ('sofia_a', 'ana_f'),   -- Conversation 6
+        ('ricky', 'pedro_o')    -- Conversation 2
+) AS pairs(un1, un2)
+JOIN users u1 ON u1.username = pairs.un1
+JOIN users u2 ON u2.username = pairs.un2
+ON CONFLICT DO NOTHING;
+
+-- Establish friendship between Alice and Sofia
+INSERT INTO friendship (userId1, userId2)
+VALUES (
+    LEAST((SELECT id FROM users WHERE username = 'alice'), (SELECT id FROM users WHERE username = 'sofia_a')),
+    GREATEST((SELECT id FROM users WHERE username = 'alice'), (SELECT id FROM users WHERE username = 'sofia_a'))
+) ON CONFLICT DO NOTHING;
+
+-- Conversation 1: Alice and Bruno discussing Inception (IDs based on interests)
+INSERT INTO messages (senderId, receiverId, content, isRead, sentAt) VALUES 
+    ((SELECT id FROM users WHERE username = 'alice'), 
+     (SELECT id FROM users WHERE username = 'bruno'), 
+     'Hey Bruno! Did you see my latest review on Inception? I know you love Nolan too.', TRUE, NOW() - INTERVAL '5 days'),
+    
+    ((SELECT id FROM users WHERE username = 'bruno'), 
+     (SELECT id FROM users WHERE username = 'alice'), 
+     'I just read it! Totally agree about the sound design. We should catch the re-release in IMAX next month.', TRUE, NOW() - INTERVAL '5 days'),
+    
+    ((SELECT id FROM users WHERE username = 'alice'), 
+     (SELECT id FROM users WHERE username = 'bruno'), 
+     'Count me in! I''ll check the ticket availability tonight.', FALSE, NOW() - INTERVAL '4 days');
+
+-- Conversation 2: Personal Social Interaction
+INSERT INTO messages (senderId, receiverId, content, isRead, sentAt) VALUES 
+    ((SELECT id FROM users WHERE username = 'ricky'), 
+     (SELECT id FROM users WHERE username = 'pedro_o'), 
+     'Yo! Are you bringing your keyboard to the jam session this weekend?', TRUE, NOW() - INTERVAL '12 hours'),
+    
+    ((SELECT id FROM users WHERE username = 'pedro_o'), 
+     (SELECT id FROM users WHERE username = 'ricky'), 
+     'For sure. I''ve been practicing that synth lead from the new Weeknd track.', FALSE, NOW() - INTERVAL '2 hours');
+
+-- Conversation 3: Alice and Miguel discussing Photography
+-- (Alice is a 'Film lover' and Miguel is a 'Part-time photographer')
+INSERT INTO messages (senderId, receiverId, content, isRead, sentAt) VALUES 
+    ((SELECT id FROM users WHERE username = 'alice'), 
+     (SELECT id FROM users WHERE username = 'miguelito'), 
+     'Hey Miguel! I saw your shot in the Photography Club. The composition reminded me of a Wes Anderson frame.', TRUE, NOW() - INTERVAL '3 days'),
+    
+    ((SELECT id FROM users WHERE username = 'miguelito'), 
+     (SELECT id FROM users WHERE username = 'alice'), 
+     'That is such a huge compliment, thank you Alice! I was actually trying to go for that symmetrical look.', TRUE, NOW() - INTERVAL '2 days'),
+    
+    ((SELECT id FROM users WHERE username = 'alice'), 
+     (SELECT id FROM users WHERE username = 'miguelito'), 
+     'It definitely worked. What focal length were you using?', FALSE, NOW() - INTERVAL '2 days');
+
+-- Conversation 4: Alice and Eva regarding the Bookworms Group
+-- (Eva is the 'Bookworms' owner, Alice is a member)
+INSERT INTO messages (senderId, receiverId, content, isRead, sentAt) VALUES 
+    ((SELECT id FROM users WHERE username = 'eva'), 
+     (SELECT id FROM users WHERE username = 'alice'), 
+     'Hi Alice! I noticed you recently joined the Bookworms. Are you planning to join our reading of "The Great Gatsby" this month?', TRUE, NOW() - INTERVAL '4 days'),
+    
+    ((SELECT id FROM users WHERE username = 'alice'), 
+     (SELECT id FROM users WHERE username = 'eva'), 
+     'I would love to! I have actually never read the book, only seen the film versions.', TRUE, NOW() - INTERVAL '3 days'),
+    
+    ((SELECT id FROM users WHERE username = 'eva'), 
+     (SELECT id FROM users WHERE username = 'alice'), 
+     'The book is a totally different experience. I think you will love the prose!', TRUE, NOW() - INTERVAL '3 days');
+
+-- Conversation 5: David and Ricardo (Fitness and Sci-Fi interests)
+INSERT INTO messages (senderId, receiverId, content, isRead, sentAt) VALUES 
+    ((SELECT id FROM users WHERE username = 'ricky'), 
+     (SELECT id FROM users WHERE username = 'david'), 
+     'David, did you see the new trailer for Interstellar 2? (Just kidding, I wish!)', TRUE, NOW() - INTERVAL '1 day'),
+    
+    ((SELECT id FROM users WHERE username = 'david'), 
+     (SELECT id FROM users WHERE username = 'ricky'), 
+     'You almost gave me a heart attack, Ricardo! Don''t play with my emotions like that lol.', TRUE, NOW() - INTERVAL '20 hours'),
+    
+    ((SELECT id FROM users WHERE username = 'ricky'), 
+     (SELECT id FROM users WHERE username = 'david'), 
+     'Haha! Anyway, see you at the gym later? I''m hitting shoulders.', FALSE, NOW() - INTERVAL '5 hours');
+
+-- Conversation 6: Ana and Sofia (Art and Travel)
+INSERT INTO messages (senderId, receiverId, content, isRead, sentAt) VALUES 
+    ((SELECT id FROM users WHERE username = 'sofia_a'), 
+     (SELECT id FROM users WHERE username = 'ana_f'), 
+     'Ana, I''m visiting Florence next week. Any specific art galleries I absolutely cannot miss?', TRUE, NOW() - INTERVAL '2 days'),
+    
+    ((SELECT id FROM users WHERE username = 'ana_f'), 
+     (SELECT id FROM users WHERE username = 'sofia_a'), 
+     'Oh you have to go to the Uffizi! But honestly, even the street art in the Oltrarno district is incredible.', TRUE, NOW() - INTERVAL '1 day'),
+    
+    ((SELECT id FROM users WHERE username = 'sofia_a'), 
+     (SELECT id FROM users WHERE username = 'ana_f'), 
+     'Perfect, adding Oltrarno to my itinerary now. Thanks!', TRUE, NOW() - INTERVAL '12 hours');
+
+-- Conversation: Alice and Sofia (Planning a meetup)
+INSERT INTO messages (senderId, receiverId, content, isRead, sentAt) VALUES 
+    ((SELECT id FROM users WHERE username = 'sofia_a'), 
+     (SELECT id FROM users WHERE username = 'alice'), 
+     'Hey Alice! Are you going to the community fair this Saturday? I heard they have some great local food stalls this year.', TRUE, NOW() - INTERVAL '1 day'),
+    
+    ((SELECT id FROM users WHERE username = 'alice'), 
+     (SELECT id FROM users WHERE username = 'sofia_a'), 
+     'I was thinking about it! I really need a break from my editing desk. What time were you planning on going?', TRUE, NOW() - INTERVAL '22 hours'),
+    
+    ((SELECT id FROM users WHERE username = 'sofia_a'), 
+     (SELECT id FROM users WHERE username = 'alice'), 
+     'Probably around 1 PM. We could grab lunch there! Apparently, there is a new wood-fired pizza truck everyone is talking about.', TRUE, NOW() - INTERVAL '20 hours'),
+    
+    ((SELECT id FROM users WHERE username = 'alice'), 
+     (SELECT id FROM users WHERE username = 'sofia_a'), 
+     'Pizza sounds perfect. Let''s meet by the main entrance. I''ll text you when I''m parking!', FALSE, NOW() - INTERVAL '18 hours');
+
+-- ADD NEW MEDIA ENTRIES
+INSERT INTO media (title, creator, releaseYear, coverImage) VALUES 
+    ('Bags', 'Clairo', 2019, 'https://i.scdn.co/image/ab67616d00001e0233ccb60f9b2785ef691b2fbc'),
+    ('Sally, When The Wine Runs Out', 'Role Model', 2019, 'https://i.scdn.co/image/ab67616d00001e02ff9e807b292a861ded756d63'),
+    ('Lover, You Should''ve Come Over', 'Jeff Buckley', 1994, 'https://i.scdn.co/image/ab67616d00001e02afc2d1d2c8703a10aeded0af'),
+    ('Silver Springs - Live at Warner Brothers Studios', 'Fleetwood Mac', 1997, 'https://i.scdn.co/image/ab67616d00001e020b8de3e1eb45d3b13bdb7057');
+
+-- LINK TO MUSIC SUB-TABLE (IDs 41-44 assuming previous total was 40)
+INSERT INTO music (mediaId) VALUES (41), (42), (43), (44);
+
+-- CREATE POST ENTRIES (Base table)
+-- CREATE POST ENTRIES (Base table for reviews)
+INSERT INTO post (userId, groupId, createdAt) VALUES 
+    ((SELECT id FROM users WHERE username = 'ana_f'), NULL, NOW() - INTERVAL '2 hours'),
+    ((SELECT id FROM users WHERE username = 'filipe'), NULL, NOW() - INTERVAL '5 hours'),
+    ((SELECT id FROM users WHERE username = 'pedro_o'), NULL, NOW() - INTERVAL '10 hours'),
+    ((SELECT id FROM users WHERE username = 'carla'), NULL, NOW() - INTERVAL '1 day');
+
+-- ADD REVIEW DETAILS
+INSERT INTO review (postId, rating, mediaId, content) VALUES 
+    -- Ana Ferreira reviewing Clairo
+    ((SELECT MAX(id) - 3 FROM post), 5, 41, 'Bags is the ultimate bedroom pop anthem. The lyrics about overthinking a new relationship are so relatable.'),
+    
+    -- Filipe Moreira reviewing Role Model (Fixed Artist)
+    ((SELECT MAX(id) - 2 FROM post), 5, 42, 'Role Model has such a unique way of capturing vulnerability. "Sally" is short, but it hits so hard every time.'),
+    
+    -- Pedro Oliveira reviewing Jeff Buckley
+    ((SELECT MAX(id) - 1 FROM post), 5, 43, 'Buckley’s vocals on this are haunting. "Too young to hold on and too old to just break free and run"—absolute poetry.'),
+    
+    -- Carla Dias reviewing Fleetwood Mac
+    ((SELECT MAX(id) FROM post), 5, 44, 'The raw emotion Stevie Nicks puts into Silver Springs is unmatched. How this was originally a B-side, I will never understand.');
+
+-- ====================================================
+-- GUARANTEED STABLE: COMMENTS ON NEW MUSIC REVIEWS
+-- ====================================================
+WITH latest_posts AS (
+    SELECT id, ROW_NUMBER() OVER (ORDER BY id DESC) as rn
+    FROM post
+)
+INSERT INTO comment (postId, userId, content, createdAt) VALUES 
+    (
+        (SELECT id FROM latest_posts WHERE rn = 4), 
+        (SELECT id FROM users WHERE username = 'alice'), 
+        'The music video for this has such a specific aesthetic. I love the lo-fi vibe.', 
+        NOW() - INTERVAL '1 hour'
+    ),
+    (
+        (SELECT id FROM latest_posts WHERE rn = 3), 
+        (SELECT id FROM users WHERE username = 'ricky'), 
+        'I found this song through a random playlist and haven''t stopped listening since.', 
+        NOW() - INTERVAL '3 hours'
+    ),
+    (
+        (SELECT id FROM latest_posts WHERE rn = 2), 
+        (SELECT id FROM users WHERE username = 'ana_f'), 
+        'This song feels like a painting. Buckley was truly one of a kind.', 
+        NOW() - INTERVAL '4 hours'
+    ),
+    (
+        (SELECT id FROM latest_posts WHERE rn = 1), 
+        (SELECT id FROM users WHERE username = 'filipe'), 
+        'Finally! Someone recognizes the live 1997 version is superior to the studio cut.', 
+        NOW() - INTERVAL '6 hours'
+    );
+
+-- ====================================================
+-- CREDIBLE CONVERSATIONS: MUSIC REVIEWS
+-- ====================================================
+
+-- Thread 1: The "Silver Springs" Controversy (Post-ID based on latest review)
+INSERT INTO comment (postId, userId, content, createdAt) VALUES 
+    ((SELECT postId FROM review r JOIN media m ON r.mediaId = m.id WHERE m.title = 'Silver Springs - Live at Warner Brothers Studios'), 
+     (SELECT id FROM users WHERE username = 'david'), 
+     'As a cinephile, the way the camera stays on Stevie during that final chorus is one of the best "performances" in music history.', 
+     NOW() - INTERVAL '5 hours'),
+    ((SELECT postId FROM review r JOIN media m ON r.mediaId = m.id WHERE m.title = 'Silver Springs - Live at Warner Brothers Studios'), 
+     (SELECT id FROM users WHERE username = 'mari_s'), 
+     'Agreed! Her expression at the 4:30 mark is just pure, raw emotion. Total theatre.', 
+     NOW() - INTERVAL '4 hours');
+
+-- Thread 2: Jeff Buckley Production Discussion
+INSERT INTO comment (postId, userId, content, createdAt) VALUES 
+    ((SELECT postId FROM review r JOIN media m ON r.mediaId = m.id WHERE m.title = 'Lover, You Should''ve Come Over'), 
+     (SELECT id FROM users WHERE username = 'pedro_o'), 
+     'That organ swell in the background of this track is what makes it for me. Buckley was a genius arranger.', 
+     NOW() - INTERVAL '8 hours'),
+    ((SELECT postId FROM review r JOIN media m ON r.mediaId = m.id WHERE m.title = 'Lover, You Should''ve Come Over'), 
+     (SELECT id FROM users WHERE username = 'ana_f'), 
+     'It really bridges the gap between rock and something almost spiritual.', 
+     NOW() - INTERVAL '7 hours');
+
+-- Thread 3: Clairo and "Bedroom Pop"
+INSERT INTO comment (postId, userId, content, createdAt) VALUES 
+    ((SELECT postId FROM review r JOIN media m ON r.mediaId = m.id WHERE m.title = 'Bags'), 
+     (SELECT id FROM users WHERE username = 'sofia_a'), 
+     'I listened to this non-stop during my trip to Seoul last year. Now it just sounds like jet lag and coffee to me lol.', 
+     NOW() - INTERVAL '10 hours');
+
+-- Thread 4: Role Model Short and Sweet
+INSERT INTO comment (postId, userId, content, createdAt) VALUES 
+    ((SELECT postId FROM review r JOIN media m ON r.mediaId = m.id WHERE m.title = 'Sally, When The Wine Runs Out'), 
+     (SELECT id FROM users WHERE username = 'ricky'), 
+     'Short songs > 10 minute epics sometimes. This is proof.', 
+     NOW() - INTERVAL '12 hours');
+
+-- ====================================================
+-- ORGANIC LIKES: CREDIBLE VARIED DISTRIBUTION
+-- ====================================================
+
+-- 1. "VIRAL" CLASSICS (12-15 Likes)
+-- High engagement for legendary tracks.
+INSERT INTO post_like (postId, userId)
+SELECT r.postId, u.id
+FROM review r
+JOIN media m ON r.mediaId = m.id
+CROSS JOIN users u
+WHERE m.title IN ('Silver Springs - Live at Warner Brothers Studios', 'Bohemian Rhapsody', 'Lover, You Should''ve Come Over')
+  AND u.username IN ('alice', 'bruno', 'carla', 'david', 'eva', 'filipe', 'miguelito', 'sofia_a', 'ricky', 'ana_f', 'pedro_o', 'ines_c', 'tiago_r', 'mari_s', 'goncalo_m')
+  AND random() > 0.15 -- ~85% chance to like
+ON CONFLICT DO NOTHING;
+
+-- 2. "INDIE HITS" (6-9 Likes)
+-- Moderate engagement for modern indie tracks.
+INSERT INTO post_like (postId, userId)
+SELECT r.postId, u.id
+FROM review r
+JOIN media m ON r.mediaId = m.id
+CROSS JOIN users u
+WHERE m.title IN ('Bags', 'Sally, When The Wine Runs Out', 'Get Lucky')
+  AND u.username IN ('alice', 'ana_f', 'pedro_o', 'bruno', 'sofia_a', 'ricky', 'tiago_r', 'goncalo_m', 'ines_c')
+  AND random() > 0.3 -- ~70% chance to like
+ON CONFLICT DO NOTHING;
+
+-- 3. "NICHE/POLARIZING" (1-3 Likes)
+-- Low engagement for repetitive or polarizing tracks (like Shape of You).
+INSERT INTO post_like (postId, userId)
+SELECT r.postId, u.id
+FROM review r
+JOIN media m ON r.mediaId = m.id
+CROSS JOIN users u
+WHERE m.title IN ('Shape of You', 'Wonderwall')
+  AND u.username IN ('tiago_r', 'bia_lima', 'carla')
+ON CONFLICT DO NOTHING;
+
+-- ====================================================
+-- MORE COMMENTS FOR ALL MUSIC REVIEWS
+-- ====================================================
+
+-- Adding deeper discussion to the Fleetwood Mac thread
+INSERT INTO comment (postId, userId, content, createdAt) VALUES 
+    ((SELECT postId FROM review r JOIN media m ON r.mediaId = m.id WHERE m.title = 'Silver Springs - Live at Warner Brothers Studios'), 
+     (SELECT id FROM users WHERE username = 'filipe'), 
+     'The bass line on this live version is so much punchier than the studio cut. It completely changes the energy.', 
+     NOW() - INTERVAL '2 hours'),
+    ((SELECT postId FROM review r JOIN media m ON r.mediaId = m.id WHERE m.title = 'Silver Springs - Live at Warner Brothers Studios'), 
+     (SELECT id FROM users WHERE username = 'carla'), 
+     'Stevie staring down Lindsey during the outro is the peak of 70s rock drama. I love it.', 
+     NOW() - INTERVAL '1 hour');
+
+-- Adding a technical comment to the Clairo thread
+INSERT INTO comment (postId, userId, content, createdAt) VALUES 
+    ((SELECT postId FROM review r JOIN media m ON r.mediaId = m.id WHERE m.title = 'Bags'), 
+     (SELECT id FROM users WHERE username = 'pedro_o'), 
+     'The way the guitar is mixed just slightly out of tune gives it that perfect bedroom-pop nostalgia.', 
+     NOW() - INTERVAL '4 hours');
+
+-- Adding a general fan comment to Role Model
+INSERT INTO comment (postId, userId, content, createdAt) VALUES 
+    ((SELECT postId FROM review r JOIN media m ON r.mediaId = m.id WHERE m.title = 'Sally, When The Wine Runs Out'), 
+     (SELECT id FROM users WHERE username = 'ana_f'), 
+     'I’ve had this on repeat for weeks. His production is getting so much better.', 
+     NOW() - INTERVAL '6 hours');
+
+-- Pink Floyd: High engagement (Post 67)
+INSERT INTO post_like (postId, userId)
+SELECT 67, u.id FROM users u 
+WHERE u.username IN ('alice', 'david', 'pedro_o', 'filipe', 'mari_s', 'tiago_r', 'ana_f', 'bruno')
+ON CONFLICT DO NOTHING;
+
+-- The Beatles: High engagement (Post 68)
+INSERT INTO post_like (postId, userId)
+SELECT 68, u.id FROM users u 
+WHERE u.username IN ('alice', 'filipe', 'miguelito', 'sofia_a', 'ricky', 'goncalo_m', 'eva')
+ON CONFLICT DO NOTHING;
+
+-- Kendrick Lamar: High engagement (Post 69)
+INSERT INTO post_like (postId, userId)
+SELECT 69, u.id FROM users u 
+WHERE u.username IN ('ana_f', 'pedro_o', 'ricky', 'tiago_r', 'ines_c', 'goncalo_m', 'bruno', 'alice')
+ON CONFLICT DO NOTHING;
+
+-- Post 67: Dark Side of the Moon
+INSERT INTO comment (postId, userId, content, createdAt) VALUES 
+    (67, (SELECT id FROM users WHERE username = 'pedro_o'), 'The production on this album in 1973 was decades ahead of its time. Those synth loops still sound fresh.', NOW() - INTERVAL '3 hours'),
+    (67, (SELECT id FROM users WHERE username = 'david'), 'Great pick. The Great Gig in the Sky is basically a cinematic experience in audio form.', NOW() - INTERVAL '2 hours');
+
+-- Post 68: Abbey Road
+INSERT INTO comment (postId, userId, content, createdAt) VALUES 
+    (68, (SELECT id FROM users WHERE username = 'filipe'), 'I have a first pressing of this on vinyl. Side B is the greatest medley ever recorded.', NOW() - INTERVAL '1 day'),
+    (68, (SELECT id FROM users WHERE username = 'alice'), 'I Want You (She''s So Heavy) has such a haunting ending. Love seeing this on my feed!', NOW() - INTERVAL '20 hours');
+
+-- Post 69: To Pimp a Butterfly
+INSERT INTO comment (postId, userId, content, createdAt) VALUES 
+    (69, (SELECT id FROM users WHERE username = 'ricky'), 'This isn''t just an album, it''s a cultural landmark. The jazz influences are incredible.', NOW() - INTERVAL '4 days'),
+    (69, (SELECT id FROM users WHERE username = 'ana_f'), 'Totally agree. The storytelling is so dense; I find something new every time I listen.', NOW() - INTERVAL '3 days');
+
+-- LIKES FOR BOOK REVIEWS (image_73c988.png)
+
+-- Post 65: The Seven Husbands of Evelyn Hugo (High popularity)
+INSERT INTO post_like (postId, userId)
+SELECT 65, u.id FROM users u 
+WHERE u.username IN ('bia_lima', 'sofia_a', 'ines_c', 'alice', 'mari_s')
+ON CONFLICT DO NOTHING;
+
+-- Post 66: Atomic Habits (Productivity niche)
+INSERT INTO post_like (postId, userId)
+SELECT 66, u.id FROM users u 
+WHERE u.username IN ('bruno', 'tiago_r', 'goncalo_m')
+ON CONFLICT DO NOTHING;
+
+-- Post 53: Dune (Sci-fi enthusiasts)
+-- Note: Matching the 3 likes shown in your image
+INSERT INTO post_like (postId, userId)
+SELECT 53, u.id FROM users u 
+WHERE u.username IN ('ricky', 'alice', 'bruno')
+ON CONFLICT DO NOTHING;
+
+-- Post 71: Pride and Prejudice (Romance classics)
+INSERT INTO post_like (postId, userId)
+SELECT 71, u.id FROM users u 
+WHERE u.username IN ('bia_lima', 'ana_f', 'mari_s', 'carla')
+ON CONFLICT DO NOTHING;
+
+-- COMMENTS FOR BOOK REVIEWS
+
+-- Post 65: Evelyn Hugo
+INSERT INTO comment (postId, userId, content, createdAt) VALUES 
+    (65, (SELECT id FROM users WHERE username = 'bia_lima'), 'I finished this in one sitting and cried for three hours straight. The ending is everything.', NOW() - INTERVAL '2 hours'),
+    (65, (SELECT id FROM users WHERE username = 'sofia_a'), 'I read this on my flight to London—definitely lived up to the hype!', NOW() - INTERVAL '1 hour');
+
+-- Post 66: Atomic Habits
+INSERT INTO comment (postId, userId, content, createdAt) VALUES 
+    (66, (SELECT id FROM users WHERE username = 'bruno'), 'The 1% better every day rule is a game changer for coding. Great pick, Gonçalo!', NOW() - INTERVAL '12 hours');
+
+-- Post 53: Dune
+INSERT INTO comment (postId, userId, content, createdAt) VALUES 
+    (53, (SELECT id FROM users WHERE username = 'ricky'), 'I agree about the pacing, but the world-building is so dense you kind of need that slow start.', NOW() - INTERVAL '3 days'),
+    (53, (SELECT id FROM users WHERE username = 'bruno'), 'Wait until you get to the second half of the book, it picks up significantly!', NOW() - INTERVAL '2 days');
+
+-- Post 71: Pride and Prejudice
+INSERT INTO comment (postId, userId, content, createdAt) VALUES 
+    (71, (SELECT id FROM users WHERE username = 'mari_s'), 'Mr. Darcy is the blueprint. I have read this at least five times and it never gets old.', NOW() - INTERVAL '5 hours');
