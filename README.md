@@ -1,93 +1,299 @@
-# lbaw2544
+# Junto - Social Media Platform
 
+![Laravel](https://img.shields.io/badge/Laravel-FF2D20?style=for-the-badge&logo=laravel&logoColor=white)
+![PHP](https://img.shields.io/badge/PHP-777BB4?style=for-the-badge&logo=php&logoColor=white)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-316192?style=for-the-badge&logo=postgresql&logoColor=white)
+![TailwindCSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)
+![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)
 
+A comprehensive social networking platform built with Laravel for the LBAW (Database and Web Applications Laboratory) course at FEUP. Junto connects users through shared interests in movies, books, and music, featuring a modern social feed, group interactions, and rich media integration.
 
-## Getting started
+## 🌐 About
 
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
+Junto is a full-featured social media platform designed to bring people together through shared cultural interests. The platform combines traditional social networking features with media discovery, allowing users to connect, share, and discuss their favorite movies, books, and music.
 
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
+## 🚀 Key Features
 
-## Add your files
+### 👤 Authentication & User Management
+- **Secure Authentication**: Email/password login with Google OAuth integration
+- **Password Recovery**: Email-based password reset system
+- **User Profiles**: Customizable profiles with bio, profile pictures, and favorite media
+- **Account Status**: Block/unblock system with appeal mechanism for blocked users
+- **Privacy Controls**: Manage visibility and friend connections
 
-- [ ] [Create](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#create-a-file) or [upload](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#upload-a-file) files
-- [ ] [Add files using the command line](https://docs.gitlab.com/topics/git/add_files/#add-files-to-a-git-repository) or push an existing Git repository with the following command:
+### 📱 Social Feed & Interactions
+- **Dynamic Timeline**: Personalized feed with posts from friends and groups
+- **Post Creation**: Share text posts with image attachments
+- **Media Reviews**: Rate and review movies, books, and music
+- **Engagement System**: Like and comment on posts and reviews
+- **Real-time Updates**: AJAX-powered feed updates without page refresh
+- **Content Filtering**: Switch between all posts and friends-only feed
+
+### 💬 Messaging System
+- **Direct Messages**: One-on-one private conversations
+- **Real-time Chat**: Live message updates via AJAX polling
+- **Message Management**: Delete conversations and manage chat history
+- **Mention System**: Tag users with @ mentions in posts and comments
+
+### 👥 Friend Network
+- **Friend Requests**: Send, accept, or reject friend requests
+- **Friend Management**: View friends list and unfriend users
+- **User Search**: Discover and connect with other users
+- **Friend Activity**: See posts from friends in dedicated feed
+
+### 🎬 Media Library Integration
+- **Movie Database**: Browse and search movies
+- **Book Collection**: Discover and review books
+- **Music Library**: Explore music albums and artists
+- **Favorites System**: Add media items to personal favorites
+- **Media Reviews**: Share detailed reviews with ratings
+
+### 👨‍👩‍👧‍👦 Groups & Communities
+- **Create Groups**: Start communities around shared interests
+- **Group Management**: Admin controls for members and invitations
+- **Join Requests**: Request-based or invite-based membership
+- **Group Posts**: Dedicated feeds for group discussions
+- **Membership Roles**: Owner, admin, and member permissions
+
+### 🔍 Advanced Search
+- **User Search**: Find users by name or username
+- **Post Search**: Full-text search across all posts
+- **Comment Search**: Search within post comments
+- **Group Discovery**: Find and join relevant groups
+
+### 🛡️ Administration & Moderation
+- **Admin Dashboard**: Comprehensive platform management
+- **User Moderation**: Block/unblock users with appeal system
+- **Content Reports**: Review and manage reported posts and comments
+- **Appeal Management**: Handle unblock requests from users
+- **Platform Analytics**: Monitor user activity and engagement
+
+### 🔔 Notification System
+- **Friend Requests**: Notifications for new friend requests
+- **Group Invites**: Alerts for group invitations
+- **Post Interactions**: Notifications for likes and comments
+- **Message Alerts**: New message notifications
+
+## 🛠 Technical Implementation
+
+### Tech Stack
+- **Framework**: Laravel 12.x (PHP 8.2+)
+- **Database**: PostgreSQL with Docker
+- **Frontend**: TailwindCSS 4.0, Vite
+- **Authentication**: Laravel Sanctum + Google OAuth (Socialite)
+- **Storage**: Local filesystem for user uploads
+- **Development**: Docker Compose for services
+
+### System Architecture
+```
+┌─────────────────────────────┐
+│   Frontend (Blade + Vite)   │
+│   TailwindCSS + JavaScript  │
+├─────────────────────────────┤
+│   Laravel 12 Backend        │
+│   (MVC + Policies)          │
+├─────────────────────────────┤
+│   PostgreSQL Database       │
+│   (Docker Container)        │
+└─────────────────────────────┘
+```
+
+### Database Schema
+The database includes comprehensive tables for:
+- **Users & Authentication**: Users, password resets, sessions
+- **Social Network**: Friend requests, friendships, followers
+- **Content**: Posts, reviews, comments, likes
+- **Groups**: Groups, memberships, invites, join requests
+- **Media**: Movies, books, music, user favorites
+- **Messaging**: Direct messages between users
+- **Notifications**: Friend requests, group invites, mentions
+- **Moderation**: Reports, blocks, unblock appeals
+- **Security**: Login attempts tracking, session management
+
+### Key Laravel Features
+- **Eloquent ORM**: Rich model relationships and queries
+- **Authorization Policies**: Fine-grained access control
+- **Form Validation**: Request validation for data integrity
+- **Middleware**: Authentication and authorization guards
+- **Service Layer**: Business logic abstraction
+- **File Uploads**: Image storage and processing
+- **Email**: Password reset and notification emails
+
+## 🏗 Setup and Installation
+
+### Prerequisites
+- PHP 8.2 or higher
+- Composer 2.2+
+- Docker & Docker Compose
+- Node.js 18+ (for Vite)
+
+### Quick Start
+
+1. **Clone the repository**
+```bash
+git clone git@github.com:YourUsername/junto.git
+cd junto
+```
+
+2. **Install dependencies**
+```bash
+composer install
+npm install
+```
+
+3. **Start PostgreSQL with Docker**
+```bash
+docker compose up -d
+```
+
+4. **Configure environment**
+```bash
+cp .env.example .env
+php artisan key:generate
+```
+
+Update `.env` with database credentials:
+```env
+DB_CONNECTION=pgsql
+DB_HOST=localhost
+DB_PORT=5432
+DB_DATABASE=postgres
+DB_USERNAME=postgres
+DB_PASSWORD=password
+```
+
+5. **Seed the database**
+```bash
+php artisan db:seed
+```
+
+6. **Build frontend assets**
+```bash
+npm run build
+# Or for development with hot reload:
+npm run dev
+```
+
+7. **Start the development server**
+```bash
+php artisan serve
+```
+
+Access the application at `http://localhost:8000`
+
+### Database Management
+
+**pgAdmin 4** is available at `http://localhost:4321` to manage the PostgreSQL database.
+
+Connection details:
+- **Hostname**: `postgres`
+- **Username**: `postgres`
+- **Password**: `password`
+
+### Troubleshooting
+
+**Database connection issues:**
+```bash
+docker compose down
+docker compose up -d
+php artisan db:seed
+```
+
+**Asset compilation errors:**
+```bash
+npm ci
+npm run build
+```
+
+## 🔐 Test Credentials
+
+You can use the seeded database accounts or create your own.
+
+**Example credentials** (after seeding):
+- Check the database seed file or create a new account via `/register`
+
+## 📁 Project Structure
 
 ```
-cd existing_repo
-git remote add origin https://gitlab.up.pt/lbaw/lbaw2526/lbaw2544.git
-git branch -M main
-git push -uf origin main
+junto/
+├── app/
+│   ├── Http/
+│   │   ├── Controllers/       # Request handlers
+│   │   │   ├── Admin/         # Admin panel controllers
+│   │   │   ├── Auth/          # Authentication
+│   │   │   ├── Friendship/    # Friend system
+│   │   │   ├── Media/         # Movies, books, music
+│   │   │   ├── Post/          # Posts, comments, reviews
+│   │   │   └── Search/        # Search functionality
+│   │   └── Middleware/        # Request filters
+│   ├── Models/                # Eloquent models
+│   ├── Policies/              # Authorization rules
+│   └── Services/              # Business logic
+├── database/
+│   ├── migrations/            # Database schema
+│   └── junto-seed.sql         # Initial data
+├── resources/
+│   ├── views/                 # Blade templates
+│   ├── css/                   # Stylesheets
+│   └── js/                    # JavaScript modules
+├── routes/
+│   └── web.php                # Application routes
+├── public/                    # Public assets
+├── docker-compose.yaml        # Docker services
+└── docs/
+    └── a7_openapi.yaml        # API specification
 ```
 
-## Integrate with your tools
+## 🎯 Features Implemented
 
-- [ ] [Set up project integrations](https://gitlab.up.pt/lbaw/lbaw2526/lbaw2544/-/settings/integrations)
+- ✅ Complete authentication system with OAuth
+- ✅ User profiles with customizable bios and avatars
+- ✅ Social feed with posts, reviews, and comments
+- ✅ Friend system with requests and management
+- ✅ Real-time messaging between users
+- ✅ Media library (movies, books, music)
+- ✅ Favorites and user media preferences
+- ✅ Groups with membership management
+- ✅ Advanced search across users, posts, comments, and groups
+- ✅ Like system for posts and comments
+- ✅ Mention system with @ tagging
+- ✅ Notification system for interactions
+- ✅ Admin panel with moderation tools
+- ✅ Report system for content moderation
+- ✅ Block/unblock with appeal mechanism
+- ✅ Responsive design with TailwindCSS
+- ✅ Image upload and storage
+- ✅ Email notifications for password reset
 
-## Collaborate with your team
+## 🏆 Learning Outcomes
 
-- [ ] [Invite team members and collaborators](https://docs.gitlab.com/ee/user/project/members/)
-- [ ] [Create a new merge request](https://docs.gitlab.com/ee/user/project/merge_requests/creating_merge_requests.html)
-- [ ] [Automatically close issues from merge requests](https://docs.gitlab.com/ee/user/project/issues/managing_issues.html#closing-issues-automatically)
-- [ ] [Enable merge request approvals](https://docs.gitlab.com/ee/user/project/merge_requests/approvals/)
-- [ ] [Set auto-merge](https://docs.gitlab.com/user/project/merge_requests/auto_merge/)
+Through this project, I developed expertise in:
+- **Full-stack Web Development**: End-to-end application with Laravel
+- **Database Design**: Complex relational schemas with PostgreSQL
+- **Modern PHP**: Laravel best practices and design patterns
+- **Frontend Development**: TailwindCSS and modern JavaScript
+- **Authentication & Authorization**: Policies and middleware
+- **API Design**: RESTful routing and resource management
+- **DevOps**: Docker containerization and deployment
+- **Security**: Input validation, CSRF protection, SQL injection prevention
+- **User Experience**: Responsive design and intuitive interfaces
+- **Team Collaboration**: Git workflow and code reviews
 
-## Test and Deploy
+## 👥 Development Team
 
-Use the built-in continuous integration in GitLab.
+This project was developed by:
+- Pedro Lunet
+- [Francisca Portugal](https://github.com/franpts2)
+- [Maria Luiza Vieira](https://github.com/maluviieira)
+- [Francisco Bandeira](https://github.com/fmbb8)
 
-- [ ] [Get started with GitLab CI/CD](https://docs.gitlab.com/ee/ci/quick_start/)
-- [ ] [Analyze your code for known vulnerabilities with Static Application Security Testing (SAST)](https://docs.gitlab.com/ee/user/application_security/sast/)
-- [ ] [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/ee/topics/autodevops/requirements.html)
-- [ ] [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/ee/user/clusters/agent/)
-- [ ] [Set up protected environments](https://docs.gitlab.com/ee/ci/environments/protected_environments.html)
+## 📜 Course Information
 
-***
+Developed for the LBAW (Database and Web Applications Laboratory) course at FEUP (Faculty of Engineering, University of Porto).
 
-# Editing this README
+**Course**: LBAW 2024/2025  
+**Project Code**: lbaw2544
 
-When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!). Thanks to [makeareadme.com](https://www.makeareadme.com/) for this template.
+---
 
-## Suggestions for a good README
-
-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
-
-## Name
-Choose a self-explaining name for your project.
-
-## Description
-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
-
-## Badges
-On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
-
-## Visuals
-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
-
-## Installation
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
-
-## Usage
-Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
-
-## Support
-Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
-
-## Roadmap
-If you have ideas for releases in the future, it is a good idea to list them in the README.
-
-## Contributing
-State if you are open to contributions and what your requirements are for accepting them.
-
-For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
-
-You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
-
-## Authors and acknowledgment
-Show your appreciation to those who have contributed to the project.
-
-## License
-For open source projects, say how it is licensed.
-
-## Project status
-If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
+*Built with Laravel 12, PostgreSQL, and TailwindCSS. Features modern web development practices with a focus on scalability, security, and user experience.*
